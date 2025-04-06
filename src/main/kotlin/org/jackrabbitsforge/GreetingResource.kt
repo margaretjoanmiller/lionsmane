@@ -1,4 +1,4 @@
-package org.wanderingwires
+package org.jackrabbitsforge
 
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path

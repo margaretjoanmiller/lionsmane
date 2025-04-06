@@ -1,4 +1,4 @@
-package org.wanderingwires
+package org.jackrabbitsforge
 
 import io.quarkus.test.junit.QuarkusIntegrationTest
 
