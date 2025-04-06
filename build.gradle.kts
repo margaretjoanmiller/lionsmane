@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) Margaret Miller 2025.  Licensed under the EUPL-1.2 or later.
+ */
+
 plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.allopen") version "2.0.21"
     id("io.quarkus")
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
 repositories {
@@ -16,6 +21,7 @@ val quarkusPlatformVersion: String by project
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation("io.quarkus:quarkus-rest-jackson")
+    implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-oidc")
     implementation("io.quarkus:quarkus-keycloak-authorization")

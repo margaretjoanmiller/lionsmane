@@ -1,0 +1,53 @@
+﻿services:
+  lionsmane-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "6789:5432"
+    volumes:
+      - lionsmane-db-data:/var/lib/postgresql/data
+    networks:
+      - application_network
+      
+  keycloak-db:
+    image: postgres:17-alpine
+    volumes:
+      - kc_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRESKC_DB}
+      POSTGRES_USER: ${POSTGRESKC_USER}
+      POSTGRES_PASSWORD: ${POSTGRESKC_PASSWORD}
+    networks:
+      - keycloak_network
+
+  keycloak:
+      image: quay.io/keycloak/keycloak:26.1.4
+      command: "start"
+      environment:
+        KC_HOSTNAME_STRICT: "false"
+        KC_HTTP_ENABLED: "true"
+        KC_HEALTH_ENABLED: "true"
+        KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+        KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+        KC_DB: "postgres"
+        KC_DB_URL: jdbc:postgresql://keycloak-db/${POSTGRESKC_DB}
+        KC_DB_USERNAME: ${POSTGRESKC_USER}
+        KC_DB_PASSWORD: ${POSTGRESKC_PASSWORD}
+      ports:
+        - "8543:8443"
+      restart: always
+      depends_on:
+        - keycloak-db
+      networks:
+        - keycloak_network
+        - application_network
+
+
+volumes:
+  lionsmane-db-data:
+  kc_data:
+
+networks:
+  keycloak_network:
+  application_network:
