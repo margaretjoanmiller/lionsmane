@@ -4,5 +4,28 @@
 
 package org.jackrabbitsforge.data
 
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+@Entity
 class Folder {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @ExperimentalUuidApi
+    var id: Uuid? = null
+
+    lateinit var userName: String
+
+    lateinit var name: String
+    var description: String? = null
+
+    @OneToMany(mappedBy = "folder", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    var feeds: MutableList<Feed> = mutableListOf<Feed>()
 }
