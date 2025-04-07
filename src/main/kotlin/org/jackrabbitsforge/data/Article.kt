@@ -27,7 +27,7 @@ class Article {
     lateinit var url: String
     open lateinit var publishedDate: Date
 
-    var categories: List<String>? = null;
+    var categories: List<String>? = null
 
     var audio: String? = null
     var source: String? = null
