@@ -20,6 +20,7 @@ val quarkusPlatformVersion: String by project
 
 dependencies {
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
+    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
     implementation("io.quarkus:quarkus-rest-jackson")
     implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-kotlin")
@@ -30,6 +31,7 @@ dependencies {
     implementation("io.quarkus:quarkus-rest")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
+    implementation("com.prof18.rssparser:rssparser:6.0.10")
 }
 
 group = "org.jackrabbitsforge"
