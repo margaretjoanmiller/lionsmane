@@ -8,6 +8,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import java.sql.Date
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -16,7 +17,21 @@ class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @ExperimentalUuidApi
-    private var id: Uuid? = null;
+     var id: Uuid? = null
 
-    private var title: String? = null;
+    lateinit var title: String
+    lateinit var author: String
+    lateinit var description: String
+    lateinit var content: String
+    lateinit var image: String
+    lateinit var url: String
+    open lateinit var publishedDate: Date
+
+    var categories: List<String>? = null;
+
+    var audio: String? = null
+    var source: String? = null
+    var GUID: String? = null
+    var video: String? = null
+    var commentsUrl: String? = null
 }
