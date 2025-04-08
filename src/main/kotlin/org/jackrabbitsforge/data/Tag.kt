@@ -8,18 +8,14 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import java.util.UUID
 
 @Entity
 class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @ExperimentalUuidApi
-    var id: Uuid? = null
+    var id: UUID? = null
 
     lateinit var name: String
 

@@ -8,16 +8,15 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import java.sql.Date
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import java.util.UUID
 
 @Entity
 class Article {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @ExperimentalUuidApi
-     var id: Uuid? = null
+    @GeneratedValue
+     var id: UUID? = null
 
     lateinit var title: String
     lateinit var author: String
@@ -34,4 +33,7 @@ class Article {
     var GUID: String? = null
     var video: String? = null
     var commentsUrl: String? = null
+
+    @ManyToOne
+lateinit var feed: Feed
 }

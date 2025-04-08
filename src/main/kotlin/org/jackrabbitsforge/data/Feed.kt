@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import java.time.OffsetDateTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -16,7 +18,7 @@ import kotlin.uuid.Uuid
 @Entity
 class Feed {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     @ExperimentalUuidApi
     var id: Uuid? = null
 
@@ -25,8 +27,13 @@ class Feed {
     lateinit var title: String
     lateinit var description: String
     lateinit var url: String
-    var articles: List<Article>? = null
+
+    @OneToMany
+    var articles: MutableList<Article> = mutableListOf<Article>()
     var lastUpdated: OffsetDateTime? = null
+
+    @ManyToOne
+lateinit var folder: Folder
 
     @ManyToMany(mappedBy = "feeds")
     var tags: MutableList<Tag>? = null

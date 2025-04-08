@@ -17,7 +17,7 @@ import kotlin.uuid.Uuid
 @Entity
 class Folder {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     @ExperimentalUuidApi
     var id: Uuid? = null
 
