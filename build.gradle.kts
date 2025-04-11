@@ -32,6 +32,8 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
     implementation("com.prof18.rssparser:rssparser:6.0.10")
+    implementation("org.mapstruct:mapstruct:1.6.3")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 }
 
 group = "org.jackrabbitsforge"

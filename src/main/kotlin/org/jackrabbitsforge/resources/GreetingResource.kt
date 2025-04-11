@@ -1,8 +1,8 @@
 /*
- * Copyright (c) Margaret Miller 2025.  Licensed under the EUPL-1.2 or later.
+ * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2 or later.
  */
 
-package org.jackrabbitsforge
+package org.jackrabbitsforge.resources
 
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
