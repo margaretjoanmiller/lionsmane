@@ -2,6 +2,8 @@
 .gradle/
 build/
 
+.kotlin
+
 # Eclipse
 .project
 .classpath
