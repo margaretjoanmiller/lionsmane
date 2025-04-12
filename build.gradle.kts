@@ -32,9 +32,7 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
     implementation("com.prof18.rssparser:rssparser:6.0.10")
-    implementation("org.mapstruct:mapstruct:1.6.3")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
-    implementation("org.valiktor:valiktor-core:0.12.0")
+    implementation("io.konform:konform:0.11.0")
 }
 
 group = "org.jackrabbitsforge"
@@ -53,6 +51,7 @@ allOpen {
     annotation("jakarta.enterprise.context.ApplicationScoped")
     annotation("jakarta.persistence.Entity")
     annotation("io.quarkus.test.junit.QuarkusTest")
+    annotation("org.mapstruct:mapstruct-processor:1.6.3")
 }
 
 kotlin {
