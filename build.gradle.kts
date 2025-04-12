@@ -34,6 +34,7 @@ dependencies {
     implementation("com.prof18.rssparser:rssparser:6.0.10")
     implementation("org.mapstruct:mapstruct:1.6.3")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    implementation("org.valiktor:valiktor-core:0.12.0")
 }
 
 group = "org.jackrabbitsforge"
