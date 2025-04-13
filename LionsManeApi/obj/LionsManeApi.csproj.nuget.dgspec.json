@@ -53,6 +53,10 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -69,9 +73,17 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "NodaTime": {
+              "target": "Package",
+              "version": "[3.2.2, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.4, )"
+            },
+            "UUIDNext": {
+              "target": "Package",
+              "version": "[4.1.1, )"
             }
           },
           "imports": [
