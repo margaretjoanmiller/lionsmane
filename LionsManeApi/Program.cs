@@ -3,6 +3,8 @@ using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using LionsManeApi;
 using LionsManeApi.Auth;
+using LionsManeApi.Interfaces;
+using LionsManeApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var bld = WebApplication.CreateBuilder();
@@ -22,6 +24,8 @@ bld.Services.AddIdentityApiEndpoints<Reader>()
     .AddEntityFrameworkStores<TomeContext>();
 
 // Application setup
+bld.Services.AddScoped<IArticleFetcher, ArticleFetcherService>();
+
 bld.Services.AddFastEndpoints()
     .SwaggerDocument();
 
