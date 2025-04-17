@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/var/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj": {}
+    "/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj": {}
   },
   "projects": {
-    "/var/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj": {
+    "/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/var/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj",
+        "projectUniqueName": "/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj",
         "projectName": "LionsManeApi",
-        "projectPath": "/var/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj",
-        "packagesPath": "/var/home/x4d6165/.nuget/packages/",
-        "outputPath": "/var/home/x4d6165/Projects/lionsmane/LionsManeApi/obj/",
+        "projectPath": "/home/x4d6165/Projects/lionsmane/LionsManeApi/LionsManeApi.csproj",
+        "packagesPath": "/home/x4d6165/.nuget/packages/",
+        "outputPath": "/home/x4d6165/Projects/lionsmane/LionsManeApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/var/home/x4d6165/.nuget/NuGet/NuGet.Config"
+          "/home/x4d6165/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -45,9 +45,25 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "AngleSharp": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            },
             "FastEndpoints": {
               "target": "Package",
               "version": "[6.0.0, )"
+            },
+            "FastEndpoints.Security": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "FastEndpoints.Swagger": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
@@ -81,6 +97,18 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "SmartReader": {
+              "target": "Package",
+              "version": "[0.10.0, )"
+            },
+            "System.ServiceModel.Syndication": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "UUIDNext": {
               "target": "Package",
               "version": "[4.1.1, )"
@@ -105,7 +133,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.104/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
