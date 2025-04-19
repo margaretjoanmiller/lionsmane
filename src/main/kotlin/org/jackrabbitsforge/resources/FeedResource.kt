@@ -4,19 +4,30 @@
 
 package org.jackrabbitsforge.resources
 
+import io.quarkus.security.Authenticated
 import jakarta.ws.rs.GET
-import java.util.LinkedHashMap;
-
-import jakarta.ws.rs.Path;
-
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.core.Response
+import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
+import java.net.URI
 
+@Authenticated
 @Path("feeds")
 class FeedResource(private var feedRepository: FeedRepository) {
     private val feeds: LinkedHashMap<String, Feed> = LinkedHashMap()
 
     @GET
-    fun listFeeds() = feedRepository.listAll()
+    fun listFeeds(): List<FeedDto> = feedRepository.listAll()
+        .map { f -> f.toDto() }
 
+    @POST
+    fun postFeed(feed: FeedDto): Response {
+        var newFeed = Feed(feed.title ?: "", feed.description, URI.create(feed.url!!).toURL())
+        feedRepository.persist(newFeed)
+
+        return Response.ok(newFeed.toDto()).status(201).build()
+    }
 }

@@ -4,36 +4,29 @@
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
+import jakarta.persistence.*
+import org.jackrabbitsforge.data.dto.FeedDto
+import java.net.URL
 import java.time.OffsetDateTime
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import java.util.*
 
 @Entity
-class Feed {
+class Feed(var title: String, var description: String?, var url: URL) {
     @Id
-    @GeneratedValue
-    @ExperimentalUuidApi
-    var id: Uuid? = null
+    @GeneratedValue(strategy = GenerationType.UUID)
+    lateinit var id: UUID
 
     lateinit var userName: String
-
-    lateinit var title: String
-    lateinit var description: String
-    lateinit var url: String
 
     @OneToMany
     var articles: MutableList<Article> = mutableListOf<Article>()
     var lastUpdated: OffsetDateTime? = null
 
     @ManyToOne
-lateinit var folder: Folder
+    lateinit var folder: Folder
 
     @ManyToMany(mappedBy = "feeds")
     var tags: MutableList<Tag>? = null
+
+    fun toDto() = FeedDto(id, title, description, url.toString(), lastUpdated)
 }
