@@ -4,13 +4,11 @@
 
 package org.jackrabbitsforge.resources
 
+import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
 import jakarta.transaction.Transactional
-import jakarta.ws.rs.GET
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.PUT
-import jakarta.ws.rs.Path
+import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -30,10 +28,10 @@ class FeedResource(
     private var feedRepository: FeedRepository,
     private var identity: SecurityIdentity
 ) {
-    private val feeds: LinkedHashMap<String, Feed> = LinkedHashMap()
 
     @GET
     fun listFeeds(): List<FeedDto> = feedRepository.listAll()
+        .filter { f -> f.userName == identity.principal.name }
         .map { f -> f.toDto() }
 
     @POST
@@ -45,9 +43,13 @@ class FeedResource(
             newFeed.url = URI.create(feed.url).toURL()
         }
         newFeed.userName = identity.principal.name
-        var threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.WEEK, TimeZone.UTC)
+        val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.WEEK, TimeZone.UTC)
         newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
-        feedRepository.persist(newFeed)
+        try {
+            feedRepository.persist(newFeed)
+        } catch (e: Exception) {
+            Log.error("Error creating feed", e)
+        }
         return Response.ok(newFeed.toDto()).status(201).build()
     }
 
@@ -58,11 +60,34 @@ class FeedResource(
         if (feedToUpdate == null) {
             return Response.status(404).build()
         }
+        if (feedToUpdate.userName != identity.principal.name) {
+            return Response.status(401).build()
+        }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
         feedToUpdate.description = feed.description ?: feedToUpdate.description
         if (feed.url != null) {
             feedToUpdate.url = URI.create(feed.url).toURL()
         }
         return Response.ok(feedToUpdate.toDto()).status(200).build()
+    }
+
+    @DELETE
+    @Path("/{id}")
+    fun deleteFeed(id: Long): Response {
+        val feedToDelete = feedRepository.findById(id)
+
+        if (feedToDelete == null) {
+            return Response.status(404).build()
+        }
+        if (feedToDelete.userName != identity.principal.name) {
+            return Response.status(401).build()
+        }
+        try {
+            feedRepository.deleteById(id)
+        } catch (e: Exception) {
+            Log.error("Error deleting feed", e)
+            return Response.serverError().build()
+        }
+        return Response.ok().status(200).build()
     }
 }
