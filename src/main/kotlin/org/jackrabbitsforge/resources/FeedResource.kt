@@ -38,19 +38,28 @@ class FeedResource(
     fun postFeed(feed: FeedDto): Response {
         val newFeed = Feed()
         newFeed.title = feed.title ?: ""
-        newFeed.description = feed.description ?: newFeed.description
+        newFeed.description = feed.description ?: ""
         if (feed.url != null) {
-            newFeed.url = URI.create(feed.url).toURL()
+            try {
+                newFeed.url = URI.create(feed.url).toURL()
+            } catch (e: Exception) {
+                Log.warn("Invalid url", e)
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid URL format").build()
+            }
         }
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.WEEK, TimeZone.UTC)
         newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
+
         try {
             feedRepository.persist(newFeed)
+            Log.info("Created new feed with id: ${newFeed.id}")
+            return Response.ok(newFeed.toDto()).status(Response.Status.CREATED).build()
         } catch (e: Exception) {
             Log.error("Error creating feed", e)
+            return Response.serverError().build()
         }
-        return Response.ok(newFeed.toDto()).status(201).build()
     }
 
     @PUT
@@ -66,7 +75,13 @@ class FeedResource(
         feedToUpdate.title = feed.title ?: feedToUpdate.title
         feedToUpdate.description = feed.description ?: feedToUpdate.description
         if (feed.url != null) {
-            feedToUpdate.url = URI.create(feed.url).toURL()
+            try {
+                feedToUpdate.url = URI.create(feed.url).toURL()
+            } catch (e: Exception) {
+                Log.warn("Invalid url", e)
+                return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid URL format").build()
+            }
         }
         return Response.ok(feedToUpdate.toDto()).status(200).build()
     }
