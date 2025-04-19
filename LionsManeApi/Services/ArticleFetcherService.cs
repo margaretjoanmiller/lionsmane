@@ -1,25 +1,20 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.ServiceModel.Syndication;
+﻿using System.ServiceModel.Syndication;
 using System.Xml;
-using System.Linq;
-using NodaTime.Extensions;
-using UUIDNext;
-using SmartReader;
-using LionsManeApi.Feeds;
 using LionsManeApi.Interfaces;
+using NodaTime.Extensions;
+using SmartReader;
+using UUIDNext;
 
 namespace LionsManeApi.Services;
 
 public class ArticleFetcherService : IArticleFetcher
 {
     private readonly TomeContext _context;
-    private readonly IAuthorizationService _authorizationService;
     private readonly ILogger<ArticleFetcherService> _logger;
 
-    public ArticleFetcherService(TomeContext context, IAuthorizationService authorizationService, ILogger<ArticleFetcherService> logger)   
+    public ArticleFetcherService(TomeContext context, ILogger<ArticleFetcherService> logger)
     {
         _context = context;
-        _authorizationService = authorizationService;
         _logger = logger;
     }
 
@@ -28,21 +23,11 @@ public class ArticleFetcherService : IArticleFetcher
         throw new NotImplementedException();
     }
 
-    public async Task<SmartReader.Article> ParseArticle(string url)
-    {
-        SmartReader.Reader sr = new SmartReader.Reader(url);
-        SmartReader.Article article = await sr.GetArticleAsync();
-        return article;
-    }
-
     public async Task FetchArticlesForFeed(Guid id)
     {
         var feed = await _context.Feeds.FindAsync(id);
 
-        if (feed is null)
-        {
-            throw new KeyNotFoundException();
-        }
+        if (feed is null) throw new KeyNotFoundException();
 
         using var reader = XmlReader.Create(feed.Url.ToString());
         var feedData = SyndicationFeed.Load(reader);
@@ -50,17 +35,14 @@ public class ArticleFetcherService : IArticleFetcher
             where item.PublishDate.ToInstant() > feed.LastUpdated
             select item;
 
-        foreach (SyndicationItem article in articles)
+        foreach (var article in articles)
         {
-            string artContent = "";
+            var artContent = "";
             Uri featuredImage;
-            string featuredImageAlt = "";
+            var featuredImageAlt = "";
             try
             {
-                if (article.Links.Count == 0)
-                {
-                    throw new Exception();
-                }
+                if (article.Links.Count == 0) throw new Exception();
 
                 var artParsed = await ParseArticle(article.Links.First().Uri.ToString());
                 var articleImages = await artParsed.GetImagesAsync();
@@ -83,7 +65,7 @@ public class ArticleFetcherService : IArticleFetcher
                 throw new Exception("Failed to parse article content");
             }
 
-            var newArticle = new LionsManeApi.Articles.Article()
+            var newArticle = new Articles.Article
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 FeedId = id,
@@ -95,7 +77,7 @@ public class ArticleFetcherService : IArticleFetcher
                 IsRead = false,
                 FeaturedImage = featuredImage,
                 FeaturedImageAlt = featuredImageAlt,
-                Published = article.PublishDate.ToInstant(),
+                Published = article.PublishDate.ToInstant()
             };
             _context.Articles.Add(newArticle);
             feed.LastUpdated = newArticle.Published;
@@ -108,10 +90,7 @@ public class ArticleFetcherService : IArticleFetcher
     {
         var feed = await _context.Feeds.FindAsync(id);
 
-        if (feed is null)
-        {
-            throw new KeyNotFoundException();
-        }
+        if (feed is null) throw new KeyNotFoundException();
 
         using var reader = XmlReader.Create(feed.Url.ToString());
         var feedData = SyndicationFeed.Load(reader);
@@ -119,9 +98,9 @@ public class ArticleFetcherService : IArticleFetcher
             where item.PublishDate.ToInstant() > feed.LastUpdated
             select item).Take(count);
 
-        foreach (SyndicationItem article in articles)
+        foreach (var article in articles)
         {
-            var newArticle = new LionsManeApi.Articles.Article()
+            var newArticle = new Articles.Article
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 FeedId = id,
@@ -129,7 +108,7 @@ public class ArticleFetcherService : IArticleFetcher
                 Authors = article.Authors.Select(x => x.Name).ToArray(),
                 Links = article.Links.Select(x => x.Uri).ToArray(),
                 Description = article.Summary.Text,
-                    Published = article.PublishDate.ToInstant(),
+                Published = article.PublishDate.ToInstant()
             };
             _context.Articles.Add(newArticle);
             await _context.SaveChangesAsync();
@@ -140,19 +119,20 @@ public class ArticleFetcherService : IArticleFetcher
     {
         var feeds = _context.Feeds.Where(x => x.ReaderId == id).ToList();
 
-        foreach (Feed feed in feeds)
-        {
-            await FetchArticlesForFeed(feed.Id);
-        }
+        foreach (var feed in feeds) await FetchArticlesForFeed(feed.Id);
     }
 
     public async Task FetchArticlesForUser(Guid id, int count)
     {
         var feeds = _context.Feeds.Where(x => x.ReaderId == id).ToList();
 
-        foreach (Feed feed in feeds)
-        {
-            await FetchArticlesForFeed(feed.Id, count);
-        }
+        foreach (var feed in feeds) await FetchArticlesForFeed(feed.Id, count);
+    }
+
+    public async Task<Article> ParseArticle(string url)
+    {
+        var sr = new Reader(url);
+        var article = await sr.GetArticleAsync();
+        return article;
     }
 }
