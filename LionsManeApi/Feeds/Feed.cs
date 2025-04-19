@@ -25,7 +25,6 @@ public class FeedInputDto
 {
     public required string Title { get; set; }
     public required Uri Url { get; set; }
-    public Uri? Favicon { get; set; }
     public string[]? Tags { get; set; }
 }
 

@@ -8,6 +8,8 @@ using LionsManeApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var bld = WebApplication.CreateBuilder();
+bld.Logging.ClearProviders();
+bld.Logging.AddConsole();
 
 // Database setup
 bld.Services.AddDbContext<TomeContext>(opt =>
@@ -30,6 +32,7 @@ bld.Services.AddFastEndpoints()
     .SwaggerDocument();
 
 var app = bld.Build();
+
 app.MapIdentityApi<Reader>();
 app.UseAuthentication()
     .UseAuthorization();

@@ -23,7 +23,7 @@ public class RequestRefresh : Endpoint<RefreshReq, RefreshStatus>
 
    public override void Configure()
    {
-       Post("/feeds/sync/refresh");
+       Get("/feeds/sync/refresh");
    }
 
    public override async Task HandleAsync(RefreshReq req, CancellationToken ct)

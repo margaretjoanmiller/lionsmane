@@ -2,26 +2,25 @@ using System.Security.Claims;
 using FastEndpoints;
 using LionsManeApi.Interfaces;
 using NodaTime;
+using UUIDNext;
 
 namespace LionsManeApi.Feeds.Endpoints.CRUD;
 
 public class AddFeed: Endpoint<FeedInputDto, FeedOutDto>
 {
-    public required IArticleFetcher ArticleFetcher { get; set; }
     public required TomeContext TomeContext { get; set; }
-    
-    public required ILogger Logger { get; set; }
     
    public override void Configure()
    {
-      Post("/api/feed/add");
+      Post("/api/feeds/add");
    }
 
    public override async Task HandleAsync(FeedInputDto dto, CancellationToken ct)
    {
-       var threeWeeksAgo = SystemClock.Instance.GetCurrentInstant().Minus(Duration.FromDays(14));
+       var threeWeeksAgo = SystemClock.Instance.GetCurrentInstant().Minus(Duration.FromDays(21));
        var outFeed = new FeedOutDto()
        {
+           Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
            Title = dto.Title,
            Url = dto.Url,
            LastUpdated = threeWeeksAgo.ToString(),
@@ -43,13 +42,13 @@ public class AddFeed: Endpoint<FeedInputDto, FeedOutDto>
        };
        try
        {
-           Logger;
+           Logger.LogInformation("Adding feed {Title} to database", feed.Title);
            TomeContext.Feeds.Add(feed);
            await TomeContext.SaveChangesAsync();
        }
        catch(Exception)
        {
-          
+         Logger.LogError("Failed to add feed {Title} to database", feed.Title); 
        }
 
        await SendAsync(outFeed);
