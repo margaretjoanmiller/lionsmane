@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) Margaret Miller 2025.  Licensed under the EUPL-1.2 or later.
+ */
+
+plugins {
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.allopen") version "2.0.21"
+    id("io.quarkus")
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+val quarkusPlatformGroupId: String by project
+val quarkusPlatformArtifactId: String by project
+val quarkusPlatformVersion: String by project
+
 dependencies {
     implementation("io.quarkus:quarkus-hibernate-validator")
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
@@ -37,6 +56,7 @@ allOpen {
     annotation("jakarta.enterprise.context.ApplicationScoped")
     annotation("jakarta.persistence.Entity")
     annotation("io.quarkus.test.junit.QuarkusTest")
+    annotation("org.mapstruct:mapstruct-processor:1.6.3")
 }
 
 kotlin {
