@@ -9,13 +9,12 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import java.sql.Date
-import java.util.UUID
 
 @Entity
 class Article {
     @Id
     @GeneratedValue
-     var id: UUID? = null
+    var id: Long? = null
 
     lateinit var title: String
     lateinit var author: String
@@ -34,5 +33,5 @@ class Article {
     var commentsUrl: String? = null
 
     @ManyToOne
-lateinit var feed: Feed
+    lateinit var feed: Feed
 }

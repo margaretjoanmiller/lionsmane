@@ -12,11 +12,16 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.core.Response
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
-import java.util.*
+import java.time.OffsetDateTime
+
 
 @Authenticated
 @Transactional
@@ -40,18 +45,16 @@ class FeedResource(
             newFeed.url = URI.create(feed.url).toURL()
         }
         newFeed.userName = identity.principal.name
+        var threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.WEEK, TimeZone.UTC)
+        newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
         feedRepository.persist(newFeed)
         return Response.ok(newFeed.toDto()).status(201).build()
     }
 
     @PUT
     @Path("/{id}")
-    fun updateFeed(id: String, feed: FeedDto): Response {
-        val uuid: UUID? = UUID.fromString(id)
-        if (uuid == null) {
-            return Response.status(422).build()
-        }
-        val feedToUpdate = feedRepository.findById(uuid).firstResult()
+    fun updateFeed(id: Long, feed: FeedDto): Response {
+        val feedToUpdate = feedRepository.findById(id)
         if (feedToUpdate == null) {
             return Response.status(404).build()
         }

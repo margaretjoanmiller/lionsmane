@@ -5,9 +5,8 @@
 package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
-import java.util.*
 
 /**
  * DTO for {@link org.jackrabbitsforge.data.entities.Tag}
  */
-data class TagDto(val id: UUID? = null, val name: String? = null) : Serializable
+data class TagDto(val id: Long? = null, val name: String? = null) : Serializable

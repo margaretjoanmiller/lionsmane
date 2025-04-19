@@ -5,10 +5,8 @@
 package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
-import java.util.UUID
-import kotlin.uuid.Uuid
 
 /**
  * DTO for {@link org.jackrabbitsforge.data.entities.Folder}
  */
-data class FolderDto(val id: UUID? = null, val name: String? = null, val description: String? = null) : Serializable
+data class FolderDto(val id: Long? = null, val name: String? = null, val description: String? = null) : Serializable

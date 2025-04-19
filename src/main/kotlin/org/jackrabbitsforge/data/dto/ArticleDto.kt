@@ -6,13 +6,11 @@ package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
 import java.sql.Date
-import java.util.*
 
 /**
  * DTO for {@link org.jackrabbitsforge.data.entities.Article}
  */
 data class ArticleDto(
-    val id: UUID? = null,
     val title: String? = null,
     val author: String? = null,
     val description: String? = null,

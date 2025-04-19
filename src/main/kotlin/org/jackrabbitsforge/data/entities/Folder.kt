@@ -9,14 +9,13 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @Entity
 class Folder {
     @Id
     @GeneratedValue
     @ExperimentalUuidApi
-    var id: Uuid? = null
+    var id: Long? = null
 
     lateinit var userName: String
 

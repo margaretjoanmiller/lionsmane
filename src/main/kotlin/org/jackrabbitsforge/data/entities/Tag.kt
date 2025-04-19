@@ -4,14 +4,16 @@
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.*
-import java.util.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToMany
 
 @Entity
 class Tag {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null
+    @GeneratedValue
+    var id: Long? = null
 
     lateinit var name: String
 
