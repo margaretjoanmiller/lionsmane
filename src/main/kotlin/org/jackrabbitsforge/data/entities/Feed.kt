@@ -11,22 +11,24 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-class Feed(var title: String, var description: String?, var url: URL) {
+class Feed(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    lateinit var id: UUID
+    var id: UUID,
+    var title: String, var description: String?, var url: URL,
 
-    lateinit var userName: String
+    var userName: String,
 
     @OneToMany
-    var articles: MutableList<Article> = mutableListOf<Article>()
-    var lastUpdated: OffsetDateTime? = null
+    var articles: MutableList<Article> = mutableListOf<Article>(),
+    var lastUpdated: OffsetDateTime? = null,
 
     @ManyToOne
-    lateinit var folder: Folder
+    var folder: Folder,
 
     @ManyToMany(mappedBy = "feeds")
-    var tags: MutableList<Tag>? = null
+    var tags: MutableList<Tag>? = null,
+) {
 
     fun toDto() = FeedDto(id, title, description, url.toString(), lastUpdated)
 }
