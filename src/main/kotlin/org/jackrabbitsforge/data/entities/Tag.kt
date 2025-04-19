@@ -4,12 +4,8 @@
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToMany
-import java.util.UUID
+import jakarta.persistence.*
+import java.util.*
 
 @Entity
 class Tag {

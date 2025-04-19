@@ -4,9 +4,7 @@
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
@@ -25,6 +23,6 @@ class Folder {
     lateinit var name: String
     var description: String? = null
 
-    @OneToMany(mappedBy = "folder", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany
     var feeds: MutableList<Feed> = mutableListOf<Feed>()
 }

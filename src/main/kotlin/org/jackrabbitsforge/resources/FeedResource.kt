@@ -5,6 +5,7 @@
 package org.jackrabbitsforge.resources
 
 import io.quarkus.security.Authenticated
+import io.quarkus.security.identity.SecurityIdentity
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -18,8 +19,12 @@ import java.net.URI
 import java.util.*
 
 @Authenticated
+@Transactional
 @Path("feeds")
-class FeedResource(private var feedRepository: FeedRepository) {
+class FeedResource(
+    private var feedRepository: FeedRepository,
+    private var identity: SecurityIdentity
+) {
     private val feeds: LinkedHashMap<String, Feed> = LinkedHashMap()
 
     @GET
@@ -27,17 +32,20 @@ class FeedResource(private var feedRepository: FeedRepository) {
         .map { f -> f.toDto() }
 
     @POST
-    @Transactional
     fun postFeed(feed: FeedDto): Response {
-        val newFeed = Feed(feed.title ?: "", feed.description, URI.create(feed.url!!).toURL())
+        val newFeed = Feed()
+        newFeed.title = feed.title ?: ""
+        newFeed.description = feed.description ?: newFeed.description
+        if (feed.url != null) {
+            newFeed.url = URI.create(feed.url).toURL()
+        }
+        newFeed.userName = identity.principal.name
         feedRepository.persist(newFeed)
-
         return Response.ok(newFeed.toDto()).status(201).build()
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
     fun updateFeed(id: String, feed: FeedDto): Response {
         val uuid: UUID? = UUID.fromString(id)
         if (uuid == null) {
