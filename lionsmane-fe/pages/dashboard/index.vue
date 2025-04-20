@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script lang="ts">
 export const description = 'An inset sidebar with secondary navigation.'
 export const iframeHeight = '800px'

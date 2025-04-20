@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script setup lang="ts">
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { type Component, computed } from 'vue'

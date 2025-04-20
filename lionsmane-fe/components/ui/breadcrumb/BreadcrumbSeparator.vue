@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script lang="ts" setup>
 import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'

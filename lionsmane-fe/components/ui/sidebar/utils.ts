@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+ */
+
 import type { ComputedRef, Ref } from 'vue'
 import { createContext } from 'reka-ui'
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+ */
+
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export { default as Button } from './Button.vue'
