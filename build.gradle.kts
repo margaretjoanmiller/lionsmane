@@ -38,6 +38,7 @@ dependencies {
     implementation("com.prof18.rssparser:rssparser:6.0.10")
     implementation("com.github.f4b6a3:uuid-creator:6.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("org.jsoup:jsoup:1.19.1")
 }
 
 group = "org.jackrabbitsforge"
