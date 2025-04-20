@@ -17,7 +17,7 @@ import org.jackrabbitsforge.data.repositories.FeedRepository
 @Path("/articles")
 class ArticleResource(
     private var articleRepository: ArticleRepository,
-    private var feedRepository: FeedRepository
+    private var feedRepository: FeedRepository,
     private var identity: SecurityIdentity,
 ) {
 
