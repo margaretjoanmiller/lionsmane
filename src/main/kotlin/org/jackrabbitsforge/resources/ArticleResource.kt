@@ -6,12 +6,16 @@ import io.quarkus.security.identity.SecurityIdentity
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import org.jackrabbitsforge.data.dto.ArticleOut
-import org.jackrabbitsforge.data.dto.FeedOut
 import org.jackrabbitsforge.data.repositories.ArticleRepository
+import org.jackrabbitsforge.data.repositories.FeedRepository
 
 @Authenticated
 @Path("/articles")
-class ArticleResource(private var articleRepository: ArticleRepository, private var identity: SecurityIdentity) {
+class ArticleResource(
+    private var articleRepository: ArticleRepository,
+    private var feedRepository: FeedRepository
+    private var identity: SecurityIdentity,
+) {
 
     @GET
     @Path("/{id}")
@@ -19,7 +23,7 @@ class ArticleResource(private var articleRepository: ArticleRepository, private 
         try {
             val articlesOut = articleRepository.findById(id)
             return articlesOut?.toDto() ?: throw Exception("Article not found")
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.error("Error getting article", e)
             throw e
         }
