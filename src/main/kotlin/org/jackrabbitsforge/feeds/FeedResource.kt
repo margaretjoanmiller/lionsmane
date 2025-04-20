@@ -2,13 +2,17 @@
  * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
  */
 
-package org.jackrabbitsforge.resources
+package org.jackrabbitsforge.feeds
 
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
 import jakarta.transaction.Transactional
-import jakarta.ws.rs.*
+import jakarta.ws.rs.DELETE
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.PUT
+import jakarta.ws.rs.Path
 import jakarta.ws.rs.core.Response
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -19,7 +23,6 @@ import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.time.OffsetDateTime
-
 
 @Authenticated
 @Transactional
@@ -57,7 +60,7 @@ class FeedResource(
             }
         }
         newFeed.userName = identity.principal.name
-        val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.WEEK, TimeZone.UTC)
+        val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
 
         try {
