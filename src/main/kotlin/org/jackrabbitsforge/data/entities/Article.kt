@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.data.entities
@@ -18,13 +18,13 @@ class Article {
     @GeneratedValue
     var id: Long? = null
 
-    lateinit var title: String
-    lateinit var author: String
-    lateinit var description: String
-    lateinit var content: String
-    lateinit var image: String
-    lateinit var url: String
-    lateinit var publishedDate: Date
+    var title: String? = null
+    var author: String? = null
+    var description: String? = null
+    var content: String? = null
+    var image: String? = null
+    var url: String? = null
+    var publishedDate: Date? = null
 
     var categories: List<String>? = null
 

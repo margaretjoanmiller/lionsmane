@@ -1,5 +1,5 @@
 /*
- * Copyright (c) Margaret Miller 2025. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.feeds
@@ -14,8 +14,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
+import org.jackrabbitsforge.articles.ArticleFetcher
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
+import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.net.URL
@@ -26,6 +28,7 @@ import java.time.OffsetDateTime
 @Path("feeds")
 class FeedResource(
     private var feedRepository: FeedRepository,
+    private var articleFetcher: ArticleFetcher
     private var identity: SecurityIdentity
 ) {
 
@@ -133,5 +136,19 @@ class FeedResource(
             Log.error("Error getting feed", e)
             return null
         }
+    }
+
+    @GET
+    @Path("/refresh/{id}")
+    fun getFeedRefresh(id: Long): Response {
+        val feed = feedRepository.findById(id)
+        if (feed == null) {
+            return Response.status(404).build()
+        }
+        if (feed.userName != identity.principal.name) {
+            return Response.status(401).build()
+        }
+
+
     }
 }
