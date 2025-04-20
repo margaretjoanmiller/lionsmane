@@ -44,7 +44,7 @@ class Article {
         content,
         image,
         url,
-        publishedDate.toInstant().atOffset(ZoneOffset.UTC),
+        publishedDate?.toInstant()?.atOffset(ZoneOffset.UTC),
         categories ?: listOf(),
         audio
     )
