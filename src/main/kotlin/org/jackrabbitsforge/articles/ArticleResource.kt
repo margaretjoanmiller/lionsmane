@@ -25,10 +25,22 @@ class ArticleResource(
     @Path("/{id}")
     fun getArticle(id: Long): ArticleOut {
         try {
-            val articlesOut = articleRepository.findById(id)
-            return articlesOut?.toDto() ?: throw Exception("Article not found")
+            val articleOut = articleRepository.findById(id)
+            return articleOut?.toDto() ?: throw Exception("Article not found")
         } catch (e: Exception) {
             Log.error("Error getting article", e)
+            throw e
+        }
+    }
+    
+    @GET
+    @Path("/feed/{feedId}")
+    fun getArticlesForFeed(feedId: Long): List<ArticleOut> {
+        try {
+            val articlesOut = articleRepository.findByFeedId(feedId)
+            return articlesOut.map { it.toDto() }
+        } catch (e: Exception) {
+            Log.error("Error getting articles for feed", e)
             throw e
         }
     }
