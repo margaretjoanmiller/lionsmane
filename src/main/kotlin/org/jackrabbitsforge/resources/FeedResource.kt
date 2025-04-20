@@ -30,9 +30,17 @@ class FeedResource(
 ) {
 
     @GET
-    fun listFeeds(): List<FeedDto> = feedRepository.listAll()
-        .filter { f -> f.userName == identity.principal.name }
-        .map { f -> f.toDto() }
+    fun listFeeds(): List<FeedDto> {
+        try {
+            val feedDtos = feedRepository.listAll()
+                .filter { f -> f.userName == identity.principal.name }
+                .map { f -> f.toDto() }
+            return feedDtos
+        } catch(e: Exception) {
+            Log.error("Error listing feeds", e)
+            throw e
+        }
+    }
 
     @POST
     fun postFeed(feed: FeedDto): Response {

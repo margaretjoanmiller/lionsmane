@@ -8,7 +8,9 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
+import org.jackrabbitsforge.data.dto.ArticleOut
 import java.sql.Date
+import java.time.ZoneOffset
 
 @Entity
 class Article {
@@ -22,7 +24,7 @@ class Article {
     lateinit var content: String
     lateinit var image: String
     lateinit var url: String
-    open lateinit var publishedDate: Date
+    lateinit var publishedDate: Date
 
     var categories: List<String>? = null
 
@@ -34,4 +36,16 @@ class Article {
 
     @ManyToOne
     lateinit var feed: Feed
+
+    fun toDto() = ArticleOut(
+        id!!,
+        title,
+        author,
+        content,
+        image,
+        url,
+        publishedDate.toInstant().atOffset(ZoneOffset.UTC),
+        categories ?: listOf(),
+        audio
+    )
 }
