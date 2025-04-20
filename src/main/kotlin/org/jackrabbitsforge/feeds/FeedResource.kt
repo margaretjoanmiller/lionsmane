@@ -126,4 +126,10 @@ class FeedResource(
         }
         return Response.ok().status(200).build()
     }
+
+    @GET
+    @Path("/{id}")
+    fun getFeed(id: Long): FeedDto? {
+        return feedRepository.findById(id)?.toDto()
+    }
 }
