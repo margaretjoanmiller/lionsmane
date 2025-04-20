@@ -22,6 +22,7 @@ import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
+import java.net.URL
 import java.time.OffsetDateTime
 
 @Authenticated
@@ -31,6 +32,16 @@ class FeedResource(
     private var feedRepository: FeedRepository,
     private var identity: SecurityIdentity
 ) {
+
+    fun checkUrl (url: String): URL {
+        try {
+            val newUrl = URI.create(url).toURL()
+            return newUrl
+        } catch (e: Exception) {
+            Log.warn("Invalid url", e)
+            throw e
+        }
+    }
 
     @GET
     fun listFeeds(): List<FeedDto> {
@@ -50,15 +61,11 @@ class FeedResource(
         val newFeed = Feed()
         newFeed.title = feed.title ?: ""
         newFeed.description = feed.description ?: ""
-        if (feed.url != null) {
-            try {
-                newFeed.url = URI.create(feed.url).toURL()
-            } catch (e: Exception) {
-                Log.warn("Invalid url", e)
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid URL format").build()
-            }
+        if (feed.url == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("URL is required").build()
         }
+        newFeed.url = checkUrl(feed.url)
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
@@ -84,6 +91,9 @@ class FeedResource(
             return Response.status(401).build()
         }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
+        if (feed.url != null) {
+            feedToUpdate.url = checkUrl(feed.url)
+        }
         feedToUpdate.description = feed.description ?: feedToUpdate.description
         if (feed.url != null) {
             try {
