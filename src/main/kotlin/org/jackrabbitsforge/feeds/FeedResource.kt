@@ -131,7 +131,7 @@ class FeedResource(
             return feed
         } catch (e: Exception) {
             Log.error("Error getting feed", e)
-            throw e
+            return null
         }
     }
 }
