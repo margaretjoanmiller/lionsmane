@@ -8,11 +8,7 @@ import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
 import jakarta.transaction.Transactional
-import jakarta.ws.rs.DELETE
-import jakarta.ws.rs.GET
-import jakarta.ws.rs.POST
-import jakarta.ws.rs.PUT
-import jakarta.ws.rs.Path
+import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -33,7 +29,7 @@ class FeedResource(
     private var identity: SecurityIdentity
 ) {
 
-    fun checkUrl (url: String): URL {
+    fun checkUrl(url: String): URL {
         try {
             val newUrl = URI.create(url).toURL()
             return newUrl
@@ -50,7 +46,7 @@ class FeedResource(
                 .filter { f -> f.userName == identity.principal.name }
                 .map { f -> f.toDto() }
             return feedDtos
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Log.error("Error listing feeds", e)
             throw e
         }
@@ -130,6 +126,12 @@ class FeedResource(
     @GET
     @Path("/{id}")
     fun getFeed(id: Long): FeedDto? {
-        return feedRepository.findById(id)?.toDto()
+        try {
+            val feed = feedRepository.findById(id)?.toDto()
+            return feed
+        } catch (e: Exception) {
+            Log.error("Error getting feed", e)
+            throw e
+        }
     }
 }
