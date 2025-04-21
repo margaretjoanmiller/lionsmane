@@ -10,13 +10,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/test-utils",
-    "shadcn-nuxt",
-    "nuxt-oidc-auth",
+   "@nuxt/eslint",
+   "@nuxt/fonts",
+   "@nuxt/icon",
+   "@nuxt/image",
+   "@nuxt/test-utils",
+   "shadcn-nuxt",
+   "nuxt-oidc-auth",
+   "nuxt-api-party",
   ],
 
   css: ["~/assets/css/tailwind.css"],
