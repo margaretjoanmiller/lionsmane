@@ -2,13 +2,8 @@
   - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
   -->
 
-<script lang="ts">
-export const description = 'An inset sidebar with secondary navigation.'
-export const iframeHeight = '800px'
-</script>
-
 <script setup lang="ts">
-import AppSidebar from '@/components/AppSidebar.vue'
+import AppSidebar from "@/components/AppSidebar.vue";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,15 +11,19 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { Separator } from '@/components/ui/separator'
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar";
 </script>
 
+<script lang="ts">
+export const description = "An inset sidebar with secondary navigation.";
+export const iframeHeight = "800px";
+</script>
 <template>
   <SidebarProvider>
     <AppSidebar />
