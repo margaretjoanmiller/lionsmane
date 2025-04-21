@@ -11,4 +11,6 @@ import org.jackrabbitsforge.data.entities.Article
 @ApplicationScoped
 class ArticleRepository: PanacheRepository<Article> {
     fun findByFeedId(feedId: Long) = list("feed.id", feedId)
+
+    fun findByUrl(feedUrl: String) = find("feed.url", feedUrl)
 }

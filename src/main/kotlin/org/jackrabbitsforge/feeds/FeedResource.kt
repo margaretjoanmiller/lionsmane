@@ -7,6 +7,7 @@ package org.jackrabbitsforge.feeds
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
+import io.smallrye.common.annotation.Blocking
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
@@ -16,7 +17,9 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import org.jackrabbitsforge.articles.ArticleFetcher
 import org.jackrabbitsforge.data.dto.FeedDto
+import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.entities.Feed
+import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.net.URL
@@ -28,7 +31,8 @@ import java.time.OffsetDateTime
 class FeedResource(
     private var feedRepository: FeedRepository,
     private var articleFetcher: ArticleFetcher,
-    private var identity: SecurityIdentity
+    private var identity: SecurityIdentity,
+    private val articleRepository: ArticleRepository
 ) {
 
     fun checkUrl(url: String): URL {
@@ -149,7 +153,29 @@ class FeedResource(
                 return Response.status(401).build()
             }
 
-            articleFetcher.fetchArticles(feed.id!!)
+            var articlesNew = articleFetcher.fetchArticles(feed.id!!)
+            articlesNew.forEach { article ->
+                val dupeArticle = articleRepository.findByUrl(article.url.toString()).firstResult()
+                if (dupeArticle == null) {
+
+                    val newArt = Article()
+                    newArt.title = article.title
+                    newArt.author = article.author
+                    newArt.description = article.description
+                    newArt.content = article.content
+                    newArt.image = article.image
+                    newArt.url = article.url
+                    newArt.publishedDate = article.publishedDate
+                    newArt.categories = article.categories
+                    newArt.audio = article.audio
+                    newArt.GUID = article.GUID
+                    newArt.video = article.video
+                    newArt.commentsUrl = article.commentsUrl
+                    newArt.feed = feed
+                    articleRepository.persist(newArt)
+                    Log.info("Created new article with id: ${newArt.id}")
+                }
+            }
             feed.lastUpdated = OffsetDateTime.now()
             return Response.ok(feed.toDto()).status(Response.Status.OK).build()
         } catch (e: Exception) {

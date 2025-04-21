@@ -6,6 +6,7 @@ package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
 import java.sql.Date
+import java.time.LocalDateTime
 
 /**
  * DTO for {@link org.jackrabbitsforge.data.entities.Article}
@@ -17,8 +18,8 @@ data class ArticleIn(
     val content: String? = null,
     val image: String? = null,
     val url: String? = null,
-    val publishedDate: Date? = null,
-    val categories: MutableList<List<String>>? = null,
+    val publishedDate: LocalDateTime? = null,
+    val categories: List<String>? = null,
     val audio: String? = null,
     val source: String? = null,
     val GUID: String? = null,

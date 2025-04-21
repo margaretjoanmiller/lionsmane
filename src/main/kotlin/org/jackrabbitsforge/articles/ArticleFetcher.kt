@@ -7,6 +7,7 @@ package org.jackrabbitsforge.articles
 import com.prof18.rssparser.RssParser
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
+import org.jackrabbitsforge.data.dto.ArticleIn
 import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.repositories.ArticleRepository
@@ -19,7 +20,7 @@ import java.time.LocalDateTime
 class ArticleFetcher(private val articleRepository: ArticleRepository, private val feedRepository: FeedRepository) {
 
 
-    suspend fun fetchArticles(feedid: Long): List<ArticleOut> {
+    suspend fun fetchArticles(feedid: Long): List<ArticleIn> {
         val feed = feedRepository.findById(feedid)
         if (feed == null) {
             Log.error("Feed $feedid not found")
@@ -29,24 +30,22 @@ class ArticleFetcher(private val articleRepository: ArticleRepository, private v
         val rssChannel = rssParser.getRssChannel(feed?.url.toString())
         return rssChannel.items
             .map { item ->
-                val art = Article()
-                art.title = item.title
-                art.author = item.author
-                art.description = item.description
                 val doc = Jsoup.connect(item.sourceUrl.toString()).timeout(300).get()
-                art.content = Jsoup.clean(doc.select("article").html(), Safelist.basicWithImages())
-                art.image = item.image
-                art.url = item.sourceUrl
-                if (item.pubDate != null) {
-                    art.publishedDate = LocalDateTime.parse(item.pubDate!!)
-                }
-                art.categories = item.categories
-                art.GUID = item.guid
-                art.video = item.video
-                art.commentsUrl = item.commentsUrl
-                art.feed = feed
-                articleRepository.persist(art)
-                art.toDto()
+                ArticleIn(
+                item.title,
+                item.author,
+                item.description,
+                        Jsoup.clean(doc.select("article").html(), Safelist.basicWithImages()),
+
+                item.image,
+                item.sourceUrl,
+                    LocalDateTime.parse(item.pubDate!!),
+                item.categories,
+                    item.audio,
+                item.sourceUrl,
+                    item.guid,
+                    item.video,
+                    item.commentsUrl)
             }
 
     }
