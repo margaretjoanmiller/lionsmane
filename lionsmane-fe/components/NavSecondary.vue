@@ -1,5 +1,9 @@
+<!--
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script setup lang="ts">
-import type { LucideIcon } from 'lucide-vue-next'
+import type {LucideIcon} from 'lucide-vue-next'
 
 import {
   SidebarGroup,
@@ -25,7 +29,7 @@ const props = defineProps<{
         <SidebarMenuItem v-for="item in items" :key="item.title">
           <SidebarMenuButton as-child size="sm">
             <a :href="item.url">
-              <component :is="item.icon" />
+              <component :is="item.icon"/>
               <span>{{ item.title }}</span>
             </a>
           </SidebarMenuButton>

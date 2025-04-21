@@ -1,14 +1,17 @@
 /*
- * Copyright (c) Margaret Miller 2025.  Licensed under the EUPL-1.2 or later.
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.data.entities
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
-import java.sql.Date
+import org.jackrabbitsforge.data.dto.ArticleOut
+import java.time.LocalDateTime
 
 @Entity
 class Article {
@@ -16,22 +19,35 @@ class Article {
     @GeneratedValue
     var id: Long? = null
 
-    lateinit var title: String
-    lateinit var author: String
-    lateinit var description: String
-    lateinit var content: String
-    lateinit var image: String
-    lateinit var url: String
-    open lateinit var publishedDate: Date
+    var title: String? = null
+    var author: String? = null
+    var description: String? = null
+
+    @Column(columnDefinition = "TEXT")
+    var content: String? = null
+    var image: String? = null
+    var url: String? = null
+    var publishedDate: String? = null
 
     var categories: List<String>? = null
 
     var audio: String? = null
-    var source: String? = null
     var GUID: String? = null
     var video: String? = null
     var commentsUrl: String? = null
 
     @ManyToOne
     lateinit var feed: Feed
+
+    fun toDto() = ArticleOut(
+        id!!,
+        title,
+        author,
+        content,
+        image,
+        url,
+        publishedDate,
+        categories ?: listOf(),
+        audio
+    )
 }

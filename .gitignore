@@ -42,3 +42,6 @@ nb-configuration.xml
 # TLS Certificates
 .certs/
 kls_database.db
+
+node_modules/
+.nuxt/

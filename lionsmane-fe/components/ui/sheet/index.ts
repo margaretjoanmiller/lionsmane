@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ */
+
 export { default as Sheet } from './Sheet.vue'
 export { default as SheetClose } from './SheetClose.vue'
 export { default as SheetContent } from './SheetContent.vue'

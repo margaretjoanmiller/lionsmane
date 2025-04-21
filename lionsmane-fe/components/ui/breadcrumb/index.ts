@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ */
+
 export { default as Breadcrumb } from './Breadcrumb.vue'
 export { default as BreadcrumbEllipsis } from './BreadcrumbEllipsis.vue'
 export { default as BreadcrumbItem } from './BreadcrumbItem.vue'

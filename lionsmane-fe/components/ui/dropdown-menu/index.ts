@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ */
+
 export { default as DropdownMenu } from './DropdownMenu.vue'
 
 export { default as DropdownMenuCheckboxItem } from './DropdownMenuCheckboxItem.vue'

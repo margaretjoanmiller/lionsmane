@@ -6,15 +6,11 @@ package org.jackrabbitsforge.data.repositories
 
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
-import org.jackrabbitsforge.data.dto.FeedDto
-import org.jackrabbitsforge.data.entities.Feed
-import java.util.UUID
+import org.jackrabbitsforge.data.entities.Article
 
 @ApplicationScoped
-class FeedRepository: PanacheRepository<Feed> {
+class ArticleRepository: PanacheRepository<Article> {
+    fun findByFeedId(feedId: Long) = list("feed.id", feedId)
 
-    fun findByName(name: String) = find(name).firstResult()
-
-    fun findById(id: UUID) = find("$id")
-
+    fun findByUrl(feedUrl: String) = find("feed.url", feedUrl)
 }

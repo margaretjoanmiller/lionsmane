@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script setup lang="ts">
 import { DropdownMenuRoot, type DropdownMenuRootEmits, type DropdownMenuRootProps, useForwardPropsEmits } from 'reka-ui'
 
