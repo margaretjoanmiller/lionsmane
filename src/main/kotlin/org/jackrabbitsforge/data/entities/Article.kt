@@ -9,8 +9,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import org.jackrabbitsforge.data.dto.ArticleOut
-import java.sql.Date
-import java.time.ZoneOffset
+import java.time.LocalDateTime
 
 @Entity
 class Article {
@@ -24,12 +23,11 @@ class Article {
     var content: String? = null
     var image: String? = null
     var url: String? = null
-    var publishedDate: Date? = null
+    var publishedDate: LocalDateTime? = null
 
     var categories: List<String>? = null
 
     var audio: String? = null
-    var source: String? = null
     var GUID: String? = null
     var video: String? = null
     var commentsUrl: String? = null
@@ -44,7 +42,7 @@ class Article {
         content,
         image,
         url,
-        publishedDate?.toInstant()?.atOffset(ZoneOffset.UTC),
+        publishedDate,
         categories ?: listOf(),
         audio
     )

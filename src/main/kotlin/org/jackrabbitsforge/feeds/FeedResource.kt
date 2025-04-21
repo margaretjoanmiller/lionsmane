@@ -17,7 +17,6 @@ import kotlinx.datetime.minus
 import org.jackrabbitsforge.articles.ArticleFetcher
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
-import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.net.URL
@@ -28,7 +27,7 @@ import java.time.OffsetDateTime
 @Path("feeds")
 class FeedResource(
     private var feedRepository: FeedRepository,
-    private var articleFetcher: ArticleFetcher
+    private var articleFetcher: ArticleFetcher,
     private var identity: SecurityIdentity
 ) {
 
@@ -140,13 +139,22 @@ class FeedResource(
 
     @GET
     @Path("/refresh/{id}")
-    fun getFeedRefresh(id: Long): Response {
-        val feed = feedRepository.findById(id)
-        if (feed == null) {
-            return Response.status(404).build()
-        }
-        if (feed.userName != identity.principal.name) {
-            return Response.status(401).build()
+    suspend fun getFeedRefresh(id: Long): Response {
+        try {
+            val feed = feedRepository.findById(id)
+            if (feed == null) {
+                return Response.status(404).build()
+            }
+            if (feed.userName != identity.principal.name) {
+                return Response.status(401).build()
+            }
+
+            articleFetcher.fetchArticles(feed.id!!)
+            feed.lastUpdated = OffsetDateTime.now()
+            return Response.ok(feed.toDto()).status(Response.Status.OK).build()
+        } catch (e: Exception) {
+            Log.error("Error getting feedRefresh", e)
+            return Response.serverError().build()
         }
 
 

@@ -5,24 +5,31 @@
 package org.jackrabbitsforge.articles
 
 import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.model.RssItem
+import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
-import org.jackrabbitsforge.data.dto.ArticleIn
+import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.repositories.ArticleRepository
+import org.jackrabbitsforge.data.repositories.FeedRepository
 import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
-import java.net.URL
+import java.time.LocalDateTime
 
 @ApplicationScoped
-class ArticleFetcher(private val articleRepository: ArticleRepository) {
+class ArticleFetcher(private val articleRepository: ArticleRepository, private val feedRepository: FeedRepository) {
 
-    suspend fun fetchArticles(feedURL: URL): List<ArticleIn?> {
+
+    suspend fun fetchArticles(feedid: Long): List<ArticleOut> {
+        val feed = feedRepository.findById(feedid)
+        if (feed == null) {
+            Log.error("Feed $feedid not found")
+            throw RuntimeException("Feed $feedid not found")
+        }
         val rssParser: RssParser = RssParser()
-        val rssChannel = rssParser.getRssChannel(feedURL.toString())
-        var articleList: List<RssItem> = rssChannel.items
+        val rssChannel = rssParser.getRssChannel(feed?.url.toString())
+        return rssChannel.items
             .map { item ->
-                var art = Article()
+                val art = Article()
                 art.title = item.title
                 art.author = item.author
                 art.description = item.description
@@ -30,10 +37,16 @@ class ArticleFetcher(private val articleRepository: ArticleRepository) {
                 art.content = Jsoup.clean(doc.select("article").html(), Safelist.basicWithImages())
                 art.image = item.image
                 art.url = item.sourceUrl
-                art.publishedDate = item.pubDate
-
-                articleRepository.persist()
-                artIn
+                if (item.pubDate != null) {
+                    art.publishedDate = LocalDateTime.parse(item.pubDate!!)
+                }
+                art.categories = item.categories
+                art.GUID = item.guid
+                art.video = item.video
+                art.commentsUrl = item.commentsUrl
+                art.feed = feed
+                articleRepository.persist(art)
+                art.toDto()
             }
 
     }

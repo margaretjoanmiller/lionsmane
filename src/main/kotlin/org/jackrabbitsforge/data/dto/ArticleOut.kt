@@ -4,7 +4,7 @@
 
 package org.jackrabbitsforge.data.dto
 
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
 
 data class ArticleOut(
     var id: Long,
@@ -13,7 +13,7 @@ data class ArticleOut(
     var content: String?,
     var image: String?,
     var url: String?,
-    var publishedAt: OffsetDateTime?,
+    var publishedAt: LocalDateTime?,
     var categories: List<String>? = listOf(),
     var audio: String?,
 )
