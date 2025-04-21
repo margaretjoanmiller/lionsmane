@@ -4,10 +4,8 @@
 
 package org.jackrabbitsforge.data.dto
 
-import java.time.LocalDateTime
-
 data class ArticleOut(
-    var id: Long,
+    var id: Long?,
     var title: String?,
     var author: String?,
     var content: String?,

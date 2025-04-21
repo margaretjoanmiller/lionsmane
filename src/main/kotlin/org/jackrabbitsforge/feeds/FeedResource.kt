@@ -7,20 +7,18 @@ package org.jackrabbitsforge.feeds
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
-import io.smallrye.common.annotation.Blocking
+import io.smallrye.mutiny.Uni
+import io.vertx.mutiny.core.eventbus.EventBus
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
-import org.jackrabbitsforge.articles.ArticleFetcher
+import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.dto.FeedDto
-import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.entities.Feed
-import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.net.URL
@@ -31,9 +29,8 @@ import java.time.OffsetDateTime
 @Path("feeds")
 class FeedResource(
     private var feedRepository: FeedRepository,
-    private var articleFetcher: ArticleFetcher,
     private var identity: SecurityIdentity,
-    private val articleRepository: ArticleRepository
+    private val eventBus: EventBus
 ) {
 
     fun checkUrl(url: String): URL {
@@ -134,53 +131,8 @@ class FeedResource(
     }
 
     @GET
-    @Blocking
     @Path("/refresh/{id}")
-    fun getFeedRefresh(id: Long): Response {
-        try {
-            val feed = feedRepository.findById(id)
-            if (feed == null) {
-                return Response.status(404).build()
-            }
-            if (feed.userName != identity.principal.name) {
-                return Response.status(401).build()
-            }
-
-            runBlocking {
-                val articlesNew = articleFetcher.fetchArticles(feed.url.toString())
-                articlesNew.forEach { article ->
-                    if (article.url != null && article.url.isNotEmpty()) {
-                        val dupeArt = articleRepository.findByUrl(article.url).firstResult()
-                        if (dupeArt != null) {
-                            Log.info("Article already exists: ${article.url}")
-                            return@forEach
-                        }
-                    }
-                    val newArt = Article()
-                    newArt.title = article.title
-                    newArt.author = article.author
-                    newArt.description = article.description
-                    newArt.content = article.content
-                    newArt.image = article.image
-                    newArt.url = article.url
-                    newArt.publishedDate = article.publishedDate
-                    newArt.categories = article.categories
-                    newArt.audio = article.audio
-                    newArt.GUID = article.GUID
-                    newArt.video = article.video
-                    newArt.commentsUrl = article.commentsUrl
-                    newArt.feed = feed
-                    articleRepository.persist(newArt)
-                    Log.info("Created new article with id: ${newArt.id}")
-                }
-                feed.lastUpdated = OffsetDateTime.now()
-            }
-            return Response.ok(feed.toDto()).status(Response.Status.OK).build()
-        } catch (e: Exception) {
-            Log.error("Error getting feedRefresh", e)
-            return Response.serverError().build()
-        }
-
-
+    fun getFeedRefresh(id: Long): Uni<List<ArticleOut>> {
+        return eventBus.request<List<ArticleOut>>("fetchArticles", id).onItem().transform { it.body() }
     }
 }

@@ -4,14 +4,8 @@
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Lob
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.ArticleOut
-import java.time.LocalDateTime
 
 @Entity
 class Article {
@@ -40,7 +34,7 @@ class Article {
     lateinit var feed: Feed
 
     fun toDto() = ArticleOut(
-        id!!,
+        id,
         title,
         author,
         content,
