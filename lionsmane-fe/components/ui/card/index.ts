@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
- */
-
 export { default as Card } from './Card.vue'
 export { default as CardAction } from './CardAction.vue'
 export { default as CardContent } from './CardContent.vue'
