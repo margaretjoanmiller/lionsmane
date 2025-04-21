@@ -133,6 +133,11 @@ class FeedResource(
     @GET
     @Path("/refresh/{id}")
     fun getFeedRefresh(id: Long): Uni<List<ArticleOut>> {
-        return eventBus.request<List<ArticleOut>>("fetchArticles", id).onItem().transform { it.body() }
+        return eventBus.request<List<ArticleOut>>("fetchArticles", id)
+            .onItem()
+            .transform { it.body() }
+            .onFailure()
+            .retry().atMost(2)
+
     }
 }
