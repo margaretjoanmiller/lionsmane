@@ -13,7 +13,7 @@ data class ArticleOut(
     var content: String?,
     var image: String?,
     var url: String?,
-    var publishedAt: LocalDateTime?,
+    var publishedAt: String?,
     var categories: List<String>? = listOf(),
     var audio: String?,
 )

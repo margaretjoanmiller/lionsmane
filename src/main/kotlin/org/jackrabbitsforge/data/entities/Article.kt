@@ -4,9 +4,11 @@
 
 package org.jackrabbitsforge.data.entities
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
 import org.jackrabbitsforge.data.dto.ArticleOut
 import java.time.LocalDateTime
@@ -20,10 +22,12 @@ class Article {
     var title: String? = null
     var author: String? = null
     var description: String? = null
+
+    @Column(columnDefinition = "TEXT")
     var content: String? = null
     var image: String? = null
     var url: String? = null
-    var publishedDate: LocalDateTime? = null
+    var publishedDate: String? = null
 
     var categories: List<String>? = null
 

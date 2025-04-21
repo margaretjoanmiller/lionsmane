@@ -18,7 +18,7 @@ data class ArticleIn(
     val content: String? = null,
     val image: String? = null,
     val url: String? = null,
-    val publishedDate: LocalDateTime? = null,
+    val publishedDate: String? = null,
     val categories: List<String>? = null,
     val audio: String? = null,
     val source: String? = null,

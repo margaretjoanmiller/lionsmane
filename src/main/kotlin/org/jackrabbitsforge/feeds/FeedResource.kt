@@ -11,6 +11,7 @@ import io.smallrye.common.annotation.Blocking
 import jakarta.transaction.Transactional
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
@@ -97,15 +98,6 @@ class FeedResource(
             feedToUpdate.url = checkUrl(feed.url)
         }
         feedToUpdate.description = feed.description ?: feedToUpdate.description
-        if (feed.url != null) {
-            try {
-                feedToUpdate.url = URI.create(feed.url).toURL()
-            } catch (e: Exception) {
-                Log.warn("Invalid url", e)
-                return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid URL format").build()
-            }
-        }
         return Response.ok(feedToUpdate.toDto()).status(200).build()
     }
 
@@ -142,8 +134,9 @@ class FeedResource(
     }
 
     @GET
+    @Blocking
     @Path("/refresh/{id}")
-    suspend fun getFeedRefresh(id: Long): Response {
+    fun getFeedRefresh(id: Long): Response {
         try {
             val feed = feedRepository.findById(id)
             if (feed == null) {
@@ -153,11 +146,9 @@ class FeedResource(
                 return Response.status(401).build()
             }
 
-            var articlesNew = articleFetcher.fetchArticles(feed.id!!)
-            articlesNew.forEach { article ->
-                val dupeArticle = articleRepository.findByUrl(article.url.toString()).firstResult()
-                if (dupeArticle == null) {
-
+            runBlocking {
+                val articlesNew = articleFetcher.fetchArticles(feed.url.toString())
+                articlesNew.forEach { article ->
                     val newArt = Article()
                     newArt.title = article.title
                     newArt.author = article.author
@@ -175,8 +166,8 @@ class FeedResource(
                     articleRepository.persist(newArt)
                     Log.info("Created new article with id: ${newArt.id}")
                 }
+                feed.lastUpdated = OffsetDateTime.now()
             }
-            feed.lastUpdated = OffsetDateTime.now()
             return Response.ok(feed.toDto()).status(Response.Status.OK).build()
         } catch (e: Exception) {
             Log.error("Error getting feedRefresh", e)
