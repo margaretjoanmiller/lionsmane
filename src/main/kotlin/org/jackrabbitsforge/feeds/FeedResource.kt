@@ -149,6 +149,13 @@ class FeedResource(
             runBlocking {
                 val articlesNew = articleFetcher.fetchArticles(feed.url.toString())
                 articlesNew.forEach { article ->
+                    if (article.url != null && article.url.isNotEmpty()) {
+                        val dupeArt = articleRepository.findByUrl(article.url).firstResult()
+                        if (dupeArt != null) {
+                            Log.info("Article already exists: ${article.url}")
+                            return@forEach
+                        }
+                    }
                     val newArt = Article()
                     newArt.title = article.title
                     newArt.author = article.author
