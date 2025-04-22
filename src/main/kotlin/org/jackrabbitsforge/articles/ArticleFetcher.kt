@@ -53,7 +53,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                     newArt.description = item.description
                     newArt.content = item.content
                     newArt.image = item.image
-                    newArt.url = item.sourceUrl
+                    newArt.url = item.link
                     newArt.publishedDate = item.pubDate
                     newArt.categories = item.categories
                     newArt.audio = item.audio
@@ -61,6 +61,8 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                     newArt.video = item.video
                     newArt.commentsUrl = item.commentsUrl
                     newArt.feed = feed
+
+                    articleRepository.persist(newArt)
 
                     newArt.toDto()
                 }
