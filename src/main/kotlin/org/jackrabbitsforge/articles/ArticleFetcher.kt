@@ -18,6 +18,7 @@ import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import org.jsoup.Jsoup
+import org.jsoup.safety.Safelist
 
 @ApplicationScoped
 class ArticleFetcher(private val feedRepository: FeedRepository, private val articleRepository: ArticleRepository) {
@@ -47,11 +48,12 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                         }
                     }
                     val doc = Jsoup.connect(item.link!!).timeout(3000).get()
+                    val content = Jsoup.clean(doc.body().getElementsByTag("article").text(), Safelist.basic())
                     val newArt = Article()
                     newArt.title = item.title
                     newArt.author = item.author
                     newArt.description = item.description
-                    newArt.content = item.content
+                    newArt.content = content
                     newArt.image = item.image
                     newArt.url = item.link
                     newArt.publishedDate = item.pubDate
