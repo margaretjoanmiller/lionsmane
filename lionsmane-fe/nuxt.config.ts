@@ -6,55 +6,63 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
+    compatibilityDate: "2024-11-01",
+    devtools: {enabled: true},
 
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/test-utils",
-    "shadcn-nuxt",
-    "nuxt-oidc-auth",
-    "nuxt-api-party",
-  ],
+    modules: [
+        "@nuxt/eslint",
+        "@nuxt/fonts",
+        "@nuxt/icon",
+        "@nuxt/image",
+        "@nuxt/test-utils",
+        "shadcn-nuxt",
+        "nuxt-oidc-auth",
+        "nuxt-api-party",
+        "@nuxtjs/color-mode",
+    ],
 
-  css: ["~/assets/css/tailwind.css"],
-  vite: {
-    plugins: [tailwindcss()],
-  },
+    css: ["~/assets/css/tailwind.css"],
+    vite: {
+        plugins: [tailwindcss()],
+    },
 
-  shadcn: {
-    /**
-     * Prefix for all the imported component
-     */
-    prefix: "",
-    /**
-     * Directory that the component lives in.
-     * @default "./components/ui"
-     */
-    componentDir: "./components/ui",
-  },
-  oidc: {
-    defaultProvider: "keycloak",
-    middleware: {
-      globalMiddlewareEnabled: false,
+    shadcn: {
+        /**
+         * Prefix for all the imported component
+         */
+        prefix: "",
+        /**
+         * Directory that the component lives in.
+         * @default "./components/ui"
+         */
+        componentDir: "./components/ui",
     },
-    providers: {
-      keycloak: {
-        baseUrl: "",
-        clientId: "",
-        clientSecret: "",
-        redirectUri: "http://localhost:3000/auth/keycloak/callback",
-      },
+    colorMode: {
+        classSuffix: '',
+        preference: 'system',
     },
-  },
-  apiParty: {
-    endpoints: {
-      lionsmane: {
-        url: process.env.LIONSMANE_API_BASE_URL!,
-      },
+
+    oidc: {
+        defaultProvider: "keycloak",
+        middleware: {
+            globalMiddlewareEnabled: false,
+        },
+        providers: {
+            keycloak: {
+                baseUrl: "",
+                clientId: "",
+                clientSecret: "",
+                redirectUri: "http://localhost:3000/auth/keycloak/callback",
+                exposeAccessToken: true,
+            },
+        },
     },
-  },
+    apiParty: {
+        endpoints: {
+            lion: {
+                url: process.env.API_URL || "http://localhost:8080",
+            },
+        },
+    },
+
 });

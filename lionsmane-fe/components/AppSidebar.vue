@@ -35,10 +35,12 @@ const props = withDefaults(defineProps<SidebarProps>(), {
   variant: 'inset',
 })
 
+const {user} = useOidcAuth()
+
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
+    name: user?.value?.userInfo?.upn || 'error',
+    email: user?.value?.userInfo?.email || '<no email>',
     avatar: '/avatars/shadcn.jpg',
   },
   navMain: [

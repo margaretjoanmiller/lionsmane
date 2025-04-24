@@ -11,7 +11,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import org.jboss.resteasy.reactive.NoCache
 
-@Path("/users")
+@Path("users")
 class UsersResource {
     @Inject
     @field: Default
