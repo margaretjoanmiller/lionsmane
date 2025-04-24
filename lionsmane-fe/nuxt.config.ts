@@ -10,14 +10,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-   "@nuxt/eslint",
-   "@nuxt/fonts",
-   "@nuxt/icon",
-   "@nuxt/image",
-   "@nuxt/test-utils",
-   "shadcn-nuxt",
-   "nuxt-oidc-auth",
-   "nuxt-api-party",
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/test-utils",
+    "shadcn-nuxt",
+    "nuxt-oidc-auth",
+    "nuxt-api-party",
   ],
 
   css: ["~/assets/css/tailwind.css"],
@@ -38,13 +38,22 @@ export default defineNuxtConfig({
   },
   oidc: {
     defaultProvider: "keycloak",
+    middleware: {
+      globalMiddlewareEnabled: false,
+    },
     providers: {
       keycloak: {
-        audience: "account",
         baseUrl: "",
         clientId: "",
         clientSecret: "",
         redirectUri: "http://localhost:3000/auth/keycloak/callback",
+      },
+    },
+  },
+  apiParty: {
+    endpoints: {
+      lionsmane: {
+        url: process.env.LIONSMANE_API_BASE_URL!,
       },
     },
   },

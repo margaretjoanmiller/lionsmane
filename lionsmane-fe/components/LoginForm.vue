@@ -17,6 +17,7 @@ import {
 const props = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
+const { login } = useOidcAuth();
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const props = defineProps<{
         <form>
           <div class="grid gap-6">
             <div class="flex flex-col gap-4">
-              <Button variant="outline" class="w-full">
+              <Button variant="outline" class="w-full" @click="login()">
                 <Icon name="simple-icons:keycloak" />
                 Login with Keycloak
               </Button>
