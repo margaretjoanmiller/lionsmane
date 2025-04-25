@@ -18,6 +18,12 @@ const props = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
 const { login } = useOidcAuth();
+
+async function onLogin() {
+  await login().then(async () => {
+    await navigateTo('dashboard')
+  }).catch(()=> alert("could not log in to keycloak"))
+}
 </script>
 
 <template>
@@ -31,7 +37,7 @@ const { login } = useOidcAuth();
         <form>
           <div class="grid gap-6">
             <div class="flex flex-col gap-4">
-              <Button variant="outline" class="w-full" @click="login()">
+              <Button variant="outline" class="w-full" @click="onLogin()">
                 <Icon name="simple-icons:keycloak" />
                 Login with Keycloak
               </Button>

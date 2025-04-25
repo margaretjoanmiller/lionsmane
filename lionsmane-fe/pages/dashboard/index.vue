@@ -17,6 +17,10 @@ import {
 
 const {loggedIn, user} = useOidcAuth()
 
+definePageMeta({
+  middleware: ['authenticated'],
+})
+
 const {data: feeds, error} = await useLionData('/feeds', {
   headers: {
     "Authorization": `Bearer ${user?.value?.accessToken}`
