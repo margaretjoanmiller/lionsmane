@@ -22,8 +22,6 @@ const {data: feeds, error} = await useLionData('/feeds', {
     "Authorization": `Bearer ${user?.value?.accessToken}`
   }
 })
-console.log(error)
-console.log(feeds)
 
 </script>
 

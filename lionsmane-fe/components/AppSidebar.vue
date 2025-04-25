@@ -40,7 +40,7 @@ const {user} = useOidcAuth()
 const data = {
   user: {
     name: user?.value?.userInfo?.upn || 'error',
-    email: user?.value?.userInfo?.email || '<no email>',
+    email: user?.value?.userName || '<no email>',
     avatar: '/avatars/shadcn.jpg',
   },
   navMain: [
