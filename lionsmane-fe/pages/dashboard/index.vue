@@ -18,9 +18,9 @@ import {
 const {loggedIn, user} = useOidcAuth()
 
 const {data: feeds, error} = await useLionData('/feeds', {
-  onRequest({request, options}) {
-    options.headers.set('Authorization', `Bearer ${user?.value?.accessToken}`)
-  },
+  headers: {
+    "Authorization": `Bearer ${user?.value?.accessToken}`
+  }
 })
 console.log(error)
 console.log(feeds)
