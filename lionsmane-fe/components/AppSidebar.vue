@@ -3,9 +3,9 @@
   -->
 
 <script setup lang="ts">
-import NavMain from '@/components/NavMain.vue'
+import NavMain from "@/components/NavMain.vue";
 
-import NavUser from '@/components/NavUser.vue'
+import NavUser from "@/components/NavUser.vue";
 import {
   Sidebar,
   SidebarContent,
@@ -15,63 +15,47 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   type SidebarProps,
-} from '@/components/ui/sidebar'
-import {
-  Filter,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  Newspaper,
-} from 'lucide-vue-next'
+} from "@/components/ui/sidebar";
+import { Filter, PlusCircle, Settings2, Newspaper } from "lucide-vue-next";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
-  variant: 'inset',
-})
+  variant: "inset",
+});
 
-const {user} = useOidcAuth()
+const { user } = useOidcAuth();
 
 const data = {
   user: {
-    name: user?.value?.userInfo?.upn || 'error',
-    email: user?.value?.userName || '<no email>',
-    avatar: '/avatars/shadcn.jpg',
+    name: user?.value?.userInfo?.upn || "error",
+    email: user?.value?.userName || "<no email>",
+    avatar: "/avatars/shadcn.jpg",
   },
+
   navMain: [
     {
-      title: 'Feeds',
-      url: '#',
+      title: "Feeds",
+      url: "#",
       icon: Newspaper,
       isActive: true,
-      items: [],
+      items: [
+        {
+          title: "Add Feed +",
+          url: "/dashboard/feeds/add",
+        },
+      ],
     },
     {
-      title: 'Rules',
-      url: '#',
+      title: "Rules",
+      url: "#",
       icon: Filter,
     },
     {
-      title: 'Settings',
-      url: '#',
+      title: "Settings",
+      url: "#",
       icon: Settings2,
     },
   ],
-  navSecondary: [
-    {
-      title: 'Support',
-      url: '#',
-      icon: LifeBuoy,
-    },
-    {
-      title: 'Feedback',
-      url: '#',
-      icon: Send,
-    },
-  ],
-}
+};
 </script>
 
 <template>
@@ -82,8 +66,9 @@ const data = {
           <SidebarMenuButton size="lg" as-child>
             <a href="#">
               <div
-                  class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Icon name="mdi:mushroom-outline"/>
+                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+              >
+                <Icon name="mdi:mushroom-outline" />
               </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-medium">lionsmane</span>
@@ -94,10 +79,10 @@ const data = {
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="data.navMain"/>
+      <NavMain :items="data.navMain" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user"/>
+      <NavUser :user="data.user" />
     </SidebarFooter>
   </Sidebar>
 </template>

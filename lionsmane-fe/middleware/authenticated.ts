@@ -1,8 +1,12 @@
-export default defineNuxtRouteMiddleware(async (to) => {
-    const {loggedIn, login} = useOidcAuth()
+/*
+ * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ */
 
-    if (loggedIn.value || to.path.startsWith('/auth/')) {
-        return
-    }
-    await login()
-})
+export default defineNuxtRouteMiddleware(async (to) => {
+  const { loggedIn, login } = useOidcAuth();
+
+  if (loggedIn.value || to.path.startsWith("/auth/")) {
+    return;
+  }
+  await login();
+});

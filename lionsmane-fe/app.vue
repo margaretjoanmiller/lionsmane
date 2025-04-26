@@ -3,8 +3,9 @@
   -->
 
 <template>
-  <div>
+  <NuxtLoadingIndicator />
+  <NuxtLayout>
     <NuxtRouteAnnouncer />
     <NuxtPage />
-  </div>
+  </NuxtLayout>
 </template>
