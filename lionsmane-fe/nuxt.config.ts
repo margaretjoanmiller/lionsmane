@@ -54,6 +54,7 @@ export default defineNuxtConfig({
                 clientSecret: "",
                 redirectUri: "http://localhost:3000/auth/keycloak/callback",
                 exposeAccessToken: true,
+                callbackRedirectUrl: "/dashboard",
             },
         },
     },

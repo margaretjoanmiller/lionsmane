@@ -5,8 +5,6 @@
 <script setup lang="ts">
 import NavMain from '@/components/NavMain.vue'
 
-import NavProjects from '@/components/NavProjects.vue'
-import NavSecondary from '@/components/NavSecondary.vue'
 import NavUser from '@/components/NavUser.vue'
 import {
   Sidebar,
@@ -19,8 +17,7 @@ import {
   type SidebarProps,
 } from '@/components/ui/sidebar'
 import {
-  BookOpen,
-  Bot,
+  Filter,
   Command,
   Frame,
   LifeBuoy,
@@ -28,7 +25,7 @@ import {
   PieChart,
   Send,
   Settings2,
-  SquareTerminal,
+  Newspaper,
 } from 'lucide-vue-next'
 
 const props = withDefaults(defineProps<SidebarProps>(), {
@@ -45,89 +42,21 @@ const data = {
   },
   navMain: [
     {
-      title: 'Playground',
+      title: 'Feeds',
       url: '#',
-      icon: SquareTerminal,
+      icon: Newspaper,
       isActive: true,
-      items: [
-        {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
-        },
-      ],
+      items: [],
     },
     {
-      title: 'Models',
+      title: 'Rules',
       url: '#',
-      icon: Bot,
-      items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
-      ],
+      icon: Filter,
     },
     {
       title: 'Settings',
       url: '#',
       icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
-      ],
     },
   ],
   navSecondary: [
@@ -142,23 +71,6 @@ const data = {
       icon: Send,
     },
   ],
-  projects: [
-    {
-      name: 'Design Engineering',
-      url: '#',
-      icon: Frame,
-    },
-    {
-      name: 'Sales & Marketing',
-      url: '#',
-      icon: PieChart,
-    },
-    {
-      name: 'Travel',
-      url: '#',
-      icon: Map,
-    },
-  ],
 }
 </script>
 
@@ -169,12 +81,12 @@ const data = {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" as-child>
             <a href="#">
-              <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <Command class="size-4" />
+              <div
+                  class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Icon name="mdi:mushroom-outline"/>
               </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-medium">Acme Inc</span>
-                <span class="truncate text-xs">Enterprise</span>
+                <span class="truncate font-medium">lionsmane</span>
               </div>
             </a>
           </SidebarMenuButton>
@@ -182,12 +94,10 @@ const data = {
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="data.navMain" />
-      <NavProjects :projects="data.projects" />
-      <NavSecondary :items="data.navSecondary" class="mt-auto" />
+      <NavMain :items="data.navMain"/>
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser :user="data.user"/>
     </SidebarFooter>
   </Sidebar>
 </template>

@@ -28,16 +28,15 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from 'lucide-vue-next'
 
 const {logout} = useOidcAuth()
 
-const props = defineProps<{
+defineProps<{
   user: {
     name: string
+    email: string
     avatar: string
   }
 }>()
