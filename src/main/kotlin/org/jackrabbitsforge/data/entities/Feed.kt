@@ -8,12 +8,13 @@ import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.FeedDto
 import java.net.URL
 import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
 class Feed {
     @Id
-    @GeneratedValue
-    var id: Long? = null
+    @GeneratedValue(strategy = GenerationType.UUID)
+    var id: UUID? = null
     lateinit var title: String
     var description: String? = ""
     lateinit var url: URL

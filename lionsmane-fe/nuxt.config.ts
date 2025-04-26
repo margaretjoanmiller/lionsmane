@@ -62,6 +62,7 @@ export default defineNuxtConfig({
     endpoints: {
       lion: {
         url: process.env.API_URL || "http://localhost:8080",
+        schema: "./v1.json",
       },
     },
   },

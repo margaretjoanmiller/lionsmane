@@ -4,8 +4,10 @@
 
 package org.jackrabbitsforge.data.dto
 
+import java.util.UUID
+
 data class ArticleOut(
-    var id: Long?,
+    var id: UUID?,
     var title: String?,
     var author: String?,
     var content: String?,

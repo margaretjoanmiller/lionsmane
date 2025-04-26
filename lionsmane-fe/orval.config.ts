@@ -1,27 +1,17 @@
-import { defineConfig } from 'orval';
-
- 
+import { defineConfig } from "orval";
 
 export default defineConfig({
+  lionsmane: {
+    output: {
+      client: "zod",
 
-   lionsmane: {
+      mode: "tags",
 
-     output: {
+      target: "./utils/gen",
+    },
 
-       client: 'zod',
-
-       mode: 'tags',
-
-       target: './utils/gen',
-
-     },
-
-     input: {
-
-       target: './v1.yaml',
-
-     },
-
-   },
-
- });
+    input: {
+      target: "./v1.json",
+    },
+  },
+});

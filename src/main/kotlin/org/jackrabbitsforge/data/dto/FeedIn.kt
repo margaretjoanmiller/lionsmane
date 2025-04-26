@@ -5,6 +5,7 @@
 package org.jackrabbitsforge.data.dto
 
 data class FeedIn(
-    val name: String,
+    val title: String,
+    val description: String?,
     val url: String,
 )

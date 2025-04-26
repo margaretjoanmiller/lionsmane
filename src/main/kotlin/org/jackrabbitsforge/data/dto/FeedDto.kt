@@ -6,12 +6,13 @@ package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
 import java.time.OffsetDateTime
+import java.util.UUID
 
 /**
  * DTO for {@link org.jackrabbitsforge.data.entities.Feed}
  */
 data class FeedDto(
-    val id: Long? = null,
+    val id: UUID? = null,
     val title: String? = null,
     val description: String? = null,
     val url: String? = null,

@@ -6,12 +6,13 @@ package org.jackrabbitsforge.data.entities
 
 import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.ArticleOut
+import java.util.UUID
 
 @Entity
 class Article {
     @Id
     @GeneratedValue
-    var id: Long? = null
+    var id: UUID? = null
 
     var title: String? = null
     var author: String? = null

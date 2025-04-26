@@ -13,12 +13,18 @@ import {
 /**
  * @summary Get Articles For Feed
  */
+export const getArticlesFeedFeedIdPathFeedIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
 export const getArticlesFeedFeedIdParams = zod.object({
-  "feedId": zod.number()
+  "feedId": zod.string().uuid().regex(getArticlesFeedFeedIdPathFeedIdRegExp)
 })
 
+export const getArticlesFeedFeedIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
 export const getArticlesFeedFeedIdResponseItem = zod.object({
-  "id": zod.number().nullish(),
+  "id": zod.string().uuid().regex(getArticlesFeedFeedIdResponseIdRegExpOne).or(zod.null()).optional(),
   "title": zod.string().nullish(),
   "author": zod.string().nullish(),
   "content": zod.string().nullish(),
@@ -33,12 +39,18 @@ export const getArticlesFeedFeedIdResponse = zod.array(getArticlesFeedFeedIdResp
 /**
  * @summary Get Article
  */
+export const getArticlesIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
 export const getArticlesIdParams = zod.object({
-  "id": zod.number()
+  "id": zod.string().uuid().regex(getArticlesIdPathIdRegExp)
 })
 
+export const getArticlesIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
 export const getArticlesIdResponse = zod.object({
-  "id": zod.number().nullish(),
+  "id": zod.string().uuid().regex(getArticlesIdResponseIdRegExpOne).or(zod.null()).optional(),
   "title": zod.string().nullish(),
   "author": zod.string().nullish(),
   "content": zod.string().nullish(),

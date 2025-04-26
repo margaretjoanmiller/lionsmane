@@ -7,10 +7,13 @@ package org.jackrabbitsforge.data.repositories
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import org.jackrabbitsforge.data.entities.Article
+import java.util.UUID
 
 @ApplicationScoped
-class ArticleRepository: PanacheRepository<Article> {
-    fun findByFeedId(feedId: Long) = list("feed.id", feedId)
+class ArticleRepository : PanacheRepository<Article> {
+    fun findByFeedId(feedId: UUID) = list("feed.id", feedId)
+
+    fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()
 
     fun findByUrl(feedUrl: String) = find("feed.url", feedUrl)
 }

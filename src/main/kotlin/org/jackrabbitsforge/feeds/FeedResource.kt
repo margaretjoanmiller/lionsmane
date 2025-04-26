@@ -18,11 +18,13 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.dto.FeedDto
+import org.jackrabbitsforge.data.dto.FeedIn
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.net.URI
 import java.net.URL
 import java.time.OffsetDateTime
+import java.util.UUID
 
 @Authenticated
 @Transactional
@@ -57,14 +59,10 @@ class FeedResource(
     }
 
     @POST
-    fun postFeed(feed: FeedDto): Response {
+    fun postFeed(feed: FeedIn): Response {
         val newFeed = Feed()
-        newFeed.title = feed.title ?: ""
+        newFeed.title = feed.title
         newFeed.description = feed.description ?: ""
-        if (feed.url == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                .entity("URL is required").build()
-        }
         newFeed.url = checkUrl(feed.url)
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
@@ -82,8 +80,8 @@ class FeedResource(
 
     @PUT
     @Path("/{id}")
-    fun updateFeed(id: Long, feed: FeedDto): Response {
-        val feedToUpdate = feedRepository.findById(id)
+    fun updateFeed(id: UUID, feed: FeedDto): Response {
+        val feedToUpdate = feedRepository.findByUUID(id)
         if (feedToUpdate == null) {
             return Response.status(404).build()
         }
@@ -100,8 +98,8 @@ class FeedResource(
 
     @DELETE
     @Path("/{id}")
-    fun deleteFeed(id: Long): Response {
-        val feedToDelete = feedRepository.findById(id)
+    fun deleteFeed(id: UUID): Response {
+        val feedToDelete = feedRepository.findByUUID(id)
 
         if (feedToDelete == null) {
             return Response.status(404).build()
@@ -110,7 +108,7 @@ class FeedResource(
             return Response.status(401).build()
         }
         try {
-            feedRepository.deleteById(id)
+            feedRepository.deleteByUUID(id)
         } catch (e: Exception) {
             Log.error("Error deleting feed", e)
             return Response.serverError().build()
@@ -120,9 +118,9 @@ class FeedResource(
 
     @GET
     @Path("/{id}")
-    fun getFeed(id: Long): FeedDto? {
+    fun getFeed(id: UUID): FeedDto? {
         try {
-            val feed = feedRepository.findById(id)?.toDto()
+            val feed = feedRepository.findByUUID(id)?.toDto()
             return feed
         } catch (e: Exception) {
             Log.error("Error getting feed", e)
