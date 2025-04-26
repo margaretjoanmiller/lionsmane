@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   type SidebarProps,
 } from "@/components/ui/sidebar";
-import { Filter, PlusCircle, Settings2, Newspaper } from "lucide-vue-next";
+import { Filter, Settings2, Newspaper } from "lucide-vue-next";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   variant: "inset",
