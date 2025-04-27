@@ -15,7 +15,7 @@ import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.util.UUID
 
 @Authenticated
-@Path("articles")
+@Path("/articles")
 class ArticleResource(
     private var articleRepository: ArticleRepository,
     private var feedRepository: FeedRepository,
@@ -35,7 +35,7 @@ class ArticleResource(
     }
 
     @GET
-    @Path("feed/{feedId}")
+    @Path("/feed/{feedId}")
     fun getArticlesForFeed(feedId: UUID): List<ArticleOut> {
         try {
             val articlesOut = articleRepository.findByFeedId(feedId)

@@ -28,7 +28,7 @@ import java.util.UUID
 
 @Authenticated
 @Transactional
-@Path("feeds")
+@Path("/feeds")
 class FeedResource(
     private var feedRepository: FeedRepository,
     private var identity: SecurityIdentity,

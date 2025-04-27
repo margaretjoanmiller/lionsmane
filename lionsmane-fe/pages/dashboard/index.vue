@@ -5,7 +5,6 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "dash",
-  middleware: "authenticated",
 });
 </script>
 
