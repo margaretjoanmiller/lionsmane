@@ -68,9 +68,6 @@ importers:
       ofetch:
         specifier: ^1.4.1
         version: 1.4.1
-      openapi-typescript:
-        specifier: ^7.6.1
-        version: 7.6.1(typescript@5.8.3)
       pinia:
         specifier: ^3.0.2
         version: 3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
@@ -114,6 +111,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.2.6
         version: 5.2.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.2(eslint@9.25.1(jiti@2.4.2)))(eslint@9.25.1(jiti@2.4.2))(prettier@3.5.3)
+      openapi-typescript:
+        specifier: ^7.6.1
+        version: 7.6.1(typescript@5.8.3)
       orval:
         specifier: ^7.8.0
         version: 7.8.0(openapi-types@12.1.3)

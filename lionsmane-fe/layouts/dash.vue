@@ -18,15 +18,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import {useFeedStore} from "@/stores/feedStore";
 
-const { user } = useOidcAuth();
+const feedStore = useFeedStore()
 
-const { data: feeds, error } = await useLionData("/feeds", {
-  headers: {
-    Authorization: `Bearer ${user?.value?.accessToken}`,
-  },
-});
-console.log(feeds.value);
+const {user, loggedIn} = useOidcAuth()
+
+await feedStore.fetchFeeds(loggedIn, user?.value?.accessToken)
+
 </script>
 
 <template>

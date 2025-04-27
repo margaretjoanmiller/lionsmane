@@ -17,12 +17,15 @@ import {
   type SidebarProps,
 } from "@/components/ui/sidebar";
 import { Filter, Settings2, Newspaper } from "lucide-vue-next";
+import {useFeedStore} from "@/stores/feedStore";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   variant: "inset",
 });
 
 const { user } = useOidcAuth();
+
+const feedStore = useFeedStore();
 
 const data = {
   user: {
@@ -32,18 +35,6 @@ const data = {
   },
 
   navMain: [
-    {
-      title: "Feeds",
-      url: "#",
-      icon: Newspaper,
-      isActive: true,
-      items: [
-        {
-          title: "Add Feed +",
-          url: "/dashboard/feeds/add",
-        },
-      ],
-    },
     {
       title: "Rules",
       url: "#",

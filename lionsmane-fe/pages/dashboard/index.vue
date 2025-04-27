@@ -13,5 +13,8 @@ definePageMeta({
     <div class="bg-muted/50 aspect-video rounded-xl" />
     <div class="bg-muted/50 aspect-video rounded-xl" />
     <div class="bg-muted/50 aspect-video rounded-xl" />
+    <NuxtLink :to="{name: 'dashboard-feeds-id', params: {id: 1} }">
+      Feed 1
+    </NuxtLink>
   </div>
 </template>

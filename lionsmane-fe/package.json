@@ -31,7 +31,6 @@
     "nuxt-api-party": "2.2.2",
     "nuxt-oidc-auth": "1.0.0-beta.5",
     "ofetch": "^1.4.1",
-    "openapi-typescript": "^7.6.1",
     "pinia": "^3.0.2",
     "reka-ui": "^2.2.0",
     "shadcn-nuxt": "2.1.0",
@@ -51,6 +50,7 @@
     "@nuxtjs/color-mode": "^3.5.2",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
+    "openapi-typescript": "^7.6.1",
     "orval": "^7.8.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
