@@ -33,7 +33,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
     @RunOnVirtualThread
     @Blocking
     @Transactional
-    fun fetchArticles(feedId: UUID): List<ArticleOut?> {
+    fun fetchArticles(feedId: UUID): List<ArticleOut> {
         try {
             val feed = feedRepository.findByUUID(feedId)
             if (feed == null) {
@@ -51,6 +51,12 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                             Log.info("Article already exists: ${item.sourceUrl}")
                             return@map null
                         }
+                    }
+                    if (item.pubDate == null) {
+                        return@map null
+                    }
+                    if (OffsetDateTime.parse(item.pubDate!!).isBefore(feed.lastUpdated)) {
+                        return@map null
                     }
                     val doc = Jsoup.connect(item.link!!).timeout(3000).get()
                     val cleanBody = Jsoup.clean(doc.body().html(), Safelist.basic())
@@ -80,7 +86,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                 }
             feed.lastUpdated = OffsetDateTime.now()
             feedRepository.persist(feed)
-            return newArts
+            return newArts.filterNotNull()
         } catch (e: Exception) {
             Log.error("Error getting feedRefresh", e)
             return listOf()
