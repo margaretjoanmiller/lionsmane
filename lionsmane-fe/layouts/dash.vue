@@ -27,9 +27,6 @@ if (!loggedIn.value) {
 
 const feedStore = useFeedStore();
 await feedStore.fetchFeeds();
-
-const articleStore = useArticleStore();
-await articleStore.fetchArticles();
 </script>
 
 <template>

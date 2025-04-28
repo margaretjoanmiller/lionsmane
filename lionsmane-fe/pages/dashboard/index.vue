@@ -6,12 +6,34 @@
 definePageMeta({
   layout: "dash",
 });
+
+const articleStore = useArticleStore();
+await articleStore.fetchArticles();
+
+const articles = articleStore.articles.map((art) => {
+  if (!art.title) {
+    throw new Error("Article is malformed");
+  }
+  if (!art.content) {
+    return {
+      title: art.title,
+      preview: "no preview available",
+    };
+  }
+  return {
+    title: art.title,
+    preview:
+      art.content!.length > 50
+        ? `${art.content?.substring(0, 50)} ...`
+        : art.content,
+  };
+});
 </script>
 
 <template>
   <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-    <div class="bg-muted/50 aspect-video rounded-xl" />
-    <div class="bg-muted/50 aspect-video rounded-xl" />
-    <div class="bg-muted/50 aspect-video rounded-xl" />
+    <template v-for="article in articles" :key="article.id">
+      <ArticleCard :article-preview="article" />
+    </template>
   </div>
 </template>
