@@ -19,6 +19,9 @@ import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @ApplicationScoped
 class ArticleFetcher(private val feedRepository: FeedRepository, private val articleRepository: ArticleRepository) {
@@ -28,9 +31,9 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
     @RunOnVirtualThread
     @Blocking
     @Transactional
-    fun fetchArticles(feedId: Long): List<ArticleOut?> {
+    fun fetchArticles(feedId: UUID): List<ArticleOut?> {
         try {
-            val feed = feedRepository.findById(feedId)
+            val feed = feedRepository.findByUUID(feedId)
             if (feed == null) {
                 Log.error("Feed not found: $feedId")
                 return listOf()
@@ -38,7 +41,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
 
             val rssParser: RssParser = RssParser()
             val rssChannel: RssChannel = runBlocking { rssParser.getRssChannel(feed.url.toString()) }
-            return rssChannel.items
+            val newArts = rssChannel.items
                 .map { item ->
                     if (item.sourceUrl != null && item.sourceUrl!!.isNotEmpty()) {
                         val dupeArt = articleRepository.findByUrl(item.sourceUrl!!).firstResult()
@@ -68,6 +71,9 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
 
                     newArt.toDto()
                 }
+            feed.lastUpdated = OffsetDateTime.now()
+            feedRepository.persist(feed)
+            return newArts
         } catch (e: Exception) {
             Log.error("Error getting feedRefresh", e)
             return listOf()

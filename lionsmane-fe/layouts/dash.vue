@@ -18,7 +18,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useFeedStore } from "@/stores/feedStore";
 
 const { loggedIn, login } = useOidcAuth();
 
@@ -27,8 +26,10 @@ if (!loggedIn.value) {
 }
 
 const feedStore = useFeedStore();
-
 await feedStore.fetchFeeds();
+
+const articleStore = useArticleStore();
+await articleStore.fetchArticles();
 </script>
 
 <template>
@@ -45,14 +46,9 @@ await feedStore.fetchFeeds();
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem class="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Building Your Application
-                </BreadcrumbLink>
+                <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator class="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>

@@ -5,6 +5,7 @@
 package org.jackrabbitsforge.data.dto
 
 import java.io.Serializable
+import java.net.URL
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -15,6 +16,6 @@ data class FeedDto(
     val id: UUID? = null,
     val title: String? = null,
     val description: String? = null,
-    val url: String? = null,
+    val url: URL? = null,
     val lastUpdated: OffsetDateTime? = null
 ) : Serializable

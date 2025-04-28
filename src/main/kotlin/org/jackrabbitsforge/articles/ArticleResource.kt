@@ -45,4 +45,15 @@ class ArticleResource(
             throw e
         }
     }
+
+    @GET
+    fun getAllArticles(): List<ArticleOut> {
+        try {
+            val articlesOut = articleRepository.listAll()
+            return articlesOut.map { it.toDto() }
+        } catch (e: Exception) {
+            Log.error("Error getting articles", e)
+            throw e
+        }
+    }
 }

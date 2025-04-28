@@ -30,5 +30,5 @@ class Feed {
 
     @ManyToMany(mappedBy = "feeds")
     var tags: MutableList<Tag>? = null
-    fun toDto() = FeedDto(id, title, description, url.toString(), lastUpdated)
+    fun toDto() = FeedDto(id, title, description, url, lastUpdated)
 }

@@ -4,10 +4,10 @@ import type { SchemaFeedDto } from "@/utils/gen/schema";
 export const useFeedStore = defineStore("feeds", () => {
   const { user, loggedIn } = useOidcAuth();
 
-  const feeds: Ref<SchemaFeedDto[]> = ref([] as SchemaFeedDto[]);
+  const feeds = ref([] as SchemaFeedDto[]);
 
   async function fetchFeeds() {
-    if (loggedIn && user) {
+    if (loggedIn.value && user.value) {
       try {
         const { data, error } = await useLionData("/feeds", {
           headers: {

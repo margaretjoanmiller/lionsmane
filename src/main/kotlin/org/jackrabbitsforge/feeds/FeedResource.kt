@@ -37,7 +37,7 @@ class FeedResource(
 
     fun checkUrl(url: String): URL {
         try {
-            val newUrl = URI.create(url).toURL()
+            val newUrl = URI(url).toURL()
             return newUrl
         } catch (e: Exception) {
             Log.warn("Invalid url", e)
@@ -89,9 +89,7 @@ class FeedResource(
             return Response.status(401).build()
         }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
-        if (feed.url != null) {
-            feedToUpdate.url = checkUrl(feed.url)
-        }
+        feedToUpdate.url = feed.url ?: feedToUpdate.url
         feedToUpdate.description = feed.description ?: feedToUpdate.description
         return Response.ok(feedToUpdate.toDto()).status(200).build()
     }
@@ -130,7 +128,7 @@ class FeedResource(
 
     @GET
     @Path("/refresh/{id}")
-    fun getFeedRefresh(id: Long): Uni<List<ArticleOut>> = eventBus.request<List<ArticleOut>>("fetchArticles", id)
+    fun getFeedRefresh(id: UUID): Uni<List<ArticleOut>> = eventBus.request<List<ArticleOut>>("fetchArticles", id)
         .onItem()
         .transform { it.body() }
         .onFailure()
