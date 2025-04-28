@@ -11,6 +11,7 @@ data class ArticleOut(
     var title: String?,
     var author: String?,
     var content: String?,
+    var textPreview: String?,
     var image: String?,
     var url: String?,
     var publishedAt: String?,

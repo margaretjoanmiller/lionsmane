@@ -20,6 +20,9 @@ class Article {
 
     @Column(columnDefinition = "TEXT")
     var content: String? = null
+
+    @Column(columnDefinition = "TEXT")
+    var textPreview: String? = null
     var image: String? = null
     var url: String? = null
     var publishedDate: String? = null
@@ -39,6 +42,7 @@ class Article {
         title,
         author,
         content,
+        textPreview,
         image,
         url,
         publishedDate,

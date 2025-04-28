@@ -40,6 +40,7 @@ dependencies {
     implementation("com.github.f4b6a3:uuid-creator:6.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation("org.jsoup:jsoup:1.19.1")
+    implementation("net.dankito.readability4j:readability4j:1.0.8")
     implementation("io.smallrye.reactive:smallrye-mutiny-vertx-core:3.17.1")
 }
 
