@@ -3,10 +3,9 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "~/components/ui/sidebar";
+} from "@/components/ui/sidebar";
 import { useFeedStore } from "@/stores/feedStore";
 import { CollapsibleTrigger } from "~/components/ui/collapsible";
 import { ChevronRight } from "lucide-vue-next";
@@ -20,11 +19,7 @@ const feeds = feedStore.feeds;
   <SidebarGroup>
     <SidebarGroupLabel>RSS</SidebarGroupLabel>
     <SidebarMenu>
-      <Collapsible
-        v-for="feed in feeds"
-        :key="feed.id!"
-        class="group/collapsible"
-      >
+      <Collapsible class="group/collapsible">
         <SidebarMenuItem>
           <CollapsibleTrigger as-child>
             <SidebarMenuButton>
@@ -34,7 +29,7 @@ const feeds = feedStore.feeds;
               />
             </SidebarMenuButton>
           </CollapsibleTrigger>
-          <CollapsibleContent>
+          <CollapsibleContent v-for="feed in feeds" :key="feed.id!">
             <SidebarMenuSub>
               <SidebarMenuButton as-child :tooltip="feed.title!">
                 <NuxtLink

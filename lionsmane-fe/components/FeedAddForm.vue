@@ -22,7 +22,13 @@ import { postFeedsBody } from "@/utils/gen/feed-resource";
 
 const form = useForm({ validationSchema: toTypedSchema(postFeedsBody) });
 
-const { user } = useOidcAuth();
+const { loggedIn, user, login } = useOidcAuth();
+
+const feedStore = useFeedStore();
+
+if (!loggedIn.value) {
+  await login();
+}
 
 const onSubmit = form.handleSubmit(async (values) => {
   try {
@@ -39,6 +45,7 @@ const onSubmit = form.handleSubmit(async (values) => {
           console.log(await response.json());
         } else {
           toast.success("Feed added");
+          await feedStore.fetchFeeds();
           await navigateTo("/dashboard");
         }
       },

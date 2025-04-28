@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
+const route = useRoute();
 </script>
 
 <template>
-<p>hi! {route.param.id}</p>
+  <p>hi! {{ route.params.id }}</p>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

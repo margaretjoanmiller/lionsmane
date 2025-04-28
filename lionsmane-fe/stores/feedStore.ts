@@ -8,7 +8,6 @@ export const useFeedStore = defineStore("feeds", () => {
 
   async function fetchFeeds() {
     if (loggedIn && user) {
-      console.log("trying to get feeds");
       try {
         const { data, error } = await useLionData("/feeds", {
           headers: {
