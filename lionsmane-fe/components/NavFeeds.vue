@@ -3,9 +3,7 @@
 import {
   SidebarGroup,
   SidebarGroupLabel, SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuButton, SidebarMenuItem, SidebarMenuSub,
-  SidebarMenuSubButton, SidebarMenuSubItem
+  SidebarMenuButton, SidebarMenuItem
 } from "~/components/ui/sidebar";
 import {useFeedStore} from '@/stores/feedStore'
 

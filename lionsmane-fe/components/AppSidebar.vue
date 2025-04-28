@@ -70,6 +70,7 @@ const data = {
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
+      <NavFeeds />
       <NavMain :items="data.navMain" />
     </SidebarContent>
     <SidebarFooter>
