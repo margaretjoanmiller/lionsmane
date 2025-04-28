@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script lang="ts" setup>
 import { Toaster as Sonner, type ToasterProps } from 'vue-sonner'
 

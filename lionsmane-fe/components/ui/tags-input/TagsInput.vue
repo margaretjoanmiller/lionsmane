@@ -1,3 +1,7 @@
+<!--
+  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
 import { TagsInputRoot, type TagsInputRootEmits, type TagsInputRootProps, useForwardPropsEmits } from 'reka-ui'

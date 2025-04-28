@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -10,16 +10,16 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-   "@nuxt/eslint",
-   "@nuxt/fonts",
-   "@nuxt/icon",
-   "@nuxt/image",
-   "@nuxt/test-utils",
-   "shadcn-nuxt",
-   "nuxt-oidc-auth",
-   "nuxt-api-party",
-   "@nuxtjs/color-mode",
-   "@pinia/nuxt",
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/test-utils",
+    "shadcn-nuxt",
+    "nuxt-oidc-auth",
+    "nuxt-api-party",
+    "@nuxtjs/color-mode",
+    "@pinia/nuxt",
   ],
 
   css: ["~/assets/css/tailwind.css"],

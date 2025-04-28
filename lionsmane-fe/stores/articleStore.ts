@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+ */
+
 import { defineStore } from "pinia";
 import type { SchemaArticleOut, SchemaFeedDto } from "@/utils/gen/schema";
 
