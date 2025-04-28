@@ -16,16 +16,13 @@ import {
   SidebarMenuItem,
   type SidebarProps,
 } from "@/components/ui/sidebar";
-import { Filter, Settings2, Newspaper } from "lucide-vue-next";
-import {useFeedStore} from "@/stores/feedStore";
+import { Filter, Settings2 } from "lucide-vue-next";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   variant: "inset",
 });
 
 const { user } = useOidcAuth();
-
-const feedStore = useFeedStore();
 
 const data = {
   user: {

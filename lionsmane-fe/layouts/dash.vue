@@ -18,14 +18,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {useFeedStore} from "@/stores/feedStore";
+import { useFeedStore } from "@/stores/feedStore";
 
-const feedStore = useFeedStore()
+const { loggedIn, login } = useOidcAuth();
 
-const {user, loggedIn} = useOidcAuth()
+if (!loggedIn.value) {
+  await login();
+}
 
-await feedStore.fetchFeeds(loggedIn, user?.value?.accessToken)
+const feedStore = useFeedStore();
 
+await feedStore.fetchFeeds();
 </script>
 
 <template>

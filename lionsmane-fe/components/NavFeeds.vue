@@ -1,29 +1,61 @@
 <script setup lang="ts">
-
 import {
   SidebarGroup,
-  SidebarGroupLabel, SidebarMenu,
-  SidebarMenuButton, SidebarMenuItem
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "~/components/ui/sidebar";
-import {useFeedStore} from '@/stores/feedStore'
+import { useFeedStore } from "@/stores/feedStore";
+import { CollapsibleTrigger } from "~/components/ui/collapsible";
+import { ChevronRight } from "lucide-vue-next";
 
-const feedStore = useFeedStore()
+const feedStore = useFeedStore();
 
-const feeds = feedStore.feeds
+const feeds = feedStore.feeds;
 </script>
 
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>Feeds</SidebarGroupLabel>
+    <SidebarGroupLabel>RSS</SidebarGroupLabel>
     <SidebarMenu>
-        <SidebarMenuItem v-for="feed in feeds" :key="feed.id!">
-          <SidebarMenuButton as-child :tooltip="feed.title!">
-            <NuxtLink :to="{name: 'dashboard-feeds-id', params: {id: feed.id!} }">
-              <!--              <component :is="feed.icon" />-->
-              <span>{{ feed.title }}</span>
-            </NuxtLink>
-          </SidebarMenuButton>
+      <Collapsible
+        v-for="feed in feeds"
+        :key="feed.id!"
+        class="group/collapsible"
+      >
+        <SidebarMenuItem>
+          <CollapsibleTrigger as-child>
+            <SidebarMenuButton>
+              <span>Feeds</span>
+              <ChevronRight
+                class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+              />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarMenuSub>
+              <SidebarMenuButton as-child :tooltip="feed.title!">
+                <NuxtLink
+                  :to="{ name: 'dashboard-feeds-id', params: { id: feed.id! } }"
+                >
+                  <!--              <component :is="feed.icon" />-->
+                  <span>{{ feed.title }}</span>
+                </NuxtLink>
+              </SidebarMenuButton>
+            </SidebarMenuSub>
+          </CollapsibleContent>
         </SidebarMenuItem>
+      </Collapsible>
+      <SidebarMenuItem>
+        <SidebarMenuButton as-child>
+          <NuxtLink to="/dashboard/feeds/add">
+            <span>Add feed</span>
+            <Icon name="mdi:plus-circle" />
+          </NuxtLink>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
     </SidebarMenu>
   </SidebarGroup>
 </template>
