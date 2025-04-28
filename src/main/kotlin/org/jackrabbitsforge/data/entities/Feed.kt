@@ -7,7 +7,7 @@ package org.jackrabbitsforge.data.entities
 import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.FeedDto
 import java.net.URL
-import java.time.OffsetDateTime
+import java.time.Instant
 import java.util.UUID
 
 @Entity
@@ -23,7 +23,7 @@ class Feed {
 
     @OneToMany
     var articles: MutableList<Article> = mutableListOf<Article>()
-    var lastUpdated: OffsetDateTime? = null
+    var lastUpdated: Instant? = null
 
     @ManyToOne(optional = true)
     var folder: Folder? = null

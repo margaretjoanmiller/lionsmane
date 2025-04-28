@@ -16,14 +16,13 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
+import org.jackrabbitsforge.utils.checkUrl
 import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.dto.FeedIn
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
-import java.net.URI
-import java.net.URL
-import java.time.OffsetDateTime
+import java.time.Instant
 import java.util.UUID
 
 @Authenticated
@@ -34,16 +33,6 @@ class FeedResource(
     private var identity: SecurityIdentity,
     private val eventBus: EventBus
 ) {
-
-    fun checkUrl(url: String): URL {
-        try {
-            val newUrl = URI(url).toURL()
-            return newUrl
-        } catch (e: Exception) {
-            Log.warn("Invalid url", e)
-            throw e
-        }
-    }
 
     @GET
     fun listFeeds(): List<FeedDto> {
@@ -66,7 +55,7 @@ class FeedResource(
         newFeed.url = checkUrl(feed.url)
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
-        newFeed.lastUpdated = OffsetDateTime.parse(threeWeeksAgo.toString())
+        newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())
 
         try {
             feedRepository.persist(newFeed)

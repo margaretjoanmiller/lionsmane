@@ -6,6 +6,7 @@ package org.jackrabbitsforge.data.entities
 
 import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.ArticleOut
+import java.time.Instant
 import java.util.UUID
 
 @Entity
@@ -25,7 +26,7 @@ class Article {
     var textPreview: String? = null
     var image: String? = null
     var url: String? = null
-    var publishedDate: String? = null
+    var publishedDate: Instant? = null
 
     var categories: List<String>? = null
 

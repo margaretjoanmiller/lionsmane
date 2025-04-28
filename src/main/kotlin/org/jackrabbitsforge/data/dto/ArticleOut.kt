@@ -4,6 +4,7 @@
 
 package org.jackrabbitsforge.data.dto
 
+import java.time.Instant
 import java.util.UUID
 
 data class ArticleOut(
@@ -14,7 +15,7 @@ data class ArticleOut(
     var textPreview: String?,
     var image: String?,
     var url: String?,
-    var publishedAt: String?,
+    var publishedAt: Instant?,
     var categories: List<String>? = listOf(),
     var audio: String?,
 )

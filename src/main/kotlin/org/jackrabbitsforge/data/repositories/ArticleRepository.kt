@@ -15,5 +15,5 @@ class ArticleRepository : PanacheRepository<Article> {
 
     fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()
 
-    fun findByUrl(feedUrl: String) = find("feed.url", feedUrl)
+    fun findByArticleUrl(articleUrl: String) = find("url", articleUrl)
 }
