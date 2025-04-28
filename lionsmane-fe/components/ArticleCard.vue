@@ -7,19 +7,25 @@ defineProps<{
   articlePreview: {
     title: string;
     preview: string;
+    date: string;
   };
 }>();
 </script>
 
 <template>
   <Card>
-    <CardTitle>
-      {{ articlePreview.title }}
-    </CardTitle>
+    <CardHeader>
+      <CardTitle>
+        {{ articlePreview.title }}
+      </CardTitle>
+    </CardHeader>
     <CardContent>
       <div class="flex-1">
         <p class="mt-1">{{ articlePreview.preview }}</p>
       </div>
     </CardContent>
+    <CardFooter>
+      {{ articlePreview.date }}
+    </CardFooter>
   </Card>
 </template>
