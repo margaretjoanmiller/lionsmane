@@ -13,16 +13,15 @@ export const useArticleStore = defineStore("articleStore", () => {
   async function fetchArticles() {
     if (loggedIn.value && user.value) {
       try {
-        const { data, error } = await useLionData("/articles", {
+        const arts = await $lion("/articles", {
           headers: {
             Authorization: `Bearer ${user.value?.accessToken}`,
           },
         });
-        if (error.value) {
-          console.error("error getting feeds" + error);
-          return error;
+        if (!articles) {
+          return;
         }
-        articles.value = data.value as SchemaFeedDto[];
+        articles.value = arts as SchemaFeedDto[];
       } catch (e) {
         console.error(e);
       }
