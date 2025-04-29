@@ -32,14 +32,7 @@ fun LocalDateTime.localDateTimeToInstant(): Instant =
     this.atZone(ZoneId.systemDefault()).toInstant()
 
 fun String.smartLocalDateTimeParse(): LocalDateTime {
-    val dtmStrRaw = replace("/", "-")
-
-    val dtmStr =
-        dtmStrRaw.replace(
-            Regex("(Mo(n(day)?)?|Tu(e(sday)?)?|We(d(nesday)?)?|Th(u(rsday)?)?|Fr(i(day)?)?|Sa(t(urday)?)?|Su(n(day)?)?)"),
-            ""
-        )
-
+    val dtmStr = replace("/", "-")
 
     val (dt, tm) = dtmStr.split(" ")
 
@@ -51,7 +44,7 @@ fun String.smartLocalDateParse(): LocalDate {
 
     return when {
 
-        dtStr.matches(Regex("[0-9]{2}-[0-9]-[0-9]{4}")) ->
+        dtStr.matches(Regex("[0-9]{2} [0-9]-[0-9]{4}")) ->
             LocalDate.parse(dtStr, DateTimeFormatter.ofPattern("d-M-yyyy"))
 
         dtStr.matches(Regex("[0-9]-[0-9]-[0-9]{2}")) ->

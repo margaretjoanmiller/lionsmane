@@ -25,6 +25,11 @@ import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
 import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.UUID
 
 @ApplicationScoped
@@ -48,7 +53,20 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
             val newArts = rssChannel.items
                 .map { item ->
                     val itemLink = item.link
-                    val itemDate = item.pubDate?.smartLocalDateTimeParse()?.localDateTimeToInstant()
+
+                    val rfc = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+
+                    val rawDate = item.pubDate
+                    if (rawDate == null) {
+                        return@map null
+                    }
+
+                    var itemDate = ZonedDateTime.parse(rawDate, rfc).toInstant()
+
+                    if (itemDate == null) {
+                        itemDate = rawDate.smartLocalDateTimeParse().toInstant(ZoneOffset.UTC)
+                    }
+
                     if (itemLink != null
                         && itemDate != null
                     ) {

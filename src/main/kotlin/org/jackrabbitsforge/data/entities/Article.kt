@@ -15,8 +15,11 @@ class Article {
     @GeneratedValue
     var id: UUID? = null
 
+    @Column(columnDefinition = "TEXT")
     var title: String? = null
     var author: String? = null
+
+    @Column(columnDefinition = "TEXT")
     var description: String? = null
 
     @Column(columnDefinition = "TEXT")
@@ -25,6 +28,8 @@ class Article {
     @Column(columnDefinition = "TEXT")
     var textPreview: String? = null
     var image: String? = null
+
+    @Column(columnDefinition = "TEXT")
     var url: String? = null
     var publishedDate: Instant? = null
 
