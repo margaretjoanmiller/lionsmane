@@ -6,7 +6,7 @@
 defineProps<{
   articlePreview: {
     title: string;
-    preview: string;
+    preview: string | undefined;
     date: string;
   };
 }>();

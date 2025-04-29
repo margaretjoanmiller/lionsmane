@@ -84,14 +84,21 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                         val cleanBody = Jsoup.clean(doc.body().html(), Safelist.basic())
                         val readAbility: ReadArt = Readability4J(itemLink, cleanBody).parse()
                         val content = readAbility.contentWithDocumentsCharsetOrUtf8
-                        val textPreview = readAbility.textContent
+
+                        val rawPreview = item.content
+                        var preview = ""
+                        if (rawPreview != null) {
+                            preview = Jsoup.parse(rawPreview).text()
+                        } else {
+                            preview = "Preview not available"
+                        }
 
                         val newArt = Article()
                         newArt.title = item.title
                         newArt.author = item.author
                         newArt.description = item.description
                         newArt.content = content
-                        newArt.textPreview = textPreview
+                        newArt.textPreview = preview
                         newArt.image = item.image
                         newArt.url = itemLink
                         newArt.publishedDate = itemDate
