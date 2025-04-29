@@ -1,544 +1,448 @@
 {
-  "openapi": "3.1.0",
-  "components": {
-    "schemas": {
-      "ArticleOut": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              },
-              {
-                "type": "null"
-              }
-            ]
+  "openapi" : "3.1.0",
+  "components" : {
+    "schemas" : {
+      "ArticleOut" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/UUID"
+            }, {
+              "type" : "null"
+            } ]
           },
-          "title": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "title" : {
+            "type" : [ "string", "null" ]
           },
-          "author": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "author" : {
+            "type" : [ "string", "null" ]
           },
-          "content": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "content" : {
+            "type" : [ "string", "null" ]
           },
-          "image": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "textPreview" : {
+            "type" : [ "string", "null" ]
           },
-          "url": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "image" : {
+            "type" : [ "string", "null" ]
           },
-          "publishedAt": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "url" : {
+            "type" : [ "string", "null" ]
           },
-          "categories": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "type": "string"
+          "publishedAt" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/Instant"
+            }, {
+              "type" : "null"
+            } ]
+          },
+          "categories" : {
+            "type" : [ "array", "null" ],
+            "items" : {
+              "type" : "string"
             }
           },
-          "audio": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "audio" : {
+            "type" : [ "string", "null" ]
           }
         }
       },
-      "FeedDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/UUID"
-              },
-              {
-                "type": "null"
-              }
-            ]
+      "FeedDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/UUID"
+            }, {
+              "type" : "null"
+            } ]
           },
-          "title": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "title" : {
+            "type" : [ "string", "null" ]
           },
-          "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "description" : {
+            "type" : [ "string", "null" ]
           },
-          "url": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "url" : {
+            "type" : [ "string", "null" ]
           },
-          "lastUpdated": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Instant"
-              },
-              {
-                "type": "null"
-              }
-            ]
+          "lastUpdated" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/Instant"
+            }, {
+              "type" : "null"
+            } ]
           }
         }
       },
-      "FeedIn": {
-        "type": "object",
-        "required": [
-          "title",
-          "url"
-        ],
-        "properties": {
-          "title": {
-            "type": "string"
+      "FeedIn" : {
+        "type" : "object",
+        "required" : [ "title", "url" ],
+        "properties" : {
+          "title" : {
+            "type" : "string"
           },
-          "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "description" : {
+            "type" : [ "string", "null" ]
           },
-          "url": {
-            "type": "string"
+          "url" : {
+            "type" : "string"
           }
         }
       },
-      "Instant": {
-        "type": "string",
-        "format": "date-time",
-        "examples": [
-          "2022-03-10T12:15:50-04:00"
-        ]
+      "Instant" : {
+        "type" : "string",
+        "format" : "date-time",
+        "examples" : [ "2022-03-10T16:15:50Z" ]
       },
-      "UUID": {
-        "type": "string",
-        "format": "uuid",
-        "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      "UUID" : {
+        "type" : "string",
+        "format" : "uuid",
+        "pattern" : "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
       },
-      "User": {
-        "type": "object",
-        "required": [
-          "userName"
-        ],
-        "properties": {
-          "userName": {
-            "type": "string"
+      "User" : {
+        "type" : "object",
+        "required" : [ "userName" ],
+        "properties" : {
+          "userName" : {
+            "type" : "string"
           }
         }
       }
     },
-    "securitySchemes": {
-      "SecurityScheme": {
-        "type": "openIdConnect",
-        "description": "Authentication",
-        "openIdConnectUrl": "http://localhost:8675/realms/quarkus/.well-known/openid-configuration"
+    "securitySchemes" : {
+      "SecurityScheme" : {
+        "type" : "openIdConnect",
+        "description" : "Authentication",
+        "openIdConnectUrl" : "http://localhost:8675/realms/quarkus/.well-known/openid-configuration"
       }
     }
   },
-  "paths": {
-    "/articles": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticleOut"
+  "paths" : {
+    "/articles" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ArticleOut"
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Get All Articles",
-        "tags": [
-          "Article Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Get All Articles",
+        "tags" : [ "Article Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/articles/feed/{feedId}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "feedId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UUID"
-            }
+    "/articles/feed/{feedId}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "feedId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticleOut"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ArticleOut"
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Get Articles For Feed",
-        "tags": [
-          "Article Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Get Articles For Feed",
+        "tags" : [ "Article Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/articles/{id}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UUID"
-            }
+    "/articles/{id}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArticleOut"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ArticleOut"
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Get Article",
-        "tags": [
-          "Article Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Get Article",
+        "tags" : [ "Article Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/feeds": {
-      "post": {
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FeedIn"
+    "/feeds" : {
+      "post" : {
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FeedIn"
               }
             }
           },
-          "required": true
+          "required" : true
         },
-        "responses": {
-          "200": {
-            "description": "OK"
+        "responses" : {
+          "200" : {
+            "description" : "OK"
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           },
-          "400": {
-            "description": "Bad Request"
+          "400" : {
+            "description" : "Bad Request"
           }
         },
-        "summary": "Post Feed",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Post Feed",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       },
-      "get": {
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FeedDto"
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/FeedDto"
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "List Feeds",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "List Feeds",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/feeds/refresh/{id}": {
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+    "/feeds/refresh/{id}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticleOut"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ArticleOut"
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Get Feed Refresh",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Get Feed Refresh",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/feeds/{id}": {
-      "put": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UUID"
-            }
+    "/feeds/{id}" : {
+      "put" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FeedDto"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FeedDto"
               }
             }
           },
-          "required": true
+          "required" : true
         },
-        "responses": {
-          "200": {
-            "description": "OK"
+        "responses" : {
+          "200" : {
+            "description" : "OK"
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           },
-          "400": {
-            "description": "Bad Request"
+          "400" : {
+            "description" : "Bad Request"
           }
         },
-        "summary": "Update Feed",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Update Feed",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       },
-      "get": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UUID"
-            }
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeedDto"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FeedDto"
                 }
               }
             }
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Get Feed",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Get Feed",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       },
-      "delete": {
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UUID"
-            }
+      "delete" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
           },
-          "401": {
-            "description": "Not Authorized"
+          "401" : {
+            "description" : "Not Authorized"
           },
-          "403": {
-            "description": "Not Allowed"
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
-        "summary": "Delete Feed",
-        "tags": [
-          "Feed Resource"
-        ],
-        "security": [
-          {
-            "SecurityScheme": []
-          }
-        ]
+        "summary" : "Delete Feed",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
       }
     },
-    "/users/me": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
+    "/users/me" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User"
                 }
               }
             }
           }
         },
-        "summary": "Me",
-        "tags": [
-          "Users Resource"
-        ]
+        "summary" : "Me",
+        "tags" : [ "Users Resource" ]
       }
     }
   },
-  "info": {
-    "title": "lionsmane API",
-    "version": "1.0.0-SNAPSHOT"
+  "info" : {
+    "title" : "lionsmane API",
+    "version" : "1.0.0-SNAPSHOT"
   }
 }
