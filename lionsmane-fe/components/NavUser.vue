@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
   -->
 
 <script setup lang="ts">
@@ -28,12 +28,12 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from 'lucide-vue-next'
 
-const props = defineProps<{
+const {logout} = useOidcAuth()
+
+defineProps<{
   user: {
     name: string
     email: string
@@ -61,7 +61,6 @@ const { isMobile } = useSidebar()
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{ user.name }}</span>
-              <span class="truncate text-xs">{{ user.email }}</span>
             </div>
             <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
@@ -77,31 +76,19 @@ const { isMobile } = useSidebar()
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage :src="user.avatar" :alt="user.name" />
                 <AvatarFallback class="rounded-lg">
-                  CN
+                  LM
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ user.name }}</span>
-                <span class="truncate text-xs">{{ user.email }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <Sparkles />
-              Upgrade to Pro
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
               <BadgeCheck />
               Account
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCard />
-              Billing
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Bell />
@@ -111,7 +98,9 @@ const { isMobile } = useSidebar()
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogOut />
-            Log out
+            <Button @click="logout('keycloak', '/')">
+              Log out
+            </Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

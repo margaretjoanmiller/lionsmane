@@ -1,10 +1,15 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
   -->
+<script setup lang="ts">
+import { Toaster } from "@/components/ui/sonner";
+</script>
 
 <template>
-  <div>
+  <Toaster />
+  <NuxtLoadingIndicator />
+  <NuxtLayout>
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-  </div>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

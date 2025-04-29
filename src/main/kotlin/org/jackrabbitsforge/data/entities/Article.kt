@@ -1,33 +1,37 @@
 /*
- * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.data.entities
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Lob
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.ArticleOut
-import java.time.LocalDateTime
+import java.time.Instant
+import java.util.UUID
 
 @Entity
 class Article {
     @Id
     @GeneratedValue
-    var id: Long? = null
+    var id: UUID? = null
 
+    @Column(columnDefinition = "TEXT")
     var title: String? = null
     var author: String? = null
+
+    @Column(columnDefinition = "TEXT")
     var description: String? = null
 
     @Column(columnDefinition = "TEXT")
     var content: String? = null
+
+    @Column(columnDefinition = "TEXT")
+    var textPreview: String? = null
     var image: String? = null
+
+    @Column(columnDefinition = "TEXT")
     var url: String? = null
-    var publishedDate: String? = null
+    var publishedDate: Instant? = null
 
     var categories: List<String>? = null
 
@@ -40,10 +44,11 @@ class Article {
     lateinit var feed: Feed
 
     fun toDto() = ArticleOut(
-        id!!,
+        id,
         title,
         author,
         content,
+        textPreview,
         image,
         url,
         publishedDate,

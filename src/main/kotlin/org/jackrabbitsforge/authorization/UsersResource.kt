@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.authorization
@@ -11,7 +11,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import org.jboss.resteasy.reactive.NoCache
 
-@Path("/api/users")
+@Path("users")
 class UsersResource {
     @Inject
     @field: Default

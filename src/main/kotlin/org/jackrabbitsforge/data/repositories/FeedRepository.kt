@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
 package org.jackrabbitsforge.data.repositories
@@ -11,10 +11,11 @@ import org.jackrabbitsforge.data.entities.Feed
 import java.util.UUID
 
 @ApplicationScoped
-class FeedRepository: PanacheRepository<Feed> {
+class FeedRepository : PanacheRepository<Feed> {
 
     fun findByName(name: String) = find(name).firstResult()
 
-    fun findById(id: UUID) = find("$id")
+    fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()
 
+    fun deleteByUUID(uuid: UUID) = delete("id", uuid)
 }
