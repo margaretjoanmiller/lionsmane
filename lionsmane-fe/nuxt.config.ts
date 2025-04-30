@@ -20,11 +20,15 @@ export default defineNuxtConfig({
     "nuxt-api-party",
     "@nuxtjs/color-mode",
     "@pinia/nuxt",
+    "vue-sonner/nuxt",
   ],
 
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["vee-validate", "zod", "@vee-validate/zod"],
+    },
   },
 
   shadcn: {

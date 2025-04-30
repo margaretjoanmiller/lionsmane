@@ -5,6 +5,7 @@
 <script setup lang="ts">
 defineProps<{
   articlePreview: {
+    id: string;
     title: string;
     preview: string | undefined;
     date: string;
@@ -13,19 +14,23 @@ defineProps<{
 </script>
 
 <template>
-  <Card>
-    <CardHeader>
-      <CardTitle>
-        {{ articlePreview.title }}
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <div class="flex-1">
-        <p class="mt-1">{{ articlePreview.preview }}</p>
-      </div>
-    </CardContent>
-    <CardFooter>
-      {{ articlePreview.date }}
-    </CardFooter>
-  </Card>
+  <NuxtLink
+    :to="{ name: 'dashboard-articles-id', params: { id: articlePreview.id } }"
+  >
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          {{ articlePreview.title }}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="flex-1">
+          <p class="mt-1">{{ articlePreview.preview }}</p>
+        </div>
+      </CardContent>
+      <CardFooter>
+        {{ new Date(articlePreview.date).toLocaleDateString() }}
+      </CardFooter>
+    </Card>
+  </NuxtLink>
 </template>

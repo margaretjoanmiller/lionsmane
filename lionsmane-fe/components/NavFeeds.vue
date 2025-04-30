@@ -16,7 +16,7 @@ import { ChevronRight } from "lucide-vue-next";
 
 const feedStore = useFeedStore();
 
-const feeds = feedStore.feeds;
+const { feeds } = storeToRefs(feedStore);
 </script>
 
 <template>
@@ -25,17 +25,24 @@ const feeds = feedStore.feeds;
     <SidebarMenu>
       <Collapsible class="group/collapsible">
         <SidebarMenuItem>
+          <SidebarMenuButton>
+            <NuxtLink :to="{ name: 'dashboard-feeds-all' }">Feeds</NuxtLink>
+          </SidebarMenuButton>
           <CollapsibleTrigger as-child>
-            <SidebarMenuButton>
-              <span>Feeds</span>
+            <SidebarMenuAction>
               <ChevronRight
                 class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
               />
-            </SidebarMenuButton>
+            </SidebarMenuAction>
           </CollapsibleTrigger>
-          <CollapsibleContent v-for="feed in feeds" :key="feed.id!">
+          <CollapsibleContent>
             <SidebarMenuSub>
-              <SidebarMenuButton as-child :tooltip="feed.title!">
+              <SidebarMenuButton
+                v-for="feed in feeds"
+                :key="feed.id!"
+                as-child
+                :tooltip="feed.title!"
+              >
                 <NuxtLink
                   :to="{ name: 'dashboard-feeds-id', params: { id: feed.id! } }"
                 >
@@ -43,18 +50,17 @@ const feeds = feedStore.feeds;
                   <span>{{ feed.title }}</span>
                 </NuxtLink>
               </SidebarMenuButton>
+              <Separator />
+              <SidebarMenuButton as-child>
+                <NuxtLink to="/dashboard/feeds/add">
+                  <span>Add feed</span>
+                  <Icon name="mdi:plus-circle" />
+                </NuxtLink>
+              </SidebarMenuButton>
             </SidebarMenuSub>
           </CollapsibleContent>
         </SidebarMenuItem>
       </Collapsible>
-      <SidebarMenuItem>
-        <SidebarMenuButton as-child>
-          <NuxtLink to="/dashboard/feeds/add">
-            <span>Add feed</span>
-            <Icon name="mdi:plus-circle" />
-          </NuxtLink>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
     </SidebarMenu>
   </SidebarGroup>
 </template>

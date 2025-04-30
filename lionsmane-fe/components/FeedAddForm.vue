@@ -16,11 +16,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "vue-sonner";
 
 import { postFeedsBody } from "@/utils/gen/feed-resource";
+import type { SchemaFeedDto } from "~/utils/gen/schema";
 
-const form = useForm({ validationSchema: toTypedSchema(postFeedsBody) });
+const { $toast } = useNuxtApp();
+
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: toTypedSchema(postFeedsBody),
+});
 
 const { loggedIn, user, login } = useOidcAuth();
 
@@ -30,7 +34,7 @@ if (!loggedIn.value) {
   await login();
 }
 
-const onSubmit = form.handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (values) => {
   try {
     await $lion("/feeds", {
       method: "POST",
@@ -38,21 +42,39 @@ const onSubmit = form.handleSubmit(async (values) => {
       headers: {
         Authorization: `Bearer ${user?.value?.accessToken}`,
       },
-      async onResponse({ response }) {
-        console.log(response);
-        if (!response.ok) {
-          toast.error("Error adding feed");
-          console.log(await response.json());
-        } else {
-          toast.success("Feed added");
-          await feedStore.fetchFeeds();
-          await navigateTo("/dashboard");
+
+      async onResponse() {
+        try {
+          const response = await $lion("/feeds", {
+            headers: {
+              Authorization: `Bearer ${user.value?.accessToken}`,
+            },
+          });
+
+          if (!response) {
+            $toast.error("Error updating feed list");
+          }
+          feedStore.storeFeeds(response as SchemaFeedDto[]);
+          $toast.success("Successfully added feed");
+        } catch (e) {
+          console.error(e);
+          $toast.error("Failed to update feed list");
         }
       },
+      async onResponseError({ error }) {
+        console.error(error);
+        $toast.error(`Error adding feed`);
+      },
     });
+
+    return navigateTo({ name: "dashboard-home" });
   } catch (e) {
-    console.log(`Error adding feed: ${e}`);
-    toast.error("Unknown error adding feed");
+    $toast.error("Unknown error adding feed");
+    console.error(e);
+    throw createError({
+      status: 500,
+      statusMessage: `Error adding feed ${e}`,
+    });
   }
 });
 </script>

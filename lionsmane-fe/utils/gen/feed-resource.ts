@@ -16,7 +16,7 @@ import {
 export const postFeedsBody = zod.object({
   "title": zod.string(),
   "description": zod.string().nullish(),
-  "url": zod.string()
+  "url": zod.string().url()
 })
 
 /**
@@ -45,6 +45,7 @@ export const getFeedsRefreshIdParams = zod.object({
 })
 
 export const getFeedsRefreshIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getFeedsRefreshIdResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
 export const getFeedsRefreshIdResponseItem = zod.object({
@@ -57,7 +58,8 @@ export const getFeedsRefreshIdResponseItem = zod.object({
   "url": zod.string().nullish(),
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
-  "audio": zod.string().nullish()
+  "audio": zod.string().nullish(),
+  "feedId": zod.string().uuid().regex(getFeedsRefreshIdResponseFeedIdRegExpOne).or(zod.null()).optional()
 })
 export const getFeedsRefreshIdResponse = zod.array(getFeedsRefreshIdResponseItem)
 

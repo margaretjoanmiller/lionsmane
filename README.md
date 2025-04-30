@@ -13,7 +13,7 @@ Project goals:
 
 ## TODO
 
-- [ ] !!Only fetch articles from after last sync datetime
+- [x] !!Only fetch articles from after last sync datetime
 
 ## License
 

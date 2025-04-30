@@ -9,7 +9,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
@@ -18,15 +17,29 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import type { SchemaFeedDto } from "@/utils/gen/schema";
 
-const { loggedIn, login } = useOidcAuth();
+const { loggedIn, login, user } = useOidcAuth();
 
-if (!loggedIn.value) {
+if (!loggedIn.value || !user.value) {
   await login();
 }
 
 const feedStore = useFeedStore();
-await feedStore.fetchFeeds();
+
+const { data, error } = await useLionData("/feeds", {
+  headers: {
+    Authorization: `Bearer ${user.value?.accessToken}`,
+  },
+});
+if (error.value) {
+  throw createError({
+    status: 500,
+    statusText: error.value.message,
+  });
+}
+
+feedStore.storeFeeds(data.value as SchemaFeedDto[]);
 </script>
 
 <template>

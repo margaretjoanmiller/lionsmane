@@ -485,6 +485,7 @@ export type components = {
             publishedAt?: components["schemas"]["Instant"] | null;
             categories?: string[] | null;
             audio?: string | null;
+            feedId?: components["schemas"]["UUID"] | null;
         };
         FeedDto: {
             id?: components["schemas"]["UUID"] | null;

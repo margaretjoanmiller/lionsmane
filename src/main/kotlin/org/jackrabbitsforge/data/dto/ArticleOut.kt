@@ -18,4 +18,6 @@ data class ArticleOut(
     var publishedAt: Instant?,
     var categories: List<String>? = listOf(),
     var audio: String?,
+
+    var feedId: UUID?
 )

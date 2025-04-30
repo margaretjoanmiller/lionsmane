@@ -43,7 +43,7 @@ class Article {
     @ManyToOne
     lateinit var feed: Feed
 
-    fun toDto() = ArticleOut(
+    fun toDto(feedId: UUID) = ArticleOut(
         id,
         title,
         author,
@@ -53,6 +53,7 @@ class Article {
         url,
         publishedDate,
         categories ?: listOf(),
-        audio
+        audio,
+        feedId
     )
 }

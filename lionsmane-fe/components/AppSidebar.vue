@@ -28,7 +28,7 @@ const data = {
   user: {
     name: user?.value?.userInfo?.upn || "error",
     email: user?.value?.userName || "<no email>",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/img/Doc_Brown.jpg",
   },
 
   navMain: [
@@ -52,7 +52,7 @@ const data = {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" as-child>
-            <a href="/dashboard">
+            <NuxtLink href="/dashboard">
               <div
                 class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
               >
@@ -61,7 +61,7 @@ const data = {
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-medium">lionsmane</span>
               </div>
-            </a>
+            </NuxtLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

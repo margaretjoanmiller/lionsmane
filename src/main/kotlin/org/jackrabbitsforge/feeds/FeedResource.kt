@@ -10,6 +10,7 @@ import io.quarkus.security.identity.SecurityIdentity
 import io.smallrye.mutiny.Uni
 import io.vertx.mutiny.core.eventbus.EventBus
 import jakarta.transaction.Transactional
+import jakarta.validation.Valid
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.Response
 import kotlinx.datetime.Clock
@@ -48,11 +49,11 @@ class FeedResource(
     }
 
     @POST
-    fun postFeed(feed: FeedIn): Response {
+    fun postFeed(@Valid feed: FeedIn): Response {
         val newFeed = Feed()
         newFeed.title = feed.title
         newFeed.description = feed.description ?: ""
-        newFeed.url = checkUrl(feed.url)
+        newFeed.url = feed.url
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())

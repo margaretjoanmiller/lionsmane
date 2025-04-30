@@ -45,6 +45,13 @@
           },
           "audio" : {
             "type" : [ "string", "null" ]
+          },
+          "feedId" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/UUID"
+            }, {
+              "type" : "null"
+            } ]
           }
         }
       },

@@ -14,6 +14,7 @@ import {
  * @summary Get All Articles
  */
 export const getArticlesResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getArticlesResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
 export const getArticlesResponseItem = zod.object({
@@ -26,7 +27,8 @@ export const getArticlesResponseItem = zod.object({
   "url": zod.string().nullish(),
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
-  "audio": zod.string().nullish()
+  "audio": zod.string().nullish(),
+  "feedId": zod.string().uuid().regex(getArticlesResponseFeedIdRegExpOne).or(zod.null()).optional()
 })
 export const getArticlesResponse = zod.array(getArticlesResponseItem)
 
@@ -41,6 +43,7 @@ export const getArticlesFeedFeedIdParams = zod.object({
 })
 
 export const getArticlesFeedFeedIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getArticlesFeedFeedIdResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
 export const getArticlesFeedFeedIdResponseItem = zod.object({
@@ -53,7 +56,8 @@ export const getArticlesFeedFeedIdResponseItem = zod.object({
   "url": zod.string().nullish(),
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
-  "audio": zod.string().nullish()
+  "audio": zod.string().nullish(),
+  "feedId": zod.string().uuid().regex(getArticlesFeedFeedIdResponseFeedIdRegExpOne).or(zod.null()).optional()
 })
 export const getArticlesFeedFeedIdResponse = zod.array(getArticlesFeedFeedIdResponseItem)
 
@@ -68,6 +72,7 @@ export const getArticlesIdParams = zod.object({
 })
 
 export const getArticlesIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getArticlesIdResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
 export const getArticlesIdResponse = zod.object({
@@ -80,6 +85,7 @@ export const getArticlesIdResponse = zod.object({
   "url": zod.string().nullish(),
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
-  "audio": zod.string().nullish()
+  "audio": zod.string().nullish(),
+  "feedId": zod.string().uuid().regex(getArticlesIdResponseFeedIdRegExpOne).or(zod.null()).optional()
 })
 

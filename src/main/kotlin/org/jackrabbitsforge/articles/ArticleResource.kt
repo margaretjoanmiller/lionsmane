@@ -27,7 +27,14 @@ class ArticleResource(
     fun getArticle(id: UUID): ArticleOut {
         try {
             val articleOut = articleRepository.findByUUID(id)
-            return articleOut?.toDto() ?: throw Exception("Article not found")
+
+            val feedId = articleOut?.feed?.id
+            if (feedId == null) {
+                Log.error("Orphaned article, could not find feed")
+                throw Error("Orphaned article, could not find feed")
+            }
+
+            return articleOut.toDto(feedId)
         } catch (e: Exception) {
             Log.error("Error getting article", e)
             throw e
@@ -39,7 +46,7 @@ class ArticleResource(
     fun getArticlesForFeed(feedId: UUID): List<ArticleOut> {
         try {
             val articlesOut = articleRepository.findByFeedId(feedId)
-            return articlesOut.map { it.toDto() }
+            return articlesOut.map { it.toDto(feedId) }
         } catch (e: Exception) {
             Log.error("Error getting articles for feed", e)
             throw e
@@ -50,7 +57,14 @@ class ArticleResource(
     fun getAllArticles(): List<ArticleOut> {
         try {
             val articlesOut = articleRepository.listAll()
-            return articlesOut.map { it.toDto() }
+            return articlesOut.map {
+                val feedId = it.feed.id
+                if (feedId == null) {
+                    Log.error("Orphaned article, could not find feed")
+                    throw Error("Orphaned article, could not find feed")
+                }
+                it.toDto(feedId)
+            }
         } catch (e: Exception) {
             Log.error("Error getting articles", e)
             throw e

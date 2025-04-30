@@ -4,8 +4,10 @@
 
 package org.jackrabbitsforge.data.dto
 
+import java.net.URL
+
 data class FeedIn(
     val title: String,
     val description: String?,
-    val url: String,
+    val url: URL,
 )

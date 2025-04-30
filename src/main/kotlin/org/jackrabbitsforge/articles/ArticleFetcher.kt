@@ -7,6 +7,7 @@ package org.jackrabbitsforge.articles
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import io.quarkus.logging.Log
+import io.quarkus.scheduler.Scheduled
 import io.quarkus.vertx.ConsumeEvent
 import io.smallrye.common.annotation.Blocking
 import io.smallrye.common.annotation.RunOnVirtualThread
@@ -19,22 +20,29 @@ import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.entities.Article
 import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
-import org.jackrabbitsforge.utils.smartLocalDateTimeParse
-import org.jackrabbitsforge.utils.localDateTimeToInstant
+import io.ktor.client.*
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.*
+import io.ktor.client.request.request
 import org.jsoup.Jsoup
 import org.jsoup.safety.Safelist
-import java.time.Clock
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 import java.util.UUID
 
 @ApplicationScoped
 class ArticleFetcher(private val feedRepository: FeedRepository, private val articleRepository: ArticleRepository) {
 
+    val client = HttpClient(CIO) {
+        install(HttpRequestRetry) {
+            retryOnServerErrors(maxRetries = 5)
+            exponentialDelay()
+        }
+    }
 
     @ConsumeEvent("fetchArticles")
     @RunOnVirtualThread
@@ -43,7 +51,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
     fun fetchArticles(feedId: UUID): List<ArticleOut> {
         try {
             val feed = feedRepository.findByUUID(feedId)
-            if (feed == null) {
+            if (feed == null || feed.id == null) {
                 Log.error("Feed not found: $feedId")
                 return listOf()
             }
@@ -61,10 +69,12 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                         return@map null
                     }
 
-                    var itemDate = ZonedDateTime.parse(rawDate, rfc).toInstant()
-
-                    if (itemDate == null) {
-                        itemDate = rawDate.smartLocalDateTimeParse().toInstant(ZoneOffset.UTC)
+                    var itemDate = Instant.now()
+                    try {
+                        itemDate = ZonedDateTime.parse(rawDate, rfc).toInstant()
+                    } catch (e: DateTimeParseException) {
+                        Log.info("Using backup date parser $e")
+                        itemDate = Instant.parse(rawDate)
                     }
 
                     if (itemLink != null
@@ -80,10 +90,15 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                         ) {
                             return@map null
                         }
-                        val doc = Jsoup.connect(itemLink).timeout(3000).get()
+
+
+                        val rawDoc: String = runBlocking {
+                            client.request(itemLink).body()
+                        }
+                        val doc = Jsoup.parse(rawDoc)
                         val cleanBody = Jsoup.clean(doc.body().html(), Safelist.basic())
                         val readAbility: ReadArt = Readability4J(itemLink, cleanBody).parse()
-                        val content = readAbility.contentWithDocumentsCharsetOrUtf8
+                        val content = readAbility.content
 
                         val rawPreview = item.content
                         var preview = ""
@@ -111,7 +126,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
 
                         articleRepository.persist(newArt)
 
-                        newArt.toDto()
+                        newArt.toDto(feed.id!!)
                     } else {
                         return@map null
                     }
@@ -122,6 +137,24 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
         } catch (e: Exception) {
             Log.error("Error getting feedRefresh", e)
             return listOf()
+        }
+    }
+
+    @Scheduled(every = "1h")
+    fun updateAllFeeds() {
+        try {
+            val feeds = feedRepository.listAll()
+            if (feeds.isEmpty()) {
+                Log.info("No feeds")
+                return
+            }
+
+            feeds.forEach {
+                if (it.id != null) fetchArticles(it.id!!)
+            }
+        } catch (e: Exception) {
+            Log.error("Error updating articles", e)
+            return
         }
     }
 }
