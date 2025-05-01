@@ -140,7 +140,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
         }
     }
 
-    @Scheduled(every = "1h")
+    @Scheduled(every = "30m")
     fun updateAllFeedsSchedule() {
         try {
             val feeds = feedRepository.listAll()
