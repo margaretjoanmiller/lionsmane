@@ -57,10 +57,10 @@ async function onReload() {
             </BreadcrumbList>
           </Breadcrumb>
           <Button
-            @click="onReload"
             variant="outline"
             size="icon"
             class="fixed right-4"
+            @click="onReload"
           >
             <Icon name="material-symbols:refresh" />
           </Button>

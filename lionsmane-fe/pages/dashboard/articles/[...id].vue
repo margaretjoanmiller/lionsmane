@@ -42,7 +42,7 @@ const content = article.content ?? article.textPreview;
 
 <template>
   <div
-    class="text-justify bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm"
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm"
   >
     <div class="m-6">
       <h1
