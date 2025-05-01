@@ -46,9 +46,9 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
 
     @ConsumeEvent("fetchArticles")
     @RunOnVirtualThread
-    @Blocking
     @Transactional
     fun fetchArticles(feedId: UUID): List<ArticleOut> {
+        Log.info("Fetching articles for $feedId")
         try {
             val feed = feedRepository.findByUUID(feedId)
             if (feed == null || feed.id == null) {
@@ -141,7 +141,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
     }
 
     @Scheduled(every = "1h")
-    fun updateAllFeeds() {
+    fun updateAllFeedsSchedule() {
         try {
             val feeds = feedRepository.listAll()
             if (feeds.isEmpty()) {
@@ -155,6 +155,27 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
         } catch (e: Exception) {
             Log.error("Error updating articles", e)
             return
+        }
+    }
+
+    @ConsumeEvent("fetchAllArticles")
+    fun updateAllFeedsSchedule(whenToFetch: String) {
+        if (whenToFetch == "now") {
+            Log.info("Fetching all articles")
+            try {
+                val feeds = feedRepository.listAll()
+                if (feeds.isEmpty()) {
+                    Log.info("No feeds")
+                    return
+                }
+
+                feeds.forEach {
+                    fetchArticles(it.id!!)
+                }
+            } catch (e: Exception) {
+                Log.error("Error updating articles", e)
+                return
+            }
         }
     }
 }

@@ -118,11 +118,15 @@ class FeedResource(
 
     @GET
     @Path("/refresh/{id}")
-    fun getFeedRefresh(id: UUID): Uni<List<ArticleOut>> = eventBus.request<List<ArticleOut>>("fetchArticles", id)
-        .onItem()
-        .transform { it.body() }
-        .onFailure()
-        .retry()
-        .atMost(2)
+    fun getFeedRefresh(id: UUID): Response {
+        eventBus.publish("fetchArticles", id)
+        return Response.accepted().build()
+    }
 
+    @GET
+    @Path("/refresh/all")
+    fun getAllFeedsRefresh(): Response {
+        eventBus.publish("fetchAllFeeds", "now")
+        return Response.accepted().build()
+    }
 }

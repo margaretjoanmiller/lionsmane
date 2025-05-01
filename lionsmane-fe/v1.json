@@ -291,6 +291,26 @@
         } ]
       }
     },
+    "/feeds/refresh/all" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Get All Feeds Refresh",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/feeds/refresh/{id}" : {
       "get" : {
         "parameters" : [ {
@@ -303,17 +323,7 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ArticleOut"
-                  }
-                }
-              }
-            }
+            "description" : "OK"
           },
           "401" : {
             "description" : "Not Authorized"

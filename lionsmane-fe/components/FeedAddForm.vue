@@ -18,11 +18,10 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { postFeedsBody } from "@/utils/gen/feed-resource";
-import type { SchemaFeedDto } from "~/utils/gen/schema";
 
 const { $toast } = useNuxtApp();
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(postFeedsBody),
 });
 
