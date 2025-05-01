@@ -17,7 +17,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import type { SchemaFeedDto } from "@/utils/gen/schema";
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -27,19 +26,9 @@ if (!loggedIn.value || !user.value) {
 
 const feedStore = useFeedStore();
 
-const { data, error } = await useLionData("/feeds", {
-  headers: {
-    Authorization: `Bearer ${user.value?.accessToken}`,
-  },
+onMounted(() => {
+  feedStore.fetchFeeds();
 });
-if (error.value) {
-  throw createError({
-    status: 500,
-    statusText: error.value.message,
-  });
-}
-
-feedStore.storeFeeds(data.value as SchemaFeedDto[]);
 </script>
 
 <template>

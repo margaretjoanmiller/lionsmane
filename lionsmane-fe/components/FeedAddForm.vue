@@ -44,22 +44,8 @@ const onSubmit = handleSubmit(async (values) => {
       },
 
       async onResponse() {
-        try {
-          const response = await $lion("/feeds", {
-            headers: {
-              Authorization: `Bearer ${user.value?.accessToken}`,
-            },
-          });
-
-          if (!response) {
-            $toast.error("Error updating feed list");
-          }
-          feedStore.storeFeeds(response as SchemaFeedDto[]);
-          $toast.success("Successfully added feed");
-        } catch (e) {
-          console.error(e);
-          $toast.error("Failed to update feed list");
-        }
+        await feedStore.fetchFeeds();
+        $toast.success("Successfully added feed");
       },
       async onResponseError({ error }) {
         console.error(error);

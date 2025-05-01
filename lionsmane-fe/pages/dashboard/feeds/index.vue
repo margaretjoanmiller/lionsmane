@@ -5,26 +5,14 @@ definePageMeta({
   alias: "/dashboard/feeds/all",
 });
 
-const { user } = useOidcAuth();
-
 const articleStore = useArticleStore();
 
-const { data, error } = await useLionData("/articles", {
-  headers: {
-    Authorization: `Bearer ${user.value?.accessToken}`,
-  },
+onMounted(() => {
+  articleStore.fetchArticles();
 });
 
-let anyArticles;
-if (!data.value || error.value) {
-  anyArticles = false;
-} else {
-  anyArticles = true;
-  articleStore.storeArticles(data.value);
-}
-
-const articles = computed(() =>
-  articleStore.articles.map((article) => {
+const articles = computed(() => {
+  return articleStore.articles.map((article) => {
     {
       if (
         !article.title ||
@@ -44,8 +32,8 @@ const articles = computed(() =>
         date: article.publishedAt,
       };
     }
-  }),
-);
+  });
+});
 </script>
 
 <template>

@@ -11,22 +11,15 @@ const { user } = useOidcAuth();
 
 const route = useRoute();
 
-const { data, error } = await useLionData("/articles", {
-  headers: {
-    Authorization: `Bearer ${user.value?.accessToken}`,
-  },
-});
-
 const articleStore = useArticleStore();
 
-if (data.value || !error.value) {
-  articleStore.storeArticles(data.value);
-}
+onMounted(() => {
+  articleStore.fetchArticles();
+});
 
-let articles;
-if (route.params.id !== "") {
-  articles = articleStore.articles
-    .filter((article) => article.feedId == route.params.id)
+const articles = computed(() => {
+  return articleStore.articles
+    .filter((article) => article.feedId === route.params.id)
     .map((article) => {
       {
         if (
@@ -48,29 +41,7 @@ if (route.params.id !== "") {
         };
       }
     });
-} else {
-  articles = articleStore.articles.map((article) => {
-    {
-      if (
-        !article.title ||
-        !article.textPreview ||
-        !article.publishedAt ||
-        !article.id
-      ) {
-        throw createError({
-          status: 500,
-          statusText: "Malformed articles, something went very wrong",
-        });
-      }
-      return {
-        id: article.id,
-        title: article.title,
-        preview: `${article.textPreview.substring(0, 100)}...`,
-        date: article.publishedAt,
-      };
-    }
-  });
-}
+});
 </script>
 
 <template>
@@ -80,5 +51,3 @@ if (route.params.id !== "") {
     </template>
   </div>
 </template>
-
-<style scoped></style>

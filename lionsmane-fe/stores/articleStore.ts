@@ -6,14 +6,20 @@ import { defineStore } from "pinia";
 import type { SchemaArticleOut } from "@/utils/gen/schema";
 
 export const useArticleStore = defineStore("articleStore", () => {
+  const { user } = useOidcAuth();
+
   const articles = ref([] as SchemaArticleOut[]);
 
-  function storeArticles(arts: SchemaArticleOut[]) {
-    articles.value = arts;
+  async function fetchArticles() {
+    articles.value = await $lion("/articles", {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
   }
 
   return {
     articles,
-    storeArticles,
+    fetchArticles,
   };
 });

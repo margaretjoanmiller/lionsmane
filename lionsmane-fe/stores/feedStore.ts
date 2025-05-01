@@ -5,13 +5,21 @@
 import { defineStore } from "pinia";
 import type { SchemaFeedDto } from "@/utils/gen/schema";
 
-export const useFeedStore = defineStore("feeds", {
-  state: () => ({
-    feeds: [] as SchemaFeedDto[],
-  }),
-  actions: {
-    storeFeeds(newFeedsDto: SchemaFeedDto[]) {
-      this.feeds = newFeedsDto;
-    },
-  },
+export const useFeedStore = defineStore("feeds", () => {
+  const { user } = useOidcAuth();
+
+  const feeds = ref([] as SchemaFeedDto[]);
+
+  async function fetchFeeds() {
+    feeds.value = await $lion("/feeds", {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+  }
+
+  return {
+    feeds,
+    fetchFeeds,
+  };
 });
