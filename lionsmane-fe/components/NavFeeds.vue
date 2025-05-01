@@ -11,12 +11,35 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useFeedStore } from "@/stores/feedStore";
-import { CollapsibleTrigger } from "~/components/ui/collapsible";
+import { useArticleStore } from "@/stores/articleStore";
+import { sleep } from "@/utils/utilFunctions";
+import { CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronRight } from "lucide-vue-next";
 
+const { user } = useOidcAuth();
+
 const feedStore = useFeedStore();
+const articleStore = useArticleStore();
 
 const { feeds } = storeToRefs(feedStore);
+
+const { $toast } = useNuxtApp();
+
+async function onRequestRefresh() {
+  try {
+    await $lion("/feeds/refresh/all", {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    $toast.success("Feeds are fetching new articles, please wait...");
+    await sleep(5000);
+    await articleStore.fetchArticles();
+  } catch (e) {
+    console.error(e);
+    $toast.error("Failed to request feed refresh");
+  }
+}
 </script>
 
 <template>
@@ -56,6 +79,12 @@ const { feeds } = storeToRefs(feedStore);
                   <span>Add feed</span>
                   <Icon name="mdi:plus-circle" />
                 </NuxtLink>
+              </SidebarMenuButton>
+              <SidebarMenuButton as-child @click="onRequestRefresh">
+                <span
+                  >Request refresh
+                  <Icon name="material-symbols:cloud-sync-outline"
+                /></span>
               </SidebarMenuButton>
             </SidebarMenuSub>
           </CollapsibleContent>

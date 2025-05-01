@@ -25,10 +25,16 @@ if (!loggedIn.value || !user.value) {
 }
 
 const feedStore = useFeedStore();
+const articlesStore = useArticleStore();
 
 onMounted(() => {
   feedStore.fetchFeeds();
 });
+
+async function onReload() {
+  await feedStore.fetchFeeds();
+  await articlesStore.fetchArticles();
+}
 </script>
 
 <template>
@@ -50,6 +56,14 @@ onMounted(() => {
               <BreadcrumbSeparator class="hidden md:block" />
             </BreadcrumbList>
           </Breadcrumb>
+          <Button
+            @click="onReload"
+            variant="outline"
+            size="icon"
+            class="fixed right-4"
+          >
+            <Icon name="material-symbols:refresh" />
+          </Button>
         </div>
       </header>
       <div class="flex flex-1 flex-col gap-4 p-4 pt-0">

@@ -52,6 +52,7 @@
     "@parcel/watcher"
   ],
   "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.20",
     "@nuxtjs/color-mode": "^3.5.2",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",

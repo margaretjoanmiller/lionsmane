@@ -126,7 +126,7 @@ class FeedResource(
     @GET
     @Path("/refresh/all")
     fun getAllFeedsRefresh(): Response {
-        eventBus.publish("fetchAllFeeds", "now")
+        eventBus.publish("fetchAllArticles", "now")
         return Response.accepted().build()
     }
 }
