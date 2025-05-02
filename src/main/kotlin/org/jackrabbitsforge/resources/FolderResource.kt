@@ -40,6 +40,20 @@ class FolderResource(
             .map { it.toDto() }
     }
 
+    @GET
+    @Path("/{id}")
+    fun getFolder(id: UUID): FolderOut {
+        val folder = folderRepository.findByUUID(id)
+
+        if (folder == null)
+            throw Error("Folder not found! $id")
+
+        if (folder.userName != identity.principal.name)
+            throw Error("Unauthorized $id")
+
+        return folder.toDto()
+    }
+
     @POST
     fun createFolder(@Valid folder: FolderIn): FolderOut {
         val newFolder = Folder()

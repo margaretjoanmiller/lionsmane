@@ -11,7 +11,6 @@ import java.util.UUID
  * DTO for {@link org.jackrabbitsforge.data.entities.Folder}
  */
 data class FolderIn(
-    val userName: String,
     val name: String,
     val description: String? = null,
     val feeds: List<UUID>? = mutableListOf()

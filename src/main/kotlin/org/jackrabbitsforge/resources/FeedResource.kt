@@ -65,6 +65,7 @@ class FeedResource(
                 if (folderToFileInto.userName != identity.principal.name)
                     return Response.status(404).build()
                 newFeed.folder = folderToFileInto
+                folderToFileInto.feeds.add(newFeed)
             } catch (e: Exception) {
                 Log.error("User tried to update feed with non-existent folder")
                 return Response.status(422).build()
@@ -103,6 +104,7 @@ class FeedResource(
                 if (folderToFileInto.userName != identity.principal.name)
                     return Response.status(404).build()
                 feedToUpdate.folder = folderToFileInto
+                folderToFileInto.feeds.add(feedToUpdate)
             } catch (e: Exception) {
                 Log.error("User tried to update feed with non-existent folder")
                 return Response.status(422).build()

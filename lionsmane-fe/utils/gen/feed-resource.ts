@@ -4,112 +4,105 @@
  * lionsmane API
  * OpenAPI spec version: 1.0.0-SNAPSHOT
  */
-import { z as zod } from "zod";
+import {
+  z as zod
+} from 'zod';
+
+
 
 /**
  * @summary Post Feed
  */
+export const postFeedsBodyFolderIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
 export const postFeedsBody = zod.object({
-  title: zod.string(),
-  description: zod.string().nullish(),
-  url: zod.string().url(),
-});
+  "title": zod.string(),
+  "description": zod.string().nullish(),
+  "url": zod.string().url(),
+  "folderId": zod.string().uuid().regex(postFeedsBodyFolderIdRegExpOne).or(zod.null()).optional()
+})
 
 /**
  * @summary List Feeds
  */
-export const getFeedsResponseIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const getFeedsResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getFeedsResponseFolderIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const getFeedsResponseItem = zod.object({
-  id: zod
-    .string()
-    .uuid()
-    .regex(getFeedsResponseIdRegExpOne)
-    .or(zod.null())
-    .optional(),
-  title: zod.string().nullish(),
-  description: zod.string().nullish(),
-  url: zod.string().nullish(),
-  lastUpdated: zod.string().datetime({}).or(zod.null()).optional(),
-});
-export const getFeedsResponse = zod.array(getFeedsResponseItem);
+  "id": zod.string().uuid().regex(getFeedsResponseIdRegExpOne).or(zod.null()).optional(),
+  "title": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "url": zod.string().nullish(),
+  "lastUpdated": zod.string().datetime({}).or(zod.null()).optional(),
+  "folderId": zod.string().uuid().regex(getFeedsResponseFolderIdRegExpOne).or(zod.null()).optional()
+})
+export const getFeedsResponse = zod.array(getFeedsResponseItem)
 
 /**
  * @summary Get Feed Refresh
  */
-export const getFeedsRefreshIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const getFeedsRefreshIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const getFeedsRefreshIdParams = zod.object({
-  id: zod.string().uuid().regex(getFeedsRefreshIdPathIdRegExp),
-});
+  "id": zod.string().uuid().regex(getFeedsRefreshIdPathIdRegExp)
+})
 
 /**
  * @summary Update Feed
  */
-export const putFeedsIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const putFeedsIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const putFeedsIdParams = zod.object({
-  id: zod.string().uuid().regex(putFeedsIdPathIdRegExp),
-});
+  "id": zod.string().uuid().regex(putFeedsIdPathIdRegExp)
+})
 
-export const putFeedsIdBodyIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const putFeedsIdBodyIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const putFeedsIdBodyFolderIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const putFeedsIdBody = zod.object({
-  id: zod
-    .string()
-    .uuid()
-    .regex(putFeedsIdBodyIdRegExpOne)
-    .or(zod.null())
-    .optional(),
-  title: zod.string().nullish(),
-  description: zod.string().nullish(),
-  url: zod.string().nullish(),
-  lastUpdated: zod.string().datetime({}).or(zod.null()).optional(),
-});
+  "id": zod.string().uuid().regex(putFeedsIdBodyIdRegExpOne).or(zod.null()).optional(),
+  "title": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "url": zod.string().nullish(),
+  "lastUpdated": zod.string().datetime({}).or(zod.null()).optional(),
+  "folderId": zod.string().uuid().regex(putFeedsIdBodyFolderIdRegExpOne).or(zod.null()).optional()
+})
 
 /**
  * @summary Get Feed
  */
-export const getFeedsIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const getFeedsIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const getFeedsIdParams = zod.object({
-  id: zod.string().uuid().regex(getFeedsIdPathIdRegExp),
-});
+  "id": zod.string().uuid().regex(getFeedsIdPathIdRegExp)
+})
 
-export const getFeedsIdResponseIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const getFeedsIdResponseIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getFeedsIdResponseFolderIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const getFeedsIdResponse = zod.object({
-  id: zod
-    .string()
-    .uuid()
-    .regex(getFeedsIdResponseIdRegExpOne)
-    .or(zod.null())
-    .optional(),
-  title: zod.string().nullish(),
-  description: zod.string().nullish(),
-  url: zod.string().nullish(),
-  lastUpdated: zod.string().datetime({}).or(zod.null()).optional(),
-});
+  "id": zod.string().uuid().regex(getFeedsIdResponseIdRegExpOne).or(zod.null()).optional(),
+  "title": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "url": zod.string().nullish(),
+  "lastUpdated": zod.string().datetime({}).or(zod.null()).optional(),
+  "folderId": zod.string().uuid().regex(getFeedsIdResponseFolderIdRegExpOne).or(zod.null()).optional()
+})
 
 /**
  * @summary Delete Feed
  */
-export const deleteFeedsIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
+export const deleteFeedsIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
 
 export const deleteFeedsIdParams = zod.object({
-  id: zod.string().uuid().regex(deleteFeedsIdPathIdRegExp),
-});
+  "id": zod.string().uuid().regex(deleteFeedsIdPathIdRegExp)
+})
+
