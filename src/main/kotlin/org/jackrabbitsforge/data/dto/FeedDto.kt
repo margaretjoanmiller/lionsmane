@@ -17,5 +17,6 @@ data class FeedDto(
     val title: String? = null,
     val description: String? = null,
     val url: URL? = null,
-    val lastUpdated: Instant? = null
+    val lastUpdated: Instant? = null,
+    val folderId: UUID? = null
 ) : Serializable

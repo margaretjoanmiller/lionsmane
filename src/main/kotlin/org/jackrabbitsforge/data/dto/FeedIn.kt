@@ -5,9 +5,11 @@
 package org.jackrabbitsforge.data.dto
 
 import java.net.URL
+import java.util.UUID
 
 data class FeedIn(
     val title: String,
     val description: String?,
     val url: URL,
+    val folderId: UUID?
 )

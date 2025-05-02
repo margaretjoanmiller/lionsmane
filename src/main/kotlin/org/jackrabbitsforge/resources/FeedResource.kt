@@ -7,7 +7,6 @@ package org.jackrabbitsforge.resources
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
-import io.smallrye.mutiny.Uni
 import io.vertx.mutiny.core.eventbus.EventBus
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
@@ -17,12 +16,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
-import org.jackrabbitsforge.utils.checkUrl
-import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.dto.FeedIn
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
+import org.jackrabbitsforge.data.repositories.FolderRepository
 import java.time.Instant
 import java.util.UUID
 
@@ -31,8 +29,9 @@ import java.util.UUID
 @Path("/feeds")
 class FeedResource(
     private var feedRepository: FeedRepository,
+    private var folderRepository: FolderRepository,
     private var identity: SecurityIdentity,
-    private val eventBus: EventBus
+    private val eventBus: EventBus,
 ) {
 
     @GET
@@ -58,6 +57,20 @@ class FeedResource(
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())
 
+        if (feed.folderId != null) {
+            try {
+                val folderToFileInto = folderRepository.findByUUID(feed.folderId)
+                if (folderToFileInto == null)
+                    return Response.status(404).build()
+                if (folderToFileInto.userName != identity.principal.name)
+                    return Response.status(404).build()
+                newFeed.folder = folderToFileInto
+            } catch (e: Exception) {
+                Log.error("User tried to update feed with non-existent folder")
+                return Response.status(422).build()
+            }
+        }
+
         try {
             feedRepository.persist(newFeed)
             Log.info("Created new feed with id: ${newFeed.id}")
@@ -81,6 +94,21 @@ class FeedResource(
         feedToUpdate.title = feed.title ?: feedToUpdate.title
         feedToUpdate.url = feed.url ?: feedToUpdate.url
         feedToUpdate.description = feed.description ?: feedToUpdate.description
+
+        if (feed.folderId != null) {
+            try {
+                val folderToFileInto = folderRepository.findByUUID(feed.folderId)
+                if (folderToFileInto == null)
+                    return Response.status(404).build()
+                if (folderToFileInto.userName != identity.principal.name)
+                    return Response.status(404).build()
+                feedToUpdate.folder = folderToFileInto
+            } catch (e: Exception) {
+                Log.error("User tried to update feed with non-existent folder")
+                return Response.status(422).build()
+            }
+        }
+
         return Response.ok(feedToUpdate.toDto()).status(200).build()
     }
 
