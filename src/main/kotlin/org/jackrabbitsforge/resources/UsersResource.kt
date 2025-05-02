@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
  */
 
-package org.jackrabbitsforge.authorization
+package org.jackrabbitsforge.resources
 
 import io.quarkus.security.identity.SecurityIdentity
 import jakarta.enterprise.inject.Default
@@ -28,4 +28,3 @@ class UsersResource {
         val userName: String = identity.principal.name
     }
 }
-
