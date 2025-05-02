@@ -32,6 +32,7 @@ const route = useRoute();
 
 onMounted(() => {
   feedStore.fetchFeeds();
+  folderStore.fetchFolders();
 });
 
 async function onReload() {

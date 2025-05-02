@@ -11,7 +11,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useFeedStore } from "@/stores/feedStore";
-import { useArticleStore } from "@/stores/articleStore";
 import { CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronRight } from "lucide-vue-next";
 
@@ -19,6 +18,7 @@ const feedStore = useFeedStore();
 const folderStore = useFolderStore();
 
 const { feeds } = storeToRefs(feedStore);
+const { folders } = storeToRefs(folderStore);
 
 const orphanFeeds = computed(() => {
   return feedStore.feeds.filter((feed) => !feed.folderId);
@@ -29,7 +29,8 @@ const orphanFeeds = computed(() => {
   <SidebarGroup>
     <SidebarGroupLabel>RSS</SidebarGroupLabel>
     <SidebarMenu>
-      <Collapsible class="group/collapsible">
+      <!-- Main Feeds Collapsible -->
+      <Collapsible class="group/feeds-collapsible">
         <SidebarMenuItem>
           <SidebarMenuButton>
             <NuxtLink :to="{ name: 'dashboard-feeds-all' }">Feeds</NuxtLink>
@@ -37,12 +38,13 @@ const orphanFeeds = computed(() => {
           <CollapsibleTrigger as-child>
             <SidebarMenuAction>
               <ChevronRight
-                class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+                class="ml-auto transition-transform duration-200 group-data-[state=open]/feeds-collapsible:rotate-90"
               />
             </SidebarMenuAction>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <SidebarMenuSub>
+              <!-- Orphan Feeds (without folders) -->
               <SidebarMenuButton
                 v-for="feed in orphanFeeds"
                 :key="feed.id!"
@@ -55,35 +57,47 @@ const orphanFeeds = computed(() => {
                     params: { id: feed.id! },
                   }"
                 >
-                  <!--              <component :is="feed.icon" />-->
                   <span>{{ feed.title }}</span>
                 </NuxtLink>
               </SidebarMenuButton>
-              <Collapsible v-for="folder in folders">
-                <CollapsibleTrigger as-child>
-                  <SidebarMenuButton>{{ folder.name }}</SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <template v-for="feed in feeds">
-                    <SidebarMenuButton
-                      v-if="feed.folderId === folder.id"
-                      :key="feed.id!"
-                      as-child
-                      :tooltip="feed.title!"
-                    >
-                      <NuxtLink
-                        :to="{
-                          name: 'dashboard-feeds-id',
-                          params: { id: feed.id! },
-                        }"
-                      >
-                        <!--              <component :is="feed.icon" />-->
-                        <span>{{ feed.title }}</span>
-                      </NuxtLink>
+
+              <template v-for="folder in folders" :key="folder.id!">
+                <Collapsible class="group/folder-collapsible">
+                  <SidebarMenuSubItem>
+                    <SidebarMenuButton as-child :tooltip="folder.name">
+                      <span>{{ folder.name ?? "error" }}</span>
                     </SidebarMenuButton>
-                  </template>
-                </CollapsibleContent>
-              </Collapsible>
+                    <CollapsibleTrigger as-child>
+                      <SidebarMenuAction>
+                        <ChevronRight
+                          class="ml-auto transition-transform duration-200 group-data-[state=open]/folder-collapsible:rotate-90"
+                        />
+                      </SidebarMenuAction>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        <SidebarMenuButton
+                          v-for="feed in feeds.filter(
+                            (f) => f.folderId === folder.id,
+                          )"
+                          :key="feed.id!"
+                          as-child
+                          :tooltip="feed.title!"
+                        >
+                          <NuxtLink
+                            :to="{
+                              name: 'dashboard-feeds-id',
+                              params: { id: feed.id! },
+                            }"
+                          >
+                            <span>{{ feed.title }}</span>
+                          </NuxtLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuSubItem>
+                </Collapsible>
+              </template>
             </SidebarMenuSub>
           </CollapsibleContent>
         </SidebarMenuItem>
