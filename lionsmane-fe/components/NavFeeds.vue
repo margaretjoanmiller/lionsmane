@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import FormAddForm from "@/components/FeedAddForm.vue";
 import { useFeedStore } from "@/stores/feedStore";
 import { useArticleStore } from "@/stores/articleStore";
 import { sleep } from "@/utils/utilFunctions";
@@ -74,12 +75,7 @@ async function onRequestRefresh() {
                 </NuxtLink>
               </SidebarMenuButton>
               <Separator />
-              <SidebarMenuButton as-child>
-                <NuxtLink to="/dashboard/feeds/add">
-                  <span>Add feed</span>
-                  <Icon name="mdi:plus-circle" />
-                </NuxtLink>
-              </SidebarMenuButton>
+              <FormAddForm />
               <SidebarMenuButton as-child @click="onRequestRefresh">
                 <span
                   >Request refresh

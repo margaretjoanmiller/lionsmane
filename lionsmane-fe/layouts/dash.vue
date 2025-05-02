@@ -17,6 +17,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { match } from "ts-pattern";
+import { Primitive } from "reka-ui";
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -26,6 +28,7 @@ if (!loggedIn.value || !user.value) {
 
 const feedStore = useFeedStore();
 const articlesStore = useArticleStore();
+const route = useRoute();
 
 onMounted(() => {
   feedStore.fetchFeeds();
@@ -54,12 +57,42 @@ async function onReload() {
                 <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator class="hidden md:block" />
+              <template v-if="route.name === 'dashboard-feeds-all'">
+                <BreadcrumbItem>
+                  <NuxtLink
+                    to="/dashboard/feeds"
+                    class="hover:text-foreground transition-colors"
+                  >
+                    Feeds
+                  </NuxtLink>
+                </BreadcrumbItem>
+              </template>
+              <template v-else-if="route.name === 'dashboard-feeds-id'">
+                <BreadcrumbItem>
+                  <NuxtLink
+                    to="/dashboard/feeds"
+                    class="hover:text-foreground transition-colors"
+                  >
+                    Feeds
+                  </NuxtLink>
+                </BreadcrumbItem>
+              </template>
+              <template v-else-if="route.name === 'dashboard-articles-id'">
+                <BreadcrumbItem>
+                  <NuxtLink
+                    to="/dashboard/feeds"
+                    class="hover:text-foreground transition-colors"
+                  >
+                    Feeds
+                  </NuxtLink>
+                </BreadcrumbItem>
+              </template>
             </BreadcrumbList>
           </Breadcrumb>
           <Button
             variant="outline"
             size="icon"
-            class="fixed right-4"
+            class="absolute right-4"
             @click="onReload"
           >
             <Icon name="material-symbols:refresh" />

@@ -16,6 +16,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { postFeedsBody } from "@/utils/gen/feed-resource";
 
@@ -65,46 +74,59 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <form @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="title">
-      <FormItem>
-        <FormLabel>Feed title</FormLabel>
-        <FormControl>
-          <Input type="text" placeholder="epic news" v-bind="componentField" />
-        </FormControl>
-        <FormDescription> This is the name for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="url">
-      <FormItem>
-        <FormLabel>Feed url</FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="https://epic-news.com/feed.xml"
-            rules="required"
-            v-bind="componentField"
-          />
-        </FormControl>
-        <FormDescription> This is the url for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="description">
-      <FormItem>
-        <FormLabel>Feed description</FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="https://epic-news.com/feed.xml"
-            v-bind="componentField"
-          />
-        </FormControl>
-        <FormDescription> This is the url for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <Button type="submit"> Submit</Button>
-  </form>
+  <Dialog>
+    <DialogTrigger>
+      <SidebarMenuButton>Add Feed</SidebarMenuButton>
+    </DialogTrigger>
+    <DialogContent>
+      <form @submit="onSubmit">
+        <FormField v-slot="{ componentField }" name="title">
+          <FormItem>
+            <FormLabel>Feed title</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="epic news"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormDescription> This is the name for this feed</FormDescription>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <FormField v-slot="{ componentField }" name="url">
+          <FormItem>
+            <FormLabel>Feed url</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="https://epic-news.com/feed.xml"
+                rules="required"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormDescription> This is the url for this feed</FormDescription>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <FormField v-slot="{ componentField }" name="description">
+          <FormItem>
+            <FormLabel>Feed description</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="https://epic-news.com/feed.xml"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormDescription> This is the url for this feed</FormDescription>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <DialogClose as-child>
+          <Button type="submit"> Submit</Button>
+        </DialogClose>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>
