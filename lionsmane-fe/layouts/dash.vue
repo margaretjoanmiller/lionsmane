@@ -30,20 +30,12 @@ const articleStore = useArticleStore();
 const folderStore = useFolderStore();
 const route = useRoute();
 
-onMounted(() => {
-  feedStore.fetchFeeds();
-  folderStore.fetchFolders();
+onMounted(async () => {
+  await feedStore.fetchFeeds();
+  await folderStore.fetchFolders();
 });
 
 async function onReload() {
-  await feedStore.fetchFeeds();
-  await articleStore.fetchArticles();
-  await folderStore.fetchFolders();
-}
-
-const { $toast } = useNuxtApp();
-
-async function onRequestRefresh() {
   try {
     await $lion("/feeds/refresh/all", {
       headers: {
@@ -52,12 +44,16 @@ async function onRequestRefresh() {
     });
     $toast.success("Feeds are fetching new articles, please wait...");
     await sleep(5000);
+    await feedStore.fetchFeeds();
     await articleStore.fetchArticles();
+    await folderStore.fetchFolders();
   } catch (e) {
     console.error(e);
     $toast.error("Failed to request feed refresh");
   }
 }
+
+const { $toast } = useNuxtApp();
 </script>
 
 <template>
@@ -109,35 +105,24 @@ async function onRequestRefresh() {
               </template>
             </BreadcrumbList>
           </Breadcrumb>
-          <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-              <Button variant="outline" size="icon" class="absolute right-4">
-                <Icon name="solar:hamburger-menu-outline" />
-              </Button>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Button variant="outline" @click="onReload">
-                    <Icon name="material-symbols:refresh" />
-                    Refresh
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <NuxtLink to="/dashboard/feeds/add">
-                    <Button variant="outline">
-                      <Icon name="material-symbols:add-circle-outline" />
-                      Add Feed
-                    </Button>
-                  </NuxtLink>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Button variant="outline" @click="onRequestRefresh">
-                    <Icon name="material-symbols:cloud-sync-outline" />
-                    Fetch new articles
-                  </Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenuTrigger>
-          </DropdownMenu>
+          <Button variant="outline" class="absolute right-5" @click="onReload">
+            <Icon name="material-symbols:cloud-sync-outline" />
+            Fetch articles
+          </Button>
+          <div class="fixed right-6 bottom-6 group">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  class="flex justify-center items-center w-14 h-14 rounded-full 0 focus:ring-4"
+                >
+                  <Icon name="material-symbols:add" size="72" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <FeedAddForm />
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </header>
       <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
