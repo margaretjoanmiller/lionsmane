@@ -17,7 +17,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { sleep } from "~/utils/utilFunctions";
+import { sleep } from "@/utils/utilFunctions";
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -26,7 +26,8 @@ if (!loggedIn.value || !user.value) {
 }
 
 const feedStore = useFeedStore();
-const articlesStore = useArticleStore();
+const articleStore = useArticleStore();
+const folderStore = useFolderStore();
 const route = useRoute();
 
 onMounted(() => {
@@ -35,7 +36,8 @@ onMounted(() => {
 
 async function onReload() {
   await feedStore.fetchFeeds();
-  await articlesStore.fetchArticles();
+  await articleStore.fetchArticles();
+  await folderStore.fetchFolders();
 }
 
 const { $toast } = useNuxtApp();
