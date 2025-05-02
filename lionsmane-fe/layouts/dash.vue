@@ -17,8 +17,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { match } from "ts-pattern";
-import { Primitive } from "reka-ui";
+import FormAddForm from "@/components/FeedAddForm.vue";
+import { sleep } from "~/utils/utilFunctions";
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -37,6 +37,24 @@ onMounted(() => {
 async function onReload() {
   await feedStore.fetchFeeds();
   await articlesStore.fetchArticles();
+}
+
+const { $toast } = useNuxtApp();
+
+async function onRequestRefresh() {
+  try {
+    await $lion("/feeds/refresh/all", {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    $toast.success("Feeds are fetching new articles, please wait...");
+    await sleep(5000);
+    await articleStore.fetchArticles();
+  } catch (e) {
+    console.error(e);
+    $toast.error("Failed to request feed refresh");
+  }
 }
 </script>
 
@@ -89,14 +107,35 @@ async function onReload() {
               </template>
             </BreadcrumbList>
           </Breadcrumb>
-          <Button
-            variant="outline"
-            size="icon"
-            class="absolute right-4"
-            @click="onReload"
-          >
-            <Icon name="material-symbols:refresh" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <Button variant="outline" size="icon" class="absolute right-4">
+                <Icon name="solar:hamburger-menu-outline" />
+              </Button>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Button variant="outline" @click="onReload">
+                    <Icon name="material-symbols:refresh" />
+                    Refresh
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <NuxtLink to="/dashboard/feeds/add">
+                    <Button variant="outline">
+                      <Icon name="material-symbols:add-circle-outline" />
+                      Add Feed
+                    </Button>
+                  </NuxtLink>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Button variant="outline" @click="onRequestRefresh">
+                    <Icon name="material-symbols:cloud-sync-outline" />
+                    Fetch new articles
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenuTrigger>
+          </DropdownMenu>
         </div>
       </header>
       <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
