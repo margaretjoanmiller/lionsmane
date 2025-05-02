@@ -2,7 +2,7 @@
  * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
-package org.jackrabbitsforge.articles
+package org.jackrabbitsforge.resources
 
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated

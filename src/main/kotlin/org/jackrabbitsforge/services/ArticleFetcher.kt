@@ -2,7 +2,7 @@
  * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
-package org.jackrabbitsforge.articles
+package org.jackrabbitsforge.services
 
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
