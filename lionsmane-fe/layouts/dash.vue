@@ -17,7 +17,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import FormAddForm from "@/components/FeedAddForm.vue";
 import { sleep } from "~/utils/utilFunctions";
 
 const { loggedIn, login, user } = useOidcAuth();
