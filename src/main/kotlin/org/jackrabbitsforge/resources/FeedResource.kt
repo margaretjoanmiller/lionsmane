@@ -70,13 +70,13 @@ class FeedResource(
 
     @PUT
     @Path("/{id}")
-    fun updateFeed(id: UUID, feed: FeedDto): Response {
+    fun updateFeed(id: UUID, @Valid feed: FeedDto): Response {
         val feedToUpdate = feedRepository.findByUUID(id)
         if (feedToUpdate == null) {
             return Response.status(404).build()
         }
         if (feedToUpdate.userName != identity.principal.name) {
-            return Response.status(401).build()
+            return Response.status(404).build() // don't let the user know they found a real feed
         }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
         feedToUpdate.url = feed.url ?: feedToUpdate.url
@@ -93,7 +93,7 @@ class FeedResource(
             return Response.status(404).build()
         }
         if (feedToDelete.userName != identity.principal.name) {
-            return Response.status(401).build()
+            return Response.status(404).build()
         }
         try {
             feedRepository.deleteByUUID(id)
@@ -101,7 +101,7 @@ class FeedResource(
             Log.error("Error deleting feed", e)
             return Response.serverError().build()
         }
-        return Response.ok().status(200).build()
+        return Response.ok().build()
     }
 
     @GET

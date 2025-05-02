@@ -11,8 +11,6 @@ import jakarta.transaction.Transactional
 import org.jackrabbitsforge.data.entities.Folder
 import java.util.UUID
 
-@Authenticated
-@Transactional
 @ApplicationScoped
 class FolderRepository : PanacheRepository<Folder> {
     fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()

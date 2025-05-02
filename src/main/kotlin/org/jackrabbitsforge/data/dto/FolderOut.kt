@@ -15,5 +15,5 @@ data class FolderOut(
     val userName: String? = null,
     val name: String? = null,
     val description: String? = null,
-    val feeds: MutableList<FeedDto> = mutableListOf<Feed>()
+    val feeds: MutableList<UUID>? = mutableListOf()
 ) : Serializable

@@ -126,7 +126,7 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
 
                         articleRepository.persist(newArt)
 
-                        newArt.toDto(feed.id!!)
+                        newArt.toDto()
                     } else {
                         return@map null
                     }

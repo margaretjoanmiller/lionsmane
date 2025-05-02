@@ -8,14 +8,13 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
+import org.jackrabbitsforge.data.dto.FolderOut
 import java.util.UUID
-import kotlin.uuid.ExperimentalUuidApi
 
 @Entity
 class Folder {
     @Id
     @GeneratedValue
-    @ExperimentalUuidApi
     var id: UUID? = null
 
     lateinit var userName: String
@@ -25,4 +24,14 @@ class Folder {
 
     @OneToMany
     var feeds: MutableList<Feed> = mutableListOf<Feed>()
+
+    fun toDto() = FolderOut(
+        id,
+        userName,
+        name,
+        description,
+        feeds.map {
+            it.id!!
+        } as MutableList<UUID>
+    )
 }
