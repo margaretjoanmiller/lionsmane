@@ -3,9 +3,9 @@
   -->
 
 <script setup lang="ts">
-import NavMain from "@/components/NavMain.vue";
+import NavMain from '@/components/NavMain.vue';
 
-import NavUser from "@/components/NavUser.vue";
+import NavUser from '@/components/NavUser.vue';
 import {
   Sidebar,
   SidebarContent,
@@ -15,31 +15,31 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   type SidebarProps,
-} from "@/components/ui/sidebar";
-import { Filter, Settings2 } from "lucide-vue-next";
+} from '@/components/ui/sidebar';
+import { Filter, Settings2 } from 'lucide-vue-next';
 
 const props = withDefaults(defineProps<SidebarProps>(), {
-  variant: "inset",
+  variant: 'inset',
 });
 
 const { user } = useOidcAuth();
 
 const data = {
   user: {
-    name: user?.value?.userInfo?.upn || "error",
-    email: user?.value?.userName || "<no email>",
-    avatar: "/img/Doc_Brown.jpg",
+    name: user?.value?.userInfo?.upn || 'error',
+    email: user?.value?.userName || '<no email>',
+    avatar: '/img/Doc_Brown.jpg',
   },
 
   navMain: [
     {
-      title: "Rules",
-      url: "#",
+      title: 'Rules',
+      url: '#',
       icon: Filter,
     },
     {
-      title: "Settings",
-      url: "/dashboard/settings",
+      title: 'Settings',
+      url: '/dashboard/settings',
       icon: Settings2,
     },
   ],
