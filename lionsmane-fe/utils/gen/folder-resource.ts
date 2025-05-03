@@ -51,22 +51,32 @@ export const postFoldersResponse = zod.object({
 })
 
 /**
- * @summary Update Folder
+ * @summary Delete Folder
  */
-export const putFoldersIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const getFoldersDeleteIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
-export const putFoldersIdParams = zod.object({
-  "id": zod.string().uuid().regex(putFoldersIdPathIdRegExp)
+export const getFoldersDeleteIdParams = zod.object({
+  "id": zod.string().uuid().regex(getFoldersDeleteIdPathIdRegExp)
 })
 
-export const putFoldersIdBodyFeedsItemRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+/**
+ * @summary Update Folder
+ */
+export const postFoldersUpdateIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
-export const putFoldersIdBody = zod.object({
+export const postFoldersUpdateIdParams = zod.object({
+  "id": zod.string().uuid().regex(postFoldersUpdateIdPathIdRegExp)
+})
+
+export const postFoldersUpdateIdBodyFeedsItemRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
+export const postFoldersUpdateIdBody = zod.object({
   "name": zod.string(),
   "description": zod.string().nullish(),
-  "feeds": zod.array(zod.string().uuid().regex(putFoldersIdBodyFeedsItemRegExp)).nullish()
+  "feeds": zod.array(zod.string().uuid().regex(postFoldersUpdateIdBodyFeedsItemRegExp)).nullish()
 })
 
 /**
@@ -89,15 +99,5 @@ export const getFoldersIdResponse = zod.object({
   "name": zod.string().nullish(),
   "description": zod.string().nullish(),
   "feeds": zod.array(zod.string().uuid().regex(getFoldersIdResponseFeedsItemRegExp)).nullish()
-})
-
-/**
- * @summary Delete Folder
- */
-export const deleteFoldersIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
-
-
-export const deleteFoldersIdParams = zod.object({
-  "id": zod.string().uuid().regex(deleteFoldersIdPathIdRegExp)
 })
 

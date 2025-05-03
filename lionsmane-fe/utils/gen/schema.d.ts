@@ -251,6 +251,56 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/feeds/delete/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Delete Feed */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["schemas"]["UUID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/feeds/refresh/all": {
         parameters: {
             query?: never;
@@ -349,52 +399,17 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/feeds/{id}": {
+    "/feeds/update/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Feed */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["FeedDto"];
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
+        get?: never;
+        put?: never;
         /** Update Feed */
-        put: {
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -439,9 +454,21 @@ export type paths = {
                 };
             };
         };
-        post?: never;
-        /** Delete Feed */
-        delete: {
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/feeds/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Feed */
+        get: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -457,7 +484,9 @@ export type paths = {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["FeedDto"];
+                    };
                 };
                 /** @description Not Authorized */
                 401: {
@@ -475,6 +504,9 @@ export type paths = {
                 };
             };
         };
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -575,14 +607,14 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/folders/{id}": {
+    "/folders/delete/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Folder */
+        /** Delete Folder */
         get: {
             parameters: {
                 query?: never;
@@ -599,9 +631,7 @@ export type paths = {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content: {
-                        "application/json": components["schemas"]["FolderOut"];
-                    };
+                    content?: never;
                 };
                 /** @description Not Authorized */
                 401: {
@@ -619,8 +649,25 @@ export type paths = {
                 };
             };
         };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/folders/update/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /** Update Folder */
-        put: {
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -665,9 +712,21 @@ export type paths = {
                 };
             };
         };
-        post?: never;
-        /** Delete Folder */
-        delete: {
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/folders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Folder */
+        get: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -683,7 +742,9 @@ export type paths = {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": components["schemas"]["FolderOut"];
+                    };
                 };
                 /** @description Not Authorized */
                 401: {
@@ -701,6 +762,9 @@ export type paths = {
                 };
             };
         };
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;

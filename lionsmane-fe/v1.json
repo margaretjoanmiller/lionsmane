@@ -354,6 +354,34 @@
         } ]
       }
     },
+    "/feeds/delete/{id}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Delete Feed",
+        "tags" : [ "Feed Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/feeds/refresh/all" : {
       "get" : {
         "responses" : {
@@ -402,8 +430,8 @@
         } ]
       }
     },
-    "/feeds/{id}" : {
-      "put" : {
+    "/feeds/update/{id}" : {
+      "post" : {
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -441,7 +469,9 @@
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
-      },
+      }
+    },
+    "/feeds/{id}" : {
       "get" : {
         "parameters" : [ {
           "name" : "id",
@@ -470,32 +500,6 @@
           }
         },
         "summary" : "Get Feed",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      },
-      "delete" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Delete Feed",
         "tags" : [ "Feed Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
@@ -570,8 +574,36 @@
         } ]
       }
     },
-    "/folders/{id}" : {
-      "put" : {
+    "/folders/delete/{id}" : {
+      "get" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Delete Folder",
+        "tags" : [ "Folder Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/folders/update/{id}" : {
+      "post" : {
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
@@ -609,7 +641,9 @@
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
-      },
+      }
+    },
+    "/folders/{id}" : {
       "get" : {
         "parameters" : [ {
           "name" : "id",
@@ -638,32 +672,6 @@
           }
         },
         "summary" : "Get Folder",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      },
-      "delete" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Delete Folder",
         "tags" : [ "Folder Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]

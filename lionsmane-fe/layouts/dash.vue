@@ -35,6 +35,8 @@ onMounted(async () => {
   await folderStore.fetchFolders();
 });
 
+const toast = useToast();
+
 async function onReload() {
   try {
     await $lion("/feeds/refresh/all", {
@@ -42,7 +44,7 @@ async function onReload() {
         Authorization: `Bearer ${user.value?.accessToken}`,
       },
     });
-    $toast.success("Feeds are fetching new articles, please wait...");
+    toast.add({ title: "Feeds are fetching new articles, please wait..." });
     await sleep(5000);
     await feedStore.fetchFeeds();
     await articleStore.fetchArticles();
@@ -52,8 +54,6 @@ async function onReload() {
     $toast.error("Failed to request feed refresh");
   }
 }
-
-const { $toast } = useNuxtApp();
 </script>
 
 <template>

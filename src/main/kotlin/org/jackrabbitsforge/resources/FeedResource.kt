@@ -92,8 +92,8 @@ class FeedResource(
         }
     }
 
-    @PUT
-    @Path("/{id}")
+    @POST
+    @Path("/update/{id}")
     fun updateFeed(id: UUID, @Valid feed: FeedDto): Response {
         val feedToUpdate = feedRepository.findByUUID(id)
         if (feedToUpdate == null) {
@@ -126,8 +126,8 @@ class FeedResource(
         return Response.ok(feedToUpdate.toDto()).status(200).build()
     }
 
-    @DELETE
-    @Path("/{id}")
+    @GET
+    @Path("/delete/{id}")
     fun deleteFeed(id: UUID): Response {
         val feedToDelete = feedRepository.findByUUID(id)
 
@@ -143,6 +143,7 @@ class FeedResource(
             Log.error("Error deleting feed", e)
             return Response.serverError().build()
         }
+        Log.info("Deleting feed...")
         return Response.ok().build()
     }
 

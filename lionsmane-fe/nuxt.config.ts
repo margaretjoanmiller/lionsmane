@@ -22,6 +22,7 @@ export default defineNuxtConfig({
    "@pinia/nuxt",
    "vue-sonner/nuxt",
    "@nuxt/ui",
+   "@pinia/colada-nuxt",
   ],
 
   css: ["~/assets/css/tailwind.css"],

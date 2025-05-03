@@ -7,7 +7,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -18,28 +18,33 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/components/ui/sidebar'
-import { ChevronRight, type LucideIcon } from 'lucide-vue-next'
+} from "@/components/ui/sidebar";
+import { ChevronRight, type LucideIcon } from "lucide-vue-next";
 
 defineProps<{
   items: {
-    title: string
-    url: string
-    icon: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}>()
+      title: string;
+      url: string;
+    }[];
+  }[];
+}>();
 </script>
 
 <template>
   <SidebarGroup>
     <SidebarGroupLabel>Platform</SidebarGroupLabel>
     <SidebarMenu>
-      <Collapsible v-for="item in items" :key="item.title" as-child :default-open="item.isActive">
+      <Collapsible
+        v-for="item in items"
+        :key="item.title"
+        as-child
+        :default-open="item.isActive"
+      >
         <SidebarMenuItem>
           <SidebarMenuButton as-child :tooltip="item.title">
             <a :href="item.url">
@@ -56,11 +61,14 @@ defineProps<{
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarMenuSub>
-                <SidebarMenuSubItem v-for="subItem in item.items" :key="subItem.title">
+                <SidebarMenuSubItem
+                  v-for="subItem in item.items"
+                  :key="subItem.title"
+                >
                   <SidebarMenuSubButton as-child>
-                    <a :href="subItem.url">
+                    <NuxtLink :href="subItem.url">
                       <span>{{ subItem.title }}</span>
-                    </a>
+                    </NuxtLink>
                   </SidebarMenuSubButton>
                 </SidebarMenuSubItem>
               </SidebarMenuSub>

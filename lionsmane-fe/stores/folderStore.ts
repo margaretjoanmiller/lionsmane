@@ -6,9 +6,9 @@ import { defineStore } from "pinia";
 import type { SchemaArticleOut } from "@/utils/gen/schema";
 
 export const useFolderStore = defineStore("folderStore", () => {
-  const { user } = useOidcAuth();
-
   const folders = ref([] as SchemaArticleOut[]);
+
+  const { user } = useOidcAuth();
 
   async function fetchFolders() {
     folders.value = await $lion("/folders", {
