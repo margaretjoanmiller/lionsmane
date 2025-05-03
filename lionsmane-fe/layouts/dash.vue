@@ -51,7 +51,7 @@ async function onReload() {
     await folderStore.fetchFolders();
   } catch (e) {
     console.error(e);
-    $toast.error("Failed to request feed refresh");
+    toast.add({ title: "Failed to request feed refresh" });
   }
 }
 </script>

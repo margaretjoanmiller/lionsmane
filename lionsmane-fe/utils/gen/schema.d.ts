@@ -420,7 +420,7 @@ export type paths = {
             };
             requestBody: {
                 content: {
-                    "application/json": components["schemas"]["FeedDto"];
+                    "application/json": components["schemas"]["FeedInUpdate"];
                 };
             };
             responses: {
@@ -837,6 +837,12 @@ export type components = {
             url: string;
             folderId?: components["schemas"]["UUID"] | null;
         };
+        FeedInUpdate: {
+            title?: string | null;
+            description?: string | null;
+            url?: string | null;
+            folderId?: components["schemas"]["UUID"] | null;
+        };
         FolderIn: {
             name: string;
             description?: string | null;
@@ -866,6 +872,7 @@ export type components = {
 export type SchemaArticleOut = components['schemas']['ArticleOut'];
 export type SchemaFeedDto = components['schemas']['FeedDto'];
 export type SchemaFeedIn = components['schemas']['FeedIn'];
+export type SchemaFeedInUpdate = components['schemas']['FeedInUpdate'];
 export type SchemaFolderIn = components['schemas']['FolderIn'];
 export type SchemaFolderOut = components['schemas']['FolderOut'];
 export type SchemaInstant = components['schemas']['Instant'];

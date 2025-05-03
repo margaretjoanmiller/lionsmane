@@ -30,7 +30,7 @@ const orphanFeeds = computed(() => {
     <SidebarGroupLabel>RSS</SidebarGroupLabel>
     <SidebarMenu>
       <!-- Main Feeds Collapsible -->
-      <Collapsible class="group/feeds-collapsible">
+      <Collapsible class="group/feeds-collapsible" defaultOpen>
         <SidebarMenuItem>
           <SidebarMenuButton>
             <NuxtLink :to="{ name: 'dashboard-feeds-all' }">Feeds</NuxtLink>

@@ -19,11 +19,15 @@ const { $toast } = useNuxtApp();
 
 const feedStore = useFeedStore();
 
-const feeds = feedStore.feeds.map((feed) => {
-  return {
-    label: feed.title as string,
-    id: feed.id as string,
-  };
+await feedStore.fetchFeeds();
+
+const feeds = computed(() => {
+  feedStore.feeds.map((feed) => {
+    return {
+      label: feed.title as string,
+      id: feed.id as string,
+    };
+  });
 });
 
 async function onSubmit(event: FormSubmitEvent<SchemaFolderIn>) {

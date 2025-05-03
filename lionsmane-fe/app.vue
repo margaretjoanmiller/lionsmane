@@ -8,7 +8,7 @@
     <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtRouteAnnouncer />
-      <NuxtPage />
+      <NuxtPage :transition="{ name: 'slide', mode: 'default' }" />
     </NuxtLayout>
   </UApp>
 </template>

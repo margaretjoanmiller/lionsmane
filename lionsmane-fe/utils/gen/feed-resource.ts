@@ -88,24 +88,14 @@ export const postFeedsUpdateIdParams = zod.object({
   id: zod.string().uuid().regex(postFeedsUpdateIdPathIdRegExp),
 });
 
-export const postFeedsUpdateIdBodyIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
-);
 export const postFeedsUpdateIdBodyFolderIdRegExpOne = new RegExp(
   "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
 );
 
 export const postFeedsUpdateIdBody = zod.object({
-  id: zod
-    .string()
-    .uuid()
-    .regex(postFeedsUpdateIdBodyIdRegExpOne)
-    .or(zod.null())
-    .optional(),
   title: zod.string().nullish(),
   description: zod.string().nullish(),
-  url: zod.string().nullish(),
-  lastUpdated: zod.string().datetime({}).or(zod.null()).optional(),
+  url: zod.string().url().nullish(),
   folderId: zod
     .string()
     .uuid()

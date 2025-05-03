@@ -112,6 +112,27 @@
           }
         }
       },
+      "FeedInUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : [ "string", "null" ]
+          },
+          "description" : {
+            "type" : [ "string", "null" ]
+          },
+          "url" : {
+            "type" : [ "string", "null" ]
+          },
+          "folderId" : {
+            "anyOf" : [ {
+              "$ref" : "#/components/schemas/UUID"
+            }, {
+              "type" : "null"
+            } ]
+          }
+        }
+      },
       "FolderIn" : {
         "type" : "object",
         "required" : [ "name" ],
@@ -444,7 +465,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/FeedDto"
+                "$ref" : "#/components/schemas/FeedInUpdate"
               }
             }
           },

@@ -18,6 +18,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.dto.FeedIn
+import org.jackrabbitsforge.data.dto.FeedInUpdate
 import org.jackrabbitsforge.data.entities.Feed
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import org.jackrabbitsforge.data.repositories.FolderRepository
@@ -94,7 +95,7 @@ class FeedResource(
 
     @POST
     @Path("/update/{id}")
-    fun updateFeed(id: UUID, @Valid feed: FeedDto): Response {
+    fun updateFeed(id: UUID, @Valid feed: FeedInUpdate): Response {
         val feedToUpdate = feedRepository.findByUUID(id)
         if (feedToUpdate == null) {
             return Response.status(404).build()

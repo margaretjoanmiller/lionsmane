@@ -3,10 +3,10 @@
  */
 
 import { defineStore } from "pinia";
-import type { SchemaArticleOut } from "@/utils/gen/schema";
+import type { SchemaFolderOut } from "@/utils/gen/schema";
 
 export const useFolderStore = defineStore("folderStore", () => {
-  const folders = ref([] as SchemaArticleOut[]);
+  const folders = ref([] as SchemaFolderOut[]);
 
   const { user } = useOidcAuth();
 
@@ -18,8 +18,18 @@ export const useFolderStore = defineStore("folderStore", () => {
     });
   }
 
+  function getFoldersAsSelect() {
+    return folders.value.map((folder) => {
+      return {
+        label: folder.name as string,
+        id: folder.id as string,
+      };
+    });
+  }
+
   return {
     folders,
     fetchFolders,
+    getFoldersAsSelect,
   };
 });
