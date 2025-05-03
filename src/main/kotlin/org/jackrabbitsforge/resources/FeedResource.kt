@@ -49,6 +49,15 @@ class FeedResource(
 
     @POST
     fun postFeed(@Valid feed: FeedIn): Response {
+        val existingFeedName = feedRepository.findByName(feed.title)
+        if (existingFeedName != null) {
+            return Response.status(409).build()
+        }
+        val existingFeedUrl = feedRepository.findByUrl(feed.url)
+        if (existingFeedUrl != null) {
+            return Response.status(409).build()
+        }
+
         val newFeed = Feed()
         newFeed.title = feed.title
         newFeed.description = feed.description ?: ""
@@ -57,9 +66,10 @@ class FeedResource(
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())
 
-        if (feed.folderId != null) {
+        val folderId = feed.folderId
+        if (folderId != null) {
             try {
-                val folderToFileInto = folderRepository.findByUUID(feed.folderId)
+                val folderToFileInto = folderRepository.findByUUID(folderId)
                 if (folderToFileInto == null)
                     return Response.status(404).build()
                 if (folderToFileInto.userName != identity.principal.name)
@@ -93,12 +103,14 @@ class FeedResource(
             return Response.status(404).build() // don't let the user know they found a real feed
         }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
-        feedToUpdate.url = feed.url ?: feedToUpdate.url
+        if (feed.url != null)
+            feedToUpdate.url = feed.url
         feedToUpdate.description = feed.description ?: feedToUpdate.description
 
-        if (feed.folderId != null) {
+        val folderId = feed.folderId
+        if (folderId != null) {
             try {
-                val folderToFileInto = folderRepository.findByUUID(feed.folderId)
+                val folderToFileInto = folderRepository.findByUUID(folderId)
                 if (folderToFileInto == null)
                     return Response.status(404).build()
                 if (folderToFileInto.userName != identity.principal.name)

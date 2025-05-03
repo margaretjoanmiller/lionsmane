@@ -8,12 +8,14 @@ import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
 import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.entities.Feed
+import java.net.URL
 import java.util.UUID
 
 @ApplicationScoped
 class FeedRepository : PanacheRepository<Feed> {
 
-    fun findByName(name: String) = find(name).firstResult()
+    fun findByName(name: String) = find("title", name).firstResult()
+    fun findByUrl(url: URL) = find("url", url).firstResult()
 
     fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()
 
