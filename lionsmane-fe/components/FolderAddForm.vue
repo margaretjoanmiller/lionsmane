@@ -1,71 +1,60 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
   -->
 
 <script setup lang="ts">
-import { postFoldersBody } from "@/utils/gen/folder-resource";
-import type { SchemaFolderIn } from "@/utils/gen/schema";
-import type { FormSubmitEvent } from "@nuxt/ui";
+import { postFoldersBody } from '@/utils/gen/folder-resource';
+import { useCreateFolder } from '@/mutations/folders';
+import { useFeedQuery } from '~/queries/feeds';
 
 const { user, loggedIn, login } = useOidcAuth();
 
 const state = reactive({
-  name: "",
-  description: "",
+  name: '',
+  description: '',
   feeds: [] as string[],
 });
 
-const { $toast } = useNuxtApp();
+const toast = useToast();
 
 const feedStore = useFeedStore();
 
-await feedStore.fetchFeeds();
-
-const feeds = computed(() => {
-  feedStore.feeds.map((feed) => {
-    return {
-      label: feed.title as string,
-      id: feed.id as string,
-    };
-  });
+const { refresh } = useFeedQuery();
+onMounted(async () => {
+  await refresh();
 });
 
-async function onSubmit(event: FormSubmitEvent<SchemaFolderIn>) {
-  if (!user.value || !loggedIn.value) await login();
-  const resp = await $lion("/folders", {
-    method: "POST",
-    body: {
-      name: event.data.name,
-      description: event.data.description,
-      feeds: event.data.feeds,
-    },
-    headers: {
-      Authorization: `Bearer ${user.value?.accessToken}`,
-    },
-  });
+const feeds = computed(() => feedStore.getFeedsAsSelect());
+const { createFolder, newFolder, status, asyncStatus } = useCreateFolder();
 
-  if (resp) $toast.success("Folder Added");
-  else $toast.error("Folder could not be added");
+async function onSubmit() {
+  createFolder();
+  if (status.value === 'success') {
+    await refresh();
+    toast.add({ title: 'Added folder successfully.', color: 'success' });
+  } else if (status.value === 'error') {
+    toast.add({ title: 'Error adding feed', color: 'error' });
+  }
 }
 </script>
 
 <template>
   <UForm
     :schema="postFoldersBody"
-    :state="state"
+    :state="newFolder"
     class="space-y-4"
     @submit="onSubmit"
   >
     <UFormField label="Name" name="name">
-      <UInput v-model="state.name" />
+      <UInput v-model="newFolder.name" />
     </UFormField>
 
     <UFormField label="Description" name="description">
-      <UInput v-model="state.description" />
+      <UInput v-model="newFolder.description" />
     </UFormField>
     <UFormField name="feeds">
       <USelect
-        v-model="state.feeds"
+        v-model="newFolder.feeds!"
         multiple
         label="Feeds"
         value-key="id"

@@ -1,23 +1,23 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
   -->
 
 <script setup lang="ts">
-import AppSidebar from "@/components/AppSidebar.vue";
+import AppSidebar from '@/components/AppSidebar.vue';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { sleep } from "@/utils/utilFunctions";
+} from '@/components/ui/sidebar';
+import { sleep } from '@/utils/utilFunctions';
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -25,13 +25,11 @@ if (!loggedIn.value || !user.value) {
   await login();
 }
 
-const feedStore = useFeedStore();
 const articleStore = useArticleStore();
 const folderStore = useFolderStore();
 const route = useRoute();
 
 onMounted(async () => {
-  await feedStore.fetchFeeds();
   await folderStore.fetchFolders();
 });
 
@@ -39,19 +37,18 @@ const toast = useToast();
 
 async function onReload() {
   try {
-    await $lion("/feeds/refresh/all", {
+    await $lion('/feeds/refresh/all', {
       headers: {
         Authorization: `Bearer ${user.value?.accessToken}`,
       },
     });
-    toast.add({ title: "Feeds are fetching new articles, please wait..." });
+    toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
-    await feedStore.fetchFeeds();
     await articleStore.fetchArticles();
     await folderStore.fetchFolders();
   } catch (e) {
     console.error(e);
-    toast.add({ title: "Failed to request feed refresh" });
+    toast.add({ title: 'Failed to request feed refresh' });
   }
 }
 </script>
@@ -77,7 +74,7 @@ async function onReload() {
                 <BreadcrumbItem>
                   <NuxtLink
                     to="/dashboard/feeds"
-                    class="hover:text-foreground transition-colors"
+                    class="transition-colors hover:text-foreground"
                   >
                     Feeds
                   </NuxtLink>
@@ -87,7 +84,7 @@ async function onReload() {
                 <BreadcrumbItem>
                   <NuxtLink
                     to="/dashboard/feeds"
-                    class="hover:text-foreground transition-colors"
+                    class="transition-colors hover:text-foreground"
                   >
                     Feeds
                   </NuxtLink>
@@ -97,7 +94,7 @@ async function onReload() {
                 <BreadcrumbItem>
                   <NuxtLink
                     to="/dashboard/feeds"
-                    class="hover:text-foreground transition-colors"
+                    class="transition-colors hover:text-foreground"
                   >
                     Feeds
                   </NuxtLink>
@@ -109,11 +106,11 @@ async function onReload() {
             <Icon name="material-symbols:cloud-sync-outline" />
             Fetch articles
           </Button>
-          <div class="fixed right-6 bottom-6 group">
+          <div class="group fixed right-6 bottom-6">
             <Dialog>
               <DialogTrigger>
                 <Button
-                  class="flex justify-center items-center w-14 h-14 rounded-full 0 focus:ring-4"
+                  class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4"
                 >
                   <Icon name="material-symbols:add" size="72" />
                 </Button>

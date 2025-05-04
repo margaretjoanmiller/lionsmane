@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
   -->
 
 <script setup lang="ts">
@@ -9,13 +9,20 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { useFeedStore } from "@/stores/feedStore";
-import { CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronRight } from "lucide-vue-next";
+} from '@/components/ui/sidebar';
+import { useFeedStore } from '@/stores/feedStore';
+import { CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronRight } from 'lucide-vue-next';
+import { useFeedQuery } from '~/queries/feeds';
+
+const { feedList, status, asyncStatus } = useFeedQuery();
 
 const feedStore = useFeedStore();
 const folderStore = useFolderStore();
+
+if (status.value === 'success' && feedList.value.data) {
+  feedStore.storeFeeds(feedList.value.data);
+}
 
 const { feeds } = storeToRefs(feedStore);
 const { folders } = storeToRefs(folderStore);
@@ -65,7 +72,7 @@ const orphanFeeds = computed(() => {
                 <Collapsible class="group/folder-collapsible">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton as-child :tooltip="folder.name">
-                      <span>{{ folder.name ?? "error" }}</span>
+                      <span>{{ folder.name ?? 'error' }}</span>
                     </SidebarMenuButton>
                     <CollapsibleTrigger as-child>
                       <SidebarMenuAction>

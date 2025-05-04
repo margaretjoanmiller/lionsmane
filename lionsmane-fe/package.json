@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "lionsmane-fe",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.9.0",
@@ -37,6 +37,7 @@
     "nuxt-oidc-auth": "1.0.0-beta.5",
     "ofetch": "^1.4.1",
     "pinia": "^3.0.2",
+    "refa": "^0.12.1",
     "reka-ui": "^2.2.0",
     "shadcn-nuxt": "2.1.0",
     "tailwind-merge": "^3.2.0",
@@ -54,6 +55,7 @@
     "@parcel/watcher"
   ],
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.39",
     "@iconify-json/material-symbols": "^1.2.20",
     "@iconify-json/solar": "^1.2.2",
     "@nuxt/test-utils": "3.17.2",

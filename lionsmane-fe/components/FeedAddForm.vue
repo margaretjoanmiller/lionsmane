@@ -1,110 +1,63 @@
 <!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  - Copyright (c) 2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
   -->
 
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
+import { useCreateFeed } from '@/mutations/feeds';
+import { postFeedsBody } from '~/utils/gen/feed-resource';
+import { useFeedQuery } from '~/queries/feeds';
 
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+const toast = useToast();
 
-import { postFeedsBody } from "@/utils/gen/feed-resource";
-
-const { $toast } = useNuxtApp();
-
-const { handleSubmit } = useForm({
-  validationSchema: toTypedSchema(postFeedsBody),
-});
-
-const { loggedIn, user, login } = useOidcAuth();
-
-const feedStore = useFeedStore();
+const { loggedIn, login } = useOidcAuth();
 
 if (!loggedIn.value) {
   await login();
 }
 
-const onSubmit = handleSubmit(async (values) => {
+const { createFeed, status, asyncStatus, newFeed } = useCreateFeed();
+
+const { refresh } = useFeedQuery();
+const folderStore = useFolderStore();
+const folders = computed(() => folderStore.getFoldersAsSelect());
+
+async function onSubmit() {
   try {
-    await $lion("/feeds", {
-      method: "POST",
-      body: values,
-      headers: {
-        Authorization: `Bearer ${user?.value?.accessToken}`,
-      },
-
-      async onResponse() {
-        await feedStore.fetchFeeds();
-        $toast.success("Successfully added feed");
-      },
-      async onResponseError({ error }) {
-        console.error(error);
-        $toast.error(`Error adding feed`);
-      },
-    });
-
-    return navigateTo({ name: "dashboard-home" });
-  } catch (e) {
-    $toast.error("Unknown error adding feed");
-    console.error(e);
-    throw createError({
-      status: 500,
-      statusMessage: `Error adding feed ${e}`,
-    });
+    createFeed();
+    await refresh();
+    toast.add({ title: 'Feed added successfully', color: 'success' });
+  } catch {
+    toast.add({ title: 'Feed added failed', color: 'error' });
   }
-});
+}
 </script>
 
 <template>
-  <form @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="title">
-      <FormItem>
-        <FormLabel>Feed title</FormLabel>
-        <FormControl>
-          <Input type="text" placeholder="epic news" v-bind="componentField" />
-        </FormControl>
-        <FormDescription> This is the name for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
+  <UForm
+    :schema="postFeedsBody"
+    :state="newFeed"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
+    <UFormField label="title" name="title">
+      <UInput v-model="newFeed.title" />
+    </UFormField>
+    <UFormField label="description" name="description">
+      <UInput v-model="newFeed.description" />
+    </UFormField>
+    <UFormField label="url" name="url">
+      <UInput v-model="newFeed.url" />
+    </UFormField>
+
+    <FormField label="folderId" name="folderId">
+      <USelect
+        v-model="newFeed.folderId!"
+        label="Folders"
+        value-key="id"
+        :items="folders"
+        class="w-48"
+      />
     </FormField>
-    <FormField v-slot="{ componentField }" name="url">
-      <FormItem>
-        <FormLabel>Feed url</FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="https://epic-news.com/feed.xml"
-            rules="required"
-            v-bind="componentField"
-          />
-        </FormControl>
-        <FormDescription> This is the url for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="description">
-      <FormItem>
-        <FormLabel>Feed description</FormLabel>
-        <FormControl>
-          <Input
-            type="text"
-            placeholder="https://epic-news.com/feed.xml"
-            v-bind="componentField"
-          />
-        </FormControl>
-        <FormDescription> This is the url for this feed</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <Button type="submit"> Submit</Button>
-  </form>
+    <UButton type="submit"> Submit</UButton>
+  </UForm>
 </template>
