@@ -9,15 +9,16 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator,
+  BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
+import { useFolderQuery } from '@/queries/folders';
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -28,24 +29,29 @@ if (!loggedIn.value || !user.value) {
 const articleStore = useArticleStore();
 const folderStore = useFolderStore();
 const route = useRoute();
+const toast = useToast();
+
+const { folderList, status, asyncStatus, refresh } = useFolderQuery();
 
 onMounted(async () => {
-  await folderStore.fetchFolders();
+  if (status.value === 'success' && folderList.value.data) {
+    folderStore.storeFolders(folderList.value.data);
+  } else if (status.value === 'error') {
+    toast.add({ title: 'Error updating folders', color: 'error' });
+  }
 });
-
-const toast = useToast();
 
 async function onReload() {
   try {
     await $lion('/feeds/refresh/all', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
-      },
+        Authorization: `Bearer ${user.value?.accessToken}`
+      }
     });
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
     await articleStore.fetchArticles();
-    await folderStore.fetchFolders();
+    await refresh();
   } catch (e) {
     console.error(e);
     toast.add({ title: 'Failed to request feed refresh' });

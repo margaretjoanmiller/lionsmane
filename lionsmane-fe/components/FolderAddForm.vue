@@ -5,21 +5,13 @@
 <script setup lang="ts">
 import { postFoldersBody } from '@/utils/gen/folder-resource';
 import { useCreateFolder } from '@/mutations/folders';
-import { useFeedQuery } from '~/queries/feeds';
-
-const { user, loggedIn, login } = useOidcAuth();
-
-const state = reactive({
-  name: '',
-  description: '',
-  feeds: [] as string[],
-});
-
-const toast = useToast();
+import { useFolderQuery } from '@/queries/folders';
 
 const feedStore = useFeedStore();
 
-const { refresh } = useFeedQuery();
+const toast = useToast();
+
+const { refresh } = useFolderQuery();
 onMounted(async () => {
   await refresh();
 });
@@ -63,6 +55,8 @@ async function onSubmit() {
       />
     </UFormField>
 
-    <UButton type="submit"> Submit</UButton>
+    <UButton type="submit" :disabled="asyncStatus === 'loading'">
+      Submit
+    </UButton>
   </UForm>
 </template>

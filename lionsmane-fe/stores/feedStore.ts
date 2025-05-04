@@ -6,8 +6,6 @@ import { defineStore } from 'pinia';
 import type { SchemaFeedDto } from '@/utils/gen/schema';
 
 export const useFeedStore = defineStore('feeds', () => {
-  const { user } = useOidcAuth();
-
   const feeds = ref([] as SchemaFeedDto[]);
 
   function storeFeeds(f: SchemaFeedDto[]) {
@@ -26,6 +24,6 @@ export const useFeedStore = defineStore('feeds', () => {
   return {
     feeds,
     storeFeeds,
-    getFeedsAsSelec,
+    getFeedsAsSelect,
   };
 });

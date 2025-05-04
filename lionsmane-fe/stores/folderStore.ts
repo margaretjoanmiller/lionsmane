@@ -2,20 +2,14 @@
  * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
  */
 
-import { defineStore } from "pinia";
-import type { SchemaFolderOut } from "@/utils/gen/schema";
+import { defineStore } from 'pinia';
+import type { SchemaFolderOut } from '@/utils/gen/schema';
 
-export const useFolderStore = defineStore("folderStore", () => {
+export const useFolderStore = defineStore('folderStore', () => {
   const folders = ref([] as SchemaFolderOut[]);
 
-  const { user } = useOidcAuth();
-
-  async function fetchFolders() {
-    folders.value = await $lion("/folders", {
-      headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
-      },
-    });
+  function storeFolders(f: SchemaFolderOut[]) {
+    folders.value = f;
   }
 
   function getFoldersAsSelect() {
@@ -29,7 +23,7 @@ export const useFolderStore = defineStore("folderStore", () => {
 
   return {
     folders,
-    fetchFolders,
     getFoldersAsSelect,
+    storeFolders,
   };
 });
