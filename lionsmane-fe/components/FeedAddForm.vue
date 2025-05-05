@@ -22,14 +22,10 @@ const folderStore = useFolderStore();
 const folders = computed(() => folderStore.getFoldersAsSelect());
 
 async function onSubmit() {
-  try {
-    createFeed();
-    if (status.value == 'success') {
-      await refresh();
-      toast.add({ title: 'Feed added successfully', color: 'success' });
-    }
-  } catch {
-    toast.add({ title: 'Feed added failed', color: 'error' });
+  createFeed();
+  await refresh();
+  if (status.value == 'success' && asyncStatus.value === 'idle') {
+    toast.add({ title: 'Feed added successfully', color: 'success' });
   }
 }
 </script>

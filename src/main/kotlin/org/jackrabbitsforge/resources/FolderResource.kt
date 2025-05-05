@@ -56,22 +56,8 @@ class FolderResource(
         newFolder.userName = identity.principal.name
         newFolder.name = folder.name
         newFolder.description = folder.description
-        newFolder.feeds = mutableListOf()
         try {
-            folder.feeds?.forEach {
-                val feed = feedRepository.findByUUID(it)
-                if (feed != null) {
-                    newFolder.feeds.add(feed)
-                }
-            }
-
             folderRepository.persist(newFolder)
-            folder.feeds?.forEach {
-                val feed = feedRepository.findByUUID(it)
-                if (feed != null) {
-                    feed.folder = newFolder
-                }
-            }
             return newFolder.toDto()
         } catch (e: Exception) {
             Log.error("Error creating folder: ${folder.name}")
@@ -90,20 +76,6 @@ class FolderResource(
 
         folderToUpdate.name = folder.name
         folderToUpdate.description = folder.description ?: folderToUpdate.description
-
-        try {
-            folder.feeds?.forEach {
-                val feed = feedRepository.findByUUID(it)
-                if (feed != null) {
-                    folderToUpdate.feeds.add(feed)
-                    feed.folder = folderToUpdate
-                }
-            }
-        } catch (e: Exception) {
-            Log.error("Error updating folder: ${folder.name}")
-            return Response.serverError().build()
-        }
-
         return Response.ok(folderToUpdate.toDto()).status(200).build()
     }
 

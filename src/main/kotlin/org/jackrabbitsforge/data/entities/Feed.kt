@@ -21,14 +21,14 @@ class Feed {
 
     lateinit var userName: String
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL])
     var articles: MutableList<Article> = mutableListOf<Article>()
     var lastUpdated: Instant? = null
 
     @ManyToOne(optional = true)
     var folder: Folder? = null
 
-    @ManyToMany(mappedBy = "feeds")
+    @ManyToMany(mappedBy = "feeds", cascade = [CascadeType.ALL])
     var tags: MutableList<Tag>? = null
     fun toDto() = FeedDto(id, title, description, url, lastUpdated, folder?.id)
 }

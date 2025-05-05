@@ -7,9 +7,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (
     loggedIn.value ||
-    to.path.startsWith("/auth") ||
-    to.path.startsWith("/api") ||
-    to.path == "/"
+    to.path.startsWith('/auth') ||
+    to.path.startsWith('/login') ||
+    to.path == '/'
   ) {
     return;
   }
