@@ -4,12 +4,16 @@
 
 import { defineStore } from 'pinia';
 import type { SchemaFolderOut } from '@/utils/gen/schema';
+import { useFolderQuery } from '@/queries/folders';
 
 export const useFolderStore = defineStore('folderStore', () => {
   const folders = ref([] as SchemaFolderOut[]);
+  const isLoaded = ref(false);
 
-  function storeFolders(f: SchemaFolderOut[]) {
-    folders.value = f;
+  function hydrateFolders() {
+    const { folderList } = useFolderQuery();
+    folders.value = folderList.value.data ?? [];
+    isLoaded.value = true;
   }
 
   function getFoldersAsSelect() {
@@ -23,7 +27,8 @@ export const useFolderStore = defineStore('folderStore', () => {
 
   return {
     folders,
+    isLoaded,
     getFoldersAsSelect,
-    storeFolders,
+    hydrateFolders,
   };
 });

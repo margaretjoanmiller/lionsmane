@@ -66,6 +66,7 @@ class FeedResource(
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())
+        feedRepository.persist(newFeed)
 
         val folderId = feed.folderId
         if (folderId != null) {
@@ -83,14 +84,8 @@ class FeedResource(
             }
         }
 
-        try {
-            feedRepository.persist(newFeed)
-            Log.info("Created new feed with id: ${newFeed.id}")
-            return Response.ok(newFeed.toDto()).status(Response.Status.CREATED).build()
-        } catch (e: Exception) {
-            Log.error("Error creating feed", e)
-            return Response.serverError().build()
-        }
+        Log.info("Created new feed with id: ${newFeed.id}")
+        return Response.ok(newFeed.toDto()).status(Response.Status.CREATED).build()
     }
 
     @POST
@@ -104,8 +99,9 @@ class FeedResource(
             return Response.status(404).build() // don't let the user know they found a real feed
         }
         feedToUpdate.title = feed.title ?: feedToUpdate.title
-        if (feed.url != null)
-            feedToUpdate.url = feed.url
+        val feedUrl = feed.url
+        if (feedUrl != null)
+            feedToUpdate.url = feedUrl
         feedToUpdate.description = feed.description ?: feedToUpdate.description
 
         val folderId = feed.folderId

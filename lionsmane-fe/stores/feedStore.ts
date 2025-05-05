@@ -4,12 +4,16 @@
 
 import { defineStore } from 'pinia';
 import type { SchemaFeedDto } from '@/utils/gen/schema';
+import { useFeedQuery } from '@/queries/feeds';
 
 export const useFeedStore = defineStore('feeds', () => {
   const feeds = ref([] as SchemaFeedDto[]);
+  const isLoaded = ref(false);
 
-  function storeFeeds(f: SchemaFeedDto[]) {
-    feeds.value = f;
+  function hydrateFeeds() {
+    const { feedList } = useFeedQuery();
+    feeds.value = feedList.value.data ?? [];
+    isLoaded.value = true;
   }
 
   function getFeedsAsSelect() {
@@ -23,7 +27,8 @@ export const useFeedStore = defineStore('feeds', () => {
 
   return {
     feeds,
-    storeFeeds,
+    isLoaded,
+    hydrateFeeds,
     getFeedsAsSelect,
   };
 });

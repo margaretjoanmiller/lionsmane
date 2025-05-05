@@ -1,15 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: "dash",
-  name: "dashboard-feeds-all",
-  alias: "/dashboard/feeds/all",
+  layout: 'dash',
+  name: 'dashboard-feeds-all',
+  alias: '/dashboard/feeds/all',
 });
 
 const articleStore = useArticleStore();
-
-onMounted(() => {
-  articleStore.fetchArticles();
-});
 
 const articles = computed(() => {
   return articleStore.articles.map((article) => {
@@ -22,7 +18,7 @@ const articles = computed(() => {
       ) {
         throw createError({
           status: 500,
-          statusText: "Malformed articles, something went very wrong",
+          statusText: 'Malformed articles, something went very wrong',
         });
       }
       return {

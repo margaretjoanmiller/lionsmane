@@ -13,19 +13,10 @@ import {
 import { useFeedStore } from '@/stores/feedStore';
 import { CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
-import { useFeedQuery } from '~/queries/feeds';
-
-const { feedList, status, asyncStatus } = useFeedQuery();
+import { useFeedQuery } from '@/queries/feeds';
 
 const feedStore = useFeedStore();
 const folderStore = useFolderStore();
-
-if (status.value === 'success' && feedList.value.data) {
-  feedStore.storeFeeds(feedList.value.data);
-}
-
-const { feeds } = storeToRefs(feedStore);
-const { folders } = storeToRefs(folderStore);
 
 const orphanFeeds = computed(() => {
   return feedStore.feeds.filter((feed) => !feed.folderId);
@@ -68,7 +59,7 @@ const orphanFeeds = computed(() => {
                 </NuxtLink>
               </SidebarMenuButton>
 
-              <template v-for="folder in folders" :key="folder.id!">
+              <template v-for="folder in folderStore.folders" :key="folder.id!">
                 <Collapsible class="group/folder-collapsible">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton as-child :tooltip="folder.name">
@@ -84,7 +75,7 @@ const orphanFeeds = computed(() => {
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         <SidebarMenuButton
-                          v-for="feed in feeds.filter(
+                          v-for="feed in feedStore.feeds.filter(
                             (f) => f.folderId === folder.id,
                           )"
                           :key="feed.id!"

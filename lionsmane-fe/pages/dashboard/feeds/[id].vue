@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: "dash",
+  layout: 'dash',
 });
 
 const { user } = useOidcAuth();
@@ -12,10 +12,6 @@ const { user } = useOidcAuth();
 const route = useRoute();
 
 const articleStore = useArticleStore();
-
-onMounted(() => {
-  articleStore.fetchArticles();
-});
 
 const articles = computed(() => {
   return articleStore.articles
@@ -30,7 +26,7 @@ const articles = computed(() => {
         ) {
           throw createError({
             status: 500,
-            statusText: "Malformed articles, something went very wrong",
+            statusText: 'Malformed articles, something went very wrong',
           });
         }
         return {

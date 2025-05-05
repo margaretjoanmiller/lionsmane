@@ -4,8 +4,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: "dash",
-  name: "dashboard-home",
+  layout: 'dash',
+  name: 'dashboard-home',
 });
 </script>
 

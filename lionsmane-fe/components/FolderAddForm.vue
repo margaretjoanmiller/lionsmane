@@ -6,23 +6,28 @@
 import { postFoldersBody } from '@/utils/gen/folder-resource';
 import { useCreateFolder } from '@/mutations/folders';
 import { useFolderQuery } from '@/queries/folders';
-
-const feedStore = useFeedStore();
+import { useFeedQuery } from '@/queries/feeds';
 
 const toast = useToast();
 
-const { refresh } = useFolderQuery();
-onMounted(async () => {
-  await refresh();
-});
+const {
+  folderList,
+  status: folderStatus,
+  refresh: folderRefresh,
+} = useFolderQuery();
+const { feedList, status: feedStatus, refresh: feedRefresh } = useFeedQuery();
+
+const folderStore = useFolderStore();
+const feedStore = useFeedStore();
 
 const feeds = computed(() => feedStore.getFeedsAsSelect());
 const { createFolder, newFolder, status, asyncStatus } = useCreateFolder();
 
 async function onSubmit() {
   createFolder();
+  await folderRefresh();
+  await feedRefresh();
   if (status.value === 'success') {
-    await refresh();
     toast.add({ title: 'Added folder successfully.', color: 'success' });
   } else if (status.value === 'error') {
     toast.add({ title: 'Error adding feed', color: 'error' });

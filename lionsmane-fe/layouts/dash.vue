@@ -3,22 +3,23 @@
   -->
 
 <script setup lang="ts">
+import { useQueryCache } from '@pinia/colada';
+
 import AppSidebar from '@/components/AppSidebar.vue';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
-import { useFolderQuery } from '@/queries/folders';
 
 const { loggedIn, login, user } = useOidcAuth();
 
@@ -27,31 +28,26 @@ if (!loggedIn.value || !user.value) {
 }
 
 const articleStore = useArticleStore();
+const feedStore = useFeedStore();
 const folderStore = useFolderStore();
+const queryStore = useQueryCache();
 const route = useRoute();
 const toast = useToast();
 
-const { folderList, status, asyncStatus, refresh } = useFolderQuery();
-
-onMounted(async () => {
-  if (status.value === 'success' && folderList.value.data) {
-    folderStore.storeFolders(folderList.value.data);
-  } else if (status.value === 'error') {
-    toast.add({ title: 'Error updating folders', color: 'error' });
-  }
-});
+feedStore.hydrateFeeds();
+folderStore.hydrateFolders();
+articleStore.hydrateArticles();
 
 async function onReload() {
   try {
     await $lion('/feeds/refresh/all', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`
-      }
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
     });
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
-    await articleStore.fetchArticles();
-    await refresh();
+    await queryStore.invalidateQueries({ active: null });
   } catch (e) {
     console.error(e);
     toast.add({ title: 'Failed to request feed refresh' });

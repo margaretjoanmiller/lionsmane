@@ -3,11 +3,12 @@
  */
 
 import { ref } from 'vue';
-import { defineMutation, useMutation } from '@pinia/colada';
+import { defineMutation, useMutation, useQueryCache } from '@pinia/colada';
 import type { SchemaFolderIn } from '@/utils/gen/schema';
 
 export const useCreateFolder = defineMutation(() => {
   const { user } = useOidcAuth();
+  const queryCache = useQueryCache();
   const newFolder = ref<SchemaFolderIn>({
     name: '',
     description: '',
@@ -21,6 +22,11 @@ export const useCreateFolder = defineMutation(() => {
         headers: {
           Authorization: `Bearer ${user?.value?.accessToken}`,
         },
+      }),
+    onSettled: async () =>
+      await queryCache.invalidateQueries({
+        key: ['feeds', 'folders'],
+        active: null,
       }),
   });
 

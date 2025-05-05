@@ -3,11 +3,13 @@
  */
 
 import { ref } from 'vue';
-import { defineMutation, useMutation } from '@pinia/colada';
-import type { SchemaFeedIn } from '~/utils/gen/schema';
+import { defineMutation, useMutation, useQueryCache } from '@pinia/colada';
+import type { SchemaFeedIn } from '@/utils/gen/schema';
 
 export const useCreateFeed = defineMutation(() => {
   const { user } = useOidcAuth();
+
+  const queryCache = useQueryCache();
   const newFeed = ref<SchemaFeedIn>({
     title: '',
     url: '',
@@ -20,6 +22,11 @@ export const useCreateFeed = defineMutation(() => {
         headers: {
           Authorization: `Bearer ${user?.value?.accessToken}`,
         },
+      }),
+    onSettled: async () =>
+      await queryCache.invalidateQueries({
+        key: ['feeds', 'folders'],
+        active: null,
       }),
   });
 
