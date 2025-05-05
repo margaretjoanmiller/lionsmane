@@ -5,6 +5,9 @@
 <script setup lang="ts">
 import { postFoldersBody } from '@/utils/gen/folder-resource';
 import type { SchemaFolderIn } from '@/utils/gen/schema';
+import type { FormError, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui';
+import { z as zod } from 'zod';
+import { postFoldersBodyFeedsItemRegExp } from '../utils/gen/folder-resource';
 
 const toast = useToast();
 const { user } = useOidcAuth();
@@ -31,15 +34,20 @@ const {
   },
 });
 
-const newFolder = reactive({
+const newFolder = ref({
   name: '',
   description: '',
-  feeds: [],
+  feeds: [
+    {
+      label: '',
+      value: '',
+    },
+  ],
 });
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: async (newFolder: SchemaFolderIn) =>
-    await $lion('/folders', {
+  mutationFn: (newFolder: SchemaFolderIn) =>
+    $lion('/folders', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${user.value?.accessToken}`,
@@ -50,20 +58,51 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     }),
   async onSuccess() {
     await queryClient.invalidateQueries();
-    toast.add({ title: 'Added feed successfully.', color: 'success' });
+    toast.add({ title: 'Added folder successfully.', color: 'success' });
   },
   onError() {
-    toast.add({ title: 'Error adding feed', color: 'error' });
+    toast.add({ title: 'Error adding folder', color: 'error' });
   },
+});
+
+function onSubmit() {
+  mutate({
+    name: newFolder.value.name,
+    description: newFolder.value.description,
+    feeds: newFolder.value.feeds.map((f) => f.value).filter((f) => f !== ''),
+  });
+}
+
+async function onError(event: FormErrorEvent) {
+  toast.add({
+    title: 'Invalid form',
+    color: 'error',
+  });
+}
+
+const postFoldersBodySelect = zod.object({
+  name: zod.string(),
+  description: zod.string().nullish(),
+  feeds: zod
+    .array(
+      zod.object({
+        label: zod.string(),
+        value: zod.string(),
+      }),
+    )
+    .nullish(),
 });
 </script>
 
 <template>
+  <template v-if="isPendingFeeds">Loading..</template>
   <UForm
-    :schema="postFoldersBody"
+    v-else-if="feeds"
+    :schema="postFoldersBodySelect"
     :state="newFolder"
     class="space-y-4"
-    @submit="mutate(newFolder)"
+    @submit="onSubmit"
+    @error="onError"
   >
     <UFormField label="Name" name="name">
       <UInput v-model="newFolder.name" />
@@ -72,22 +111,21 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     <UFormField label="Description" name="description">
       <UInput v-model="newFolder.description" />
     </UFormField>
-    <UFormField name="feeds">
-      <USelect
-        v-model="newFolder.feeds!"
+    <UFormField>
+      <USelectMenu
+        v-model="newFolder.feeds"
         multiple
         label="Feeds"
-        value-key="id"
         :items="
-          feeds?.map((feed) => ({
+          feeds.map((feed) => ({
             label: feed.title,
             value: feed.id,
           }))
         "
-        class="w-48"
+        class="w-49"
       />
     </UFormField>
 
-    <UButton type="submit" :disabled="isPending"> Submit</UButton>
+    <UButton type="submit"> Submit</UButton>
   </UForm>
 </template>

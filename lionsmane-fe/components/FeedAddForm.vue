@@ -16,11 +16,14 @@ if (!loggedIn.value) {
 
 const queryClient = useQueryClient();
 
-const feedState = reactive({
+const feedState = ref({
   title: '',
   description: '',
   url: '',
-  folderId: null,
+  folder: {
+    label: '',
+    value: '',
+  },
 });
 
 const {
@@ -37,7 +40,7 @@ const {
       },
     });
     if (!resp) {
-      throw new Error('Failed to fetch feeds');
+      throw new Error('Failed to fetch folders');
     }
     return resp;
   },
@@ -62,6 +65,15 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     toast.add({ title: 'Error adding feed', color: 'error' });
   },
 });
+
+function onSubmit() {
+  mutate({
+    title: feedState.value.title,
+    description: feedState.value.description,
+    url: feedState.value.url,
+    folderId: feedState.value.folder.value,
+  });
+}
 </script>
 
 <template>
@@ -69,7 +81,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     :schema="postFeedsBody"
     :state="feedState"
     class="space-y-4"
-    @submit="mutate(feedState)"
+    @submit="onSubmit"
   >
     <UFormField label="title" name="title">
       <UInput v-model="feedState.title" />
@@ -82,11 +94,15 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     </UFormField>
 
     <FormField label="folderId" name="folderId">
-      <USelect
-        v-model="feedState.folderId!"
+      <USelectMenu
+        v-model="feedState.folder"
         label="Folders"
-        value-key="id"
-        :items="folders"
+        :items="
+          folders?.map((folder) => ({
+            label: folder.name,
+            value: folder.id,
+          }))
+        "
         class="w-48"
       />
     </FormField>

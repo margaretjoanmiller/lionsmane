@@ -98,18 +98,16 @@ async function onReload() {
             Fetch articles
           </Button>
           <div class="group fixed right-6 bottom-6">
-            <Dialog>
-              <DialogTrigger>
-                <Button
-                  class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4"
-                >
-                  <Icon name="material-symbols:add" size="72" />
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
+            <UModal>
+              <Button
+                class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4"
+              >
+                <Icon name="material-symbols:add" size="72" />
+              </Button>
+              <template #content>
                 <FeedAddForm />
-              </DialogContent>
-            </Dialog>
+              </template>
+            </UModal>
           </div>
         </div>
       </header>
