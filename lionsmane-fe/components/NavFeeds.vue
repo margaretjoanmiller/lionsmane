@@ -147,10 +147,10 @@ const {
       </Collapsible>
       <SidebarMenuItem>
         <SidebarMenuButton as-child>
-          <!--          <NuxtLink to="/dashboard/settings/newfolder">-->
-          <!--            <Icon name="material-symbols:add" />-->
-          <!--            Add folder-->
-          <!--          </NuxtLink>-->
+          <NuxtLink to="/dashboard/settings/newfolder">
+            <Icon name="material-symbols:add" />
+            Add folder
+          </NuxtLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

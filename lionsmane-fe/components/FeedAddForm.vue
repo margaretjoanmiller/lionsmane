@@ -54,8 +54,8 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
         ...newFeed,
       },
     }),
-  onSuccess() {
-    queryClient.invalidateQueries();
+  async onSuccess() {
+    await queryClient.invalidateQueries();
     toast.add({ title: 'Added feed successfully.', color: 'success' });
   },
   onError() {

@@ -4,32 +4,58 @@
 
 <script setup lang="ts">
 import { postFoldersBody } from '@/utils/gen/folder-resource';
-import { useCreateFolder } from '@/mutations/folders';
-import { useFolderQuery } from '@/queries/folders';
-import { useFeedQuery } from '@/queries/feeds';
+import type { SchemaFolderIn } from '@/utils/gen/schema';
 
 const toast = useToast();
+const { user } = useOidcAuth();
+
+const queryClient = useQueryClient();
 
 const {
-  folderList,
-  status: folderStatus,
-  refresh: folderRefresh,
-} = useFolderQuery();
-const { feedList, status: feedStatus, refresh: feedRefresh } = useFeedQuery();
+  isPending: isPendingFeeds,
+  isError: isErrorFeeds,
+  data: feeds,
+  error: feedsError,
+} = useQuery({
+  queryKey: ['feeds'],
+  queryFn: async () => {
+    const resp = await $lion('/feeds', {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
+});
 
-const feeds = computed(() => feedStore.getFeedsAsSelect());
-const { createFolder, newFolder, status, asyncStatus } = useCreateFolder();
+const newFolder = reactive({
+  name: '',
+  description: '',
+  feeds: [],
+});
 
-async function onSubmit() {
-  createFolder();
-  await folderRefresh();
-  await feedRefresh();
-  if (status.value === 'success') {
-    toast.add({ title: 'Added folder successfully.', color: 'success' });
-  } else if (status.value === 'error') {
+const { isPending, isError, error, isSuccess, mutate } = useMutation({
+  mutationFn: async (newFolder: SchemaFolderIn) =>
+    await $lion('/folders', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+      body: {
+        ...newFolder,
+      },
+    }),
+  async onSuccess() {
+    await queryClient.invalidateQueries();
+    toast.add({ title: 'Added feed successfully.', color: 'success' });
+  },
+  onError() {
     toast.add({ title: 'Error adding feed', color: 'error' });
-  }
-}
+  },
+});
 </script>
 
 <template>
@@ -37,7 +63,7 @@ async function onSubmit() {
     :schema="postFoldersBody"
     :state="newFolder"
     class="space-y-4"
-    @submit="onSubmit"
+    @submit="mutate(newFolder)"
   >
     <UFormField label="Name" name="name">
       <UInput v-model="newFolder.name" />
@@ -52,13 +78,16 @@ async function onSubmit() {
         multiple
         label="Feeds"
         value-key="id"
-        :items="feeds"
+        :items="
+          feeds.map((feed) => ({
+            label: feed.title,
+            value: feed.id,
+          }))
+        "
         class="w-48"
       />
     </UFormField>
 
-    <UButton type="submit" :disabled="asyncStatus === 'loading'">
-      Submit
-    </UButton>
+    <UButton type="submit" :disabled="isPending"> Submit</UButton>
   </UForm>
 </template>
