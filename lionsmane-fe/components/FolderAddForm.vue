@@ -79,7 +79,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
         label="Feeds"
         value-key="id"
         :items="
-          feeds.map((feed) => ({
+          feeds?.map((feed) => ({
             label: feed.title,
             value: feed.id,
           }))

@@ -44,8 +44,8 @@ const {
 });
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: async (newFeed: SchemaFeedIn) =>
-    await $lion('/feeds', {
+  mutationFn: (newFeed: SchemaFeedIn) =>
+    $lion('/feeds', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${user.value?.accessToken}`,
