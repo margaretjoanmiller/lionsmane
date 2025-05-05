@@ -3,53 +3,78 @@
   -->
 
 <script setup lang="ts">
-import { useCreateFeed } from '@/mutations/feeds';
-import { postFeedsBody } from '~/utils/gen/feed-resource';
-import { useFeedQuery } from '~/queries/feeds';
+import { postFeedsBody } from '@/utils/gen/feed-resource';
+import type { SchemaFeedIn } from '@/utils/gen/schema';
 
 const toast = useToast();
 
-const { loggedIn, login } = useOidcAuth();
+const { loggedIn, user, login } = useOidcAuth();
 
 if (!loggedIn.value) {
   await login();
 }
 
-const { createFeed, status, asyncStatus, newFeed } = useCreateFeed();
+const feedState = reactive({
+  title: '',
+  description: '',
+  url: '',
+  folderId: null,
+});
 
-const { refresh } = useFeedQuery();
-const folderStore = useFolderStore();
-const folders = computed(() => folderStore.getFoldersAsSelect());
+const {
+  isPending: isPendingFolders,
+  isError: isErrorFolders,
+  data: folders,
+  error: foldersError,
+} = useQuery({
+  queryKey: ['folders'],
+  queryFn: async () => {
+    const resp = await $lion('/folders', {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
+});
 
-async function onSubmit() {
-  createFeed();
-  await refresh();
-  if (status.value == 'success' && asyncStatus.value === 'idle') {
-    toast.add({ title: 'Feed added successfully', color: 'success' });
-  }
-}
+const { isPending, isError, error, isSuccess, mutate } = useMutation({
+  mutationFn: async (newFeed: SchemaFeedIn) =>
+    await $lion('/feeds', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+      body: {
+        ...newFeed,
+      },
+    }),
+});
 </script>
 
 <template>
   <UForm
     :schema="postFeedsBody"
-    :state="newFeed"
+    :state="feedState"
     class="space-y-4"
-    @submit="onSubmit"
+    @submit="mutate(feedState)"
   >
     <UFormField label="title" name="title">
-      <UInput v-model="newFeed.title" />
+      <UInput v-model="feedState.title" />
     </UFormField>
     <UFormField label="description" name="description">
-      <UInput v-model="newFeed.description" />
+      <UInput v-model="feedState.description" />
     </UFormField>
     <UFormField label="url" name="url">
-      <UInput v-model="newFeed.url" />
+      <UInput v-model="feedState.url" />
     </UFormField>
 
     <FormField label="folderId" name="folderId">
       <USelect
-        v-model="newFeed.folderId!"
+        v-model="feedState.folderId!"
         label="Folders"
         value-key="id"
         :items="folders"

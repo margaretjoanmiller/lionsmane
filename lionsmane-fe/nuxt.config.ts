@@ -29,12 +29,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: [
-        'vee-validate',
-        'zod',
-        '@vee-validate/zod',
-        '@tanstack/vue-query-devtools',
-      ],
+      include: ['vee-validate', 'zod', '@vee-validate/zod'],
     },
   },
 
@@ -88,10 +83,10 @@ export default defineNuxtConfig({
     // from @tanstack/vue-query, will be passed
     // to the QueryClient constructor
     // More details: https://tanstack.com/query/v5/docs/reference/QueryClient
-    queryClientOptions: {
-      defaultOptions: {
-        queries: {},
-      },
-    },
+    // queryClientOptions: {
+    //   defaultOptions: {
+    //     queries: {},
+    //   },
+    // },
   },
 });

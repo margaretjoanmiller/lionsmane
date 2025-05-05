@@ -4,13 +4,13 @@
  * lionsmane API
  * OpenAPI spec version: 1.0.0-SNAPSHOT
  */
-import { z as zod } from "zod";
+import { z as zod } from 'zod';
 
 /**
  * @summary Post Feed
  */
 export const postFeedsBodyFolderIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const postFeedsBody = zod.object({
@@ -29,10 +29,10 @@ export const postFeedsBody = zod.object({
  * @summary List Feeds
  */
 export const getFeedsResponseIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 export const getFeedsResponseFolderIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const getFeedsResponseItem = zod.object({
@@ -59,7 +59,7 @@ export const getFeedsResponse = zod.array(getFeedsResponseItem);
  * @summary Delete Feed
  */
 export const getFeedsDeleteIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const getFeedsDeleteIdParams = zod.object({
@@ -70,7 +70,7 @@ export const getFeedsDeleteIdParams = zod.object({
  * @summary Get Feed Refresh
  */
 export const getFeedsRefreshIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const getFeedsRefreshIdParams = zod.object({
@@ -81,7 +81,7 @@ export const getFeedsRefreshIdParams = zod.object({
  * @summary Update Feed
  */
 export const postFeedsUpdateIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const postFeedsUpdateIdParams = zod.object({
@@ -89,13 +89,13 @@ export const postFeedsUpdateIdParams = zod.object({
 });
 
 export const postFeedsUpdateIdBodyFolderIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const postFeedsUpdateIdBody = zod.object({
   title: zod.string().nullish(),
   description: zod.string().nullish(),
-  url: zod.string().url().nullish(),
+  url: zod.string().nullish(),
   folderId: zod
     .string()
     .uuid()
@@ -108,7 +108,7 @@ export const postFeedsUpdateIdBody = zod.object({
  * @summary Get Feed
  */
 export const getFeedsIdPathIdRegExp = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const getFeedsIdParams = zod.object({
@@ -116,10 +116,10 @@ export const getFeedsIdParams = zod.object({
 });
 
 export const getFeedsIdResponseIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 export const getFeedsIdResponseFolderIdRegExpOne = new RegExp(
-  "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+  '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}',
 );
 
 export const getFeedsIdResponse = zod.object({

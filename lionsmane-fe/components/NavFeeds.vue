@@ -10,16 +10,52 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useFeedStore } from '@/stores/feedStore';
 import { CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
-import { useFeedQuery } from '@/queries/feeds';
+import { Collapsible } from '@/components/ui/collapsible';
 
-const feedStore = useFeedStore();
-const folderStore = useFolderStore();
+const toast = useToast();
 
-const orphanFeeds = computed(() => {
-  return feedStore.feeds.filter((feed) => !feed.folderId);
+const { user } = useOidcAuth();
+
+const {
+  isPending: isPendingFeeds,
+  isError: isErrorFeeds,
+  data: feeds,
+  error: feedsError,
+} = useQuery({
+  queryKey: ['feeds'],
+  queryFn: async () => {
+    const resp = await $lion('/feeds', {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
+});
+
+const {
+  isPending: isPendingFolders,
+  isError: isErrorFolders,
+  data: folders,
+  error: foldersError,
+} = useQuery({
+  queryKey: ['folders'],
+  queryFn: async () => {
+    const resp = await $lion('/folders', {
+      headers: {
+        Authorization: `Bearer ${user.value?.accessToken}`,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
 });
 </script>
 
@@ -27,8 +63,16 @@ const orphanFeeds = computed(() => {
   <SidebarGroup>
     <SidebarGroupLabel>RSS</SidebarGroupLabel>
     <SidebarMenu>
+      <!--Loading -->
+      <SidebarMenuItem v-if="isPendingFeeds || isPendingFolders">
+        Loading...
+      </SidebarMenuItem>
       <!-- Main Feeds Collapsible -->
-      <Collapsible class="group/feeds-collapsible" defaultOpen>
+      <Collapsible
+        v-else-if="feeds && folders"
+        class="group/feeds-collapsible"
+        defaultOpen
+      >
         <SidebarMenuItem>
           <SidebarMenuButton>
             <NuxtLink :to="{ name: 'dashboard-feeds-all' }">Feeds</NuxtLink>
@@ -44,7 +88,7 @@ const orphanFeeds = computed(() => {
             <SidebarMenuSub>
               <!-- Orphan Feeds (without folders) -->
               <SidebarMenuButton
-                v-for="feed in orphanFeeds"
+                v-for="feed in feeds.filter((feed) => !feed.folderId)"
                 :key="feed.id!"
                 as-child
                 :tooltip="feed.title!"
@@ -59,7 +103,7 @@ const orphanFeeds = computed(() => {
                 </NuxtLink>
               </SidebarMenuButton>
 
-              <template v-for="folder in folderStore.folders" :key="folder.id!">
+              <template v-for="folder in folders" :key="folder.id!">
                 <Collapsible class="group/folder-collapsible">
                   <SidebarMenuSubItem>
                     <SidebarMenuButton as-child :tooltip="folder.name">
@@ -75,7 +119,7 @@ const orphanFeeds = computed(() => {
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         <SidebarMenuButton
-                          v-for="feed in feedStore.feeds.filter(
+                          v-for="feed in feeds.filter(
                             (f) => f.folderId === folder.id,
                           )"
                           :key="feed.id!"
@@ -103,10 +147,10 @@ const orphanFeeds = computed(() => {
       </Collapsible>
       <SidebarMenuItem>
         <SidebarMenuButton as-child>
-          <NuxtLink to="/dashboard/settings/newfolder">
-            <Icon name="material-symbols:add" />
-            Add folder
-          </NuxtLink>
+          <!--          <NuxtLink to="/dashboard/settings/newfolder">-->
+          <!--            <Icon name="material-symbols:add" />-->
+          <!--            Add folder-->
+          <!--          </NuxtLink>-->
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

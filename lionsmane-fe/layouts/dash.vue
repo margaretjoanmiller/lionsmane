@@ -3,8 +3,6 @@
   -->
 
 <script setup lang="ts">
-import { useQueryCache } from '@pinia/colada';
-
 import AppSidebar from '@/components/AppSidebar.vue';
 import {
   Breadcrumb,
@@ -27,16 +25,8 @@ if (!loggedIn.value || !user.value) {
   await login();
 }
 
-const articleStore = useArticleStore();
-const feedStore = useFeedStore();
-const folderStore = useFolderStore();
-const queryStore = useQueryCache();
 const route = useRoute();
 const toast = useToast();
-
-feedStore.hydrateFeeds();
-folderStore.hydrateFolders();
-articleStore.hydrateArticles();
 
 async function onReload() {
   try {
@@ -47,7 +37,6 @@ async function onReload() {
     });
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
-    await queryStore.invalidateQueries({ active: null });
   } catch (e) {
     console.error(e);
     toast.add({ title: 'Failed to request feed refresh' });
