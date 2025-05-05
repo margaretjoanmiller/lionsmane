@@ -51,24 +51,25 @@ class FolderResource(
     }
 
     @POST
+    @Transactional
     fun createFolder(@Valid folder: FolderIn): FolderOut {
         val newFolder = Folder()
         newFolder.userName = identity.principal.name
         newFolder.name = folder.name
         newFolder.description = folder.description
 
+        folder.feeds?.forEach { feedId ->
+            val feed = feedRepository.findByUUID(feedId)
+            if (feed != null) {
+                feed.folder = newFolder
+                newFolder.feeds.add(feed)
+            }
+        }
         try {
             folderRepository.persist(newFolder)
         } catch (e: Exception) {
             Log.error("Error creating folder: ${folder.name}")
             throw e
-        }
-        folder.feeds?.forEach { feedId ->
-            {
-                val feed = feedRepository.findByUUID(feedId)
-                if (feed != null)
-                    feed.folder = newFolder
-            }
         }
         return newFolder.toDto()
     }
@@ -84,6 +85,14 @@ class FolderResource(
 
         folderToUpdate.name = folder.name
         folderToUpdate.description = folder.description ?: folderToUpdate.description
+        folder.feeds?.forEach { feedId ->
+            val feed = feedRepository.findByUUID(feedId)
+            if (feed != null) {
+                feed.folder = folderToUpdate
+                if (!folderToUpdate.feeds.contains(feed))
+                    folderToUpdate.feeds.add(feed)
+            }
+        }
         return Response.ok(folderToUpdate.toDto()).status(200).build()
     }
 

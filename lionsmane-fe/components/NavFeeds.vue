@@ -88,7 +88,7 @@ const {
             <SidebarMenuSub>
               <!-- Orphan Feeds (without folders) -->
               <SidebarMenuButton
-                v-for="feed in feeds.filter((feed) => !feed.folderId)"
+                v-for="feed in feeds.filter((f) => !f.folderId)"
                 :key="feed.id!"
                 as-child
                 :tooltip="feed.title!"

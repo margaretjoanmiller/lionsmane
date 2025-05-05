@@ -22,11 +22,16 @@ class Folder {
     lateinit var name: String
     var description: String? = null
 
+    @OneToMany(mappedBy = "folder", orphanRemoval = false)
+    var feeds: MutableList<Feed> = mutableListOf<Feed>()
 
     fun toDto() = FolderOut(
         id,
         userName,
         name,
         description,
+        feeds.map { feed ->
+            feed.id!!
+        } as MutableList<UUID>?
     )
 }
