@@ -14,6 +14,8 @@ if (!loggedIn.value) {
   await login();
 }
 
+const queryClient = useQueryClient();
+
 const feedState = reactive({
   title: '',
   description: '',
@@ -52,6 +54,13 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
         ...newFeed,
       },
     }),
+  onSuccess() {
+    queryClient.invalidateQueries();
+    toast.add({ title: 'Added feed successfully.', color: 'success' });
+  },
+  onError() {
+    toast.add({ title: 'Error adding feed', color: 'error' });
+  },
 });
 </script>
 

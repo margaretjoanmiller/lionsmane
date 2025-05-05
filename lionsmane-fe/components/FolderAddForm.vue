@@ -17,9 +17,6 @@ const {
 } = useFolderQuery();
 const { feedList, status: feedStatus, refresh: feedRefresh } = useFeedQuery();
 
-const folderStore = useFolderStore();
-const feedStore = useFeedStore();
-
 const feeds = computed(() => feedStore.getFeedsAsSelect());
 const { createFolder, newFolder, status, asyncStatus } = useCreateFolder();
 
