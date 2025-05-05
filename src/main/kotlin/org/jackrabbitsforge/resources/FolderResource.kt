@@ -56,13 +56,21 @@ class FolderResource(
         newFolder.userName = identity.principal.name
         newFolder.name = folder.name
         newFolder.description = folder.description
+
         try {
             folderRepository.persist(newFolder)
-            return newFolder.toDto()
         } catch (e: Exception) {
             Log.error("Error creating folder: ${folder.name}")
             throw e
         }
+        folder.feeds?.forEach { feedId ->
+            {
+                val feed = feedRepository.findByUUID(feedId)
+                if (feed != null)
+                    feed.folder = newFolder
+            }
+        }
+        return newFolder.toDto()
     }
 
     @POST
