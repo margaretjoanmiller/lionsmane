@@ -8,11 +8,7 @@ import type { SchemaFeedIn } from '@/utils/gen/schema';
 
 const toast = useToast();
 
-const { loggedIn, user, login } = useOidcAuth();
-
-if (!loggedIn.value) {
-  await login();
-}
+const { data } = useAuth();
 
 const queryClient = useQueryClient();
 
@@ -36,7 +32,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/folders', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
+        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
     });
     if (!resp) {
@@ -51,7 +47,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     $lion('/feeds', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
+        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
       body: {
         ...newFeed,

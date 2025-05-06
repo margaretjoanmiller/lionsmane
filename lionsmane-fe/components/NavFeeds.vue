@@ -16,7 +16,7 @@ import { Collapsible } from '@/components/ui/collapsible';
 
 const toast = useToast();
 
-const { user } = useOidcAuth();
+const { data } = useAuth();
 
 const {
   isPending: isPendingFeeds,
@@ -28,7 +28,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/feeds', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
+        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
     });
     if (!resp) {
@@ -48,7 +48,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/folders', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
+        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
     });
     if (!resp) {

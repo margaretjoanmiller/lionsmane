@@ -7,37 +7,7 @@ definePageMeta({
   layout: 'dash',
 });
 
-const { user } = useOidcAuth();
-
 const route = useRoute();
-
-const articleStore = useArticleStore();
-
-const articles = computed(() => {
-  return articleStore.articles
-    .filter((article) => article.feedId === route.params.id)
-    .map((article) => {
-      {
-        if (
-          !article.title ||
-          !article.textPreview ||
-          !article.publishedAt ||
-          !article.id
-        ) {
-          throw createError({
-            status: 500,
-            statusText: 'Malformed articles, something went very wrong',
-          });
-        }
-        return {
-          id: article.id,
-          title: article.title,
-          preview: `${article.textPreview.substring(0, 100)}...`,
-          date: article.publishedAt,
-        };
-      }
-    });
-});
 </script>
 
 <template>

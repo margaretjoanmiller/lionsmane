@@ -22,12 +22,12 @@ const props = withDefaults(defineProps<SidebarProps>(), {
   variant: 'inset',
 });
 
-const { user } = useOidcAuth();
+const { data: user } = useAuth();
 
 const data = {
   user: {
-    name: user?.value?.userInfo?.upn || 'error',
-    email: user?.value?.userName || '<no email>',
+    name: user.value?.user.name || 'error',
+    email: user.value?.user.email || '<no email>',
     avatar: '/img/Doc_Brown.jpg',
   },
 

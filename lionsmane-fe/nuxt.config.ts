@@ -16,13 +16,12 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/test-utils',
     'shadcn-nuxt',
-    'nuxt-oidc-auth',
     'nuxt-api-party',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
-    'vue-sonner/nuxt',
     '@nuxt/ui',
     '@peterbud/nuxt-query',
+    '@sidebase/nuxt-auth',
   ],
 
   css: ['~/assets/css/tailwind.css'],
@@ -49,28 +48,22 @@ export default defineNuxtConfig({
     preference: 'system',
   },
 
-  oidc: {
-    defaultProvider: 'keycloak',
-    middleware: {
-      globalMiddlewareEnabled: false,
-    },
-    providers: {
-      keycloak: {
-        baseUrl: '',
-        clientId: '',
-        clientSecret: '',
-        redirectUri: 'http://localhost:3000/auth/keycloak/callback',
-        exposeAccessToken: true,
-        callbackRedirectUrl: '/dashboard',
-      },
-    },
-  },
   apiParty: {
     endpoints: {
       lion: {
         url: process.env.API_URL || 'http://localhost:8080',
         schema: './v1.json',
       },
+    },
+  },
+
+  auth: {
+    globalAppMiddleware: true,
+    provider: {
+      type: 'authjs',
+      trustHost: false,
+      defaultProvider: 'keycloak',
+      addDefaultCallbackUrl: true,
     },
   },
 
@@ -88,5 +81,14 @@ export default defineNuxtConfig({
     //     queries: {},
     //   },
     // },
+  },
+
+  runtimeConfig: {
+    auth: {
+      nuxtSecret: '',
+      clientId: '',
+      clientSecret: '',
+      keycloakUrl: '',
+    },
   },
 });

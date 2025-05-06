@@ -19,11 +19,7 @@ import {
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
 
-const { loggedIn, login, user } = useOidcAuth();
-
-if (!loggedIn.value || !user.value) {
-  await login();
-}
+const { data, getSession } = useAuth();
 
 const route = useRoute();
 const toast = useToast();
@@ -32,7 +28,7 @@ async function onReload() {
   try {
     await $lion('/feeds/refresh/all', {
       headers: {
-        Authorization: `Bearer ${user.value?.accessToken}`,
+        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
     });
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });

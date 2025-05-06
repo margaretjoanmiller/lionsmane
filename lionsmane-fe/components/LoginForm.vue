@@ -3,21 +3,22 @@
   -->
 
 <script setup lang="ts">
-import type {HTMLAttributes} from "vue";
-import {cn} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
+import type { HTMLAttributes } from 'vue';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 const props = defineProps<{
-  class?: HTMLAttributes["class"];
+  class?: HTMLAttributes['class'];
 }>();
-const {login} = useOidcAuth();
+
+const { signIn } = useAuth();
 </script>
 
 <template>
@@ -30,8 +31,8 @@ const {login} = useOidcAuth();
       <CardContent>
         <div class="grid gap-6">
           <div class="flex flex-col gap-4">
-            <Button variant="outline" class="w-full" @click="login()">
-              <Icon name="simple-icons:keycloak"/>
+            <Button variant="outline" class="w-full" @click="signIn">
+              <Icon name="simple-icons:keycloak" />
               Login with Keycloak
             </Button>
           </div>
@@ -39,7 +40,7 @@ const {login} = useOidcAuth();
       </CardContent>
     </Card>
     <div
-        class="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4"
+      class="text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary"
     >
       By clicking continue, you agree to our
       <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.

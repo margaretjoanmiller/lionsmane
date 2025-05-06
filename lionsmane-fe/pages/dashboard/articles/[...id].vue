@@ -2,15 +2,15 @@
   - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
   -->
 <script setup lang="ts">
-import type { SchemaArticleOut } from "@/utils/gen/schema";
+import type { SchemaArticleOut } from '@/utils/gen/schema';
 
 definePageMeta({
-  layout: "dash",
+  layout: 'dash',
 });
 
 const route = useRoute();
 
-const { user } = useOidcAuth();
+const { data } = useAuth();
 
 const articleStore = useArticleStore();
 
@@ -22,13 +22,13 @@ const cachedArticle = articleStore.articles.find(
 if (!cachedArticle) {
   const { data, error } = await useLionData(`/articles/${route.params.id}`, {
     headers: {
-      Authorization: `Bearer ${user.value?.accessToken}`,
+      Authorization: `Bearer ${data.value?.user.accessToken}`,
     },
   });
   if (!data.value || error.value) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Could not find feed",
+      statusMessage: 'Could not find feed',
     });
   }
 
@@ -42,7 +42,7 @@ const content = article.content ?? article.textPreview;
 
 <template>
   <div
-    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm"
+    class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm"
   >
     <div class="m-6">
       <h1
@@ -53,7 +53,7 @@ const content = article.content ?? article.textPreview;
       <h4>
         {{ article.author }}
       </h4>
-      <div class="prose prose-pink prose-lg prose-card" v-html="content"></div>
+      <div class="prose prose-lg prose-card prose-pink" v-html="content"></div>
 
       <a :href="article.url!!">Original article</a>
     </div>
@@ -66,6 +66,6 @@ p {
 }
 
 h4 {
-  @apply text-muted-foreground text-sm;
+  @apply text-sm text-muted-foreground;
 }
 </style>
