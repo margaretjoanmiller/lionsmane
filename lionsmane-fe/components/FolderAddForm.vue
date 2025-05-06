@@ -3,14 +3,13 @@
   -->
 
 <script setup lang="ts">
-import { postFoldersBody } from '@/utils/gen/folder-resource';
 import type { SchemaFolderIn } from '@/utils/gen/schema';
 import type { FormError, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui';
 import { z as zod } from 'zod';
-import { postFoldersBodyFeedsItemRegExp } from '../utils/gen/folder-resource';
 
 const toast = useToast();
-const { data } = useAuth();
+
+const { session } = useUserSession();
 
 const queryClient = useQueryClient();
 
@@ -24,7 +23,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/feeds', {
       headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens?.access_token}`,
       },
     });
     if (!resp) {
@@ -50,7 +49,7 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
     $lion('/folders', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens?.access_token}`,
       },
       body: {
         ...newFolder,

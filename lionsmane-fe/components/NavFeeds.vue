@@ -28,7 +28,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/feeds', {
       headers: {
-        Authorization: `Bearer ${session.value?.tokens.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens.access_token}`,
       },
     });
     if (!resp) {
@@ -48,7 +48,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/folders', {
       headers: {
-        Authorization: `Bearer ${session.value?.tokens.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens.access_token}`,
       },
     });
     if (!resp) {

@@ -53,6 +53,9 @@ importers:
       '@tanstack/vue-table':
         specifier: ^8.21.3
         version: 8.21.3(vue@3.5.13(typescript@5.8.3))
+      '@tsndr/cloudflare-worker-jwt':
+        specifier: ^3.1.4
+        version: 3.1.4
       '@vee-validate/zod':
         specifier: ^4.15.0
         version: 4.15.0(vue@3.5.13(typescript@5.8.3))(zod@3.24.4)
@@ -65,6 +68,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      cookie-es:
+        specifier: ^2.0.0
+        version: 2.0.0
       eslint:
         specifier: ^9.26.0
         version: 9.26.0(jiti@2.4.2)
@@ -1802,6 +1808,9 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
+
+  '@tsndr/cloudflare-worker-jwt@3.1.4':
+    resolution: {integrity: sha512-sxuM/qXMhOEonGYogNYP6ijL2nmeJx0h8QQ28sv4fVn3kVNATYVm3nrDYhHztlfpcJtJpmUwaK/oWc7Vkdiykg==}
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
@@ -9239,6 +9248,8 @@ snapshots:
       vue: 3.5.13(typescript@5.8.3)
 
   '@trysound/sax@0.2.0': {}
+
+  '@tsndr/cloudflare-worker-jwt@3.1.4': {}
 
   '@tybys/wasm-util@0.9.0':
     dependencies:
