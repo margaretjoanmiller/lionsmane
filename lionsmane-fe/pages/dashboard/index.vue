@@ -7,8 +7,6 @@ definePageMeta({
   layout: 'dash',
   name: 'dashboard-home',
 });
-
-const { session } = useUserSession();
 </script>
 
 <template>
