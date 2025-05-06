@@ -17,6 +17,8 @@ export default defineOAuthKeycloakEventHandler({
       loggedInAt: Date.now(),
     });
 
+    console.log(tokens.refresh_token);
+
     return sendRedirect(event, '/');
   },
   onError(event, error) {

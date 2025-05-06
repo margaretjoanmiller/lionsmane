@@ -23,6 +23,7 @@ export default eventHandler(async (event) => {
       },
       body: new URLSearchParams({
         client_id: keycloakConfig.clientId,
+        client_secret: keycloakConfig.clientSecret,
         grant_type: 'refresh_token',
         refresh_token: session.tokens?.refresh_token,
       }),
