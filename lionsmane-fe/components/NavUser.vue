@@ -21,8 +21,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-vue-next';
+import { useUserSession } from '../.nuxt/imports';
 
-const { logout } = useAuth();
+const { clear } = useUserSession();
 
 defineProps<{
   user: {
@@ -46,7 +47,7 @@ const { isMobile } = useSidebar();
           >
             <Avatar class="h-8 w-8 rounded-lg">
               <AvatarImage :src="user.avatar" :alt="user.name" />
-              <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
+              <AvatarFallback class="rounded-lg"> CN</AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{ user.name }}</span>
@@ -64,7 +65,7 @@ const { isMobile } = useSidebar();
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage :src="user.avatar" :alt="user.name" />
-                <AvatarFallback class="rounded-lg"> LM </AvatarFallback>
+                <AvatarFallback class="rounded-lg"> LM</AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">{{ user.name }}</span>
@@ -85,7 +86,7 @@ const { isMobile } = useSidebar();
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogOut />
-            <Button @click="logout('keycloak', '/')"> Log out </Button>
+            <Button @click="clear"> Log out</Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

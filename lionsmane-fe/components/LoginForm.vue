@@ -18,7 +18,13 @@ const props = defineProps<{
   class?: HTMLAttributes['class'];
 }>();
 
-const { signIn } = useAuth();
+const { loggedIn, user, session, fetch, clear, openInPopup } = useUserSession();
+
+function login() {
+  if (!loggedIn.value) openInPopup('/auth/keycloak');
+
+  if (loggedIn.value) return navigateTo('/dashboard');
+}
 </script>
 
 <template>
@@ -31,7 +37,7 @@ const { signIn } = useAuth();
       <CardContent>
         <div class="grid gap-6">
           <div class="flex flex-col gap-4">
-            <Button variant="outline" class="w-full" @click="signIn">
+            <Button variant="outline" class="w-full" @click="login">
               <Icon name="simple-icons:keycloak" />
               Login with Keycloak
             </Button>

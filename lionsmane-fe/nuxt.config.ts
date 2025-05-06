@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/ui',
     '@peterbud/nuxt-query',
-    '@sidebase/nuxt-auth',
+    'nuxt-auth-utils',
   ],
 
   css: ['~/assets/css/tailwind.css'],
@@ -57,16 +57,6 @@ export default defineNuxtConfig({
     },
   },
 
-  auth: {
-    globalAppMiddleware: true,
-    provider: {
-      type: 'authjs',
-      trustHost: false,
-      defaultProvider: 'keycloak',
-      addDefaultCallbackUrl: true,
-    },
-  },
-
   nuxtQuery: {
     autoImports: ['useQuery', 'useMutation', 'useQueryClient'],
 
@@ -84,11 +74,13 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    auth: {
-      nuxtSecret: '',
-      clientId: '',
-      clientSecret: '',
-      keycloakUrl: '',
+    oauth: {
+      keycloak: {
+        clientId: '',
+        clientSecret: '',
+        serverUrl: '',
+        realm: '',
+      },
     },
   },
 });

@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
 
-const { data, getSession } = useAuth();
+const { session } = useUserSession();
 
 const route = useRoute();
 const toast = useToast();
@@ -28,7 +28,7 @@ async function onReload() {
   try {
     await $lion('/feeds/refresh/all', {
       headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens.accessToken}`,
       },
     });
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
