@@ -7,7 +7,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from '@/components/ui/collapsible';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -18,8 +18,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
-import { ChevronRight, type LucideIcon } from "lucide-vue-next";
+} from '@/components/ui/sidebar';
+import { ChevronRight, type LucideIcon } from 'lucide-vue-next';
 
 defineProps<{
   items: {
@@ -47,10 +47,10 @@ defineProps<{
       >
         <SidebarMenuItem>
           <SidebarMenuButton as-child :tooltip="item.title">
-            <a :href="item.url">
+            <NuxtLink :href="item.url">
               <component :is="item.icon" />
               <span>{{ item.title }}</span>
-            </a>
+            </NuxtLink>
           </SidebarMenuButton>
           <template v-if="item.items?.length">
             <CollapsibleTrigger as-child>

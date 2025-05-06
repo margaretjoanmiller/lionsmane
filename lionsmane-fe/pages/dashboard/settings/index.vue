@@ -24,7 +24,7 @@ const UDropdownMenu = resolveComponent('UDropdownMenu');
 
 const toast = useToast();
 
-const { data } = useAuth();
+const { session } = useUserSession();
 
 const queryClient = useQueryClient();
 
@@ -38,7 +38,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/feeds', {
       headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens.access_token}`,
       },
     });
     if (!resp) {
@@ -58,7 +58,7 @@ const {
   queryFn: async () => {
     const resp = await $lion('/folders', {
       headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
+        Authorization: `Bearer ${session.value?.tokens.access_token}`,
       },
     });
     if (!resp) {

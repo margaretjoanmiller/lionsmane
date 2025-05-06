@@ -4,6 +4,12 @@
 
 <script setup lang="ts">
 //
+
+const { loggedIn } = useUserSession();
+
+if (loggedIn.value) {
+  await navigateTo('/dashboard');
+}
 </script>
 
 <template>

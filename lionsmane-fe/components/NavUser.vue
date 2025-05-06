@@ -23,8 +23,6 @@ import {
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-vue-next';
 import { useUserSession } from '../.nuxt/imports';
 
-const { clear } = useUserSession();
-
 defineProps<{
   user: {
     name: string;
@@ -33,7 +31,13 @@ defineProps<{
   };
 }>();
 
+const { clear: clearSession } = useUserSession();
 const { isMobile } = useSidebar();
+
+async function logout() {
+  await clearSession();
+  await navigateTo('/');
+}
 </script>
 
 <template>
@@ -86,7 +90,7 @@ const { isMobile } = useSidebar();
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogOut />
-            <Button @click="clear"> Log out</Button>
+            <Button @click="logout()"> Log out</Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

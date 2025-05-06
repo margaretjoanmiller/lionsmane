@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { loggedIn, session } = useUserSession();
+  const { loggedIn } = useUserSession();
 
   // redirect the user to the login screen if they're not authenticated
   if (
