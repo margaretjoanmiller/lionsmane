@@ -8,11 +8,48 @@ definePageMeta({
 });
 
 const route = useRoute();
+
+let id: string;
+if (Array.isArray(route.params.id)) {
+  id = route.params.id[0];
+} else {
+  id = route.params.id;
+}
+
+const {
+  isPending: isPendingArticles,
+  isError: isErrorArticles,
+  data: articles,
+  error: articlesError,
+} = useQuery({
+  queryKey: ['articles', { feedId: id }],
+  queryFn: async () => {
+    const resp = await $lion('/articles/feed/{feedId}', {
+      path: {
+        feedId: id,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
+});
 </script>
 
 <template>
   <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-    <template v-for="article in articles" :key="article.id">
+    <template
+      v-for="article in articles?.map((a) => {
+        return {
+          id: a.id || '',
+          title: a.title || '',
+          preview: a.textPreview || '',
+          date: a.publishedAt || '',
+        };
+      })"
+      :key="article.id"
+    >
       <ArticleCard :article-preview="article" />
     </template>
   </div>

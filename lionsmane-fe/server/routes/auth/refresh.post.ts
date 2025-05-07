@@ -3,16 +3,15 @@
  */
 
 export default eventHandler(async (event) => {
-  const { secure } = await requireUserSession(event);
-
-  const keycloakConfig = useRuntimeConfig().oauth.keycloak;
-
-  if (!secure?.access_token && !secure?.refresh_token) {
+  const session = await getUserSession(event);
+  if (!session.secure?.access_token && !session.secure?.refresh_token) {
     throw createError({
       statusCode: 401,
       message: 'Unauthorized',
     });
   }
+
+  const keycloakConfig = useRuntimeConfig().oauth.keycloak;
 
   //@ts-expect-error
   const { access_token, refresh_token } = await $fetch(
@@ -26,7 +25,7 @@ export default eventHandler(async (event) => {
         client_id: keycloakConfig.clientId,
         client_secret: keycloakConfig.clientSecret,
         grant_type: 'refresh_token',
-        refresh_token: secure?.refresh_token,
+        refresh_token: session.secure?.refresh_token,
       }),
     },
   );
@@ -39,5 +38,8 @@ export default eventHandler(async (event) => {
     loggedInAt: Date.now(),
   });
 
-  return {};
+  return {
+    access_token,
+    refresh_token,
+  };
 });

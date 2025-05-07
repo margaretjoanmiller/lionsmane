@@ -16,8 +16,6 @@ import { Collapsible } from '@/components/ui/collapsible';
 
 const toast = useToast();
 
-const { session } = useUserSession();
-
 const {
   isPending: isPendingFeeds,
   isError: isErrorFeeds,

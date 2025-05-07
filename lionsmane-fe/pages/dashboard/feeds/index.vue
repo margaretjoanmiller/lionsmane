@@ -4,12 +4,38 @@ definePageMeta({
   name: 'dashboard-feeds-all',
   alias: '/dashboard/feeds/all',
 });
+
+const {
+  isPending: isPendingArticles,
+  isError: isErrorArticles,
+  data: articles,
+  error: articlesError,
+} = useQuery({
+  queryKey: ['articles'],
+  queryFn: async () => {
+    const resp = await $lion('/articles');
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
+  },
+});
 </script>
 
 <template>
   <div>
     <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-      <template v-for="article in articles" :key="article.id">
+      <template
+        v-for="article in articles?.map((a) => {
+          return {
+            id: a.id || '',
+            title: a.title || '',
+            preview: a.textPreview || '',
+            date: a.publishedAt || '',
+          };
+        })"
+        :key="a.id"
+      >
         <ArticleCard :article-preview="article" />
       </template>
     </div>

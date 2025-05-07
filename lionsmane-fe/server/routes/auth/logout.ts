@@ -17,9 +17,13 @@ export default eventHandler(async (event) => {
   const tokenResponse = await $fetch(
     `${keycloakConfig.serverUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/logout`,
     {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${secure?.access_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
+      body: new URLSearchParams({
+        client_id: keycloakConfig.clientId,
+      }),
     },
   );
 

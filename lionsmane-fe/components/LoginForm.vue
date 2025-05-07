@@ -21,7 +21,10 @@ const props = defineProps<{
 const { loggedIn, openInPopup } = useUserSession();
 
 function login() {
-  if (!loggedIn.value) openInPopup('/auth/keycloak');
+  if (!loggedIn.value) {
+    openInPopup('/auth/keycloak');
+    return navigateTo('/dashboard');
+  }
 
   if (loggedIn.value) return navigateTo('/dashboard');
 }
