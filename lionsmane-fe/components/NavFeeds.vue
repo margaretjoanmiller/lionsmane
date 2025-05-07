@@ -13,7 +13,6 @@ import {
 import { CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
 import { Collapsible } from '@/components/ui/collapsible';
-import type { NuxtError } from '#app';
 
 const toast = useToast();
 
@@ -31,6 +30,7 @@ const {
       return await $lion('/feeds');
     } catch {
       await clearSession();
+      await navigateTo('/login');
     }
   },
 });
@@ -47,6 +47,7 @@ const {
       return await $lion('/folders');
     } catch {
       await clearSession();
+      await navigateTo('/login');
     }
   },
 });
