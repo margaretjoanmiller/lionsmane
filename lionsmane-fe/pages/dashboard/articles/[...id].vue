@@ -19,37 +19,48 @@ if (Array.isArray(route.params.id)) {
   id = route.params.id;
 }
 
-const article = await $lion('/articles/{id}', {
-  path: {
-    id,
+const {
+  isPending: isPendingArticles,
+  isError: isErrorArticles,
+  data: article,
+  error: articlesError,
+} = useQuery({
+  queryKey: ['articles', { articleId: id }],
+  queryFn: async () => {
+    const resp = await $lion('/articles/{id}', {
+      path: {
+        id,
+      },
+    });
+    if (!resp) {
+      throw new Error('Failed to fetch feeds');
+    }
+    return resp;
   },
 });
-if (!article) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Could not find article',
-  });
-}
 
-const content = article.content ?? article.textPreview;
+const content = computed(
+  () => article.value?.content ?? article.value?.textPreview,
+);
 </script>
 
 <template>
   <div
+    v-if="!isPendingArticles && article"
     class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm"
   >
     <div class="m-6">
       <h1
         class="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
       >
-        {{ article.title }}
+        {{ article?.title }}
       </h1>
       <h4>
-        {{ article.author }}
+        {{ article?.author }}
       </h4>
       <div class="prose prose-lg prose-card prose-pink" v-html="content"></div>
 
-      <a :href="article.url!!">Original article</a>
+      <a :href="article?.url ?? ''">Original article</a>
     </div>
   </div>
 </template>
