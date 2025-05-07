@@ -12,15 +12,24 @@ const route = useRoute();
 
 const { session } = useUserSession();
 
-const { data, error } = await $lion(`/articles/${route.params.id}`);
-if (!data.value || error.value) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Could not find feed',
-  });
+let id: string;
+if (Array.isArray(route.params.id)) {
+  id = route.params.id[0];
+} else {
+  id = route.params.id;
 }
 
-article = data.value as SchemaArticleOut;
+const article = await $lion('/articles/{id}', {
+  path: {
+    id,
+  },
+});
+if (!article) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Could not find article',
+  });
+}
 
 const content = article.content ?? article.textPreview;
 </script>
@@ -44,13 +53,3 @@ const content = article.content ?? article.textPreview;
     </div>
   </div>
 </template>
-
-<style scoped lang="postcss">
-p {
-  @apply leading-7 [&:not(:first-child)]:mt-6;
-}
-
-h4 {
-  @apply text-sm text-muted-foreground;
-}
-</style>

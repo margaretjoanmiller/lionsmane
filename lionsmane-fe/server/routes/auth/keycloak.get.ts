@@ -14,7 +14,7 @@ export default defineOAuthKeycloakEventHandler({
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
       },
-      expiresIn: tokens.expires_in,
+      isAuthenticated: true,
       loggedInAt: Date.now(),
     });
 

@@ -109,8 +109,8 @@ const columns: TableColumn<SchemaFeedDto>[] = [
     },
   },
   {
-    accessorKey: 'feedId',
-    header: 'Feed',
+    accessorKey: 'folderId',
+    header: 'Folder',
   },
   {
     id: 'actions',

@@ -44,7 +44,7 @@ const {
         return {
           id: a.id || '',
           title: a.title || '',
-          preview: a.textPreview || '',
+          preview: `${a.textPreview?.substring(0, 70)}...`,
           date: a.publishedAt || '',
         };
       })"

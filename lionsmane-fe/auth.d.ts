@@ -3,6 +3,15 @@
  */
 
 declare module '#auth-utils' {
+  interface UserSession {
+    isAuthenticated(): boolean;
+  }
+
+  interface User {
+    name: string;
+    email: string;
+  }
+
   interface SecureSessionData {
     // Add your own fields
     id_token: string;

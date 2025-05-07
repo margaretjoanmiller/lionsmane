@@ -5,9 +5,9 @@
 <script setup lang="ts">
 //
 
-const { loggedIn } = useUserSession();
+const { loggedIn, session } = useUserSession();
 
-if (loggedIn.value) {
+if (loggedIn.value && session.value?.isAuthenticated) {
   await navigateTo('/dashboard');
 }
 </script>

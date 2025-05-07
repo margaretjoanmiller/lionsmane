@@ -12,6 +12,10 @@ export default defineNitroPlugin((nitroApp) => {
         'Authorization',
         `Bearer ${secure?.access_token}`,
       );
-    } catch {}
+    } catch {
+      await setUserSession(event, {
+        isAuthenticated: false,
+      });
+    }
   });
 });

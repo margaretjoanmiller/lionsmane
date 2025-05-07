@@ -19,8 +19,6 @@ import {
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
 
-const { session } = useUserSession();
-
 const route = useRoute();
 const toast = useToast();
 

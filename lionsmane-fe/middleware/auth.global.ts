@@ -3,17 +3,18 @@
  */
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { loggedIn } = useUserSession();
+  const { loggedIn, session } = useUserSession();
 
-  // redirect the user to the login screen if they're not authenticated
   if (
-    loggedIn.value ||
+    session.value?.isAuthenticated ||
     to.path.startsWith('/auth') ||
     to.path.startsWith('/api') ||
     to.path.startsWith('/login') ||
     to.path == '/'
   ) {
+    // redirect the user to the login screen if they're not authenticated
     return;
   }
+
   return navigateTo('/login');
 });
