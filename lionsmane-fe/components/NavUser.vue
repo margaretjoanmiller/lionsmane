@@ -21,7 +21,6 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-vue-next';
-import { useUserSession } from '../.nuxt/imports';
 
 defineProps<{
   user: {
@@ -91,7 +90,7 @@ async function logout() {
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogOut />
-            <Button @click="logout()"> Log out</Button>
+            <UButton @click="logout()"> Log out</UButton>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

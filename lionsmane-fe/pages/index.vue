@@ -5,6 +5,6 @@
 
 <template>
   <NuxtLink to="/login">
-    <Button>Login</Button>
+    <UButton>Login</UButton>
   </NuxtLink>
 </template>
