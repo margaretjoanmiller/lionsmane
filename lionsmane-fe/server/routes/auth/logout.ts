@@ -14,18 +14,26 @@ export default eventHandler(async (event) => {
     });
   }
 
-  const tokenResponse = await $fetch(
-    `${keycloakConfig.serverUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/logout`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+  try {
+    const tokenResponse = await $fetch(
+      `${keycloakConfig.serverUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/logout`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: keycloakConfig.clientId,
+        }),
       },
-      body: new URLSearchParams({
-        client_id: keycloakConfig.clientId,
-      }),
-    },
-  );
+    );
+  } catch (error) {
+    throw createError({ statusCode: 400, message: 'Unauthorized' });
+  }
 
   await clearUserSession(event);
+
+  await setUserSession(event, {
+    isAuthenticated: false,
+  });
 });

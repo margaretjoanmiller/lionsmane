@@ -13,6 +13,7 @@ export default defineNitroPlugin((nitroApp) => {
         `Bearer ${secure?.access_token}`,
       );
     } catch {
+      await clearUserSession(event);
       await setUserSession(event, {
         isAuthenticated: false,
       });

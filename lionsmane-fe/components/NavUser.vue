@@ -34,9 +34,9 @@ const { clear: clearSession } = useUserSession();
 const { isMobile } = useSidebar();
 
 async function logout() {
-  await clearSession();
   await $fetch('/auth/logout');
-  await navigateTo('/');
+  await clearSession();
+  return navigateTo('/');
 }
 </script>
 

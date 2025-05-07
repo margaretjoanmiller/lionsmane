@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { loggedIn, session } = useUserSession();
 
   if (
-    session.value?.isAuthenticated ||
+    (loggedIn.value && session.value?.isAuthenticated) ||
     to.path.startsWith('/auth') ||
     to.path.startsWith('/api') ||
     to.path.startsWith('/login') ||

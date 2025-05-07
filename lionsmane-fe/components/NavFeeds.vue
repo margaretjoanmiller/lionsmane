@@ -13,8 +13,11 @@ import {
 import { CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
 import { Collapsible } from '@/components/ui/collapsible';
+import type { NuxtError } from '#app';
 
 const toast = useToast();
+
+const { clear: clearSession } = useUserSession();
 
 const {
   isPending: isPendingFeeds,
@@ -24,11 +27,11 @@ const {
 } = useQuery({
   queryKey: ['feeds'],
   queryFn: async () => {
-    const resp = await $lion('/feeds');
-    if (!resp) {
-      throw new Error('Failed to fetch feeds');
+    try {
+      return await $lion('/feeds');
+    } catch {
+      await clearSession();
     }
-    return resp;
   },
 });
 
@@ -40,11 +43,11 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    const resp = await $lion('/folders');
-    if (!resp) {
-      throw new Error('Failed to fetch feeds');
+    try {
+      return await $lion('/folders');
+    } catch {
+      await clearSession();
     }
-    return resp;
   },
 });
 </script>
