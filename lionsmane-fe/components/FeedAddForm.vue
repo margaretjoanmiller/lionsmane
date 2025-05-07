@@ -82,7 +82,7 @@ function onSubmit() {
       <UInput v-model="feedState.url" />
     </UFormField>
 
-    <FormField label="folderId" name="folderId">
+    <UFormField label="folderId" name="folderId">
       <USelectMenu
         v-model="feedState.folder"
         label="Folders"
@@ -94,7 +94,7 @@ function onSubmit() {
         "
         class="w-48"
       />
-    </FormField>
+    </UFormField>
     <UButton type="submit"> Submit</UButton>
   </UForm>
 </template>

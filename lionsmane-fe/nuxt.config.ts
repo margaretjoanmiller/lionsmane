@@ -28,7 +28,18 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: ['vee-validate', 'zod', '@vee-validate/zod'],
+      include: [
+        'vee-validate',
+        'zod',
+        '@vee-validate/zod',
+        'class-variance-authority',
+        'reka-ui',
+        'clsx',
+        'tailwind-merge',
+        '@tanstack/vue-query',
+        'lucide-vue-next',
+        '@vueuse/core',
+      ],
     },
   },
 

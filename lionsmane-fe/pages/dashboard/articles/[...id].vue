@@ -12,26 +12,15 @@ const route = useRoute();
 
 const { session } = useUserSession();
 
-const articleStore = useArticleStore();
-
-let article;
-
-const cachedArticle = articleStore.articles.find(
-  (art) => art.id === route.params.id,
-);
-if (!cachedArticle) {
-  const { data, error } = await useLionData(`/articles/${route.params.id}`);
-  if (!data.value || error.value) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Could not find feed',
-    });
-  }
-
-  article = data.value as SchemaArticleOut;
-} else {
-  article = cachedArticle;
+const { data, error } = await $lion(`/articles/${route.params.id}`);
+if (!data.value || error.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Could not find feed',
+  });
 }
+
+article = data.value as SchemaArticleOut;
 
 const content = article.content ?? article.textPreview;
 </script>

@@ -4,10 +4,14 @@
 
 export default defineNitroPlugin((nitroApp) => {
   // Generic request hook: runs before any API request on the server
-  nitroApp.hooks.hook('api-party:request', async (ctx, event) => {
-    // Do something before each request
-    const { secure } = await requireUserSession(event);
+  nitroApp.hooks.hook('api-party:request:lion', async (ctx, event) => {
+    try {
+      const { secure } = await requireUserSession(event);
 
-    ctx.options.headers.set('Authorization', `Bearer ${secure?.access_token}`);
+      ctx.options.headers.set(
+        'Authorization',
+        `Bearer ${secure?.access_token}`,
+      );
+    } catch {}
   });
 });
