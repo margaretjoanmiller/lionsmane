@@ -18,7 +18,7 @@ const props = defineProps<{
   class?: HTMLAttributes['class'];
 }>();
 
-const { loggedIn, user, session, fetch, clear, openInPopup } = useUserSession();
+const { loggedIn, openInPopup } = useUserSession();
 
 function login() {
   if (!loggedIn.value) openInPopup('/auth/keycloak');

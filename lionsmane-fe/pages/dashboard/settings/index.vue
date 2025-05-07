@@ -36,11 +36,7 @@ const {
 } = useQuery({
   queryKey: ['feeds'],
   queryFn: async () => {
-    const resp = await $lion('/feeds', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
-    });
+    const resp = await $lion('/feeds');
     if (!resp) {
       throw new Error('Failed to fetch feeds');
     }
@@ -56,11 +52,7 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    const resp = await $lion('/folders', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
-    });
+    const resp = await $lion('/folders');
     if (!resp) {
       throw new Error('Failed to fetch feeds');
     }
@@ -161,9 +153,6 @@ const {
       path: {
         id,
       },
-      headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
-      },
     }),
   async onSuccess() {
     await queryClient.invalidateQueries();
@@ -185,9 +174,6 @@ const {
       method: 'POST',
       path: {
         id: feedToUpdate.id!,
-      },
-      headers: {
-        Authorization: `Bearer ${data.value?.user.accessToken}`,
       },
       body: {
         title: feedToUpdate.title,
@@ -271,7 +257,7 @@ const isModalOpen = ref(false);
             <UInput v-model="state.url" type="url" />
           </UFormField>
 
-          <FormField label="folderId" name="folderId">
+          <UFormField label="folderId" name="folderId">
             <USelectMenu
               v-model="state.folder"
               label="Folders"
@@ -283,7 +269,7 @@ const isModalOpen = ref(false);
               "
               class="w-48"
             />
-          </FormField>
+          </UFormField>
 
           <UButton type="submit" :disabled="isPendingEdit"> Submit</UButton>
         </UForm>

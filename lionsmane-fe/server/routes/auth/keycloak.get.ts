@@ -10,15 +10,13 @@ export default defineOAuthKeycloakEventHandler({
         name: user.upn,
         email: user.email,
       },
-      tokens: {
+      secure: {
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
       },
       expiresIn: tokens.expires_in,
       loggedInAt: Date.now(),
     });
-
-    console.log(tokens.refresh_token);
 
     return sendRedirect(event, '/');
   },

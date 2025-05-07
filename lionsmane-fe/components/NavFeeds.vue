@@ -26,11 +26,7 @@ const {
 } = useQuery({
   queryKey: ['feeds'],
   queryFn: async () => {
-    const resp = await $lion('/feeds', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
-    });
+    const resp = await $lion('/feeds');
     if (!resp) {
       throw new Error('Failed to fetch feeds');
     }
@@ -46,11 +42,7 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    const resp = await $lion('/folders', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
-    });
+    const resp = await $lion('/folders');
     if (!resp) {
       throw new Error('Failed to fetch feeds');
     }

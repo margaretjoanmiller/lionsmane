@@ -36,6 +36,7 @@ const { isMobile } = useSidebar();
 
 async function logout() {
   await clearSession();
+  await $fetch('/auth/logout');
   await navigateTo('/');
 }
 </script>

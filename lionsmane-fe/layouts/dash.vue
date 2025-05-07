@@ -26,11 +26,7 @@ const toast = useToast();
 
 async function onReload() {
   try {
-    await $lion('/feeds/refresh/all', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.accessToken}`,
-      },
-    });
+    await $lion('/feeds/refresh/all');
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
   } catch (e) {

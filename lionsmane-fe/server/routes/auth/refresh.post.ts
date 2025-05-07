@@ -7,14 +7,15 @@ export default eventHandler(async (event) => {
 
   const keycloakConfig = useRuntimeConfig().oauth.keycloak;
 
-  if (!session.tokens?.access_token && !session.tokens?.refresh_token) {
+  if (!session.secure?.access_token && !session.secure?.refresh_token) {
     throw createError({
       statusCode: 401,
       message: 'Unauthorized',
     });
   }
 
-  const tokenResponse = await $fetch(
+  //@ts-expect-error
+  const { access_token, refresh_token } = await $fetch(
     `${keycloakConfig.serverUrl}/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
     {
       method: 'POST',
@@ -25,21 +26,21 @@ export default eventHandler(async (event) => {
         client_id: keycloakConfig.clientId,
         client_secret: keycloakConfig.clientSecret,
         grant_type: 'refresh_token',
-        refresh_token: session.tokens?.refresh_token,
+        refresh_token: session.secure?.refresh_token,
       }),
     },
   );
 
   await setUserSession(event, {
-    tokens: {
-      access_token: tokenResponse.access_token,
-      refresh_token: tokenResponse.refresh_token,
+    secure: {
+      access_token,
+      refresh_token,
     },
     loggedInAt: Date.now(),
   });
 
   return {
-    access_token: session.tokens.access_token,
-    refresh_token: session.tokens.refresh_token,
+    access_token: session.secure.access_token,
+    refresh_token: session.secure.refresh_token,
   };
 });

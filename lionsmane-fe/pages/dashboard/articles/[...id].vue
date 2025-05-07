@@ -10,7 +10,7 @@ definePageMeta({
 
 const route = useRoute();
 
-const { data } = useAuth();
+const { session } = useUserSession();
 
 const articleStore = useArticleStore();
 
@@ -20,11 +20,7 @@ const cachedArticle = articleStore.articles.find(
   (art) => art.id === route.params.id,
 );
 if (!cachedArticle) {
-  const { data, error } = await useLionData(`/articles/${route.params.id}`, {
-    headers: {
-      Authorization: `Bearer ${data.value?.user.accessToken}`,
-    },
-  });
+  const { data, error } = await useLionData(`/articles/${route.params.id}`);
   if (!data.value || error.value) {
     throw createError({
       statusCode: 404,

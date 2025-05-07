@@ -30,11 +30,7 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    const resp = await $lion('/folders', {
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
-    });
+    const resp = await $lion('/folders');
     if (!resp) {
       throw new Error('Failed to fetch folders');
     }
@@ -46,9 +42,6 @@ const { isPending, isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (newFeed: SchemaFeedIn) =>
     $lion('/feeds', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${session.value?.tokens.access_token}`,
-      },
       body: {
         ...newFeed,
       },

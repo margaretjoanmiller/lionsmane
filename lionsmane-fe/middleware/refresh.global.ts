@@ -17,17 +17,13 @@ export default defineNuxtRouteMiddleware(async () => {
   )
     return;
 
-  const {
-    session,
-    clear: clearSession,
-    fetch: fetchSession,
-  } = useUserSession();
+  const { secure, clear: clearSession, fetch: fetchSession } = useUserSession();
   // Ignore if no tokens
-  if (!session.value?.tokens) return;
+  if (!secure) return;
 
   const serverEvent = useRequestEvent();
   const runtimeConfig = useRuntimeConfig();
-  const { access_token, refresh_token } = session.value.tokens;
+  const { access_token, refresh_token } = secure;
 
   const accessPayload = decode(access_token);
   const refreshPayload = decode(refresh_token);
