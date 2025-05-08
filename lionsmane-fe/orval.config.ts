@@ -2,20 +2,40 @@
  * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
  */
 
-import { defineConfig } from "orval";
+import { defineConfig } from 'orval';
 
 export default defineConfig({
-  lionsmane: {
+  lionsmaneZod: {
     output: {
-      client: "zod",
+      client: 'zod',
 
-      mode: "tags",
+      mode: 'tags',
 
-      target: "./utils/gen",
+      target: './utils/gen/zod',
+
+      fileExtension: '.zod.ts',
     },
 
     input: {
-      target: "./v1.json",
+      target: './v1.json',
     },
   },
+  // lionsmane: {
+  //   output: {
+  //     client: 'vue-query',
+  //     httpClient: 'fetch',
+  //
+  //     mode: 'tags',
+  //
+  //     target: './utils/gen/endpoints',
+  //
+  //     schemas: './utils/gen/endpoints',
+  //
+  //     mock: true,
+  //   },
+  //
+  //   input: {
+  //     target: './v1.json',
+  //   },
+  // },
 });
