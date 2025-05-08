@@ -24,6 +24,7 @@ export default eventHandler(async (event) => {
         },
         body: new URLSearchParams({
           client_id: keycloakConfig.clientId,
+          id_token_hint: secure.id_token,
         }),
       },
     );

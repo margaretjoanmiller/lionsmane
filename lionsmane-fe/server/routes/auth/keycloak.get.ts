@@ -13,6 +13,7 @@ export default defineOAuthKeycloakEventHandler({
       secure: {
         access_token: tokens.access_token,
         refresh_token: tokens.refresh_token,
+        id_token: tokens.id_token,
       },
       isAuthenticated: true,
       loggedInAt: Date.now(),

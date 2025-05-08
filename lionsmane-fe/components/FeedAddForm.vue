@@ -3,7 +3,7 @@
   -->
 
 <script setup lang="ts">
-import { postFeedsBody } from '@/utils/gen/feed-resource';
+import { postFeedsBody } from '@/utils/gen/zod/feed-resource.zod';
 import type { SchemaFeedIn } from '@/utils/gen/schema';
 
 const toast = useToast();
