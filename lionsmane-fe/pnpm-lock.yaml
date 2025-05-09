@@ -132,6 +132,9 @@ importers:
         specifier: ^3.24.4
         version: 3.24.4
     devDependencies:
+      '@iconify-json/fluent':
+        specifier: ^1.2.20
+        version: 1.2.20
       '@iconify-json/lucide':
         specifier: ^1.2.40
         version: 1.2.40
@@ -791,6 +794,9 @@ packages:
 
   '@iconify-json/carbon@1.2.8':
     resolution: {integrity: sha512-6xh4YiFBz6qoSnB3XMe23WvjTJroDFXB17J1MbiT7nATFe+70+em1acRXr8hgP/gYpwFMHFc4IvjA/IPTPnTzg==}
+
+  '@iconify-json/fluent@1.2.20':
+    resolution: {integrity: sha512-CIaXiuXjv/rp+yiB8lZ0pJ7E+Q2Jz01G1AxWy3LPaEsViFSArkY78gxZLGveta2ZN7MzeEyna03YYfEyzTWxAw==}
 
   '@iconify-json/logos@1.2.4':
     resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
@@ -7588,6 +7594,10 @@ snapshots:
       - encoding
 
   '@iconify-json/carbon@1.2.8':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/fluent@1.2.20':
     dependencies:
       '@iconify/types': 2.0.0
 

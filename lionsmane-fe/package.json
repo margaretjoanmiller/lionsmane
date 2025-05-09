@@ -57,6 +57,7 @@
     "@parcel/watcher"
   ],
   "devDependencies": {
+    "@iconify-json/fluent": "^1.2.20",
     "@iconify-json/lucide": "^1.2.40",
     "@iconify-json/material-symbols": "^1.2.20",
     "@iconify-json/solar": "^1.2.2",

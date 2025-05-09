@@ -5,7 +5,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -20,9 +19,9 @@ const props = defineProps<{
 
 const { loggedIn, openInPopup } = useUserSession();
 
-function login() {
+async function login() {
   openInPopup('/auth/keycloak');
-  return navigateTo('/dashboard');
+  await navigateTo('/dashboard');
 }
 </script>
 
@@ -36,19 +35,13 @@ function login() {
       <CardContent>
         <div class="grid gap-6">
           <div class="flex flex-col gap-4">
-            <Button variant="outline" class="w-full" @click="login">
+            <UButton variant="outline" class="w-full" @click="login">
               <Icon name="simple-icons:keycloak" />
               Login with Keycloak
-            </Button>
+            </UButton>
           </div>
         </div>
       </CardContent>
     </Card>
-    <div
-      class="text-center text-xs text-balance text-muted-foreground *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary"
-    >
-      By clicking continue, you agree to our
-      <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-    </div>
   </div>
 </template>

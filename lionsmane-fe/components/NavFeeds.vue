@@ -14,8 +14,6 @@ import { CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
 import { Collapsible } from '@/components/ui/collapsible';
 
-const toast = useToast();
-
 const { clear: clearSession } = useUserSession();
 
 const {
@@ -60,6 +58,12 @@ const {
       <!--Loading -->
       <SidebarMenuItem v-if="isPendingFeeds || isPendingFolders">
         Loading...
+      </SidebarMenuItem>
+      <SidebarMenuItem
+        v-else-if="isErrorFeeds || isErrorFolders"
+        class="accent-error"
+      >
+        Error!
       </SidebarMenuItem>
       <!-- Main Feeds Collapsible -->
       <Collapsible

@@ -62,7 +62,7 @@ export default defineNuxtConfig({
   apiParty: {
     endpoints: {
       lion: {
-        url: process.env.API_URL || 'http://localhost:8080',
+        url: '',
         schema: './v1.json',
       },
     },
@@ -91,6 +91,13 @@ export default defineNuxtConfig({
         clientSecret: '',
         serverUrl: '',
         realm: '',
+      },
+    },
+    apiParty: {
+      endpoints: {
+        lion: {
+          url: 'http://localhost:8080',
+        },
       },
     },
   },
