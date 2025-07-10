@@ -18,7 +18,6 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     'nuxt-api-party',
     '@nuxtjs/color-mode',
-    '@pinia/nuxt',
     '@nuxt/ui',
     '@peterbud/nuxt-query',
     'nuxt-auth-utils',

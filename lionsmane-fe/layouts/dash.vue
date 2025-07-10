@@ -18,6 +18,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { sleep } from '@/utils/utilFunctions';
+import ColorModeToggle from '@/components/ColorModeToggle.vue';
 
 const route = useRoute();
 const toast = useToast();
@@ -41,10 +42,7 @@ async function onReload() {
       <header class="flex h-16 shrink-0 items-center gap-2">
         <div class="flex items-center gap-2 px-4">
           <SidebarTrigger class="-ml-1" />
-          <Separator
-            orientation="vertical"
-            class="mr-2 data-[orientation=vertical]:h-4"
-          />
+          <Separator orientation="vertical" class="mr-2 data-[orientation=vertical]:h-4" />
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem class="hidden md:block">
@@ -53,45 +51,37 @@ async function onReload() {
               <BreadcrumbSeparator class="hidden md:block" />
               <template v-if="route.name === 'dashboard-feeds-all'">
                 <BreadcrumbItem>
-                  <NuxtLink
-                    to="/dashboard/feeds"
-                    class="transition-colors hover:text-foreground"
-                  >
+                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
               <template v-else-if="route.name === 'dashboard-feeds-id'">
                 <BreadcrumbItem>
-                  <NuxtLink
-                    to="/dashboard/feeds"
-                    class="transition-colors hover:text-foreground"
-                  >
+                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
               <template v-else-if="route.name === 'dashboard-articles-id'">
                 <BreadcrumbItem>
-                  <NuxtLink
-                    to="/dashboard/feeds"
-                    class="transition-colors hover:text-foreground"
-                  >
+                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
             </BreadcrumbList>
           </Breadcrumb>
+          <div class="absolute right-45">
+            <ColorModeToggle />
+          </div>
           <Button variant="outline" class="absolute right-5" @click="onReload">
             <Icon name="material-symbols:cloud-sync-outline" />
             Fetch articles
           </Button>
           <div class="group fixed right-6 bottom-6">
             <UModal>
-              <Button
-                class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4"
-              >
+              <Button class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4">
                 <Icon name="material-symbols:add" size="72" />
               </Button>
               <template #content>
