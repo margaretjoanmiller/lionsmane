@@ -80,14 +80,18 @@ class ArticleFetcher(private val feedRepository: FeedRepository, private val art
                     if (itemLink != null
                         && itemDate != null
                     ) {
-                        val dupeArt = articleRepository.findByArticleUrl(itemLink).firstResult()
-                        if (dupeArt != null) {
-                            Log.info("Article already exists: $itemLink")
-                            return@map null
-                        }
+
+                        // don't parse old articles
                         if (itemDate
                                 .isBefore(feed.lastUpdated)
                         ) {
+                            return@map null
+                        }
+
+                        // just in case an article was already processed
+                        val dupeArt = articleRepository.findByArticleUrl(itemLink).firstResult()
+                        if (dupeArt != null) {
+                            Log.info("Article already exists: $itemLink")
                             return@map null
                         }
 
