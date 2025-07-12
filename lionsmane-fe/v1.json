@@ -12,6 +12,9 @@
               "type" : "null"
             } ]
           },
+          "isRead" : {
+            "type" : "boolean"
+          },
           "title" : {
             "type" : [ "string", "null" ]
           },
@@ -52,6 +55,9 @@
             }, {
               "type" : "null"
             } ]
+          },
+          "read" : {
+            "type" : "boolean"
           }
         }
       },
@@ -279,7 +285,7 @@
         } ]
       }
     },
-    "/articles/toggle-read/{id}" : {
+    "/articles/read/{id}" : {
       "patch" : {
         "parameters" : [ {
           "name" : "id",
@@ -300,7 +306,35 @@
             "description" : "Not Allowed"
           }
         },
-        "summary" : "Toggle Read Article",
+        "summary" : "Mark Read Article",
+        "tags" : [ "Article Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/articles/unread/{id}" : {
+      "patch" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Mark Un Read Article",
         "tags" : [ "Article Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]

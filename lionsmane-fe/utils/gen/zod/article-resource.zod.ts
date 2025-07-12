@@ -19,6 +19,7 @@ export const getArticlesResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[a-
 
 export const getArticlesResponseItem = zod.object({
   "id": zod.string().uuid().regex(getArticlesResponseIdRegExpOne).or(zod.null()).optional(),
+  "isRead": zod.boolean().optional(),
   "title": zod.string().nullish(),
   "author": zod.string().nullish(),
   "content": zod.string().nullish(),
@@ -28,7 +29,8 @@ export const getArticlesResponseItem = zod.object({
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
   "audio": zod.string().nullish(),
-  "feedId": zod.string().uuid().regex(getArticlesResponseFeedIdRegExpOne).or(zod.null()).optional()
+  "feedId": zod.string().uuid().regex(getArticlesResponseFeedIdRegExpOne).or(zod.null()).optional(),
+  "read": zod.boolean().optional()
 })
 export const getArticlesResponse = zod.array(getArticlesResponseItem)
 
@@ -48,6 +50,7 @@ export const getArticlesFeedFeedIdResponseFeedIdRegExpOne = new RegExp('[a-fA-F0
 
 export const getArticlesFeedFeedIdResponseItem = zod.object({
   "id": zod.string().uuid().regex(getArticlesFeedFeedIdResponseIdRegExpOne).or(zod.null()).optional(),
+  "isRead": zod.boolean().optional(),
   "title": zod.string().nullish(),
   "author": zod.string().nullish(),
   "content": zod.string().nullish(),
@@ -57,18 +60,29 @@ export const getArticlesFeedFeedIdResponseItem = zod.object({
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
   "audio": zod.string().nullish(),
-  "feedId": zod.string().uuid().regex(getArticlesFeedFeedIdResponseFeedIdRegExpOne).or(zod.null()).optional()
+  "feedId": zod.string().uuid().regex(getArticlesFeedFeedIdResponseFeedIdRegExpOne).or(zod.null()).optional(),
+  "read": zod.boolean().optional()
 })
 export const getArticlesFeedFeedIdResponse = zod.array(getArticlesFeedFeedIdResponseItem)
 
 /**
- * @summary Toggle Read Article
+ * @summary Mark Read Article
  */
-export const patchArticlesToggleReadIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+export const patchArticlesReadIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
 
 
-export const patchArticlesToggleReadIdParams = zod.object({
-  "id": zod.string().uuid().regex(patchArticlesToggleReadIdPathIdRegExp)
+export const patchArticlesReadIdParams = zod.object({
+  "id": zod.string().uuid().regex(patchArticlesReadIdPathIdRegExp)
+})
+
+/**
+ * @summary Mark Un Read Article
+ */
+export const patchArticlesUnreadIdPathIdRegExp = new RegExp('[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}');
+
+
+export const patchArticlesUnreadIdParams = zod.object({
+  "id": zod.string().uuid().regex(patchArticlesUnreadIdPathIdRegExp)
 })
 
 /**
@@ -87,6 +101,7 @@ export const getArticlesIdResponseFeedIdRegExpOne = new RegExp('[a-fA-F0-9]{8}-[
 
 export const getArticlesIdResponse = zod.object({
   "id": zod.string().uuid().regex(getArticlesIdResponseIdRegExpOne).or(zod.null()).optional(),
+  "isRead": zod.boolean().optional(),
   "title": zod.string().nullish(),
   "author": zod.string().nullish(),
   "content": zod.string().nullish(),
@@ -96,6 +111,7 @@ export const getArticlesIdResponse = zod.object({
   "publishedAt": zod.string().datetime({}).or(zod.null()).optional(),
   "categories": zod.array(zod.string()).nullish(),
   "audio": zod.string().nullish(),
-  "feedId": zod.string().uuid().regex(getArticlesIdResponseFeedIdRegExpOne).or(zod.null()).optional()
+  "feedId": zod.string().uuid().regex(getArticlesIdResponseFeedIdRegExpOne).or(zod.null()).optional(),
+  "read": zod.boolean().optional()
 })
 

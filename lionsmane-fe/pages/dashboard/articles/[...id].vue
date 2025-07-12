@@ -2,13 +2,13 @@
   - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
   -->
 <script setup lang="ts">
-import type { SchemaArticleOut } from '@/utils/gen/schema';
-
 definePageMeta({
   layout: 'dash',
 });
 
+const toast = useToast()
 const route = useRoute();
+const queryClient = useQueryClient();
 
 const { session } = useUserSession();
 
@@ -43,19 +43,27 @@ const content = computed(
   () => article.value?.content ?? article.value?.textPreview,
 );
 
+const enabled = computed(() => !!article.value?.id)
 
 const { isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: (feedId: string) => $lion('/articles/toggle-read/{id}', {
-    method: 'patch',
-    path: {
-      id: feedId
-    }
-  }),
-})
+  mutationFn: (feedId: string) =>
+    $lion('/articles/read/{id}', {
+      method: 'patch',
+      path: {
+        id: feedId,
+      },
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['articles'] });
+  },
+  onError: () => {
+    toast.add({ title: 'Error setting article as read', color: 'error' })
+  },
+  retry: 3
+});
 
-onMounted(() => {
-  mutate(id)
-})
+
+mutate(id)
 </script>
 
 <template>

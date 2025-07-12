@@ -7,7 +7,7 @@ package org.jackrabbitsforge.data.entities
 import jakarta.persistence.*
 import org.jackrabbitsforge.data.dto.ArticleOut
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 class Article {
@@ -48,6 +48,7 @@ class Article {
 
     fun toDto() = ArticleOut(
         id,
+        isRead,
         title,
         author,
         content,

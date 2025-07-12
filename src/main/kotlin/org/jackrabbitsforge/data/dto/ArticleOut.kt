@@ -5,10 +5,11 @@
 package org.jackrabbitsforge.data.dto
 
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class ArticleOut(
     var id: UUID?,
+    var isRead: Boolean,
     var title: String?,
     var author: String?,
     var content: String?,
@@ -18,6 +19,5 @@ data class ArticleOut(
     var publishedAt: Instant?,
     var categories: List<String>? = listOf(),
     var audio: String?,
-
     var feedId: UUID?
 )

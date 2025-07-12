@@ -7,6 +7,7 @@ package org.jackrabbitsforge.resources
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
+import jakarta.transaction.Transactional
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PATCH
 import jakarta.ws.rs.Path
@@ -73,13 +74,32 @@ class ArticleResource(
     }
 
     @PATCH
-    @Path("/toggle-read/{id}")
-    fun toggleReadArticle(id: UUID) {
+    @Path("/read/{id}")
+    @Transactional
+    fun markReadArticle(id: UUID) {
         try {
 
             val articleOut = articleRepository.findByUUID(id)
 
-            articleOut?.isRead = !articleOut.isRead
+            articleOut?.isRead = true
+            if (articleOut != null) {
+                articleRepository.persistAndFlush(articleOut)
+            }
+        } catch (e: Exception) {
+            Log.error("Error updating article", e)
+            throw e
+        }
+    }
+
+    @PATCH
+    @Path("/unread/{id}")
+    @Transactional
+    fun markUnReadArticle(id: UUID) {
+        try {
+
+            val articleOut = articleRepository.findByUUID(id)
+
+            articleOut?.isRead = false
         } catch (e: Exception) {
             Log.error("Error updating article", e)
             throw e

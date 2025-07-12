@@ -9,6 +9,7 @@ defineProps<{
     title: string;
     preview: string | undefined;
     date: string;
+    isRead: boolean;
   };
 }>();
 
@@ -20,6 +21,9 @@ defineProps<{
       <CardHeader>
         <CardTitle>
           {{ articlePreview.title }}
+
+
+          <UBadge v-if="!articlePreview.isRead" icon="radix-icons:dot-filled" color="info">Unread</UBadge>
         </CardTitle>
       </CardHeader>
       <CardContent>
