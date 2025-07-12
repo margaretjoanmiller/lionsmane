@@ -15,6 +15,9 @@ class Article {
     @GeneratedValue
     var id: UUID? = null
 
+    @Column()
+    var isRead: Boolean = false
+
     @Column(columnDefinition = "TEXT")
     var title: String? = null
     var author: String? = null

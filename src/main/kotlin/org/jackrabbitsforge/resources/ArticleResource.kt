@@ -8,11 +8,12 @@ import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
 import io.quarkus.security.identity.SecurityIdentity
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PATCH
 import jakarta.ws.rs.Path
 import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
-import java.util.UUID
+import java.util.*
 
 @Authenticated
 @Path("/articles")
@@ -67,6 +68,20 @@ class ArticleResource(
             }
         } catch (e: Exception) {
             Log.error("Error getting articles", e)
+            throw e
+        }
+    }
+
+    @PATCH
+    @Path("/toggle-read/{id}")
+    fun toggleReadArticle(id: UUID) {
+        try {
+
+            val articleOut = articleRepository.findByUUID(id)
+
+            articleOut?.isRead = !articleOut.isRead
+        } catch (e: Exception) {
+            Log.error("Error updating article", e)
             throw e
         }
     }

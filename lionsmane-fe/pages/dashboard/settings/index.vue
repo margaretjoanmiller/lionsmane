@@ -239,12 +239,8 @@ const isModalOpen = ref(false);
     <UTable :data="feeds" :columns="columns" class="flex-1" />
     <UModal v-model:open="isModalOpen">
       <UButton hidden="hidden">Open</UButton>
-      <template #content>
-        <UForm
-          :schema="postFeedsUpdateIdBody"
-          :state="state"
-          @submit="onSubmit"
-        >
+      <template #body>
+        <UForm :schema="postFeedsUpdateIdBody" :state="state" @submit="onSubmit">
           <UFormField label="title" name="title">
             <UInput v-model="state.title" />
           </UFormField>
@@ -258,17 +254,11 @@ const isModalOpen = ref(false);
           </UFormField>
 
           <UFormField label="folderId" name="folderId">
-            <USelectMenu
-              v-model="state.folder"
-              label="Folders"
-              :items="
-                folders?.map((folder) => ({
-                  label: folder.name ?? '',
-                  value: folder.id ?? '',
-                }))
-              "
-              class="w-48"
-            />
+            <USelectMenu v-model="state.folder" label="Folders" :items="folders?.map((folder) => ({
+              label: folder.name ?? '',
+              value: folder.id ?? '',
+            }))
+              " class="w-48" />
           </UFormField>
 
           <UButton type="submit" :disabled="isPendingEdit"> Submit</UButton>

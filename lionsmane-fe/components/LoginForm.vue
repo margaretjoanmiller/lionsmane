@@ -21,7 +21,11 @@ const { loggedIn, openInPopup } = useUserSession();
 
 async function login() {
   openInPopup('/auth/keycloak');
-  await navigateTo('/dashboard');
+
+  if (loggedIn) {
+
+    await navigateTo('/dashboard');
+  }
 }
 </script>
 

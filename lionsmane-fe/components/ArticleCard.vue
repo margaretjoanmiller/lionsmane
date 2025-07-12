@@ -11,12 +11,11 @@ defineProps<{
     date: string;
   };
 }>();
+
 </script>
 
 <template>
-  <NuxtLink
-    :to="{ name: 'dashboard-articles-id', params: { id: articlePreview.id } }"
-  >
+  <NuxtLink :to="{ name: 'dashboard-articles-id', params: { id: articlePreview.id } }" @click="">
     <Card>
       <CardHeader>
         <CardTitle>

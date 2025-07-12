@@ -3,7 +3,7 @@
  * Do not make direct changes to the file.
  */
 
-export type paths = {
+export interface paths {
     "/articles": {
         parameters: {
             query?: never;
@@ -104,6 +104,56 @@ export type paths = {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/articles/toggle-read/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Toggle Read Article */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: components["schemas"]["UUID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Authorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not Allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         trace?: never;
     };
     "/articles/{id}": {
@@ -806,9 +856,9 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-};
+}
 export type webhooks = Record<string, never>;
-export type components = {
+export interface components {
     schemas: {
         ArticleOut: {
             id?: components["schemas"]["UUID"] | null;
@@ -868,15 +918,6 @@ export type components = {
     requestBodies: never;
     headers: never;
     pathItems: never;
-};
-export type SchemaArticleOut = components['schemas']['ArticleOut'];
-export type SchemaFeedDto = components['schemas']['FeedDto'];
-export type SchemaFeedIn = components['schemas']['FeedIn'];
-export type SchemaFeedInUpdate = components['schemas']['FeedInUpdate'];
-export type SchemaFolderIn = components['schemas']['FolderIn'];
-export type SchemaFolderOut = components['schemas']['FolderOut'];
-export type SchemaInstant = components['schemas']['Instant'];
-export type SchemaUuid = components['schemas']['UUID'];
-export type SchemaUser = components['schemas']['User'];
+}
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

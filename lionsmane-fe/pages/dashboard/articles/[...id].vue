@@ -42,17 +42,27 @@ const {
 const content = computed(
   () => article.value?.content ?? article.value?.textPreview,
 );
+
+
+const { isError, error, isSuccess, mutate } = useMutation({
+  mutationFn: (feedId: string) => $lion('/articles/toggle-read/{id}', {
+    method: 'patch',
+    path: {
+      id: feedId
+    }
+  }),
+})
+
+onMounted(() => {
+  mutate(id)
+})
 </script>
 
 <template>
-  <div
-    v-if="!isPendingArticles && article"
-    class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm"
-  >
+  <div v-if="!isPendingArticles && article"
+    class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm">
     <div class="m-6">
-      <h1
-        class="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
-      >
+      <h1 class="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         {{ article?.title }}
       </h1>
       <h4>
