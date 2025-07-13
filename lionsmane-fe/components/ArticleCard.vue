@@ -21,9 +21,9 @@ defineProps<{
       <CardHeader>
         <CardTitle>
           {{ articlePreview.title }}
-
-
-          <UBadge v-if="!articlePreview.isRead" icon="radix-icons:dot-filled" color="info">Unread</UBadge>
+          <div v-show="articlePreview.isRead === false">
+            <UBadge icon="radix-icons:dot-filled" color="info">Unread</UBadge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>

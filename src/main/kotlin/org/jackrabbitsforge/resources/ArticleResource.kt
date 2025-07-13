@@ -100,6 +100,9 @@ class ArticleResource(
             val articleOut = articleRepository.findByUUID(id)
 
             articleOut?.isRead = false
+            if (articleOut != null) {
+                articleRepository.persistAndFlush(articleOut)
+            }
         } catch (e: Exception) {
             Log.error("Error updating article", e)
             throw e

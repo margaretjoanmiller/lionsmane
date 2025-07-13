@@ -43,27 +43,26 @@ const content = computed(
   () => article.value?.content ?? article.value?.textPreview,
 );
 
-const enabled = computed(() => !!article.value?.id)
-
 const { isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (feedId: string) =>
     $lion('/articles/read/{id}', {
-      method: 'patch',
+      method: 'PATCH',
       path: {
         id: feedId,
       },
     }),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['articles'] });
+  onSuccess: async () => {
+    await queryClient.invalidateQueries({ queryKey: ['articles'] });
   },
   onError: () => {
     toast.add({ title: 'Error setting article as read', color: 'error' })
   },
   retry: 3
 });
-
-
-mutate(id)
+watch(article, async (newArt) => {
+  if (article.value !== null && article.value?.id !== undefined)
+    mutate(article.value.id as string)
+})
 </script>
 
 <template>
