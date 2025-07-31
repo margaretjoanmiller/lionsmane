@@ -1,7 +1,11 @@
+<!--
+  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+  -->
+
 <script lang="ts" setup>
+import { cn } from '@/lib/utils'
 import { ErrorMessage } from 'vee-validate'
 import { type HTMLAttributes, toValue } from 'vue'
-import { cn } from '@/lib/utils'
 import { useFormField } from './useFormField'
 
 const props = defineProps<{

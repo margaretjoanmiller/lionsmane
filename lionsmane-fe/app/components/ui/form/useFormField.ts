@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
+ */
+
 import { FieldContextKey, useFieldError, useIsFieldDirty, useIsFieldTouched, useIsFieldValid } from 'vee-validate'
 import { inject } from 'vue'
 import { FORM_ITEM_INJECTION_KEY } from './injectionKeys'
