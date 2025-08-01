@@ -1,9 +1,6 @@
-<!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
-  -->
-
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
 import {
   DropdownMenuContent,
   type DropdownMenuContentEmits,
@@ -11,7 +8,7 @@ import {
   DropdownMenuPortal,
   useForwardPropsEmits,
 } from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
+import { cn } from '@/lib/utils'
 
 const props = withDefaults(
   defineProps<DropdownMenuContentProps & { class?: HTMLAttributes['class'] }>(),
@@ -21,11 +18,7 @@ const props = withDefaults(
 )
 const emits = defineEmits<DropdownMenuContentEmits>()
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
-
-  return delegated
-})
+const delegatedProps = reactiveOmit(props, 'class')
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>

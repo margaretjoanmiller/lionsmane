@@ -1,10 +1,5 @@
-<!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
-  -->
-
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
-import { cn } from '@/lib/utils'
 import { reactiveOmit } from '@vueuse/core'
 import { ChevronRight } from 'lucide-vue-next'
 import {
@@ -12,6 +7,7 @@ import {
   type DropdownMenuSubTriggerProps,
   useForwardProps,
 } from 'reka-ui'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<DropdownMenuSubTriggerProps & { class?: HTMLAttributes['class'], inset?: boolean }>()
 
