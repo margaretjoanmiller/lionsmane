@@ -42,7 +42,7 @@ const {
     <template v-for="article in articles?.map((a) => {
       return {
         id: a.id || '',
-        isRead: a.isRead || false,
+        isRead: a.read,
         title: a.title || '',
         preview: `${a.textPreview?.substring(0, 70)}...`,
         date: a.publishedAt || '',
