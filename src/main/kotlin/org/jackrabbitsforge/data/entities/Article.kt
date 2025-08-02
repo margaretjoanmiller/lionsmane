@@ -16,7 +16,7 @@ class Article {
     var id: UUID? = null
 
     @Column()
-    var isRead: Boolean = false
+    var read: Boolean = false
 
     @Column(columnDefinition = "TEXT")
     var title: String? = null
@@ -48,7 +48,7 @@ class Article {
 
     fun toDto() = ArticleOut(
         id,
-        isRead,
+        read,
         title,
         author,
         content,

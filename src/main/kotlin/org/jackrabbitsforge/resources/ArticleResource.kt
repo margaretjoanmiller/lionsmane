@@ -81,7 +81,7 @@ class ArticleResource(
 
             val articleOut = articleRepository.findByUUID(id)
 
-            articleOut?.isRead = true
+            articleOut?.read = true
             if (articleOut != null) {
                 articleRepository.persistAndFlush(articleOut)
             }
@@ -99,7 +99,7 @@ class ArticleResource(
 
             val articleOut = articleRepository.findByUUID(id)
 
-            articleOut?.isRead = false
+            articleOut?.read = false
             if (articleOut != null) {
                 articleRepository.persistAndFlush(articleOut)
             }
