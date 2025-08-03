@@ -11,7 +11,7 @@ export default defineConfig({
 
 			mode: "tags",
 
-			target: "./utils/gen/zod",
+			target: "./app/utils/gen/zod",
 
 			fileExtension: ".zod.ts",
 		},
