@@ -11,7 +11,7 @@ const {
   data: articles,
   error: articlesError,
 } = useQuery({
-  queryKey: ['articles'],
+  queryKey: ['articles-all'],
   queryFn: async () => {
     const resp = await $lion('/articles');
     if (!resp) {
@@ -25,15 +25,23 @@ const {
 <template>
   <div>
     <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-      <template v-for="article in articles?.map((a) => {
-        return {
-          id: a.id || '',
-          title: a.title || '',
-          preview: `${a.textPreview?.substring(0, 70)}...`,
-          date: a.publishedAt || '',
-          isRead: a.read || false,
-        };
-      })" :key="a.id">
+      <template
+        v-for="article in articles
+          ?.map((a) => {
+            if (a.read) {
+              return null;
+            }
+            return {
+              id: a.id || '',
+              title: a.title || '',
+              preview: `${a.textPreview?.substring(0, 70)}...`,
+              date: a.publishedAt || '',
+              isRead: a.read || false,
+            };
+          })
+          .filter((i) => i !== null)"
+        :key="a.id"
+      >
         <ArticleCard :article-preview="article" />
       </template>
     </div>

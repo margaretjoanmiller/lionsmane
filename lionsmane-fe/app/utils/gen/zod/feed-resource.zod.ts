@@ -4,32 +4,29 @@
  * lionsmane API
  * OpenAPI spec version: 1.0.0-SNAPSHOT
  */
-import {
-  z as zod
-} from 'zod';
-
+import { z as zod } from 'zod';
 
 
 /**
  * @summary Post Feed
  */
 export const postFeedsBody = zod.object({
-  "title": zod.string(),
-  "description": zod.string().nullish(),
-  "url": zod.string(),
-  "folderId": zod.union([zod.string().uuid().regex(postFeedsBodyFolderIdRegExpOne),zod.null()]).optional()
-})
+  title: zod.string(),
+  description: zod.string().nullish(),
+  url: zod.string(),
+  folderId: zod.union([zod.string().uuid(), zod.null()]).optional(),
+});
 
 /**
  * @summary List Feeds
  */
 export const getFeedsResponseItem = zod.object({
-  "id": zod.union([zod.string().uuid().regex(getFeedsResponseIdRegExpOne),zod.null()]).optional(),
+  "id": 'id'union([zod.string().uuid(), zod.null()]).optional(),
   "title": zod.string().nullish(),
   "description": zod.string().nullish(),
   "url": zod.string().nullish(),
   "lastUpdated": zod.union([zod.string().datetime({}),zod.null()]).optional(),
-  "folderId": zod.union([zod.string().uuid().regex(getFeedsResponseFolderIdRegExpOne),zod.null()]).optional()
+  'folderId': zod.union([zod.string().uuid(), zod.null()]).optional()
 })
 export const getFeedsResponse = zod.array(getFeedsResponseItem)
 
@@ -67,7 +64,7 @@ export const postFeedsUpdateIdBody = zod.object({
   "title": zod.string().nullish(),
   "description": zod.string().nullish(),
   "url": zod.string().nullish(),
-  "folderId": zod.union([zod.string().uuid().regex(postFeedsUpdateIdBodyFolderIdRegExpOne),zod.null()]).optional()
+  'folderId': zod.union([zod.string().uuid(), zod.null()]).optional()
 })
 
 /**
@@ -81,11 +78,11 @@ export const getFeedsIdParams = zod.object({
 })
 
 export const getFeedsIdResponse = zod.object({
-  "id": zod.union([zod.string().uuid().regex(getFeedsIdResponseIdRegExpOne),zod.null()]).optional(),
+  'id': zod.union([zod.string().uuid(), zod.null()]).optional(),
   "title": zod.string().nullish(),
   "description": zod.string().nullish(),
   "url": zod.string().nullish(),
   "lastUpdated": zod.union([zod.string().datetime({}),zod.null()]).optional(),
-  "folderId": zod.union([zod.string().uuid().regex(getFeedsIdResponseFolderIdRegExpOne),zod.null()]).optional()
+  'folderId': zod.union([zod.string().uuid(), zod.null()]).optional()
 })
 

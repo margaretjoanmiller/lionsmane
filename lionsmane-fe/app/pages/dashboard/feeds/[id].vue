@@ -39,15 +39,23 @@ const {
 
 <template>
   <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-    <template v-for="article in articles?.map((a) => {
-      return {
-        id: a.id || '',
-        isRead: a.read,
-        title: a.title || '',
-        preview: `${a.textPreview?.substring(0, 70)}...`,
-        date: a.publishedAt || '',
-      };
-    })" :key="article.id">
+    <template
+      v-for="article in articles
+        ?.map((a) => {
+          if (a.read) {
+            return null;
+          }
+          return {
+            id: a.id || '',
+            isRead: a.read,
+            title: a.title || '',
+            preview: `${a.textPreview?.substring(0, 70)}...`,
+            date: a.publishedAt || '',
+          };
+        })
+        .filter((i) => i !== null)"
+      :key="article.id"
+    >
       <ArticleCard :article-preview="article" />
     </template>
   </div>
