@@ -21,11 +21,11 @@ export const postFeedsBody = zod.object({
  * @summary List Feeds
  */
 export const getFeedsResponseItem = zod.object({
-  "id": 'id'union([zod.string().uuid(), zod.null()]).optional(),
+  "id": zod.union([zod.string().uuid(), zod.null()]).optional(),
   "title": zod.string().nullish(),
   "description": zod.string().nullish(),
   "url": zod.string().nullish(),
-  "lastUpdated": zod.union([zod.string().datetime({}),zod.null()]).optional(),
+  "lastUpdated": zod.union([zod.string().datetime({}), zod.null()]).optional(),
   'folderId': zod.union([zod.string().uuid(), zod.null()]).optional()
 })
 export const getFeedsResponse = zod.array(getFeedsResponseItem)
@@ -82,7 +82,7 @@ export const getFeedsIdResponse = zod.object({
   "title": zod.string().nullish(),
   "description": zod.string().nullish(),
   "url": zod.string().nullish(),
-  "lastUpdated": zod.union([zod.string().datetime({}),zod.null()]).optional(),
+  "lastUpdated": zod.union([zod.string().datetime({}), zod.null()]).optional(),
   'folderId': zod.union([zod.string().uuid(), zod.null()]).optional()
 })
 

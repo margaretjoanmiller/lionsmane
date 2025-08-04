@@ -22,12 +22,14 @@ import ColorModeToggle from '@/components/ColorModeToggle.vue';
 
 const route = useRoute();
 const toast = useToast();
+const queryClient = useQueryClient();
 
 async function onReload() {
   try {
     await $lion('/feeds/refresh/all');
     toast.add({ title: 'Feeds are fetching new articles, please wait...' });
     await sleep(5000);
+    await queryClient.invalidateQueries();
   } catch (e) {
     console.error(e);
     toast.add({ title: 'Failed to request feed refresh' });
@@ -51,35 +53,35 @@ async function onReload() {
               <BreadcrumbSeparator class="hidden md:block" />
               <template v-if="route.name === 'dashboard-feeds-all'">
                 <BreadcrumbItem>
-                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
+                  <NuxtLink to="/dashboard/feeds" class="hover:text-foreground transition-colors">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
               <template v-else-if="route.name === 'dashboard-feeds-id'">
                 <BreadcrumbItem>
-                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
+                  <NuxtLink to="/dashboard/feeds" class="hover:text-foreground transition-colors">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
               <template v-else-if="route.name === 'dashboard-articles-id'">
                 <BreadcrumbItem>
-                  <NuxtLink to="/dashboard/feeds" class="transition-colors hover:text-foreground">
+                  <NuxtLink to="/dashboard/feeds" class="hover:text-foreground transition-colors">
                     Feeds
                   </NuxtLink>
                 </BreadcrumbItem>
               </template>
             </BreadcrumbList>
           </Breadcrumb>
-          <div class="absolute right-45">
+          <div class="right-45 absolute">
             <ColorModeToggle />
           </div>
           <Button variant="outline" class="absolute right-5" @click="onReload">
             <Icon name="material-symbols:cloud-sync-outline" />
             Fetch articles
           </Button>
-          <div class="group fixed right-6 bottom-6">
+          <div class="group fixed bottom-6 right-6">
             <UModal>
               <Button class="0 flex h-14 w-14 items-center justify-center rounded-full focus:ring-4">
                 <Icon name="material-symbols:add" size="72" />
