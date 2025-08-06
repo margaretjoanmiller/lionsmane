@@ -20,6 +20,7 @@ import org.jackrabbitsforge.data.dto.FeedDto
 import org.jackrabbitsforge.data.dto.FeedIn
 import org.jackrabbitsforge.data.dto.FeedInUpdate
 import org.jackrabbitsforge.data.entities.Feed
+import org.jackrabbitsforge.data.repositories.ArticleRepository
 import org.jackrabbitsforge.data.repositories.FeedRepository
 import org.jackrabbitsforge.data.repositories.FolderRepository
 import java.time.Instant
@@ -31,6 +32,7 @@ import java.util.UUID
 class FeedResource(
     private var feedRepository: FeedRepository,
     private var folderRepository: FolderRepository,
+    private var articleRepository: ArticleRepository,
     private var identity: SecurityIdentity,
     private val eventBus: EventBus,
 ) {
@@ -146,7 +148,8 @@ class FeedResource(
     @Path("/{id}")
     fun getFeed(id: UUID): FeedDto? {
         try {
-            val feed = feedRepository.findByUUID(id)?.toDto()
+            var feed = feedRepository.findByUUID(id)?.toDto()
+            feed?.numberUnread = articleRepository.getUnreadCount(id)
             return feed
         } catch (e: Exception) {
             Log.error("Error getting feed", e)

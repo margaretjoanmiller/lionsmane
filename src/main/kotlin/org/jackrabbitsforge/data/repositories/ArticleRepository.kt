@@ -16,4 +16,6 @@ class ArticleRepository : PanacheRepository<Article> {
     fun findByUUID(uuid: UUID) = find("id", uuid).firstResult()
 
     fun findByArticleUrl(articleUrl: String) = find("url", articleUrl)
+
+    fun getUnreadCount(feedId: UUID) = count("feed.id = ?1 and read = false", feedId).toInt()
 }
