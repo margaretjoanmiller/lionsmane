@@ -43,7 +43,11 @@ class FeedResource(
             val feedDtos = feedRepository.listAll()
                 .filter { f -> f.userName == identity.principal.name }
                 .map { f -> f.toDto() }
-            return feedDtos
+            val feedDtoWithUnread = feedDtos.map{
+                f -> f.numberUnread = articleRepository.getUnreadCount(f.id!!)
+                f
+            }
+            return feedDtoWithUnread
         } catch (e: Exception) {
             Log.error("Error listing feeds", e)
             throw e

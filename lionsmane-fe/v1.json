@@ -90,6 +90,10 @@
             }, {
               "type" : "null"
             } ]
+          },
+          "numberUnread" : {
+            "type" : [ "integer", "null" ],
+            "format" : "int32"
           }
         }
       },
