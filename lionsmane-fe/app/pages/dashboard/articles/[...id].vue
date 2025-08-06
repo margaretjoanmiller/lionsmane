@@ -6,7 +6,7 @@ definePageMeta({
   layout: 'dash',
 });
 
-const toast = useToast()
+const toast = useToast();
 const route = useRoute();
 const queryClient = useQueryClient();
 
@@ -53,23 +53,28 @@ const { isError, error, isSuccess, mutate } = useMutation({
     }),
   onSuccess: async () => {
     await queryClient.invalidateQueries({ queryKey: ['articles'] });
+    await queryClient.invalidateQueries({ queryKey: ['feeds'] });
   },
   onError: () => {
-    toast.add({ title: 'Error setting article as read', color: 'error' })
+    toast.add({ title: 'Error setting article as read', color: 'error' });
   },
-  retry: 3
+  retry: 3,
 });
 watch(article, async (newArt) => {
   if (article.value !== null && article.value?.id !== undefined)
-    mutate(article.value.id as string)
-})
+    mutate(article.value.id as string);
+});
 </script>
 
 <template>
-  <div v-if="!isPendingArticles && article"
-    class="flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm">
+  <div
+    v-if="!isPendingArticles && article"
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm"
+  >
     <div class="m-6">
-      <h1 class="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+      <h1
+        class="mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl"
+      >
         {{ article?.title }}
       </h1>
       <h4>

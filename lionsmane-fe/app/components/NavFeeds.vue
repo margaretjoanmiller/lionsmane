@@ -59,18 +59,11 @@ const {
       <SidebarMenuItem v-if="isPendingFeeds || isPendingFolders">
         Loading...
       </SidebarMenuItem>
-      <SidebarMenuItem
-        v-else-if="isErrorFeeds || isErrorFolders"
-        class="accent-error"
-      >
+      <SidebarMenuItem v-else-if="isErrorFeeds || isErrorFolders" class="accent-error">
         Error!
       </SidebarMenuItem>
       <!-- Main Feeds Collapsible -->
-      <Collapsible
-        v-else-if="feeds && folders"
-        class="group/feeds-collapsible"
-        defaultOpen
-      >
+      <Collapsible v-else-if="feeds && folders" class="group/feeds-collapsible" defaultOpen>
         <SidebarMenuItem>
           <SidebarMenuButton>
             <NuxtLink :to="{ name: 'dashboard-feeds-all' }">Feeds</NuxtLink>
@@ -78,26 +71,19 @@ const {
           <CollapsibleTrigger as-child>
             <SidebarMenuAction>
               <ChevronRight
-                class="ml-auto transition-transform duration-200 group-data-[state=open]/feeds-collapsible:rotate-90"
-              />
+                class="ml-auto transition-transform duration-200 group-data-[state=open]/feeds-collapsible:rotate-90" />
             </SidebarMenuAction>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <SidebarMenuSub>
               <!-- Orphan Feeds (without folders) -->
-              <SidebarMenuButton
-                v-for="feed in feeds.filter((f) => !f.folderId)"
-                :key="feed.id!"
-                as-child
-                :tooltip="feed.title!"
-              >
-                <NuxtLink
-                  :to="{
-                    name: 'dashboard-feeds-id',
-                    params: { id: feed.id! },
-                  }"
-                >
-                  <span>{{ feed.title }} </span>
+              <SidebarMenuButton v-for="feed in feeds.filter((f) => !f.folderId)" :key="feed.id!" as-child
+                :tooltip="feed.title!">
+                <NuxtLink :to="{
+                  name: 'dashboard-feeds-id',
+                  params: { id: feed.id! },
+                }">
+                  <span>{{ feed.title }}</span> {{feed.numberUnread}}
                 </NuxtLink>
               </SidebarMenuButton>
 
@@ -110,27 +96,19 @@ const {
                     <CollapsibleTrigger as-child>
                       <SidebarMenuAction>
                         <ChevronRight
-                          class="ml-auto transition-transform duration-200 group-data-[state=open]/folder-collapsible:rotate-90"
-                        />
+                          class="ml-auto transition-transform duration-200 group-data-[state=open]/folder-collapsible:rotate-90" />
                       </SidebarMenuAction>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        <SidebarMenuButton
-                          v-for="feed in feeds.filter(
-                            (f) => f.folderId === folder.id,
-                          )"
-                          :key="feed.id!"
-                          as-child
-                          :tooltip="feed.title!"
-                        >
-                          <NuxtLink
-                            :to="{
-                              name: 'dashboard-feeds-id',
-                              params: { id: feed.id! },
-                            }"
-                          >
-                            <span>{{ feed.title }}</span>
+                        <SidebarMenuButton v-for="feed in feeds.filter(
+                          (f) => f.folderId === folder.id,
+                        )" :key="feed.id!" as-child :tooltip="feed.title!">
+                          <NuxtLink :to="{
+                            name: 'dashboard-feeds-id',
+                            params: { id: feed.id! },
+                          }">
+                            <span>{{ feed.title }}</span> {{feed.numberUnread}}
                           </NuxtLink>
                         </SidebarMenuButton>
                         <Separator />

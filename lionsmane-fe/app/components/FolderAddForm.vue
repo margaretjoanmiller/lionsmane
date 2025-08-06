@@ -3,9 +3,9 @@
   -->
 
 <script setup lang="ts">
-import type { SchemaFolderIn } from '@/utils/gen/schema';
-import type { FormError, FormErrorEvent, FormSubmitEvent } from '@nuxt/ui';
-import { z as zod } from 'zod';
+import type { FormErrorEvent } from '@nuxt/ui';
+import z from 'zod';
+import { postFoldersBody } from '@/utils/zod';
 
 const toast = useToast();
 
@@ -41,7 +41,7 @@ const newFolder = ref({
 });
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: (newFolder: SchemaFolderIn) =>
+  mutationFn: (newFolder: z.infer<typeof postFoldersBody>) =>
     $lion('/folders', {
       method: 'POST',
       body: {

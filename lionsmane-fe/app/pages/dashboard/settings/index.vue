@@ -12,7 +12,7 @@ import type {
   SchemaFeedInUpdate,
   SchemaFolderOut,
 } from '@/utils/gen/schema';
-import { postFeedsUpdateIdBody } from '@/utils/gen/zod/feed-resource.zod';
+import { postFeedsUpdateIdBody } from '@/utils/zod';
 
 definePageMeta({
   layout: 'dash',

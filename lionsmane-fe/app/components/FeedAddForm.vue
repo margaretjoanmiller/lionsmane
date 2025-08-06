@@ -3,12 +3,11 @@
   -->
 
 <script setup lang="ts">
-import { postFeedsBody } from '@/utils/gen/zod/feed-resource.zod';
-import type { SchemaFeedIn } from '@/utils/gen/schema';
+import z from 'zod'
+import { postFeedsBody } from '@/utils/zod';
 
 const toast = useToast();
 
-const { session } = useUserSession();
 
 const queryClient = useQueryClient();
 
@@ -39,7 +38,7 @@ const {
 });
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: (newFeed: SchemaFeedIn) =>
+  mutationFn: (newFeed: z.infer<typeof postFeedsBody>) =>
     $lion('/feeds', {
       method: 'POST',
       body: {
@@ -66,12 +65,7 @@ function onSubmit() {
 </script>
 
 <template>
-  <UForm
-    :schema="postFeedsBody"
-    :state="feedState"
-    class="space-y-4"
-    @submit="onSubmit"
-  >
+  <UForm :schema="postFeedsBody" :state="feedState" class="space-y-4" @submit="onSubmit">
     <UFormField label="title" name="title">
       <UInput v-model="feedState.title" />
     </UFormField>
@@ -83,17 +77,11 @@ function onSubmit() {
     </UFormField>
 
     <UFormField label="folderId" name="folderId">
-      <USelectMenu
-        v-model="feedState.folder"
-        label="Folders"
-        :items="
-          folders?.map((folder) => ({
-            label: folder.name,
-            value: folder.id,
-          }))
-        "
-        class="w-48"
-      />
+      <USelectMenu v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
+        label: folder.name || '',
+        value: folder.id,
+      }))
+        " class="w-48" />
     </UFormField>
     <UButton type="submit"> Submit</UButton>
   </UForm>
