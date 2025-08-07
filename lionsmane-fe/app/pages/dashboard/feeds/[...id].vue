@@ -3,11 +3,14 @@
   -->
 
 <script setup lang="ts">
+import { readStatus } from '@/stores/readStatus';
+
 definePageMeta({
   layout: 'dash',
 });
 
 const route = useRoute();
+const readStatusStore = useReadStatusStore();
 
 let id: string;
 if (Array.isArray(route.params.id)) {
@@ -35,24 +38,41 @@ const {
     return resp;
   },
 });
+
+
+const filteredArticles = computed(() => {
+  if (!articles.value) return [];
+
+  let filtered = articles.value;
+
+  switch (readStatusStore.readStatus) {
+    case readStatus.UNREAD:
+      filtered = articles.value.filter(a => !a.read)
+      break;
+    case readStatus.READ:
+      filtered = articles.value.filter(a => a.read)
+      break;
+    case readStatus.STARRED:
+      filtered = articles.value.filter(a => a.read) // TODO: Add starred state
+      break;
+    default:
+      break;
+  }
+
+  return filtered.map(a => ({
+
+    id: a.id || '',
+    title: a.title || '',
+    preview: `${a.textPreview?.substring(0, 70)}...`,
+    date: a.publishedAt || '',
+    isRead: a.read || false,
+  }))
+})
 </script>
 
 <template>
   <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-    <template v-for="article in articles
-      ?.map((a) => {
-        if (a.read) {
-          return null;
-        }
-        return {
-          id: a.id || '',
-          title: a.title || '',
-          preview: `${a.textPreview?.substring(0, 70)}...`,
-          date: a.publishedAt || '',
-          isRead: a.read || false,
-        };
-      })
-      .filter((i) => i !== null)" :key="article.id">
+    <template v-for="article in filteredArticles" :key="article.id">
       <ArticleCard :article-preview="article" />
     </template>
   </div>
