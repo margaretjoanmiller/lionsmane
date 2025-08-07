@@ -76,6 +76,7 @@
 	},
 	"prettier": {
 		"singleQuote": true,
+        "trailngComma": "all",
 		"tabWidth": 2,
 		"plugins": [
 			"prettier-plugin-tailwindcss"
