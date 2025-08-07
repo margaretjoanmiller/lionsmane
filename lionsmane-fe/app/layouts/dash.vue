@@ -20,19 +20,34 @@ import {
 import { sleep } from '@/utils/utilFunctions';
 import ColorModeToggle from '@/components/ColorModeToggle.vue';
 import type { DropdownMenuItem } from '@nuxt/ui';
+import { useReadStatusStore } from '@/stores/readStatus';
 
 const route = useRoute();
 const toast = useToast();
 const queryClient = useQueryClient();
+const readStatusStore = useReadStatusStore();
 
 const dropdownItems = ref<DropdownMenuItem[]>([
   {
     label: 'Unread',
     icon: 'i-fluent-mail-unread-16-filled',
+    onSelect(e) {
+      readStatusStore.unread();
+    },
   },
   {
     label: 'Read',
     icon: 'i-fluent-mail-read-16-filled',
+    onSelect(e) {
+      readStatusStore.read();
+    },
+  },
+  {
+    label: 'Starred',
+    icon: 'i-fluent-star-12-filled',
+    onSelect(e) {
+      readStatusStore.starred();
+    },
   },
 ]);
 async function onReload() {
