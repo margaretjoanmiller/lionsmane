@@ -68,10 +68,13 @@ function onUnStar() {
         >
           {{ articlePreview.title }}
         </NuxtLink>
-        <div class="">
-          <div v-show="articlePreview.isRead === false">
-            <UBadge icon="radix-icons:dot-filled" color="info">Unread</UBadge>
-          </div>
+        <div class="flex">
+          <UBadge
+            v-show="articlePreview.isRead === false"
+            icon="radix-icons:dot-filled"
+            color="info"
+            >Unread</UBadge
+          >
           <UButton
             v-if="articlePreview.starred === true"
             icon="i-fluent-star-12-filled"
