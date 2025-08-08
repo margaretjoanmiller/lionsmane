@@ -12,7 +12,7 @@ const colorMode = useColorMode();
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <UButton variant="outline">
+      <UButton variant="outline" size="xl">
         <UIcon
           name="i-solar-moon-bold"
           class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"

@@ -112,7 +112,7 @@ async function onReload() {
               </template>
             </BreadcrumbList>
           </Breadcrumb>
-          <div class="absolute right-48">
+          <div class="right-50 absolute">
             <UDropdownMenu :items="dropdownItems"
               ><UButton icon="i-material-symbols-news-outline" variant="outline"
                 >Article status</UButton

@@ -44,11 +44,11 @@ const content = computed(
 );
 
 const { isError, error, isSuccess, mutate } = useMutation({
-  mutationFn: (feedId: string) =>
+  mutationFn: (artId: string) =>
     $lion('/articles/{id}', {
       method: 'PATCH',
       path: {
-        id: feedId,
+        id: artId,
       },
       body: {
         read: true,
@@ -83,7 +83,7 @@ watch(article, async (newArt) => {
       <h4>
         {{ article?.author }}
       </h4>
-      <div class="prose prose-lg prose-card prose-pink" v-html="content"/>
+      <div class="prose prose-lg prose-card prose-pink" v-html="content" />
 
       <a :href="article?.url ?? ''">Original article</a>
     </div>
