@@ -31,27 +31,27 @@ const filteredArticles = computed(() => {
 
   switch (readStatusStore.readStatus) {
     case readStatus.UNREAD:
-      filtered = articles.value.filter(a => !a.read)
+      filtered = articles.value.filter((a) => !a.read);
       break;
     case readStatus.READ:
-      filtered = articles.value.filter(a => a.read)
+      filtered = articles.value.filter((a) => a.read);
       break;
     case readStatus.STARRED:
-      filtered = articles.value.filter(a => a.read) // TODO: Add starred state
+      filtered = articles.value.filter((a) => a.starred); // TODO: Add starred state
       break;
     default:
       break;
   }
 
-  return filtered.map(a => ({
-
+  return filtered.map((a) => ({
     id: a.id || '',
     title: a.title || '',
     preview: `${a.textPreview?.substring(0, 70)}...`,
     date: a.publishedAt || '',
     isRead: a.read || false,
-  }))
-})
+    starred: a.starred || false,
+  }));
+});
 </script>
 
 <template>

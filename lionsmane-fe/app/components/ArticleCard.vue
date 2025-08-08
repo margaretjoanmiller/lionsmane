@@ -34,6 +34,7 @@ const { isError, error, isSuccess, mutate } = useMutation({
     }),
   onSuccess: async () => {
     await queryClient.invalidateQueries({ queryKey: ['articles'] });
+    await queryClient.invalidateQueries({ queryKey: ['articles-all'] });
   },
   onError: () => {
     toast.add({ title: 'Error setting article as read', color: 'error' });
