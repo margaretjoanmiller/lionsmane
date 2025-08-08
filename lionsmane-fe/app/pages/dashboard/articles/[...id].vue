@@ -45,10 +45,13 @@ const content = computed(
 
 const { isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (feedId: string) =>
-    $lion('/articles/read/{id}', {
+    $lion('/articles/{id}', {
       method: 'PATCH',
       path: {
         id: feedId,
+      },
+      body: {
+        read: true,
       },
     }),
   onSuccess: async () => {
@@ -80,7 +83,7 @@ watch(article, async (newArt) => {
       <h4>
         {{ article?.author }}
       </h4>
-      <div class="prose prose-lg prose-card prose-pink" v-html="content"></div>
+      <div class="prose prose-lg prose-card prose-pink" v-html="content"/>
 
       <a :href="article?.url ?? ''">Original article</a>
     </div>

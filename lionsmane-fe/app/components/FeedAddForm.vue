@@ -3,7 +3,7 @@
   -->
 
 <script setup lang="ts">
-import z from 'zod'
+import type z from 'zod'
 import { postFeedsBody } from '@/utils/zod';
 
 const toast = useToast();
@@ -77,7 +77,8 @@ function onSubmit() {
     </UFormField>
 
     <UFormField label="folderId" name="folderId">
-      <USelectMenu v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
+      <USelectMenu
+v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
         label: folder.name || '',
         value: folder.id,
       }))

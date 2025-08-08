@@ -254,7 +254,8 @@ const isModalOpen = ref(false);
           </UFormField>
 
           <UFormField label="folderId" name="folderId">
-            <USelectMenu v-model="state.folder" label="Folders" :items="folders?.map((folder) => ({
+            <USelectMenu
+v-model="state.folder" label="Folders" :items="folders?.map((folder) => ({
               label: folder.name ?? '',
               value: folder.id ?? '',
             }))

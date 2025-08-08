@@ -18,6 +18,9 @@ class Article {
     @Column()
     var read: Boolean = false
 
+    @Column()
+    var starred: Boolean = false
+
     @Column(columnDefinition = "TEXT")
     var title: String? = null
     var author: String? = null
@@ -49,6 +52,7 @@ class Article {
     fun toDto() = ArticleOut(
         id,
         read,
+        starred,
         title,
         author,
         content,

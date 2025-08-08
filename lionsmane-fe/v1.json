@@ -15,6 +15,9 @@
           "read" : {
             "type" : "boolean"
           },
+          "starred" : {
+            "type" : "boolean"
+          },
           "title" : {
             "type" : [ "string", "null" ]
           },
@@ -55,6 +58,17 @@
             }, {
               "type" : "null"
             } ]
+          }
+        }
+      },
+      "ArticleUpdateReq" : {
+        "type" : "object",
+        "properties" : {
+          "read" : {
+            "type" : [ "boolean", "null" ]
+          },
+          "starred" : {
+            "type" : [ "boolean", "null" ]
           }
         }
       },
@@ -286,63 +300,43 @@
         } ]
       }
     },
-    "/articles/read/{id}" : {
-      "patch" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Mark Read Article",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/articles/unread/{id}" : {
-      "patch" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Mark Un Read Article",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
     "/articles/{id}" : {
+      "patch" : {
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ArticleUpdateReq"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Update Article",
+        "tags" : [ "Article Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      },
       "get" : {
         "parameters" : [ {
           "name" : "id",

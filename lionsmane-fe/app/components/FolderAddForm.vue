@@ -4,8 +4,8 @@
 
 <script setup lang="ts">
 import type { FormErrorEvent } from '@nuxt/ui';
-import z from 'zod';
-import { postFoldersBody } from '@/utils/zod';
+import type z from 'zod';
+import type { postFoldersBody } from '@/utils/zod';
 
 const toast = useToast();
 

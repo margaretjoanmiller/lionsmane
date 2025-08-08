@@ -10,9 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { CollapsibleTrigger } from '@/components/ui/collapsible';
+import { CollapsibleTrigger, Collapsible  } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
-import { Collapsible } from '@/components/ui/collapsible';
 
 const { clear: clearSession } = useUserSession();
 
@@ -69,7 +68,7 @@ const {
       <Collapsible
         v-else-if="feeds && folders"
         class="group/feeds-collapsible"
-        defaultOpen
+        default-open
       >
         <SidebarMenuItem>
           <SidebarMenuButton>

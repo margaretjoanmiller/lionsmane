@@ -6,22 +6,22 @@ package org.jackrabbitsforge.resources
 
 import io.quarkus.logging.Log
 import io.quarkus.security.Authenticated
-import io.quarkus.security.identity.SecurityIdentity
 import jakarta.transaction.Transactional
+import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PATCH
 import jakarta.ws.rs.Path
+import org.hibernate.HibernateException
 import org.jackrabbitsforge.data.dto.ArticleOut
 import org.jackrabbitsforge.data.repositories.ArticleRepository
-import org.jackrabbitsforge.data.repositories.FeedRepository
 import java.util.*
+
+class ArticleNotFoundException : Exception("Article not found")
 
 @Authenticated
 @Path("/articles")
 class ArticleResource(
     private var articleRepository: ArticleRepository,
-    private var feedRepository: FeedRepository,
-    private var identity: SecurityIdentity,
 ) {
 
     @GET
@@ -73,39 +73,35 @@ class ArticleResource(
         }
     }
 
-    @PATCH
-    @Path("/read/{id}")
-    @Transactional
-    fun markReadArticle(id: UUID) {
-        try {
-
-            val articleOut = articleRepository.findByUUID(id)
-
-            articleOut?.read = true
-            if (articleOut != null) {
-                articleRepository.persistAndFlush(articleOut)
-            }
-        } catch (e: Exception) {
-            Log.error("Error updating article", e)
-            throw e
-        }
-    }
+    data class ArticleUpdateReq(
+        val read: Boolean? = null,
+        val starred: Boolean? = null
+    )
 
     @PATCH
-    @Path("/unread/{id}")
+    @Path("/{id}")
     @Transactional
-    fun markUnReadArticle(id: UUID) {
-        try {
+    fun updateArticle(id: UUID, @Valid articleUpdate: ArticleUpdateReq) {
+        if (articleUpdate.read != null) {
+            try {
+                val articleOut = articleRepository.findByUUID(id) ?: throw ArticleNotFoundException()
+                articleOut.read = articleUpdate.read
 
-            val articleOut = articleRepository.findByUUID(id)
-
-            articleOut?.read = false
-            if (articleOut != null) {
                 articleRepository.persistAndFlush(articleOut)
+            } catch (e: HibernateException) {
+                Log.error("Error updating article at database", e)
+                throw e
             }
-        } catch (e: Exception) {
-            Log.error("Error updating article", e)
-            throw e
+        } else if (articleUpdate.starred != null) {
+            try {
+                val articleOut = articleRepository.findByUUID(id) ?: throw ArticleNotFoundException()
+                articleOut.starred = articleUpdate.starred
+
+                articleRepository.persistAndFlush(articleOut)
+            } catch (e: HibernateException) {
+                Log.error("Error updating article at database", e)
+                throw e
+            }
         }
     }
 }

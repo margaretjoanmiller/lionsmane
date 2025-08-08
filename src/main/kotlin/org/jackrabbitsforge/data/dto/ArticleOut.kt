@@ -10,6 +10,7 @@ import java.util.*
 data class ArticleOut(
     var id: UUID?,
     var read: Boolean,
+    var starred: Boolean,
     var title: String?,
     var author: String?,
     var content: String?,
