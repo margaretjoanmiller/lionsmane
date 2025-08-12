@@ -28,7 +28,6 @@ class Feed {
     @ManyToOne(optional = true)
     var folder: Folder? = null
 
-    @ManyToMany(mappedBy = "feeds", cascade = [CascadeType.ALL])
-    var tags: MutableList<Tag>? = null
-    fun toDto() = FeedDto(id, title, description, url, lastUpdated, folder?.id)
+    var tags: MutableSet<String> = mutableSetOf()
+    fun toDto() = FeedDto(id, title, description, url, lastUpdated, folder?.id, tags)
 }

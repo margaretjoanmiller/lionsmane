@@ -74,6 +74,7 @@
       },
       "FeedDto" : {
         "type" : "object",
+        "required" : [ "tags" ],
         "properties" : {
           "id" : {
             "anyOf" : [ {
@@ -105,6 +106,13 @@
               "type" : "null"
             } ]
           },
+          "tags" : {
+            "type" : "array",
+            "uniqueItems" : true,
+            "items" : {
+              "type" : "string"
+            }
+          },
           "numberUnread" : {
             "type" : [ "integer", "null" ],
             "format" : "int32"
@@ -113,7 +121,7 @@
       },
       "FeedIn" : {
         "type" : "object",
-        "required" : [ "title", "url" ],
+        "required" : [ "title", "url", "tags" ],
         "properties" : {
           "title" : {
             "type" : "string"
@@ -130,11 +138,19 @@
             }, {
               "type" : "null"
             } ]
+          },
+          "tags" : {
+            "type" : "array",
+            "uniqueItems" : true,
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
       "FeedInUpdate" : {
         "type" : "object",
+        "required" : [ "tags" ],
         "properties" : {
           "title" : {
             "type" : [ "string", "null" ]
@@ -151,6 +167,13 @@
             }, {
               "type" : "null"
             } ]
+          },
+          "tags" : {
+            "type" : "array",
+            "uniqueItems" : true,
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },

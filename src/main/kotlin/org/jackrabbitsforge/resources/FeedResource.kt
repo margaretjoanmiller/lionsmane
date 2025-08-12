@@ -72,14 +72,13 @@ class FeedResource(
         newFeed.userName = identity.principal.name
         val threeWeeksAgo = Clock.System.now().minus(3, DateTimeUnit.Companion.WEEK, TimeZone.Companion.UTC)
         newFeed.lastUpdated = Instant.parse(threeWeeksAgo.toString())
+        newFeed.tags.addAll(feed.tags)
         feedRepository.persist(newFeed)
 
         val folderId = feed.folderId
         if (folderId != null) {
             try {
-                val folderToFileInto = folderRepository.findByUUID(folderId)
-                if (folderToFileInto == null)
-                    return Response.status(404).build()
+                val folderToFileInto = folderRepository.findByUUID(folderId) ?: return Response.status(404).build()
                 if (folderToFileInto.userName != identity.principal.name)
                     return Response.status(404).build()
                 newFeed.folder = folderToFileInto
@@ -96,10 +95,7 @@ class FeedResource(
     @POST
     @Path("/update/{id}")
     fun updateFeed(id: UUID, @Valid feed: FeedInUpdate): Response {
-        val feedToUpdate = feedRepository.findByUUID(id)
-        if (feedToUpdate == null) {
-            return Response.status(404).build()
-        }
+        val feedToUpdate = feedRepository.findByUUID(id) ?: return Response.status(404).build()
         if (feedToUpdate.userName != identity.principal.name) {
             return Response.status(404).build() // don't let the user know they found a real feed
         }
@@ -109,12 +105,11 @@ class FeedResource(
             feedToUpdate.url = feedUrl
         feedToUpdate.description = feed.description ?: feedToUpdate.description
 
+        feedToUpdate.tags.addAll(feed.tags)
         val folderId = feed.folderId
         if (folderId != null) {
             try {
-                val folderToFileInto = folderRepository.findByUUID(folderId)
-                if (folderToFileInto == null)
-                    return Response.status(404).build()
+                val folderToFileInto = folderRepository.findByUUID(folderId) ?: return Response.status(404).build()
                 if (folderToFileInto.userName != identity.principal.name)
                     return Response.status(404).build()
                 feedToUpdate.folder = folderToFileInto
@@ -130,11 +125,8 @@ class FeedResource(
     @GET
     @Path("/delete/{id}")
     fun deleteFeed(id: UUID): Response {
-        val feedToDelete = feedRepository.findByUUID(id)
+        val feedToDelete = feedRepository.findByUUID(id) ?: return Response.status(404).build()
 
-        if (feedToDelete == null) {
-            return Response.status(404).build()
-        }
         if (feedToDelete.userName != identity.principal.name) {
             return Response.status(404).build()
         }

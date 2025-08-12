@@ -11,12 +11,14 @@ data class FeedIn(
     val title: String,
     val description: String?,
     val url: URL,
-    val folderId: UUID?
+    val folderId: UUID?,
+    val tags: Set<String>,
 )
 
 data class FeedInUpdate(
     val title: String?,
     val description: String?,
     val url: URL?,
-    val folderId: UUID?
+    val folderId: UUID?,
+    val tags: Set<String>
 )
