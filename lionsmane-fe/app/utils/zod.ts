@@ -31,3 +31,13 @@ export const postFeedsUpdateIdBody = z.object({
   folderId: z.union([z.uuid(), z.null()]).optional(),
   tags: z.array(z.string()),
 });
+
+
+export const getFeedsBody = z.object({
+  id: z.uuid(),
+  title: z.string(),
+  description: z.string().optional(),
+  url: z.string(),
+  folderId: z.union([z.uuid(), z.null()]).optional(),
+  tags: z.array(z.string()),
+})

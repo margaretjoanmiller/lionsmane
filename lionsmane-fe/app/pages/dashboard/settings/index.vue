@@ -5,13 +5,9 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue';
 import * as z from 'zod';
+import { getFeedsBody } from '@/utils/zod';
 import type { TableColumn } from '@nuxt/ui';
 import type { Row } from '@tanstack/vue-table';
-import type {
-  SchemaFeedDto,
-  SchemaFeedInUpdate,
-  SchemaFolderOut,
-} from '@/utils/gen/schema';
 import { postFeedsUpdateIdBody } from '@/utils/zod';
 
 definePageMeta({
@@ -19,12 +15,9 @@ definePageMeta({
 });
 
 const UButton = resolveComponent('UButton');
-const UBadge = resolveComponent('UBadge');
 const UDropdownMenu = resolveComponent('UDropdownMenu');
 
 const toast = useToast();
-
-const { session } = useUserSession();
 
 const queryClient = useQueryClient();
 
@@ -60,7 +53,19 @@ const {
   },
 });
 
-const state = ref({
+type State = {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  folder: {
+    label: string;
+    value: string;
+  };
+  tags: string[];
+};
+
+const state = ref<State>({
   id: '',
   title: '',
   description: '',
@@ -69,16 +74,28 @@ const state = ref({
     label: '',
     value: '',
   },
+  tags: [] as string[],
 });
-const currentFeed = ref<SchemaFeedDto>({
+
+const currentFeed = ref<z.infer<typeof getFeedsBody>>({
   id: '',
   title: '',
   description: '',
   url: '',
   folderId: '',
+  tags: [],
 });
 
-const columns: TableColumn<SchemaFeedDto>[] = [
+// type Feed = {
+//   id: string;
+//   title: string;
+//   description: string | undefined;
+//   url: string;
+//   folderId: string | undefined;
+//   tags: string[];
+// };
+
+const columns: TableColumn<z.infer<typeof getFeedsBody>>[] = [
   {
     accessorKey: 'id',
     header: '#',
@@ -169,7 +186,7 @@ const {
   isSuccess: isSuccessEdit,
   mutate: editFeed,
 } = useMutation({
-  mutationFn: (feedToUpdate: SchemaFeedDto) =>
+  mutationFn: (feedToUpdate: z.infer<typeof getFeedsBody>) =>
     $lion('/feeds/update/{id}', {
       method: 'POST',
       path: {
@@ -180,6 +197,7 @@ const {
         description: feedToUpdate.description,
         url: feedToUpdate.url,
         folderId: feedToUpdate.folderId,
+        tags: feedToUpdate.tags,
       },
     }),
   async onSuccess() {
@@ -194,7 +212,7 @@ const {
   },
 });
 
-function getRowItems(row: Row<SchemaFeedDto>) {
+function getRowItems(row: Row<z.infer<typeof getFeedsBody>>) {
   return [
     {
       type: 'label',
@@ -208,6 +226,8 @@ function getRowItems(row: Row<SchemaFeedDto>) {
         state.value.title = currentFeed.value.title ?? '';
         state.value.description = currentFeed.value.description ?? '';
         state.value.url = currentFeed.value.url ?? '';
+        state.value.folder.value = currentFeed.value.folderId || '';
+        state.value.tags = currentFeed.value.tags;
         isModalOpen.value = true;
       },
     },
@@ -227,6 +247,7 @@ function onSubmit() {
     description: state.value.description,
     url: state.value.url,
     folderId: state.value.folder.value,
+    tags: state.value.tags,
   });
   isModalOpen.value = false;
 }
@@ -240,7 +261,11 @@ const isModalOpen = ref(false);
     <UModal v-model:open="isModalOpen">
       <UButton hidden="hidden">Open</UButton>
       <template #body>
-        <UForm :schema="postFeedsUpdateIdBody" :state="state" @submit="onSubmit">
+        <UForm
+          :schema="postFeedsUpdateIdBody"
+          :state="state"
+          @submit="onSubmit"
+        >
           <UFormField label="title" name="title">
             <UInput v-model="state.title" />
           </UFormField>
@@ -255,11 +280,20 @@ const isModalOpen = ref(false);
 
           <UFormField label="folderId" name="folderId">
             <USelectMenu
-v-model="state.folder" label="Folders" :items="folders?.map((folder) => ({
-              label: folder.name ?? '',
-              value: folder.id ?? '',
-            }))
-              " class="w-48" />
+              v-model="state.folder"
+              label="Folders"
+              :items="
+                folders.map((folder) => ({
+                  label: folder.name ?? '',
+                  value: folder.id ?? '',
+                }))
+              "
+              class="w-48"
+            />
+          </UFormField>
+
+          <UFormField label="tags" name="tags">
+            <UInputTags v-model="state.tags" />
           </UFormField>
 
           <UButton type="submit" :disabled="isPendingEdit"> Submit</UButton>
