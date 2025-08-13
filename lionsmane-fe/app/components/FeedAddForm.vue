@@ -3,11 +3,10 @@
   -->
 
 <script setup lang="ts">
-import type z from 'zod'
+import type z from 'zod';
 import { postFeedsBody } from '@/utils/zod';
 
 const toast = useToast();
-
 
 const queryClient = useQueryClient();
 
@@ -19,6 +18,7 @@ const feedState = ref({
     label: '',
     value: '',
   },
+  tags: [],
 });
 
 const {
@@ -60,6 +60,7 @@ function onSubmit() {
     description: feedState.value.description,
     url: feedState.value.url,
     folderId: feedState.value.folder.value,
+    tags: feedState.value.tags,
   });
 }
 </script>
@@ -77,13 +78,17 @@ function onSubmit() {
     </UFormField>
 
     <UFormField label="folderId" name="folderId">
-      <USelectMenu
-v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
+      <USelectMenu v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
         label: folder.name || '',
         value: folder.id,
       }))
         " class="w-48" />
     </UFormField>
+
+    <UFormField label="tags" name="tags">
+      <UInputTags v-model="feedState.tags" />
+    </UFormField>
+
     <UButton type="submit"> Submit</UButton>
   </UForm>
 </template>
