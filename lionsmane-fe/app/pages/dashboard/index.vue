@@ -55,11 +55,9 @@ const filteredArticles = computed(() => {
 </script>
 
 <template>
-  <div>
-    <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-      <template v-for="article in filteredArticles" :key="article.id">
-        <ArticleCard :article-preview="article" />
-      </template>
-    </div>
+  <div class="grid auto-rows-min gap-4 md:grid-cols-3">
+    <template v-for="article in filteredArticles" :key="article.id">
+      <ArticleCard :article-preview="article" />
+    </template>
   </div>
 </template>
