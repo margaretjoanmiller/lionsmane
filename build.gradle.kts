@@ -36,6 +36,7 @@ dependencies {
     implementation("io.quarkus:quarkus-kubernetes")
     implementation("io.quarkus:quarkus-smallrye-metrics")
     testImplementation("io.quarkus:quarkus-junit5")
+    testImplementation("io.quarkus:quarkus-junit5-mockito")
     testImplementation("io.rest-assured:rest-assured")
     implementation("com.prof18.rssparser:rssparser:6.0.10")
     implementation("com.github.f4b6a3:uuid-creator:6.1.0")
