@@ -85,3 +85,20 @@ app.openapi(articlesRouter, async (c) => {
     cursor: artPages[artPages.length - 1]?.id || null, // if no articles, cursor is null
   });
 });
+
+const articlesUpdateRoute = createRoute({
+  method: 'put',
+  path: '/',
+  responses: {
+    202: {
+      description: 'Article updated successfully',
+    },
+  },
+});
+
+app.openapi(articlesUpdateRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+});
