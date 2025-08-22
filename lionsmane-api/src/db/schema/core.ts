@@ -28,22 +28,23 @@ export const feedRelations = relations(feeds, ({ many, one }) => ({
     fields: [feeds.userId],
     references: [user.id],
   }),
+  tags: many(tagsToFeeds),
 }));
 
 export const articles = pgTable('articles', {
   id: uuid().primaryKey(),
   isRead: boolean().default(false),
   isStarred: boolean().default(false),
-  title: varchar({ length: 256 }),
+  title: varchar({ length: 256 }).notNull(),
   url: varchar({ length: 256 }).notNull(),
-  authors: varchar({ length: 256 }).array(),
-  categories: varchar({ length: 256 }).array(),
+  authors: varchar({ length: 256 }).array().notNull().default([]),
+  categories: varchar({ length: 256 }).array().notNull().default([]),
   rawContent: text(),
   readableContent: text(),
   description: varchar({ length: 256 }),
   image: varchar({ length: 256 }),
-  media: varchar({ length: 256 }).array(),
-  published: timestamp(),
+  media: varchar({ length: 256 }).array().notNull().default([]),
+  published: timestamp().notNull(),
   updated: timestamp(),
   feedId: uuid().references(() => feeds.id),
   userId: text().references(() => user.id),
@@ -57,5 +58,34 @@ export const articleRelations = relations(articles, ({ one }) => ({
   user: one(user, {
     fields: [articles.userId],
     references: [user.id],
+  }),
+}));
+
+export const tags = pgTable('tags', {
+  id: uuid().primaryKey(),
+  name: varchar({ length: 50 }),
+});
+
+export const tagRelations = relations(tags, ({ many }) => ({
+  tagsToFeeds: many(tagsToFeeds),
+}));
+
+export const tagsToFeeds = pgTable('tags_to_feeds', {
+  tagId: uuid()
+    .notNull()
+    .references(() => tags.id),
+  feedId: uuid()
+    .notNull()
+    .references(() => feeds.id),
+});
+
+export const tagsToFeedsRelations = relations(tagsToFeeds, ({ one }) => ({
+  tag: one(tags, {
+    fields: [tagsToFeeds.tagId],
+    references: [tags.id],
+  }),
+  feed: one(feeds, {
+    fields: [tagsToFeeds.feedId],
+    references: [feeds.id],
   }),
 }));

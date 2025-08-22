@@ -32,9 +32,9 @@ const newFeedRoute = createRoute({
       description: 'Feed created',
       content: {
         'application/json': {
-          schema: feedOut
-        }
-      }
+          schema: feedOut,
+        },
+      },
     },
     500: {
       description: 'Internal error',
@@ -136,9 +136,6 @@ const getFeedRoute = createRoute({
     404: {
       description: 'Feed not found',
     },
-    401: {
-      description: 'Unauthorized',
-    },
     500: {
       description: 'Internal Server Error',
     },
@@ -197,9 +194,6 @@ const updateFeedRoute = createRoute({
     },
     404: {
       description: 'Feed not found',
-    },
-    401: {
-      description: 'Unauthorized',
     },
     500: {
       description: 'Internal Server Error',
@@ -274,9 +268,6 @@ const deleteFeedRoute = createRoute({
     },
     404: {
       description: 'Feed not found',
-    },
-    401: {
-      description: 'Unauthorized',
     },
     500: {
       description: 'Internal Server Error',
