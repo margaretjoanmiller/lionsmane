@@ -5,7 +5,6 @@ import { feedOut, newFeed } from '@/zod/feeds.zod';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { and, eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { ResultAsync } from 'neverthrow';
 import { v7 } from 'uuid';
 
 const app = new OpenAPIHono<{
@@ -211,41 +210,37 @@ app.openapi(updateFeedRoute, async (c) => {
   const validatedBody = c.req.valid('json');
 
   // First check if feed exists and belongs to user
-  const existingFeed = await ResultAsync.fromPromise(
-    db.query.feeds.findFirst({
+  try {
+    const existingFeed = await db.query.feeds.findFirst({
       where: (feeds, { and, eq }) =>
         and(eq(feeds.id, id), eq(feeds.userId, user.id)),
-    }),
-    () => new Error('database error'),
-  );
-
-  if (existingFeed.isErr()) {
-    throw new HTTPException(500, { message: 'Internal Server Error' });
-  }
-
-  if (!existingFeed.value) {
-    throw new HTTPException(404, { message: 'Feed not found' });
-  }
-
-  // Update the feed
-  try {
-    const updatedFeed = await db
-      .update(feeds)
-      .set({
-        title: validatedBody.title ?? existingFeed.value.title,
-        url: validatedBody.url ?? existingFeed.value.url,
-        description:
-          validatedBody.description ?? existingFeed.value.description,
-      })
-      .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
-      .returning({
-        id: feeds.id,
-        title: feeds.title,
-        url: feeds.url,
-        description: feeds.description,
+    });
+    if (!existingFeed) {
+      throw new HTTPException(404, { message: 'Feed not found' });
+    }
+    try {
+      const updatedFeed = await db
+        .update(feeds)
+        .set({
+          title: validatedBody.title ?? existingFeed.title,
+          url: validatedBody.url ?? existingFeed.url,
+          description: validatedBody.description ?? existingFeed.description,
+        })
+        .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
+        .returning({
+          id: feeds.id,
+          title: feeds.title,
+          url: feeds.url,
+          description: feeds.description,
+        });
+      c.status(200);
+      return c.json(updatedFeed[0]);
+    } catch (error) {
+      throw new HTTPException(500, {
+        message: 'Internal Server Error',
+        cause: error,
       });
-    c.status(200);
-    return c.json(updatedFeed[0]);
+    }
   } catch (error) {
     throw new HTTPException(500, {
       message: 'Internal Server Error',

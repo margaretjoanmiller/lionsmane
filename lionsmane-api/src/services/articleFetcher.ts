@@ -4,9 +4,9 @@ import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import type z from 'zod';
 
-export async function parseArticlesFromFeed(
-  feedUrl: string,
-): Promise<z.infer<(typeof articleOut)[]>> {
+interface Article extends z.infer<typeof articleOut>
+
+export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]> {
   try {
     const feed = await parseFeed(feedUrl);
     if (!feed || !feed.items) {
