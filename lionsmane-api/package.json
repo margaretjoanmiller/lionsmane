@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
+    "test": "vitest",
     "start": "bun --bun dist/index.js"
   },
   "dependencies": {
@@ -40,7 +41,8 @@
     "prettier": "3.6.2",
     "tsx": "^4.7.1",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^3.2.4"
   },
   "prettier": {
     "tabWidth": 2,

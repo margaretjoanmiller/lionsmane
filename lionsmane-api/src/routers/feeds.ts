@@ -3,6 +3,8 @@ import { feeds } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedOut, newFeed } from '@/zod/feeds.zod';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
+import { and, eq } from 'drizzle-orm';
+import { HTTPException } from 'hono/http-exception';
 import { ResultAsync } from 'neverthrow';
 import { v7 } from 'uuid';
 
@@ -28,9 +30,14 @@ const newFeedRoute = createRoute({
   responses: {
     201: {
       description: 'Feed created',
+      content: {
+        'application/json': {
+          schema: feedOut
+        }
+      }
     },
-    409: {
-      description: 'User already subscribed to this feed',
+    500: {
+      description: 'Internal error',
     },
   },
 });
@@ -42,22 +49,26 @@ app.openapi(newFeedRoute, async (c) => {
     return c.text('Unauthorized');
   }
   const validatedBody = c.req.valid('json');
-  const insertedFeed = await ResultAsync.fromPromise(
-    db.insert(feeds).values({
-      id: v7(),
-      title: validatedBody.title,
-      url: validatedBody.url,
-      description: validatedBody.description,
-      userId: user.id,
-    }),
-    () => new Error('database error'),
-  );
-  if (insertedFeed.isErr()) {
-    c.status(409);
-    return c.text('user already subscribed to this feed');
-  } else {
+  try {
+    const insertedFeed = await db
+      .insert(feeds)
+      .values({
+        id: v7(),
+        title: validatedBody.title,
+        url: validatedBody.url,
+        description: validatedBody.description,
+        userId: user.id,
+      })
+      .returning({
+        id: feeds.id,
+        title: feeds.title,
+        url: feeds.url,
+        description: feeds.description,
+      });
     c.status(201);
-    return c.text('feed created');
+    return c.json(insertedFeed);
+  } catch (e) {
+    throw new HTTPException(500, { message: 'Interal error', cause: e });
   }
 });
 
@@ -85,25 +96,233 @@ app.openapi(listFeeds, async (c) => {
     c.status(401);
     return c.text('Unauthorized');
   }
-  const feedList = await ResultAsync.fromPromise(
-    db.query.feeds.findMany({
-      where: (feeds, { eq }) => eq(feeds.userId, user.id),
-    }),
-    () => new Error('database error'),
-  );
-  if (feedList.isErr()) {
+  try {
+    const feedList = await db
+      .select({
+        id: feeds.id,
+        title: feeds.title,
+        url: feeds.url,
+        description: feeds.description,
+      })
+      .from(feeds)
+      .where(eq(feeds.userId, user.id));
+    c.status(200);
+    return c.json(feedList);
+  } catch {
     c.status(500);
     return c.text('Internal Server Error');
   }
-  c.status(200);
-  return c.json(
-    feedList.value.map((feed) => ({
-      id: feed.id,
-      title: feed.title,
-      url: feed.url,
-      description: feed.description,
-    })),
+});
+
+const getFeedRoute = createRoute({
+  method: 'get',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z
+        .uuid()
+        .openapi({ param: { name: 'id', in: 'path', required: true } }),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: feedOut,
+        },
+      },
+      description: 'Feed retrieved',
+    },
+    404: {
+      description: 'Feed not found',
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+    500: {
+      description: 'Internal Server Error',
+    },
+  },
+});
+app.openapi(getFeedRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    c.status(401);
+    return c.text('Unauthorized');
+  }
+
+  const { id } = c.req.valid('param');
+
+  try {
+    const feed = await db.query.feeds.findFirst({
+      where: (feeds, { and, eq }) =>
+        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
+    });
+    if (!feed) {
+      throw new HTTPException(404, { message: 'Feed not found' });
+    }
+    c.status(200);
+    return c.json(feed);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: 'Internal Server Error',
+      cause: error,
+    });
+  }
+});
+
+const updateFeedRoute = createRoute({
+  method: 'put',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z.string(),
+    }),
+    body: {
+      content: {
+        'application/json': {
+          schema: newFeed.partial(),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: feedOut,
+        },
+      },
+      description: 'Feed updated',
+    },
+    404: {
+      description: 'Feed not found',
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+    500: {
+      description: 'Internal Server Error',
+    },
+  },
+});
+
+app.openapi(updateFeedRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+
+  const { id } = c.req.valid('param');
+  const validatedBody = c.req.valid('json');
+
+  // First check if feed exists and belongs to user
+  const existingFeed = await ResultAsync.fromPromise(
+    db.query.feeds.findFirst({
+      where: (feeds, { and, eq }) =>
+        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
+    }),
+    () => new Error('database error'),
   );
+
+  if (existingFeed.isErr()) {
+    throw new HTTPException(500, { message: 'Internal Server Error' });
+  }
+
+  if (!existingFeed.value) {
+    throw new HTTPException(404, { message: 'Feed not found' });
+  }
+
+  // Update the feed
+  try {
+    const updatedFeed = await db
+      .update(feeds)
+      .set({
+        title: validatedBody.title ?? existingFeed.value.title,
+        url: validatedBody.url ?? existingFeed.value.url,
+        description:
+          validatedBody.description ?? existingFeed.value.description,
+      })
+      .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
+      .returning({
+        id: feeds.id,
+        title: feeds.title,
+        url: feeds.url,
+        description: feeds.description,
+      });
+    c.status(200);
+    return c.json(updatedFeed[0]);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: 'Internal Server Error',
+      cause: error,
+    });
+  }
+});
+
+const deleteFeedRoute = createRoute({
+  method: 'delete',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z.string(),
+    }),
+  },
+  responses: {
+    204: {
+      description: 'Feed deleted',
+    },
+    404: {
+      description: 'Feed not found',
+    },
+    401: {
+      description: 'Unauthorized',
+    },
+    500: {
+      description: 'Internal Server Error',
+    },
+  },
+});
+
+app.openapi(deleteFeedRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    c.status(401);
+    return c.text('Unauthorized');
+  }
+
+  const { id } = c.req.valid('param');
+
+  // First check if feed exists and belongs to user
+  try {
+    const existingFeed = await db.query.feeds.findFirst({
+      where: (feeds, { and, eq }) =>
+        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
+    });
+    if (!existingFeed) {
+      throw new HTTPException(404, { message: 'Feed not found' });
+    }
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: 'Internal Server Error',
+      cause: error,
+    });
+  }
+
+  // Delete the feed
+  try {
+    await ResultAsync.fromPromise(
+      db.delete(feeds).where(and(eq(feeds.id, id), eq(feeds.userId, user.id))),
+      () => new Error('database error'),
+    );
+    c.status(204);
+    return c.body(null);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: 'Internal Server Error',
+      cause: error,
+    });
+  }
 });
 
 export default app;

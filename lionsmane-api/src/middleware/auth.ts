@@ -1,4 +1,5 @@
 import { createMiddleware } from 'hono/factory';
+import { HTTPException } from 'hono/http-exception';
 import type { auth } from '@/lib/auth';
 
 export const requireAuth = createMiddleware<{
@@ -11,7 +12,7 @@ export const requireAuth = createMiddleware<{
   const user = c.get('user');
 
   if (!session || !user) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    throw new HTTPException(401, { message: 'Unauthorized' });
   }
 
   await next();

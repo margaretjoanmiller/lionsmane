@@ -9,7 +9,7 @@ services:
     volumes:
       - db:/data/postgres
     ports:
-      - "5432:5432"
+      - "5423:5432"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d postgres"]
