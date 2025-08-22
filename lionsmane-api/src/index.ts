@@ -1,4 +1,5 @@
 import { logger } from 'hono/logger';
+import { cors } from 'hono/cors';
 import { auth } from '@/lib/auth';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Scalar } from '@scalar/hono-api-reference';
@@ -13,6 +14,18 @@ const app = new OpenAPIHono<{
 }>();
 
 app.use(logger());
+
+app.use(
+  '/api/auth/*', // or replace with "*" to enable cors for all routes
+  cors({
+    origin: 'http://localhost:8181', // replace with your origin
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
 
 app.use('*', async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });

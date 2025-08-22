@@ -7,3 +7,10 @@ export const newFeed = z
     description: z.string().nullable(),
   })
   .openapi('NewFeed');
+
+export const feedOut = z.object({
+  id: z.uuidv7(),
+  title: z.string(),
+  url: z.url().nonempty(),
+  description: z.string().nullable(),
+});

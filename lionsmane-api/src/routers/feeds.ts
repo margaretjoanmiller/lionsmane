@@ -1,9 +1,9 @@
 import { db } from '@/db';
 import { feeds } from '@/db/schema/core';
-import { errAsync, ResultAsync } from 'neverthrow';
 import type { auth } from '@/lib/auth';
-import { newFeed } from '@/zod/feeds.zod';
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
+import { feedOut, newFeed } from '@/zod/feeds.zod';
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
+import { ResultAsync } from 'neverthrow';
 import { v7 } from 'uuid';
 
 const app = new OpenAPIHono<{
@@ -36,36 +36,74 @@ const newFeedRoute = createRoute({
 });
 
 app.openapi(newFeedRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    c.status(401);
+    return c.text('Unauthorized');
+  }
   const validatedBody = c.req.valid('json');
-  // const insertedFeed = await ResultAsync.fromPromise(
-  //   db.insert(feeds).values({
-  //     title: validatedBody.title,
-  //     url: validatedBody.url,
-  //     description: validatedBody.description,
-  //   }),
-  //   () => new Error("Database error")
-  // );
-  // if (insertedFeed.isErr()) {
-  //   c.status(409);
-  //   return c.text("User already subscribed to this feed");
-  // } else {
-  //   c.status(201);
-  //   return c.text("Feed created");
-  // }
-  try {
-    await db.insert(feeds).values({
+  const insertedFeed = await ResultAsync.fromPromise(
+    db.insert(feeds).values({
       id: v7(),
       title: validatedBody.title,
       url: validatedBody.url,
       description: validatedBody.description,
-    });
-  } catch (e) {
-    console.error(e);
+      userId: user.id,
+    }),
+    () => new Error('database error'),
+  );
+  if (insertedFeed.isErr()) {
     c.status(409);
-    return c.text('User already subscribed to this feed');
+    return c.text('user already subscribed to this feed');
+  } else {
+    c.status(201);
+    return c.text('feed created');
   }
-  c.status(201);
-  return c.text('Feed created');
+});
+
+const listFeeds = createRoute({
+  method: 'get',
+  path: '/',
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: z.array(feedOut),
+        },
+      },
+      description: 'list feeds',
+    },
+    500: {
+      description: 'Internal Server Error',
+    },
+  },
+});
+
+app.openapi(listFeeds, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    c.status(401);
+    return c.text('Unauthorized');
+  }
+  const feedList = await ResultAsync.fromPromise(
+    db.query.feeds.findMany({
+      where: (feeds, { eq }) => eq(feeds.userId, user.id),
+    }),
+    () => new Error('database error'),
+  );
+  if (feedList.isErr()) {
+    c.status(500);
+    return c.text('Internal Server Error');
+  }
+  c.status(200);
+  return c.json(
+    feedList.value.map((feed) => ({
+      id: feed.id,
+      title: feed.title,
+      url: feed.url,
+      description: feed.description,
+    })),
+  );
 });
 
 export default app;
