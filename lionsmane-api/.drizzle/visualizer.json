@@ -1,0 +1,13 @@
+[
+  { "id": "account", "position": { "x": 490, "y": 430 } },
+  { "id": "oauth_access_token", "position": { "x": 50, "y": 50 } },
+  { "id": "oauth_application", "position": { "x": 50, "y": 690 } },
+  { "id": "oauth_consent", "position": { "x": 50, "y": 1370 } },
+  { "id": "passkey", "position": { "x": 600, "y": 1180 } },
+  { "id": "session", "position": { "x": 490, "y": 1790 } },
+  { "id": "two_factor", "position": { "x": 1020, "y": 2380 } },
+  { "id": "user", "position": { "x": 0, "y": 1720 } },
+  { "id": "verification", "position": { "x": 50, "y": 2330 } },
+  { "id": "articles", "position": { "x": -320, "y": 2020 } },
+  { "id": "feeds", "position": { "x": 780, "y": 2720 } }
+]
