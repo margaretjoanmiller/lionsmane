@@ -1,10 +1,20 @@
-import type { articleOut } from '@/zod/articles.zod';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
-import type z from 'zod';
 
-interface Article extends z.infer<typeof articleOut>
+interface Article {
+  title: string;
+  url: string;
+  authors: string[];
+  categories: string[];
+  description: string | null;
+  rawContent: string | null;
+  readableContent: string;
+  image: string | null;
+  media: string[];
+  published: Date;
+  updated: Date | null;
+}
 
 export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]> {
   try {
@@ -21,8 +31,8 @@ export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]>
       return {
         title: item.title,
         url: item.url,
-        authors: item.authors || [],
-        categories: item.categories || [],
+        authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
+        categories: item.categories.map((i) => i.term) || [],
         description: item.description || null,
         rawContent: item.content || null,
         readableContent,

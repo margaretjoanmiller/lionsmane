@@ -1,11 +1,10 @@
 import { db } from '@/db';
-import { articles, feeds } from '@/db/schema/core';
+import { articles } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { articleOut } from '@/zod/articles.zod';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { asc, eq, gt } from 'drizzle-orm';
+import { asc, gt } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { parseArticlesFromFeed } from '@/services/articleFetcher';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -25,7 +24,7 @@ export const articlesRouter = createRoute({
         .openapi({
           param: {
             name: 'cursor',
-            in: 'query',
+            in: 'path',
           },
         }),
       pageSize: z
@@ -35,7 +34,7 @@ export const articlesRouter = createRoute({
         .openapi({
           param: {
             name: 'pageSize',
-            in: 'query',
+            in: 'path',
           },
         }),
     }),
@@ -87,27 +86,4 @@ app.openapi(articlesRouter, async (c) => {
   });
 });
 
-const articlesUpdateRoute = createRoute({
-  method: 'put',
-  path: '/',
-  responses: {
-    202: {
-      description: 'Article updated successfully',
-    },
-  },
-});
-
-app.openapi(articlesUpdateRoute, async (c) => {
-  const user = c.get('user');
-  if (!user) {
-    throw new HTTPException(401, { message: 'Unauthorized' });
-  }
-  const feedList = await db
-    .select()
-    .from(feeds)
-    .where(eq(feeds.userId, user.id));
-  const articles = feedList.map(async (feed) => {
-    return await parseArticlesFromFeed(feed.url);
-  });
-  const arts = await Promise.all(articles);
-});
+export default app;

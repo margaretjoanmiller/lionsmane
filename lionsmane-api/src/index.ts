@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Scalar } from '@scalar/hono-api-reference';
 import feedRoutes from '@/routers/feeds';
+import articlesRoutes from '@/routers/articles';
 import { requireAuth } from './middleware/auth';
 
 const app = new OpenAPIHono<{
@@ -49,8 +50,10 @@ app.get('/', (c) => {
   return c.text('Hello Hono!');
 });
 
-app.use('/feed/*', requireAuth);
-app.route('feed', feedRoutes);
+app.use('/api/v1/*', requireAuth);
+app.route('api/v1/feeds', feedRoutes);
+
+app.route('api/v1/articles', articlesRoutes);
 
 app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
   type: 'http',
