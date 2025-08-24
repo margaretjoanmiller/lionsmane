@@ -19,7 +19,7 @@ export const feeds = pgTable('feeds', {
   description: varchar({ length: 500 }),
   image: varchar({ length: 256 }),
   updated: timestamp(),
-  userId: text().references(() => user.id),
+  userId: text().references(() => user.id).notNull(),
 });
 
 export const feedRelations = relations(feeds, ({ many, one }) => ({
@@ -46,8 +46,8 @@ export const articles = pgTable('articles', {
   media: varchar({ length: 256 }).array().notNull().default([]),
   published: timestamp().notNull(),
   updated: timestamp(),
-  feedId: uuid().references(() => feeds.id),
-  userId: text().references(() => user.id),
+  feedId: uuid().references(() => feeds.id, { onDelete: 'cascade' }).notNull(),
+  userId: text().references(() => user.id).notNull(),
 });
 
 export const articleRelations = relations(articles, ({ one }) => ({

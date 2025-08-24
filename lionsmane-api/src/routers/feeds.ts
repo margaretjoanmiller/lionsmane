@@ -58,7 +58,7 @@ app.openapi(newFeedRoute, async (c) => {
 				url: validatedBody.url,
 				description: validatedBody.description,
 				userId: user.id,
-				updated: subMonths(new Date(), 2),
+				updated: subMonths(new Date(), 3),
 			})
 			.returning({
 				id: feeds.id,

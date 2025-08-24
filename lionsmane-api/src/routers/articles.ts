@@ -139,6 +139,8 @@ app.openapi(updateArticlesRoute, async (c) => {
 		feeds.forEach((f) => {
 			const job = {
 				url: f.url,
+				feedId: f.id,
+				userId: user.id,
 				requestedAt: new Date().toISOString(),
 			};
 			const message = Buffer.from(JSON.stringify(job));

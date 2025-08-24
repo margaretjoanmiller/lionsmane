@@ -23,6 +23,8 @@ interface Article {
 
 export async function parseArticlesFromFeed(
 	feedUrl: string,
+	feedId: string,
+	userId: string,
 ): Promise<Article[]> {
 	try {
 		const feedXML = await fetch(feedUrl).then((res) => res.text());
@@ -30,12 +32,12 @@ export async function parseArticlesFromFeed(
 		if (!feed || !feed.items) {
 			throw new Error("No items found in the feed");
 		}
-
 		const feedProcess = feed.items
+			.filter((i) => i.published)
 			.filter((i) => {
 				return isAfter(
-					feed.updated || subMonths(new Date(), 1),
-					i.published || new Date(),
+					i.published!!,
+					feed.updated!!,
 				);
 			})
 			.map(async (item) => {
@@ -56,6 +58,8 @@ export async function parseArticlesFromFeed(
 					media: item.media.map((media) => media.url) || [],
 					published: item.published,
 					updated: item.updated || null,
+					feedId: feedId,
+					userId: userId,
 				};
 			});
 		const arts = await Promise.all(feedProcess).then((articles) => {
