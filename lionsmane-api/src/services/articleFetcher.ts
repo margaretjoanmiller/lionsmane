@@ -1,5 +1,5 @@
 import { parseFeed } from "@rowanmanning/feed-parser";
-import { isAfter, sub, subMonths } from "date-fns";
+import { isAfter, subMonths } from "date-fns";
 import DOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import { v7 } from "uuid";
