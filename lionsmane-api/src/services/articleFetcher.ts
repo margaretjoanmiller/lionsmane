@@ -1,8 +1,12 @@
+import { db } from '@/db';
+import { articles } from '@/db/schema/core';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
+import { v7 } from 'uuid';
 
 interface Article {
+  id: string;
   title: string;
   url: string;
   authors: string[];
@@ -16,7 +20,9 @@ interface Article {
   updated: Date | null;
 }
 
-export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]> {
+export async function parseArticlesFromFeed(
+  feedUrl: string,
+): Promise<Article[]> {
   try {
     const feed = await parseFeed(feedUrl);
     if (!feed || !feed.items) {
@@ -29,6 +35,7 @@ export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]>
       }
       const readableContent = await readablity(item.url);
       return {
+        id: v7(),
         title: item.title,
         url: item.url,
         authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
@@ -42,9 +49,12 @@ export async function parseArticlesFromFeed(feedUrl: string): Promise<Article[]>
         updated: item.updated || null,
       };
     });
-    return await Promise.all(feedProcess).then((articles) => {
+    const arts = await Promise.all(feedProcess).then((articles) => {
       return articles;
     });
+
+    await db.insert(articles).values(arts);
+    return arts;
   } catch (error) {
     console.error('Error parsing feed:', error);
     throw new Error('Failed to parse feed');

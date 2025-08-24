@@ -1,18 +1,13 @@
 {
   "name": "lionsmane",
   "module": "index.ts",
-  "type": "module",
-  "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.9.2"
   },
-  "workspaces": [
-    "lionsmane-api",
-    "lionsmane-fe"
-  ],
+  "private": true,
   "trustedDependencies": [
     "@tailwindcss/oxide",
     "esbuild",
@@ -20,5 +15,10 @@
     "sharp",
     "unrs-resolver",
     "vue-demi"
+  ],
+  "type": "module",
+  "workspaces": [
+    "lionsmane-api",
+    "lionsmane-fe"
   ]
 }
