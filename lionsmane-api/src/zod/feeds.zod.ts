@@ -13,4 +13,5 @@ export const feedOut = z.object({
   title: z.string(),
   url: z.url().nonempty(),
   description: z.string().nullable(),
+  updated: z.date(),
 });

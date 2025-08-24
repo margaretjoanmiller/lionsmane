@@ -6,6 +6,7 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { and, eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { v7 } from 'uuid';
+import { subMonths } from 'date-fns';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -57,12 +58,14 @@ app.openapi(newFeedRoute, async (c) => {
         url: validatedBody.url,
         description: validatedBody.description,
         userId: user.id,
+        updated: subMonths(new Date(), 2),
       })
       .returning({
         id: feeds.id,
         title: feeds.title,
         url: feeds.url,
         description: feeds.description,
+        updated: feeds.updated,
       });
     c.status(201);
     return c.json(insertedFeed);
@@ -297,10 +300,9 @@ app.openapi(deleteFeedRoute, async (c) => {
 
   // Delete the feed
   try {
-    await ResultAsync.fromPromise(
-      db.delete(feeds).where(and(eq(feeds.id, id), eq(feeds.userId, user.id))),
-      () => new Error('database error'),
-    );
+    await db
+      .delete(feeds)
+      .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)));
     c.status(204);
     return c.body(null);
   } catch (error) {

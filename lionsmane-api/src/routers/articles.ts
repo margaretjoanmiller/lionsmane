@@ -21,27 +21,24 @@ export const articlesRouter = createRoute({
   method: 'get',
   path: '/',
   request: {
-    params: z.object({
-      cursor: z
-        .string()
-        .optional()
-        .openapi({
-          param: {
-            name: 'cursor',
-            in: 'path',
-          },
-        }),
-      pageSize: z
-        .number()
-        .optional()
-        .default(10)
-        .openapi({
-          param: {
-            name: 'pageSize',
-            in: 'path',
-          },
-        }),
-    }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            cursor: z.string().nullish().default(null).optional(),
+            pageSize: z
+              .number()
+              .min(1)
+              .max(100)
+              .default(20)
+              .optional()
+              .transform((val) =>
+                typeof val === 'string' ? parseInt(val, 10) : val,
+              ),
+          }),
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -63,7 +60,7 @@ app.openapi(articlesRouter, async (c) => {
   if (!user) {
     throw new HTTPException(401, { message: 'Unauthorized' });
   }
-  const { cursor, pageSize } = c.req.valid('param');
+  const { cursor, pageSize } = c.req.valid('json');
 
   const artPages = await db
     .select({
@@ -135,26 +132,24 @@ app.openapi(updateArticlesRoute, async (c) => {
 
   let connection;
   try {
-    const body = await c.req.json();
-    const feedUrl = body.url;
-
-    if (!feedUrl) {
-      return c.json({ error: 'URL is required' }, 400);
-    }
-
     connection = await connect(RABBITMQ_URL);
     const channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: true });
 
-    const job = {
-      url: feedUrl,
-      requestedAt: new Date().toISOString(),
-    };
-    const message = Buffer.from(JSON.stringify(job));
+    const feeds = await db.query.feeds.findMany({
+      where: (feeds, { eq }) => eq(feeds.userId, user.id),
+    });
+    feeds.map((f) => {
+      const job = {
+        url: f.url,
+        requestedAt: new Date().toISOString(),
+      };
+      const message = Buffer.from(JSON.stringify(job));
 
-    channel.sendToQueue(QUEUE_NAME, message, { persistent: true });
+      channel.sendToQueue(QUEUE_NAME, message, { persistent: true });
 
-    console.log(`[x] Sent job for URL: ${feedUrl}`);
+      console.log(`[x] Sent job for URL: ${f.url}`);
+    });
 
     await channel.close();
 

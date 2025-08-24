@@ -1,6 +1,7 @@
 import { db } from '@/db';
 import { articles } from '@/db/schema/core';
 import { parseFeed } from '@rowanmanning/feed-parser';
+import { isAfter, sub, subMonths } from 'date-fns';
 import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { v7 } from 'uuid';
@@ -24,35 +25,45 @@ export async function parseArticlesFromFeed(
   feedUrl: string,
 ): Promise<Article[]> {
   try {
-    const feed = await parseFeed(feedUrl);
+    const feedXML = await fetch(feedUrl).then((res) => res.text());
+    const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
     }
 
-    const feedProcess = feed.items.map(async (item) => {
-      if (!item.title || !item.url || !item.published) {
-        throw new Error('Item is missing required fields');
-      }
-      const readableContent = await readablity(item.url);
-      return {
-        id: v7(),
-        title: item.title,
-        url: item.url,
-        authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
-        categories: item.categories.map((i) => i.term) || [],
-        description: item.description || null,
-        rawContent: item.content || null,
-        readableContent,
-        image: item.image ? item.image.url : null,
-        media: item.media.map((media) => media.url) || [],
-        published: item.published,
-        updated: item.updated || null,
-      };
-    });
+    const feedProcess = feed.items
+      .filter((i) => {
+        return isAfter(
+          feed.updated || subMonths(new Date(), 1),
+          i.published || new Date(),
+        );
+      })
+      .map(async (item) => {
+        if (!item.title || !item.url || !item.published) {
+          throw new Error('Item is missing required fields');
+        }
+        const readableContent = await readablity(item.url);
+        return {
+          id: v7(),
+          title: item.title,
+          url: item.url,
+          authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
+          categories: item.categories.map((i) => i.term) || [],
+          description: item.description || null,
+          rawContent: item.content || null,
+          readableContent,
+          image: item.image ? item.image.url : null,
+          media: item.media.map((media) => media.url) || [],
+          published: item.published,
+          updated: item.updated || null,
+        };
+      });
     const arts = await Promise.all(feedProcess).then((articles) => {
       return articles;
     });
-
+    if (arts.length === 0) {
+      return [];
+    }
     await db.insert(articles).values(arts);
     return arts;
   } catch (error) {
