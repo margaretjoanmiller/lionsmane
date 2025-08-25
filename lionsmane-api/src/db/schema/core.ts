@@ -1,16 +1,19 @@
+import { relations } from 'drizzle-orm';
 import {
+  boolean,
   pgTable,
   text,
   timestamp,
-  boolean,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { v7 } from 'uuid';
 import { user } from '@/db/schema/auth';
 
 export const feeds = pgTable('feeds', {
-  id: uuid().primaryKey(),
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
   title: varchar({ length: 50 }),
   url: varchar({ length: 256 }).notNull(),
   authors: varchar({ length: 256 }).array(),
@@ -19,7 +22,9 @@ export const feeds = pgTable('feeds', {
   description: varchar({ length: 500 }),
   image: varchar({ length: 256 }),
   updated: timestamp(),
-  userId: text().references(() => user.id).notNull(),
+  userId: text()
+    .references(() => user.id)
+    .notNull(),
 });
 
 export const feedRelations = relations(feeds, ({ many, one }) => ({
@@ -32,7 +37,9 @@ export const feedRelations = relations(feeds, ({ many, one }) => ({
 }));
 
 export const articles = pgTable('articles', {
-  id: uuid().primaryKey(),
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
   isRead: boolean().default(false),
   isStarred: boolean().default(false),
   title: text().notNull(),
@@ -46,8 +53,12 @@ export const articles = pgTable('articles', {
   media: varchar({ length: 256 }).array().notNull().default([]),
   published: timestamp().notNull(),
   updated: timestamp(),
-  feedId: uuid().references(() => feeds.id, { onDelete: 'cascade' }).notNull(),
-  userId: text().references(() => user.id).notNull(),
+  feedId: uuid()
+    .references(() => feeds.id, { onDelete: 'cascade' })
+    .notNull(),
+  userId: text()
+    .references(() => user.id)
+    .notNull(),
 });
 
 export const articleRelations = relations(articles, ({ one }) => ({
@@ -62,7 +73,9 @@ export const articleRelations = relations(articles, ({ one }) => ({
 }));
 
 export const tags = pgTable('tags', {
-  id: uuid().primaryKey(),
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
   name: varchar({ length: 50 }),
 });
 

@@ -16,16 +16,17 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:management
+  valkey:
+    container_name: valkey
+    image: valkey/valkey:latest
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "6379:6379"
     restart: unless-stopped
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   db:

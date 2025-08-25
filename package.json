@@ -13,6 +13,7 @@
     "@tailwindcss/oxide",
     "esbuild",
     "lionsmane-fe",
+    "msgpackr-extract",
     "sharp",
     "unrs-resolver",
     "vue-demi"

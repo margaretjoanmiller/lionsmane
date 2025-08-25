@@ -1,55 +1,46 @@
-import { type ConsumeMessage, connect } from "amqplib";
-import { parseArticlesFromFeed } from "@/services/articleFetcher";
-import "dotenv/config";
+import { Worker } from 'bullmq';
+import { connection } from './config/redis';
+import { db } from './db';
+import { articles } from './db/schema/core';
+import { parseArticlesFromFeed, readablity } from './services/articleFetcher';
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";
-const QUEUE_NAME = "rss_feed_jobs";
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 5000; // 5 seconds
+const articleWorker = new Worker(
+  'articleQueue',
+  async (job) => {
+    console.log(`Processing job ${job.id} of type ${job.name}`);
+    const article = job.data;
 
-const processRssFeed = async (url: string, feedId: string, userId: string) => {
-  await parseArticlesFromFeed(url, feedId, userId);
-};
+    const readableContent = await readablity(article.url);
 
-const startWorker = async () => {
-  try {
-    const connection = await connect(RABBITMQ_URL);
-    const channel = await connection.createChannel();
+    const art = await db
+      .insert(articles)
+      .values({
+        ...article,
+        readableContent,
+      })
+      .returning();
+    console.log(`Article "${art[0].title}" processed and saved.`);
 
-    await channel.assertQueue(QUEUE_NAME, { durable: true });
+    return { result: 'Job completed' };
+  },
+  {
+    connection,
+  },
+);
 
-    channel.prefetch(1);
+export const feedWorker = new Worker(
+  'feedQueue',
+  async (job) => {
+    console.log(`Processing job ${job.id} of type ${job.name}`);
+    await parseArticlesFromFeed(job.data.url, job.data.feedId, job.data.userId);
+  },
+  { connection },
+);
 
-    // Handle connection errors
-    connection.on("error", (err) => {
-      console.error("RabbitMQ connection error:", err);
-      setTimeout(startWorker, RETRY_DELAY);
-    });
-
-    connection.on("close", () => {
-      console.log("RabbitMQ connection closed, attempting to reconnect...");
-      setTimeout(startWorker, RETRY_DELAY);
-    });
-
-    console.log(`[👂] Worker is waiting for jobs in queue: ${QUEUE_NAME}`);
-
-    channel.consume(QUEUE_NAME, async (msg: ConsumeMessage | null) => {
-      console.log("[📝] Received a job");
-      if (msg) {
-        const job = JSON.parse(msg.content.toString());
-
-        await processRssFeed(job.url, job.feedId, job.userId);
-
-        channel.ack(msg);
-      }
-    });
-
-    channel.on("error", (err) => {
-      console.error("Channel error:", err);
-    });
-  } catch (error) {
-    console.error("Worker failed to start:", error);
-  }
-};
-
-startWorker();
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Shutting down worker...');
+  await articleWorker.close();
+  await connection.quit();
+  process.exit(0);
+});
