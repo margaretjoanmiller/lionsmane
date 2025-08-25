@@ -20,7 +20,6 @@ bin/
 nb-configuration.xml
 
 # Visual Studio Code
-.vscode
 .factorypath
 
 # OSX
@@ -49,7 +48,6 @@ node_modules/
 # dev
 .yarn/
 !.yarn/releases
-.vscode/*
 !.vscode/launch.json
 !.vscode/*.code-snippets
 .idea/workspace.xml
