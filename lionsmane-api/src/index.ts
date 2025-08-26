@@ -3,6 +3,7 @@ import { Scalar } from '@scalar/hono-api-reference';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
+import { trimTrailingSlash } from 'hono/trailing-slash';
 import { auth } from '@/lib/auth';
 import articlesRoutes from '@/routers/articles';
 import feedRoutes from '@/routers/feeds';
@@ -30,6 +31,7 @@ const app = new OpenAPIHono<{
 // global middlewares
 app.use(secureHeaders());
 app.use(logger());
+app.use(trimTrailingSlash());
 
 app.use(
   '/api/auth/*', // or replace with "*" to enable cors for all routes
