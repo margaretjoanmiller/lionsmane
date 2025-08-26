@@ -1,5 +1,9 @@
+import { createBullBoard } from '@bull-board/api';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { HonoAdapter } from '@bull-board/hono';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Scalar } from '@scalar/hono-api-reference';
+import { serveStatic } from 'hono/bun';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
@@ -8,6 +12,7 @@ import { auth } from '@/lib/auth';
 import articlesRoutes from '@/routers/articles';
 import feedRoutes from '@/routers/feeds';
 import { requireAuth } from './middleware/auth';
+import { articleQueue, feedQueue } from './tasks/queues';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -84,6 +89,15 @@ app.doc31('/docs', {
 });
 
 app.get('/scalar', Scalar({ url: '/docs' }));
+
+// bull board
+const serverAdapter = new HonoAdapter(serveStatic);
+createBullBoard({
+  queues: [new BullMQAdapter(feedQueue), new BullMQAdapter(articleQueue)],
+  serverAdapter,
+});
+serverAdapter.setBasePath('/jobs');
+app.route('/jobs', serverAdapter.registerPlugin());
 
 export default {
   port: 8181,

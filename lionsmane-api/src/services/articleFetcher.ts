@@ -1,3 +1,4 @@
+import { Readability } from '@mozilla/readability';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import { isAfter } from 'date-fns';
 import DOMPurify from 'dompurify';
@@ -18,10 +19,18 @@ export async function parseArticlesFromFeed(
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
     }
+    const feedfromDb = await db
+      .select()
+      .from(feeds)
+      .where(eq(feeds.id, feedId));
+
+    if (!feedfromDb || !feedfromDb[0]?.updated) {
+      throw new Error('Malformed feed in database');
+    }
+
     const feedProcess = feed.items
-      .filter((i) => i.published)
       .filter((i) => {
-        return isAfter(i.published!, feed.updated!);
+        return isAfter(i.published!, feedfromDb[0]?.updated!);
       })
       .map((item) => {
         if (!item.title || !item.url || !item.published) {
@@ -38,8 +47,8 @@ export async function parseArticlesFromFeed(
             rawContent: item.content || null,
             image: item.image ? item.image.url : null,
             media: item.media.map((media) => media.url) || [],
-            published: item.published,
-            updated: item.updated || null,
+            published: new Date(item.published),
+            updated: item.updated ? new Date(item.updated) : null,
             feedId: feedId,
             userId: userId,
           },
@@ -74,7 +83,12 @@ export async function readablity(url: string): Promise<string> {
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
     const clean = purify.sanitize(text);
-    return clean;
+    const cleanDoc = new JSDOM(clean);
+    const readable = new Readability(cleanDoc.window.document).parse()?.content;
+    if (!readable) {
+      throw new Error('Failed to extract article text');
+    }
+    return readable;
   } catch (error) {
     console.error('Error fetching URL:', error);
     throw new Error('Failed to fetch URL');

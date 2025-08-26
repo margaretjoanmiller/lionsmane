@@ -10,18 +10,23 @@ const articleWorker = new Worker(
     console.log(`Processing job ${job.id} of type ${job.name}`);
     const article = job.data;
 
-    const readableContent = await readablity(article.url);
+    try {
+      const readableContent = await readablity(article.url);
 
-    const art = await db
-      .insert(articles)
-      .values({
-        ...article,
-        readableContent,
-      })
-      .returning();
-    console.log(`Article "${art[0].title}" processed and saved.`);
+      const art = await db
+        .insert(articles)
+        .values({
+          ...article,
+          readableContent,
+        })
+        .returning();
+      console.log(`Article "${art[0].title}" processed and saved.`);
 
-    return { result: 'Job completed' };
+      return { result: 'Job completed' };
+    } catch (error) {
+      console.error('Error processing article', { cause: error });
+      throw error;
+    }
   },
   {
     connection,

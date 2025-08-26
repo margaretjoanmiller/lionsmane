@@ -51,8 +51,8 @@ export const articles = pgTable('articles', {
   description: text(),
   image: varchar({ length: 256 }),
   media: varchar({ length: 256 }).array().notNull().default([]),
-  published: timestamp().notNull(),
-  updated: timestamp(),
+  published: timestamp({ mode: 'string' }).notNull(),
+  updated: timestamp({ mode: 'string' }),
   feedId: uuid()
     .references(() => feeds.id, { onDelete: 'cascade' })
     .notNull(),
