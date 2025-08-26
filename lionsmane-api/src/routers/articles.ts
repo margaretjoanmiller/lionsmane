@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { connect } from 'amqplib';
 import { asc, gt } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
@@ -54,7 +53,7 @@ export const articlesRouter = createRoute({
         'application/json': {
           schema: z.object({
             articles: z.array(articleOut),
-            cursor: z.string().nullable(),
+            cursor: z.string().nullish(),
           }),
         },
       },
@@ -87,10 +86,13 @@ app.openapi(articlesRouter, async (c) => {
     .limit(pageSize + 1) // the number of rows to return
     .orderBy(asc(articles.id)); // ordering
 
+  const hasNextPage = artPages.length > pageSize;
+  const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
+
   c.status(200);
   return c.json({
-    articles: artPages,
-    cursor: artPages[artPages.length - 1]?.id || null, // if no articles, cursor is null
+    articles: items,
+    cursor: hasNextPage ? items[items.length - 1]?.id : null,
   });
 });
 
@@ -133,10 +135,9 @@ app.openapi(updateArticlesRoute, async (c) => {
   const jobs = feeds.map((f) => ({
     name: 'fetchAndProcessFeed',
     data: {
-      url: f.url,
+      feedUrl: f.url,
       feedId: f.id,
       userId: user.id,
-      requestedAt: new Date().toISOString(),
     },
   }));
   await feedQueue.addBulk(jobs);

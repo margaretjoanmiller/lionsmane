@@ -37,7 +37,11 @@ export const feedWorker = new Worker(
   'feedQueue',
   async (job) => {
     console.log(`Processing job ${job.id} of type ${job.name}`);
-    await parseArticlesFromFeed(job.data.url, job.data.feedId, job.data.userId);
+    await parseArticlesFromFeed(
+      job.data.feedUrl,
+      job.data.feedId,
+      job.data.userId,
+    );
   },
   { connection },
 );

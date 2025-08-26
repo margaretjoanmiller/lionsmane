@@ -36,6 +36,7 @@ export async function parseArticlesFromFeed(
         if (!item.title || !item.url || !item.published) {
           throw new Error('Item is missing required fields');
         }
+        const updated = item.updated ? new Date(item.updated) : null;
         return {
           name: 'processArticle',
           data: {
@@ -43,12 +44,12 @@ export async function parseArticlesFromFeed(
             url: item.url,
             authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
             categories: item.categories.map((i) => i.term) || [],
-            description: item.description || null,
-            rawContent: item.content || null,
-            image: item.image ? item.image.url : null,
+            description: item.description || '',
+            rawContent: item.content || '',
+            image: item.image ? item.image.url : '',
             media: item.media.map((media) => media.url) || [],
             published: new Date(item.published),
-            updated: item.updated ? new Date(item.updated) : null,
+            updated: updated,
             feedId: feedId,
             userId: userId,
           },

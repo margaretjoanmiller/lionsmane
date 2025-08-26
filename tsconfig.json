@@ -25,5 +25,9 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  "references": [
+    {"path": "./lionsmane-api"},
+    {"path": "./lionsmane-fe"}
+  ]
 }

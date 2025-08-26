@@ -39,9 +39,9 @@ app.use(logger());
 app.use(trimTrailingSlash());
 
 app.use(
-  '/api/auth/*', // or replace with "*" to enable cors for all routes
+  '/api/auth/*',
   cors({
-    origin: 'http://localhost:8181', // replace with your origin
+    origin: process.env.FE_HOST || 'http://localhost:3000', // nuxt front end
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['POST', 'GET', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
