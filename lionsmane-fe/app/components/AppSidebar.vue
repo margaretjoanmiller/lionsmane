@@ -17,17 +17,18 @@ import {
   type SidebarProps,
 } from '@/components/ui/sidebar';
 import { Filter, Settings2 } from 'lucide-vue-next';
+import { authClient } from '~/lib/auth-client';
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   variant: 'inset',
 });
 
-const { user } = useUserSession();
+const session = authClient.useSession();
 
 const data = {
   user: {
-    name: user.value?.name || 'error',
-    email: user.value?.email || '<no email>',
+    name: session.value?.data?.user.name || 'error',
+    email: session.value?.data?.user.email || '<no email>',
     avatar: '/img/Doc_Brown.jpg',
   },
 
@@ -54,7 +55,7 @@ const data = {
           <SidebarMenuButton size="lg" as-child>
             <NuxtLink href="/dashboard">
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+                class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
               >
                 <Icon name="mdi:mushroom-outline" />
               </div>

@@ -16,7 +16,7 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [
-    bearer(),
+    // bearer(),
     passkey(),
     twoFactor(),
     openAPI(),
@@ -25,4 +25,5 @@ export const auth = betterAuth({
     }),
   ],
   telemetry: { enabled: false },
+  trustedDomains: ['localhost']
 });

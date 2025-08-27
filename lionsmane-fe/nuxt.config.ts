@@ -16,7 +16,6 @@ export default defineNuxtConfig({
 		"@nuxt/image",
 		"@nuxt/test-utils",
 		"shadcn-nuxt",
-		"nuxt-api-party",
 		"@nuxtjs/color-mode",
 		"@nuxt/ui",
 		"@peterbud/nuxt-query",
@@ -58,15 +57,6 @@ export default defineNuxtConfig({
 		preference: "system",
 	},
 
-	apiParty: {
-		endpoints: {
-			lion: {
-				url: "",
-				schema: "./v1.json",
-			},
-		},
-	},
-
 	nuxtQuery: {
 		autoImports: ["useQuery", "useMutation", "useQueryClient"],
 
@@ -83,17 +73,11 @@ export default defineNuxtConfig({
 		// },
 	},
 
-	routeRules: {
-		"/api/auth/*": { cors: true, ssr: false}
-	},
+	ssr: false,
 
 	runtimeConfig: {
-		apiParty: {
-			endpoints: {
-				lion: {
-					url: "http://localhost:8080",
-				},
-			},
-		},
+		public: {
+			apiUrl: 'http://localhost:8181'
+		}
 	},
 });

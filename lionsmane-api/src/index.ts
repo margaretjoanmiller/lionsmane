@@ -78,10 +78,14 @@ app.use('/api/v1/*', requireAuth);
 app.route('api/v1/feeds', feedRoutes);
 app.route('api/v1/articles', articlesRoutes);
 
-app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
-  type: 'http',
-  scheme: 'bearer',
-});
+// app.openAPIRegistry.registerComponent('securitySchemes', 'Bearer', {
+//   type: 'http',
+//   scheme: 'bearer',
+// });
+app.openAPIRegistry.registerComponent('securitySchemes', 'Cookie', {
+  type: 'apiKey',
+  in: 'cookie'
+})
 
 app.doc31('/docs', {
   openapi: '3.1.0',

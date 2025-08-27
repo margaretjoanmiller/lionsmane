@@ -30,12 +30,9 @@ defineProps<{
   };
 }>();
 
-const { clear: clearSession } = useUserSession();
 const { isMobile } = useSidebar();
 
 async function logout() {
-  await $fetch('/auth/logout');
-  await clearSession();
   return navigateTo('/');
 }
 </script>

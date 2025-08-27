@@ -4,14 +4,13 @@
  */
 
 export interface paths {
-    "/articles": {
+    "/api/v1/feeds": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get All Articles */
         get: {
             parameters: {
                 query?: never;
@@ -21,24 +20,28 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description list feeds */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ArticleOut"][];
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            title: string;
+                            /** Format: uri */
+                            url: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            userId: string;
+                            /** Format: date */
+                            updated: string;
+                        }[];
                     };
                 };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
+                /** @description Internal Server Error */
+                500: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -47,50 +50,101 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["NewFeed"];
+                };
+            };
+            responses: {
+                /** @description Feed created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            title: string;
+                            /** Format: uri */
+                            url: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            userId: string;
+                            /** Format: date */
+                            updated: string;
+                        };
+                    };
+                };
+                /** @description Internal error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/articles/feed/{feedId}": {
+    "/api/v1/feeds/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Articles For Feed */
         get: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    feedId: components["schemas"]["UUID"];
+                    id: string;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description Feed retrieved */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ArticleOut"][];
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            title: string;
+                            /** Format: uri */
+                            url: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            userId: string;
+                            /** Format: date */
+                            updated: string;
+                        };
                     };
                 };
-                /** @description Not Authorized */
-                401: {
+                /** @description Feed not found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description Not Allowed */
-                403: {
+                /** @description Internal Server Error */
+                500: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -98,55 +152,90 @@ export interface paths {
                 };
             };
         };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/articles/toggle-read/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Toggle Read Article */
-        patch: {
+        put: {
             parameters: {
                 query?: never;
                 header?: never;
                 path: {
-                    id: components["schemas"]["UUID"];
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        title?: string;
+                        /** Format: uri */
+                        url?: string;
+                        description?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Feed updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            title: string;
+                            /** Format: uri */
+                            url: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            userId: string;
+                            /** Format: date */
+                            updated: string;
+                        };
+                    };
+                };
+                /** @description Feed not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description No Content */
+                /** @description Feed deleted */
                 204: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description Not Authorized */
-                401: {
+                /** @description Feed not found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content?: never;
                 };
-                /** @description Not Allowed */
-                403: {
+                /** @description Internal Server Error */
+                500: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -154,49 +243,63 @@ export interface paths {
                 };
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
-    "/articles/{id}": {
+    "/api/v1/articles": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Article */
         get: {
             parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
+                query?: {
+                    /** @description Cursor for pagination, the last article ID from the previous page */
+                    cursor?: string;
+                    /** @description Number of articles to return per page */
+                    pageSize?: number;
                 };
+                header?: never;
+                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description OK */
+                /** @description List of articles with pagination */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ArticleOut"];
+                        "application/json": {
+                            articles: {
+                                /** Format: uuid */
+                                id: string;
+                                title: string;
+                                /** Format: uri */
+                                url: string;
+                                authors: string[];
+                                categories: string[];
+                                description: string | null;
+                                rawContent: string | null;
+                                readableHtml: string | null;
+                                readableText: string | null;
+                                keywords: string[];
+                                /** Format: uri */
+                                image: string | null;
+                                media: string[];
+                                /** Format: date */
+                                published: string;
+                                /** Format: date */
+                                updated: string | null;
+                            }[];
+                            cursor?: string | null;
+                        };
                     };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
                 };
             };
         };
@@ -208,248 +311,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/feeds": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Feeds */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["FeedDto"][];
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        /** Post Feed */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["FeedIn"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/feeds/delete/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Delete Feed */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/feeds/refresh/all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get All Feeds Refresh */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/feeds/refresh/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Feed Refresh */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/feeds/update/{id}": {
+    "/api/v1/articles/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -458,154 +320,6 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Update Feed */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["FeedInUpdate"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/feeds/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Feed */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["FeedDto"];
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/folders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Folders */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["FolderOut"][];
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        /** Create Folder */
         post: {
             parameters: {
                 query?: never;
@@ -613,243 +327,32 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["FolderIn"];
-                };
-            };
+            requestBody?: never;
             responses: {
-                /** @description OK */
-                200: {
+                /** @description Articles update initiated */
+                202: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["FolderOut"];
+                        "application/json": {
+                            message: string;
+                        };
                     };
                 };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
+                /** @description Unauthorized */
                 401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/folders/delete/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Delete Folder */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/folders/update/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Update Folder */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["FolderIn"];
-                };
-            };
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Bad Request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/folders/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Folder */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: components["schemas"]["UUID"];
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["FolderOut"];
-                    };
-                };
-                /** @description Not Authorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Not Allowed */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Me */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description OK */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["User"];
+                        "application/json": {
+                            message: string;
+                        };
                     };
                 };
             };
         };
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -860,57 +363,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ArticleOut: {
-            id?: components["schemas"]["UUID"] | null;
-            title?: string | null;
-            author?: string | null;
-            content?: string | null;
-            textPreview?: string | null;
-            image?: string | null;
-            url?: string | null;
-            publishedAt?: components["schemas"]["Instant"] | null;
-            categories?: string[] | null;
-            audio?: string | null;
-            feedId?: components["schemas"]["UUID"] | null;
-        };
-        FeedDto: {
-            id?: components["schemas"]["UUID"] | null;
-            title?: string | null;
-            description?: string | null;
-            url?: string | null;
-            lastUpdated?: components["schemas"]["Instant"] | null;
-            folderId?: components["schemas"]["UUID"] | null;
-        };
-        FeedIn: {
+        NewFeed: {
             title: string;
-            description?: string | null;
+            /** Format: uri */
             url: string;
-            folderId?: components["schemas"]["UUID"] | null;
-        };
-        FeedInUpdate: {
-            title?: string | null;
-            description?: string | null;
-            url?: string | null;
-            folderId?: components["schemas"]["UUID"] | null;
-        };
-        FolderIn: {
-            name: string;
-            description?: string | null;
-            feeds?: string[] | null;
-        };
-        FolderOut: {
-            id?: components["schemas"]["UUID"] | null;
-            userName?: string | null;
-            name?: string | null;
-            description?: string | null;
-            feeds?: string[] | null;
-        };
-        /** Format: date-time */
-        Instant: string;
-        /** Format: uuid */
-        UUID: string;
-        User: {
-            userName: string;
+            description: string | null;
         };
     };
     responses: never;
