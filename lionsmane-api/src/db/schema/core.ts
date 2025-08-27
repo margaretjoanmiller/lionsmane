@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -6,11 +6,11 @@ import {
   timestamp,
   uuid,
   varchar,
-} from 'drizzle-orm/pg-core';
-import { v7 } from 'uuid';
-import { user } from '@/db/schema/auth';
+} from "drizzle-orm/pg-core";
+import { v7 } from "uuid";
+import { user } from "@/db/schema/auth";
 
-export const feeds = pgTable('feeds', {
+export const feeds = pgTable("feeds", {
   id: uuid()
     .primaryKey()
     .$defaultFn(() => v7()),
@@ -25,6 +25,7 @@ export const feeds = pgTable('feeds', {
   userId: text()
     .references(() => user.id)
     .notNull(),
+  folderId: uuid().references(() => folders.id),
 });
 
 export const feedRelations = relations(feeds, ({ many, one }) => ({
@@ -36,7 +37,21 @@ export const feedRelations = relations(feeds, ({ many, one }) => ({
   tags: many(tagsToFeeds),
 }));
 
-export const articles = pgTable('articles', {
+export const folders = pgTable("folders", {
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
+  name: varchar({ length: 100 }),
+  userId: text()
+    .references(() => user.id)
+    .notNull(),
+});
+
+export const folderRelations = relations(folders, ({ many }) => ({
+  feeds: many(feeds),
+}));
+
+export const articles = pgTable("articles", {
   id: uuid()
     .primaryKey()
     .$defaultFn(() => v7()),
@@ -53,10 +68,10 @@ export const articles = pgTable('articles', {
   keywords: varchar({ length: 256 }).array().notNull().default([]),
   image: varchar({ length: 256 }),
   media: varchar({ length: 256 }).array().notNull().default([]),
-  published: timestamp({ mode: 'string' }).notNull(),
-  updated: timestamp({ mode: 'string' }),
+  published: timestamp({ mode: "string" }).notNull(),
+  updated: timestamp({ mode: "string" }),
   feedId: uuid()
-    .references(() => feeds.id, { onDelete: 'cascade' })
+    .references(() => feeds.id, { onDelete: "cascade" })
     .notNull(),
   userId: text()
     .references(() => user.id)
@@ -74,7 +89,7 @@ export const articleRelations = relations(articles, ({ one }) => ({
   }),
 }));
 
-export const tags = pgTable('tags', {
+export const tags = pgTable("tags", {
   id: uuid()
     .primaryKey()
     .$defaultFn(() => v7()),
@@ -85,7 +100,7 @@ export const tagRelations = relations(tags, ({ many }) => ({
   tagsToFeeds: many(tagsToFeeds),
 }));
 
-export const tagsToFeeds = pgTable('tags_to_feeds', {
+export const tagsToFeeds = pgTable("tags_to_feeds", {
   tagId: uuid()
     .notNull()
     .references(() => tags.id),

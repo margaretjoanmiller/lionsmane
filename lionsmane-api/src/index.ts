@@ -77,12 +77,14 @@ app.use("/api/v1/*", requireAuth);
 // routes
 app.route("api/v1/feeds", feedRoutes);
 app.route("api/v1/articles", articlesRoutes);
+//TODO: folders
+//TODO: tags
 
 app.openAPIRegistry.registerComponent("securitySchemes", "Oidc", {
   type: "openIdConnect",
-  openIdConnectUrl:
-    `${process.env.API_HOST}/api/auth/.well-known/openid-configuration` ||
-    "http://localhost:8181/api/auth/.well-known/openid-configuration",
+  openIdConnectUrl: process.env.API_HOST
+    ? `${process.env.API_HOST}/api/auth/.well-known/openid-configuration`
+    : "http://localhost:8181/api/auth/.well-known/openid-configuration",
 });
 app.openAPIRegistry.registerComponent("securitySchemes", "Cookie", {
   type: "apiKey",
