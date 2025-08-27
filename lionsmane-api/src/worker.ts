@@ -2,7 +2,11 @@ import { Worker } from 'bullmq';
 import { connection } from './config/redis';
 import { db } from './db';
 import { articles } from './db/schema/core';
-import { parseArticlesFromFeed, readablity } from './services/articleFetcher';
+import {
+  extractKeywords,
+  parseArticlesFromFeed,
+  readablity,
+} from './services/articleFetcher';
 
 const articleWorker = new Worker(
   'articleQueue',
@@ -11,16 +15,18 @@ const articleWorker = new Worker(
     const article = job.data;
 
     try {
-      const readableContent = await readablity(article.url);
+      const readable = await readablity(article.url);
+      const keywords = await extractKeywords(readable.textContent);
 
       const art = await db
         .insert(articles)
         .values({
           ...article,
-          readableContent,
+          readableHtml: readable.htmlContent,
+          readableText: readable.textContent,
+          keywords,
         })
         .returning();
-      console.log(`Article "${art[0].title}" processed and saved.`);
 
       return { result: 'Job completed' };
     } catch (error) {

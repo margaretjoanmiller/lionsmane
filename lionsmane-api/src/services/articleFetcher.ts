@@ -1,9 +1,13 @@
 import { Readability } from '@mozilla/readability';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import { isAfter } from 'date-fns';
-import DOMPurify from 'dompurify';
+import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
 import { JSDOM } from 'jsdom';
+import { toString as treeToString } from 'nlcst-to-string';
+import { retext } from 'retext';
+import retextKeywords from 'retext-keywords';
+import retextPos from 'retext-pos';
 import { db } from '@/db';
 import { feeds } from '@/db/schema/core';
 import { articleQueue } from '@/tasks/queues';
@@ -73,7 +77,10 @@ export async function parseArticlesFromFeed(
   }
 }
 
-export async function readablity(url: string): Promise<string> {
+export async function readablity(url: string): Promise<{
+  textContent: string;
+  htmlContent: string;
+}> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -82,16 +89,41 @@ export async function readablity(url: string): Promise<string> {
     const text = await response.text();
 
     const window = new JSDOM('').window;
-    const purify = DOMPurify(window);
+    const purify = createDOMPurify(window as WindowLike);
     const clean = purify.sanitize(text);
     const cleanDoc = new JSDOM(clean);
-    const readable = new Readability(cleanDoc.window.document).parse()?.content;
-    if (!readable) {
+    const readableRaw = new Readability(cleanDoc.window.document).parse();
+    const readableText = readableRaw?.textContent;
+    const readableHtml = readableRaw?.content;
+    if (!readableHtml || !readableText) {
       throw new Error('Failed to extract article text');
     }
-    return readable;
+    return {
+      textContent: readableText,
+      htmlContent: readableHtml,
+    };
   } catch (error) {
     console.error('Error fetching URL:', error);
     throw new Error('Failed to fetch URL');
   }
+}
+
+export async function extractKeywords(textContent: string): Promise<string[]> {
+  const keywordsRaw = await retext()
+    .use(retextPos)
+    .use(retextKeywords)
+    .process(textContent);
+
+  return (
+    keywordsRaw.data.keywords
+      ?.map((i) => {
+        const node = i.matches[0]?.node;
+        if (node) {
+          return treeToString(node);
+        } else {
+          return null;
+        }
+      })
+      .filter((i) => i !== null) || []
+  );
 }
