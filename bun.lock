@@ -4,7 +4,6 @@
     "": {
       "name": "lionsmane",
       "devDependencies": {
-        "@biomejs/biome": "2.2.2",
         "@types/bun": "latest",
       },
       "peerDependencies": {

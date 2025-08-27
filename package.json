@@ -2,7 +2,6 @@
   "name": "lionsmane",
   "module": "index.ts",
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
     "@types/bun": "latest"
   },
   "peerDependencies": {

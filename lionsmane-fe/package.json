@@ -2,7 +2,6 @@
 	"name": "lionsmane-fe",
 	"private": true,
 	"type": "module",
-	"packageManager": "pnpm@10.12.4",
 	"scripts": {
 		"build": "nuxt build",
 		"dev": "nuxt dev",
