@@ -2,7 +2,7 @@ import { db } from '@/db';
 import { feeds, folders } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { folderOut, newFolder } from '@/zod/folders.zod';
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { eq, and, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 
@@ -106,13 +106,32 @@ app.openapi(createFolder, async (c) => {
   return c.json(result, 201);
 });
 
-// const foldersList = createRoute({
-//   method: "get",
-//   path: "/",
-//   responses: {
-//     200
-//   }
-// });
-//
+const foldersList = createRoute({
+  method: 'get',
+  path: '/',
+  responses: {
+    200: {
+      description: 'List of folders that belong to the user',
+      content: {
+        'application/json': {
+          schema: z.array(folderOut),
+        },
+      },
+    },
+  },
+});
+
+app.openapi(foldersList, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+  const userFolders = await db
+    .select()
+    .from(folders)
+    .where(eq(folders.userId, user.id));
+
+  return c.json(userFolders, 200);
+});
 
 export default app;
