@@ -4,6 +4,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
@@ -97,15 +98,21 @@ export const articleRelations = relations(articles, ({ one }) => ({
   }),
 }));
 
-export const tags = pgTable('tags', {
-  id: uuid()
-    .primaryKey()
-    .$defaultFn(() => v7()),
-  name: varchar({ length: 50 }),
-  userId: text()
-    .references(() => user.id)
-    .notNull(),
-});
+export const tags = pgTable(
+  'tags',
+  {
+    id: uuid()
+      .primaryKey()
+      .$defaultFn(() => v7()),
+    name: varchar({ length: 50 }).notNull(),
+    userId: text()
+      .references(() => user.id)
+      .notNull(),
+  },
+  (table) => ({
+    userTagUnique: unique().on(table.name, table.userId),
+  }),
+);
 
 export const tagRelations = relations(tags, ({ many, one }) => ({
   tagsToFeeds: many(tagsToFeeds),
@@ -118,10 +125,10 @@ export const tagRelations = relations(tags, ({ many, one }) => ({
 export const tagsToFeeds = pgTable('tags_to_feeds', {
   tagId: uuid()
     .notNull()
-    .references(() => tags.id, { onDelete: 'set null' }),
+    .references(() => tags.id, { onDelete: 'cascade' }),
   feedId: uuid()
     .notNull()
-    .references(() => feeds.id, { onDelete: 'set null' }),
+    .references(() => feeds.id, { onDelete: 'cascade' }),
 });
 
 export const tagsToFeedsRelations = relations(tagsToFeeds, ({ one }) => ({

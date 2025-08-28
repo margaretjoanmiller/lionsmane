@@ -282,72 +282,45 @@ app.openapi(updateFeedRoute, async (c) => {
 
   try {
     const result = await db.transaction(async (tx) => {
-      // Check if feed exists and belongs to user
-      const existingFeed = await tx.query.feeds.findFirst({
-        where: (feeds, { and, eq }) =>
-          and(eq(feeds.id, id), eq(feeds.userId, user.id)),
-      });
-
-      if (!existingFeed) {
-        throw new HTTPException(404, { message: 'Feed not found' });
-      }
-
-      // Validate folder if provided
-      if (validatedBody.folderId) {
-        const folder = await tx.query.folders.findFirst({
-          where: eq(folders.id, validatedBody.folderId),
-        });
-        if (!folder) {
-          throw new HTTPException(400, { message: 'Folder not found' });
-        }
-      }
-
-      // Update feed with all changes at once
+      // Update feed (this will fail if feed doesn't exist or doesn't belong to user)
       const [updatedFeed] = await tx
         .update(feeds)
-        .set({
-          title: validatedBody.title ?? existingFeed.title,
-          url: validatedBody.url ?? existingFeed.url,
-          description: validatedBody.description ?? existingFeed.description,
-          folderId: validatedBody.folderId ?? existingFeed.folderId,
-        })
+        .set(validatedBody) // Drizzle will ignore undefined fields
         .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
         .returning();
 
+      if (!updatedFeed) {
+        throw new HTTPException(404, { message: 'Feed not found' });
+      }
+
       // Handle tags if provided
-      if (validatedBody.tags && validatedBody.tags.length > 0) {
-        // Remove existing tag associations
+      if (validatedBody.tags !== undefined) {
+        // Clear existing tags
         await tx.delete(tagsToFeeds).where(eq(tagsToFeeds.feedId, id));
 
-        // Process new tags
-        for (const tagName of validatedBody.tags) {
-          let tagId: string;
+        if (validatedBody.tags.length > 0) {
+          // Upsert all tags in one operation
+          const tagValues = validatedBody.tags.map((name) => ({
+            name,
+            userId: user.id,
+          }));
 
-          // Check if tag exists
-          const existingTag = await tx.query.tags.findFirst({
-            where: and(eq(tags.name, tagName), eq(tags.userId, user.id)),
-          });
+          const upsertedTags = await tx
+            .insert(tags)
+            .values(tagValues)
+            .onConflictDoUpdate({
+              target: [tags.name, tags.userId],
+              set: { name: tags.name }, // No-op update to return existing tags
+            })
+            .returning({ id: tags.id });
 
-          if (existingTag) {
-            tagId = existingTag.id;
-          } else {
-            // Create new tag
-            const [newTag] = await tx
-              .insert(tags)
-              .values({ name: tagName, userId: user.id })
-              .returning({ id: tags.id });
-
-            if (!newTag) {
-              throw new HTTPException(500, { message: 'Failed to create tag' });
-            }
-            tagId = newTag.id;
-          }
-
-          // Link tag to feed
-          await tx.insert(tagsToFeeds).values({
-            tagId,
+          // Link all tags to feed in one operation
+          const tagFeedLinks = upsertedTags.map((tag) => ({
+            tagId: tag.id,
             feedId: id,
-          });
+          }));
+
+          await tx.insert(tagsToFeeds).values(tagFeedLinks);
         }
       }
 
@@ -359,6 +332,7 @@ app.openapi(updateFeedRoute, async (c) => {
     if (error instanceof HTTPException) {
       throw error;
     }
+    console.error(error);
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,
@@ -397,30 +371,14 @@ app.openapi(deleteFeedRoute, async (c) => {
 
   const { id } = c.req.valid('param');
 
-  // First check if feed exists and belongs to user
-  try {
-    const existingFeed = await db.query.feeds.findFirst({
-      where: (feeds, { and, eq }) =>
-        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
-    });
-    if (!existingFeed) {
-      throw new HTTPException(404, { message: 'Feed not found' });
-    }
-  } catch (error) {
-    throw new HTTPException(500, {
-      message: 'Internal Server Error',
-      cause: error,
-    });
-  }
-
   // Delete the feed
   try {
     await db
       .delete(feeds)
       .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)));
-    c.status(204);
-    return c.body(null);
+    return c.body(null, 204);
   } catch (error) {
+    console.error(error);
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,
