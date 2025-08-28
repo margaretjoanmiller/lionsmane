@@ -17,21 +17,12 @@ import {
   type SidebarProps,
 } from '@/components/ui/sidebar';
 import { Filter, Settings2 } from 'lucide-vue-next';
-import { authClient } from '~/lib/auth-client';
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   variant: 'inset',
 });
 
-const session = authClient.useSession();
-
 const data = {
-  user: {
-    name: session.value?.data?.user.name || 'error',
-    email: session.value?.data?.user.email || '<no email>',
-    avatar: '/img/Doc_Brown.jpg',
-  },
-
   navMain: [
     {
       title: 'Rules',
@@ -72,7 +63,7 @@ const data = {
       <NavMain :items="data.navMain" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser />
     </SidebarFooter>
   </Sidebar>
 </template>
