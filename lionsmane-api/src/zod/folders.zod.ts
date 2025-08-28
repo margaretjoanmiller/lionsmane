@@ -18,7 +18,7 @@ export const folderList = z.array(
   }),
 );
 
-export const updateFolder = z.object({
+export const putFolder = z.object({
   name: z.string().min(1).max(100).optional(),
   feedIds: z.array(z.uuid()).optional(),
 });

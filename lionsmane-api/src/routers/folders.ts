@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { feeds, folders } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
-import { folderList, folderOut, newFolder } from '@/zod/folders.zod';
+import { folderList, folderOut, newFolder, putFolder } from '@/zod/folders.zod';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { eq, and, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
@@ -100,7 +100,7 @@ app.openapi(createFolder, async (c) => {
         .where(inArray(feeds.id, newFolderData.feedIds));
     }
 
-    return folder;
+    return { ...folder, feedIds: newFolderData.feedIds || [] };
   });
 
   return c.json(result, 201);
@@ -179,6 +179,122 @@ app.openapi(folderById, async (c) => {
     .where(and(eq(feeds.folderId, folder.id), eq(feeds.userId, user.id)));
 
   return c.json({ ...folder, feedIds: folderFeeds }, 200);
+});
+
+const updateFolder = createRoute({
+  method: 'put',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z
+        .uuid()
+        .openapi({ param: { name: 'id', in: 'path', required: true } }),
+    }),
+    body: {
+      content: {
+        'application/json': {
+          schema: putFolder,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: 'Folder updated',
+      content: {
+        'application/json': {
+          schema: folderOut,
+        },
+      },
+    },
+    404: {
+      description: 'Folder not found',
+    },
+  },
+});
+
+app.openapi(updateFolder, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+  const { id } = c.req.valid('param');
+  const updateData = c.req.valid('json');
+
+  const result = await db.transaction(async (tx) => {
+    if (updateData.feedIds && updateData.feedIds.length > 0) {
+      for (const feedId of updateData.feedIds) {
+        const feed = await tx
+          .update(feeds)
+          .set({ folderId: id })
+          .where(and(eq(feeds.id, feedId), eq(feeds.userId, user.id)))
+          .returning();
+        if (!feed) {
+          throw new HTTPException(404, { message: `Feed ${feedId} not found` });
+        }
+      }
+    }
+    if (updateData.name) {
+      await tx
+        .update(folders)
+        .set({ name: updateData.name })
+        .where(and(eq(folders.id, id), eq(folders.userId, user.id)));
+    }
+    const [folder] = await tx
+      .select({
+        id: folders.id,
+        name: folders.name,
+      })
+      .from(folders)
+      .where(and(eq(folders.id, id), eq(folders.userId, user.id)));
+    const folderFeeds = await tx
+      .select({ id: feeds.id })
+      .from(feeds)
+      .where(and(eq(feeds.folderId, id), eq(feeds.userId, user.id)));
+
+    return { ...folder, feedIds: folderFeeds };
+  });
+  return c.json(result, 201);
+});
+
+const deleteFolder = createRoute({
+  method: 'delete',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z
+        .uuid()
+        .openapi({ param: { name: 'id', in: 'path', required: true } }),
+    }),
+  },
+  responses: {
+    204: { description: 'Folder deleted' },
+    404: { description: 'Folder not found' },
+  },
+});
+
+app.openapi(deleteFolder, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+
+  const { id } = c.req.valid('param');
+  await db.transaction(async (tx) => {
+    await tx
+      .update(feeds)
+      .set({ folderId: null })
+      .where(and(eq(feeds.folderId, id), eq(feeds.userId, user.id)));
+    const folder = await tx
+      .delete(folders)
+      .where(and(eq(folders.id, id), eq(folders.userId, user.id)))
+      .returning();
+    if (!folder) {
+      throw new HTTPException(404, { message: 'Folder not found' });
+    }
+  });
+  c.status(204);
+  return c.body(null);
 });
 
 export default app;
