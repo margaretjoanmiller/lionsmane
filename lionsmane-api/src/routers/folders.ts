@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { feeds, folders } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
-import { folderOut, newFolder } from '@/zod/folders.zod';
+import { folderList, folderOut, newFolder } from '@/zod/folders.zod';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { eq, and, inArray } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
@@ -114,7 +114,7 @@ const foldersList = createRoute({
       description: 'List of folders that belong to the user',
       content: {
         'application/json': {
-          schema: z.array(folderOut),
+          schema: folderList,
         },
       },
     },
@@ -132,6 +132,53 @@ app.openapi(foldersList, async (c) => {
     .where(eq(folders.userId, user.id));
 
   return c.json(userFolders, 200);
+});
+
+const folderById = createRoute({
+  method: 'get',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z
+        .uuid()
+        .openapi({ param: { name: 'id', in: 'path', required: true } }),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Folder details',
+      content: {
+        'application/json': {
+          schema: folderOut,
+        },
+      },
+    },
+    404: {
+      description: 'Folder not found',
+    },
+  },
+});
+
+app.openapi(folderById, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+  const { id } = c.req.valid('param');
+  const folder = await db.query.folders.findFirst({
+    where: (folders, { and, eq }) =>
+      and(eq(folders.id, id), eq(folders.userId, user.id)),
+  });
+  if (!folder) {
+    throw new HTTPException(404, { message: 'Folder not found' });
+  }
+
+  const folderFeeds = await db
+    .select({ id: feeds.id })
+    .from(feeds)
+    .where(and(eq(feeds.folderId, folder.id), eq(feeds.userId, user.id)));
+
+  return c.json({ ...folder, feedIds: folderFeeds }, 200);
 });
 
 export default app;

@@ -23,16 +23,17 @@ export const auth = betterAuth({
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-    }, 
+    },
   },
   plugins: [
     passkey(),
     twoFactor(),
     openAPI(),
     oidcProvider({
-      loginPage: '/sign-in', // path to the login page
+      loginPage: '/login', // path to the login page
     }),
   ],
   telemetry: { enabled: false },
-  trustedDomains: ['localhost']
+  trustedDomains: ['localhost'],
+  trustedOrigins: ['http://localhost:3000', 'https://localhost:8181'],
 });
