@@ -5,6 +5,7 @@ export const newFeed = z
     title: z.string(),
     url: z.url().nonempty(),
     description: z.string().nullable(),
+    folderId: z.uuid().nullable(),
   })
   .openapi('NewFeed');
 
@@ -15,4 +16,5 @@ export const feedOut = z.object({
   description: z.string().nullable(),
   userId: z.uuid(),
   updated: z.date(),
+  folderId: z.uuid().nullable(),
 });
