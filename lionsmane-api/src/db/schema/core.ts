@@ -102,19 +102,26 @@ export const tags = pgTable('tags', {
     .primaryKey()
     .$defaultFn(() => v7()),
   name: varchar({ length: 50 }),
+  userId: text()
+    .references(() => user.id)
+    .notNull(),
 });
 
-export const tagRelations = relations(tags, ({ many }) => ({
+export const tagRelations = relations(tags, ({ many, one }) => ({
   tagsToFeeds: many(tagsToFeeds),
+  user: one(user, {
+    fields: [tags.userId],
+    references: [user.id],
+  }),
 }));
 
 export const tagsToFeeds = pgTable('tags_to_feeds', {
   tagId: uuid()
     .notNull()
-    .references(() => tags.id),
+    .references(() => tags.id, { onDelete: 'set null' }),
   feedId: uuid()
     .notNull()
-    .references(() => feeds.id),
+    .references(() => feeds.id, { onDelete: 'set null' }),
 });
 
 export const tagsToFeedsRelations = relations(tagsToFeeds, ({ one }) => ({

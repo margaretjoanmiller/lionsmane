@@ -47,6 +47,7 @@ const createFolder = createRoute({
       },
     },
   },
+  tags: ['Folders'],
 });
 
 app.openapi(createFolder, async (c) => {
@@ -119,6 +120,7 @@ const foldersList = createRoute({
       },
     },
   },
+  tags: ['Folders'],
 });
 
 app.openapi(foldersList, async (c) => {
@@ -157,6 +159,7 @@ const folderById = createRoute({
       description: 'Folder not found',
     },
   },
+  tags: ['Folders'],
 });
 
 app.openapi(folderById, async (c) => {
@@ -211,6 +214,7 @@ const updateFolder = createRoute({
       description: 'Folder not found',
     },
   },
+  tags: ['Folders'],
 });
 
 app.openapi(updateFolder, async (c) => {
@@ -271,6 +275,7 @@ const deleteFolder = createRoute({
     204: { description: 'Folder deleted' },
     404: { description: 'Folder not found' },
   },
+  tags: ['Folders'],
 });
 
 app.openapi(deleteFolder, async (c) => {

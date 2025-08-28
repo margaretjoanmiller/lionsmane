@@ -59,6 +59,7 @@ export const articlesRouter = createRoute({
       },
     },
   },
+  tags: ['Articles'],
 });
 
 app.openapi(articlesRouter, async (c) => {
@@ -125,6 +126,7 @@ const updateArticlesRoute = createRoute({
       },
     },
   },
+  tags: ['Articles'],
 });
 
 app.openapi(updateArticlesRoute, async (c) => {

@@ -6,6 +6,7 @@ export const newFeed = z
     url: z.url().nonempty(),
     description: z.string().nullable(),
     folderId: z.uuid().nullable(),
+    tags: z.array(z.string()).optional(),
   })
   .openapi('NewFeed');
 
@@ -13,6 +14,9 @@ export const feedOut = z.object({
   id: z.uuidv7(),
   title: z.string(),
   url: z.url().nonempty(),
+  authors: z.array(z.string()).default([]),
+  categories: z.array(z.string()).default([]),
+  copyright: z.string().nullable(),
   description: z.string().nullable(),
   userId: z.uuid(),
   updated: z.date(),

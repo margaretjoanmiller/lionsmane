@@ -12,6 +12,7 @@ import { auth } from '@/lib/auth';
 import articlesRoutes from '@/routers/articles';
 import feedRoutes from '@/routers/feeds';
 import foldersRoutes from '@/routers/folders';
+import tagsRoutes from '@/routers/tags';
 import { requireAuth } from './middleware/auth';
 import { articleQueue, feedQueue } from './tasks/queues';
 
@@ -79,7 +80,7 @@ app.use('/api/v1/*', requireAuth);
 app.route('api/v1/feeds', feedRoutes);
 app.route('api/v1/articles', articlesRoutes);
 app.route('api/v1/folders', foldersRoutes);
-//TODO: tags
+// app.route('api/v1/tags', tagsRoutes);
 
 app.openAPIRegistry.registerComponent('securitySchemes', 'Oidc', {
   type: 'openIdConnect',

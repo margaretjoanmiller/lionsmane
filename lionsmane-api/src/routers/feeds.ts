@@ -2,9 +2,8 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { subMonths } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { v7 } from 'uuid';
 import { db } from '@/db';
-import { feeds } from '@/db/schema/core';
+import { feeds, folders, tags, tagsToFeeds } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedOut, newFeed } from '@/zod/feeds.zod';
 
@@ -52,38 +51,88 @@ const newFeedRoute = createRoute({
       description: 'Internal error',
     },
   },
+  tags: ['Feeds'],
 });
 
 app.openapi(newFeedRoute, async (c) => {
   const user = c.get('user');
   if (!user) {
-    c.status(401);
-    return c.text('Unauthorized');
+    throw new HTTPException(401, { message: 'Unauthorized' });
   }
+
   const validatedBody = c.req.valid('json');
+
   try {
-    const insertedFeed = await db
-      .insert(feeds)
-      .values({
-        id: v7(),
-        title: validatedBody.title,
-        url: validatedBody.url,
-        description: validatedBody.description,
-        userId: user.id,
-        updated: subMonths(new Date(), 3),
-      })
-      .returning({
-        id: feeds.id,
-        title: feeds.title,
-        url: feeds.url,
-        description: feeds.description,
-        userId: feeds.userId,
-        updated: feeds.updated,
-      });
-    c.status(201);
-    return c.json(insertedFeed);
-  } catch (e) {
-    throw new HTTPException(500, { message: 'Interal error', cause: e });
+    const insertedFeed = await db.transaction(async (tx) => {
+      // Create feed with folder in single operation
+      const [feedNew] = await tx
+        .insert(feeds)
+        .values({
+          title: validatedBody.title,
+          url: validatedBody.url,
+          description: validatedBody.description,
+          folderId: validatedBody.folderId || null, // Handle folder in initial insert
+          userId: user.id,
+          updated: subMonths(new Date(), 3),
+        })
+        .returning();
+
+      if (!feedNew) {
+        throw new HTTPException(500, { message: 'Failed to create feed' });
+      }
+
+      // Validate folder if provided
+      if (validatedBody.folderId) {
+        const folder = await tx.query.folders.findFirst({
+          where: eq(folders.id, validatedBody.folderId),
+        });
+        if (!folder) {
+          throw new HTTPException(400, { message: 'Folder not found' });
+        }
+      }
+
+      // Handle tags if provided
+      if (validatedBody.tags && validatedBody.tags.length > 0) {
+        for (const tagName of validatedBody.tags) {
+          let tagId: string;
+
+          // Check if tag exists
+          const existingTag = await tx.query.tags.findFirst({
+            where: and(eq(tags.name, tagName), eq(tags.userId, user.id)),
+          });
+
+          if (existingTag) {
+            tagId = existingTag.id;
+          } else {
+            // Create new tag
+            const [newTag] = await tx
+              .insert(tags)
+              .values({ name: tagName, userId: user.id })
+              .returning({ id: tags.id });
+
+            if (!newTag) {
+              throw new HTTPException(500, { message: 'Failed to create tag' });
+            }
+            tagId = newTag.id;
+          }
+
+          // Link tag to feed
+          await tx.insert(tagsToFeeds).values({
+            tagId,
+            feedId: feedNew.id,
+          });
+        }
+      }
+
+      return feedNew;
+    });
+
+    return c.json(insertedFeed, 201);
+  } catch (error) {
+    if (error instanceof HTTPException) {
+      throw error;
+    }
+    throw new HTTPException(500, { message: 'Internal error', cause: error });
   }
 });
 
@@ -103,6 +152,7 @@ const listFeeds = createRoute({
       description: 'Internal Server Error',
     },
   },
+  tags: ['Feeds'],
 });
 
 app.openapi(listFeeds, async (c) => {
@@ -157,6 +207,7 @@ const getFeedRoute = createRoute({
       description: 'Internal Server Error',
     },
   },
+  tags: ['Feeds'],
 });
 app.openapi(getFeedRoute, async (c) => {
   const user = c.get('user');
@@ -168,6 +219,7 @@ app.openapi(getFeedRoute, async (c) => {
   const { id } = c.req.valid('param');
 
   try {
+    // get only if feed belongs to user
     const feed = await db.query.feeds.findFirst({
       where: (feeds, { and, eq }) =>
         and(eq(feeds.id, id), eq(feeds.userId, user.id)),
@@ -216,6 +268,7 @@ const updateFeedRoute = createRoute({
       description: 'Internal Server Error',
     },
   },
+  tags: ['Feeds'],
 });
 
 app.openapi(updateFeedRoute, async (c) => {
@@ -227,39 +280,85 @@ app.openapi(updateFeedRoute, async (c) => {
   const { id } = c.req.valid('param');
   const validatedBody = c.req.valid('json');
 
-  // First check if feed exists and belongs to user
   try {
-    const existingFeed = await db.query.feeds.findFirst({
-      where: (feeds, { and, eq }) =>
-        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
-    });
-    if (!existingFeed) {
-      throw new HTTPException(404, { message: 'Feed not found' });
-    }
-    try {
-      const updatedFeed = await db
+    const result = await db.transaction(async (tx) => {
+      // Check if feed exists and belongs to user
+      const existingFeed = await tx.query.feeds.findFirst({
+        where: (feeds, { and, eq }) =>
+          and(eq(feeds.id, id), eq(feeds.userId, user.id)),
+      });
+
+      if (!existingFeed) {
+        throw new HTTPException(404, { message: 'Feed not found' });
+      }
+
+      // Validate folder if provided
+      if (validatedBody.folderId) {
+        const folder = await tx.query.folders.findFirst({
+          where: eq(folders.id, validatedBody.folderId),
+        });
+        if (!folder) {
+          throw new HTTPException(400, { message: 'Folder not found' });
+        }
+      }
+
+      // Update feed with all changes at once
+      const [updatedFeed] = await tx
         .update(feeds)
         .set({
           title: validatedBody.title ?? existingFeed.title,
           url: validatedBody.url ?? existingFeed.url,
           description: validatedBody.description ?? existingFeed.description,
+          folderId: validatedBody.folderId ?? existingFeed.folderId,
         })
         .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
-        .returning({
-          id: feeds.id,
-          title: feeds.title,
-          url: feeds.url,
-          description: feeds.description,
-        });
-      c.status(200);
-      return c.json(updatedFeed[0]);
-    } catch (error) {
-      throw new HTTPException(500, {
-        message: 'Internal Server Error',
-        cause: error,
-      });
-    }
+        .returning();
+
+      // Handle tags if provided
+      if (validatedBody.tags && validatedBody.tags.length > 0) {
+        // Remove existing tag associations
+        await tx.delete(tagsToFeeds).where(eq(tagsToFeeds.feedId, id));
+
+        // Process new tags
+        for (const tagName of validatedBody.tags) {
+          let tagId: string;
+
+          // Check if tag exists
+          const existingTag = await tx.query.tags.findFirst({
+            where: and(eq(tags.name, tagName), eq(tags.userId, user.id)),
+          });
+
+          if (existingTag) {
+            tagId = existingTag.id;
+          } else {
+            // Create new tag
+            const [newTag] = await tx
+              .insert(tags)
+              .values({ name: tagName, userId: user.id })
+              .returning({ id: tags.id });
+
+            if (!newTag) {
+              throw new HTTPException(500, { message: 'Failed to create tag' });
+            }
+            tagId = newTag.id;
+          }
+
+          // Link tag to feed
+          await tx.insert(tagsToFeeds).values({
+            tagId,
+            feedId: id,
+          });
+        }
+      }
+
+      return updatedFeed;
+    });
+
+    return c.json(result, 200);
   } catch (error) {
+    if (error instanceof HTTPException) {
+      throw error;
+    }
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,
@@ -286,6 +385,7 @@ const deleteFeedRoute = createRoute({
       description: 'Internal Server Error',
     },
   },
+  tags: ['Feeds'],
 });
 
 app.openapi(deleteFeedRoute, async (c) => {
