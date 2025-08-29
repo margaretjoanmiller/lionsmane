@@ -22,15 +22,7 @@ const props = withDefaults(defineProps<SidebarProps>(), {
   variant: 'inset',
 });
 
-const { user } = useUserSession();
-
 const data = {
-  user: {
-    name: user.value?.name || 'error',
-    email: user.value?.email || '<no email>',
-    avatar: '/img/Doc_Brown.jpg',
-  },
-
   navMain: [
     {
       title: 'Rules',
@@ -54,7 +46,7 @@ const data = {
           <SidebarMenuButton size="lg" as-child>
             <NuxtLink href="/dashboard">
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+                class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
               >
                 <Icon name="mdi:mushroom-outline" />
               </div>
@@ -71,7 +63,7 @@ const data = {
       <NavMain :items="data.navMain" />
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser />
     </SidebarFooter>
   </Sidebar>
 </template>

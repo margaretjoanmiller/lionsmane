@@ -1,805 +1,357 @@
 {
-  "openapi" : "3.1.0",
-  "components" : {
-    "schemas" : {
-      "ArticleOut" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "read" : {
-            "type" : "boolean"
-          },
-          "starred" : {
-            "type" : "boolean"
-          },
-          "title" : {
-            "type" : [ "string", "null" ]
-          },
-          "author" : {
-            "type" : [ "string", "null" ]
-          },
-          "content" : {
-            "type" : [ "string", "null" ]
-          },
-          "textPreview" : {
-            "type" : [ "string", "null" ]
-          },
-          "image" : {
-            "type" : [ "string", "null" ]
-          },
-          "url" : {
-            "type" : [ "string", "null" ]
-          },
-          "publishedAt" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/Instant"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "categories" : {
-            "type" : [ "array", "null" ],
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "audio" : {
-            "type" : [ "string", "null" ]
-          },
-          "feedId" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          }
-        }
-      },
-      "ArticleUpdateReq" : {
-        "type" : "object",
-        "properties" : {
-          "read" : {
-            "type" : [ "boolean", "null" ]
-          },
-          "starred" : {
-            "type" : [ "boolean", "null" ]
-          }
-        }
-      },
-      "FeedDto" : {
-        "type" : "object",
-        "required" : [ "tags" ],
-        "properties" : {
-          "id" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "title" : {
-            "type" : [ "string", "null" ]
-          },
-          "description" : {
-            "type" : [ "string", "null" ]
-          },
-          "url" : {
-            "type" : [ "string", "null" ]
-          },
-          "lastUpdated" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/Instant"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "folderId" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "tags" : {
-            "type" : "array",
-            "uniqueItems" : true,
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "numberUnread" : {
-            "type" : [ "integer", "null" ],
-            "format" : "int32"
-          }
-        }
-      },
-      "FeedIn" : {
-        "type" : "object",
-        "required" : [ "title", "url", "tags" ],
-        "properties" : {
-          "title" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : [ "string", "null" ]
-          },
-          "url" : {
-            "type" : "string"
-          },
-          "folderId" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "tags" : {
-            "type" : "array",
-            "uniqueItems" : true,
-            "items" : {
-              "type" : "string"
+  "openapi": "3.1.0",
+  "info": { "title": "lionsmane", "version": "1" },
+  "components": {
+    "securitySchemes": { "Bearer": { "type": "http", "scheme": "bearer" } },
+    "schemas": {
+      "NewFeed": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string", "minLength": 1, "format": "uri" },
+          "description": { "type": ["string", "null"] }
+        },
+        "required": ["title", "url", "description"]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/api/v1/feeds": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewFeed" }
             }
           }
+        },
+        "responses": {
+          "201": {
+            "description": "Feed created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "title": { "type": "string" },
+                    "url": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "uri"
+                    },
+                    "description": { "type": ["string", "null"] },
+                    "userId": { "type": "string", "format": "uuid" },
+                    "updated": { "type": "string", "format": "date" }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url",
+                    "description",
+                    "userId",
+                    "updated"
+                  ]
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal error" }
         }
       },
-      "FeedInUpdate" : {
-        "type" : "object",
-        "required" : [ "tags" ],
-        "properties" : {
-          "title" : {
-            "type" : [ "string", "null" ]
+      "get": {
+        "responses": {
+          "200": {
+            "description": "list feeds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string", "format": "uuid" },
+                      "title": { "type": "string" },
+                      "url": {
+                        "type": "string",
+                        "minLength": 1,
+                        "format": "uri"
+                      },
+                      "description": { "type": ["string", "null"] },
+                      "userId": { "type": "string", "format": "uuid" },
+                      "updated": { "type": "string", "format": "date" }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "url",
+                      "description",
+                      "userId",
+                      "updated"
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "description" : {
-            "type" : [ "string", "null" ]
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/v1/feeds/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": { "type": "string", "format": "uuid" },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Feed retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "title": { "type": "string" },
+                    "url": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "uri"
+                    },
+                    "description": { "type": ["string", "null"] },
+                    "userId": { "type": "string", "format": "uuid" },
+                    "updated": { "type": "string", "format": "date" }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url",
+                    "description",
+                    "userId",
+                    "updated"
+                  ]
+                }
+              }
+            }
           },
-          "url" : {
-            "type" : [ "string", "null" ]
-          },
-          "folderId" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
-          },
-          "tags" : {
-            "type" : "array",
-            "uniqueItems" : true,
-            "items" : {
-              "type" : "string"
+          "404": { "description": "Feed not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "schema": { "type": "string" },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "url": { "type": "string", "minLength": 1, "format": "uri" },
+                  "description": { "type": ["string", "null"] }
+                }
+              }
             }
           }
-        }
-      },
-      "FolderIn" : {
-        "type" : "object",
-        "required" : [ "name" ],
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : [ "string", "null" ]
-          },
-          "feeds" : {
-            "type" : [ "array", "null" ],
-            "items" : {
-              "type" : "string",
-              "format" : "uuid",
-              "pattern" : "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+        },
+        "responses": {
+          "200": {
+            "description": "Feed updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string", "format": "uuid" },
+                    "title": { "type": "string" },
+                    "url": {
+                      "type": "string",
+                      "minLength": 1,
+                      "format": "uri"
+                    },
+                    "description": { "type": ["string", "null"] },
+                    "userId": { "type": "string", "format": "uuid" },
+                    "updated": { "type": "string", "format": "date" }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url",
+                    "description",
+                    "userId",
+                    "updated"
+                  ]
+                }
+              }
             }
-          }
+          },
+          "404": { "description": "Feed not found" },
+          "500": { "description": "Internal Server Error" }
         }
       },
-      "FolderOut" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "anyOf" : [ {
-              "$ref" : "#/components/schemas/UUID"
-            }, {
-              "type" : "null"
-            } ]
+      "delete": {
+        "parameters": [
+          {
+            "schema": { "type": "string" },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Feed deleted" },
+          "404": { "description": "Feed not found" },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/v1/articles": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "Cursor for pagination, the last article ID from the previous page"
+            },
+            "required": false,
+            "description": "Cursor for pagination, the last article ID from the previous page",
+            "name": "cursor",
+            "in": "query"
           },
-          "userName" : {
-            "type" : [ "string", "null" ]
-          },
-          "name" : {
-            "type" : [ "string", "null" ]
-          },
-          "description" : {
-            "type" : [ "string", "null" ]
-          },
-          "feeds" : {
-            "type" : [ "array", "null" ],
-            "items" : {
-              "type" : "string",
-              "format" : "uuid",
-              "pattern" : "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "description": "Number of articles to return per page"
+            },
+            "required": false,
+            "description": "Number of articles to return per page",
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of articles with pagination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "articles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string", "format": "uuid" },
+                          "title": { "type": "string", "maxLength": 256 },
+                          "url": { "type": "string", "format": "uri" },
+                          "authors": {
+                            "type": "array",
+                            "items": { "type": "string", "maxLength": 256 }
+                          },
+                          "categories": {
+                            "type": "array",
+                            "items": { "type": "string", "maxLength": 256 }
+                          },
+                          "description": {
+                            "type": ["string", "null"],
+                            "maxLength": 256
+                          },
+                          "rawContent": { "type": ["string", "null"] },
+                          "readableHtml": { "type": ["string", "null"] },
+                          "readableText": { "type": ["string", "null"] },
+                          "keywords": {
+                            "type": "array",
+                            "items": { "type": "string", "maxLength": 256 }
+                          },
+                          "image": {
+                            "type": ["string", "null"],
+                            "format": "uri"
+                          },
+                          "media": {
+                            "type": "array",
+                            "items": { "type": "string", "format": "uri" }
+                          },
+                          "published": { "type": "string", "format": "date" },
+                          "updated": {
+                            "type": ["string", "null"],
+                            "format": "date"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "url",
+                          "authors",
+                          "categories",
+                          "description",
+                          "rawContent",
+                          "readableHtml",
+                          "readableText",
+                          "keywords",
+                          "image",
+                          "media",
+                          "published",
+                          "updated"
+                        ]
+                      }
+                    },
+                    "cursor": { "type": ["string", "null"] }
+                  },
+                  "required": ["articles"]
+                }
+              }
             }
-          }
-        }
-      },
-      "Instant" : {
-        "type" : "string",
-        "format" : "date-time",
-        "examples" : [ "2022-03-10T16:15:50Z" ]
-      },
-      "UUID" : {
-        "type" : "string",
-        "format" : "uuid",
-        "pattern" : "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
-      },
-      "User" : {
-        "type" : "object",
-        "required" : [ "userName" ],
-        "properties" : {
-          "userName" : {
-            "type" : "string"
           }
         }
       }
     },
-    "securitySchemes" : {
-      "SecurityScheme" : {
-        "type" : "openIdConnect",
-        "description" : "Authentication",
-        "openIdConnectUrl" : "http://localhost:8675/realms/quarkus/.well-known/openid-configuration"
+    "/api/v1/articles/update": {
+      "post": {
+        "responses": {
+          "202": {
+            "description": "Articles update initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } },
+                  "required": ["message"]
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
-  "paths" : {
-    "/articles" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ArticleOut"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get All Articles",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/articles/feed/{feedId}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "feedId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ArticleOut"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get Articles For Feed",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/articles/{id}" : {
-      "patch" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ArticleUpdateReq"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No Content"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Update Article",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      },
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ArticleOut"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get Article",
-        "tags" : [ "Article Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds" : {
-      "post" : {
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FeedIn"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "400" : {
-            "description" : "Bad Request"
-          }
-        },
-        "summary" : "Post Feed",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      },
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/FeedDto"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "List Feeds",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds/delete/{id}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Delete Feed",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds/refresh/all" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get All Feeds Refresh",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds/refresh/{id}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get Feed Refresh",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds/update/{id}" : {
-      "post" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FeedInUpdate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "400" : {
-            "description" : "Bad Request"
-          }
-        },
-        "summary" : "Update Feed",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/feeds/{id}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/FeedDto"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get Feed",
-        "tags" : [ "Feed Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/folders" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/FolderOut"
-                  }
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "List Folders",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      },
-      "post" : {
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FolderIn"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/FolderOut"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "400" : {
-            "description" : "Bad Request"
-          }
-        },
-        "summary" : "Create Folder",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/folders/delete/{id}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Delete Folder",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/folders/update/{id}" : {
-      "post" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FolderIn"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          },
-          "400" : {
-            "description" : "Bad Request"
-          }
-        },
-        "summary" : "Update Folder",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/folders/{id}" : {
-      "get" : {
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/components/schemas/UUID"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/FolderOut"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Not Authorized"
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "summary" : "Get Folder",
-        "tags" : [ "Folder Resource" ],
-        "security" : [ {
-          "SecurityScheme" : [ ]
-        } ]
-      }
-    },
-    "/users/me" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        },
-        "summary" : "Me",
-        "tags" : [ "Users Resource" ]
-      }
-    }
-  },
-  "info" : {
-    "title" : "lionsmane API",
-    "version" : "1.0.0-SNAPSHOT"
-  }
+  "webhooks": {}
 }

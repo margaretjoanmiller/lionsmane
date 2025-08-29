@@ -10,10 +10,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { CollapsibleTrigger, Collapsible  } from '@/components/ui/collapsible';
+import { CollapsibleTrigger, Collapsible } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
-
-const { clear: clearSession } = useUserSession();
+import { apiClient } from '@/utils/apiClient';
 
 const {
   isPending: isPendingFeeds,
@@ -23,12 +22,9 @@ const {
 } = useQuery({
   queryKey: ['feeds'],
   queryFn: async () => {
-    try {
-      return await $lion('/feeds');
-    } catch {
-      await clearSession();
-      await navigateTo('/login');
-    }
+    return await apiClient.GET('/api/v1/feeds', {
+      credentials: 'include',
+    });
   },
 });
 
@@ -40,12 +36,7 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    try {
-      return await $lion('/folders');
-    } catch {
-      await clearSession();
-      await navigateTo('/login');
-    }
+    return await $lion('/folders');
   },
 });
 </script>

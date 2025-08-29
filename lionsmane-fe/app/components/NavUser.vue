@@ -21,21 +21,12 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-vue-next';
+import { authClient } from '~/lib/auth-client';
 
-defineProps<{
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}>();
-
-const { clear: clearSession } = useUserSession();
+const session = authClient.useSession();
 const { isMobile } = useSidebar();
 
 async function logout() {
-  await $fetch('/auth/logout');
-  await clearSession();
   return navigateTo('/');
 }
 </script>
@@ -50,11 +41,16 @@ async function logout() {
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
             <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
+              <AvatarImage
+                :src="session.data?.user.image || '/img/Doc_Brown.jpg'"
+                :alt="session.data?.user.name"
+              />
               <AvatarFallback class="rounded-lg"> CN</AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
+              <span class="truncate font-medium">{{
+                session.data?.user.name
+              }}</span>
             </div>
             <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
@@ -68,11 +64,16 @@ async function logout() {
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
+                <AvatarImage
+                  :src="session.data?.user.image || '/img/Doc_Brown.jpg'"
+                  :alt="session.data?.user.name"
+                />
                 <AvatarFallback class="rounded-lg"> LM</AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ user.name }}</span>
+                <span class="truncate font-semibold">{{
+                  session.data?.user.email
+                }}</span>
               </div>
             </div>
           </DropdownMenuLabel>

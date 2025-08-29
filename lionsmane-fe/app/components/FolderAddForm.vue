@@ -9,8 +9,6 @@ import type { postFoldersBody } from '@/utils/zod';
 
 const toast = useToast();
 
-const { session } = useUserSession();
-
 const queryClient = useQueryClient();
 
 const {
