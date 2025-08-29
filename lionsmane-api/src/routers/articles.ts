@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { and, asc, gt } from 'drizzle-orm';
+import { and, asc, eq, gt } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
-import { articles } from '@/db/schema/core';
+import { articles, userToFeeds } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedQueue } from '@/tasks/queues';
 import { articleOut, articlesListOut } from '@/zod/articles.zod';
@@ -51,7 +51,7 @@ export const articlesRouter = createRoute({
       description: 'List of articles with pagination',
       content: {
         'application/json': {
-          schema: articlesListOut
+          schema: articlesListOut,
         },
       },
     },
@@ -134,64 +134,15 @@ app.openapi(articleDetailsRoute, async (c) => {
   }
   const { id } = c.req.valid('param');
 
-  const article = await db.query.articles.findFirst({
-    where: (articles, { eq }) =>
-      and(eq(articles.id, id), eq(articles.userId, user.id)),
-  });
+  const article = await db
+    .select()
+    .from(articles)
+    .leftJoin(userToFeeds, eq(articles.feedId, userToFeeds.feedId))
+    .where(and(eq(articles.id, id), eq(userToFeeds.userId, user.id)));
   if (!article) {
     throw new HTTPException(404, { message: 'Article not found' });
   }
   return c.json(article, 200);
-});
-
-const updateArticlesRoute = createRoute({
-  method: 'post',
-  path: '/update',
-  responses: {
-    202: {
-      description: 'Articles update initiated',
-      content: {
-        'application/json': {
-          schema: z.object({
-            message: z.string(),
-          }),
-        },
-      },
-    },
-    401: {
-      description: 'Unauthorized',
-      content: {
-        'application/json': {
-          schema: z.object({
-            message: z.string(),
-          }),
-        },
-      },
-    },
-  },
-  tags: ['Articles'],
-});
-
-app.openapi(updateArticlesRoute, async (c) => {
-  const user = c.get('user');
-  if (!user) {
-    throw new HTTPException(401, { message: 'Forbidden' });
-  }
-
-  const feeds = await db.query.feeds.findMany({
-    where: (feeds, { eq }) => eq(feeds.userId, user.id),
-  });
-  const jobs = feeds.map((f) => ({
-    name: 'fetchAndProcessFeed',
-    data: {
-      feedUrl: f.url,
-      feedId: f.id,
-      userId: user.id,
-    },
-  }));
-  await feedQueue.addBulk(jobs);
-  c.status(202);
-  return c.json({ message: 'Articles update initiated' });
 });
 
 export default app;

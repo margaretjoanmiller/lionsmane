@@ -17,7 +17,6 @@ export const feedOut = z.object({
   authors: z.array(z.string()).default([]),
   categories: z.array(z.string()).default([]),
   copyright: z.string().nullable(),
-  description: z.string().nullable(),
   userId: z.uuid(),
   updated: z.date(),
   folderId: z.uuid().nullable(),

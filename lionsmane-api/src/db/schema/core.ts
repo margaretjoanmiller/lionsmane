@@ -26,30 +26,34 @@ export const feeds = pgTable(
     description: varchar({ length: 500 }),
     image: varchar({ length: 256 }),
     updated: timestamp(),
-    userId: text()
-      .references(() => user.id)
-      .notNull(),
-    folderId: uuid().references(() => folders.id),
   },
   (table) => ({
-    userFeedUnique: unique().on(table.url, table.userId),
-    userIdx: index('feeds_user_idx').on(table.userId),
-    folderIdx: index('feeds_folder_idx').on(table.folderId),
+    urlIdx: index('feeds_url_idx').on(table.url), // Index for finding existing feeds
   }),
 );
 
-export const feedRelations = relations(feeds, ({ many, one }) => ({
-  articles: many(articles),
-  user: one(user, {
-    fields: [feeds.userId],
-    references: [user.id],
+export const userToFeeds = pgTable(
+  'users_to_feeds',
+  {
+    id: uuid()
+      .primaryKey()
+      .$defaultFn(() => v7()),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    feedId: uuid()
+      .notNull()
+      .references(() => feeds.id, { onDelete: 'cascade' }),
+    description: varchar({ length: 500 }),
+    folderId: uuid().references(() => folders.id),
+  },
+  (table) => ({
+    userFeedUnique: unique().on(table.userId, table.feedId), // Prevent duplicate subscriptions
+    userIdx: index('user_feeds_user_idx').on(table.userId),
+    feedIdx: index('user_feeds_feed_idx').on(table.feedId),
+    folderIdx: index('user_feeds_folder_idx').on(table.folderId),
   }),
-  tags: many(tagsToFeeds),
-  folder: one(folders, {
-    fields: [feeds.folderId],
-    references: [folders.id],
-  }),
-}));
+);
 
 export const folders = pgTable(
   'folders',
@@ -68,11 +72,84 @@ export const folders = pgTable(
   }),
 );
 
+// Junction table for user-specific tags on their feed subscriptions
+export const userFeedTags = pgTable(
+  'user_feed_tags',
+  {
+    userFeedId: uuid()
+      .notNull()
+      .references(() => userToFeeds.id, { onDelete: 'cascade' }),
+    tagId: uuid()
+      .notNull()
+      .references(() => tags.id, { onDelete: 'cascade' }),
+  },
+  (table) => ({
+    userFeedTagUnique: unique().on(table.userFeedId, table.tagId),
+  }),
+);
+
+export const tags = pgTable(
+  'tags',
+  {
+    id: uuid()
+      .primaryKey()
+      .$defaultFn(() => v7()),
+    name: varchar({ length: 50 }).notNull(),
+    userId: text()
+      .references(() => user.id)
+      .notNull(),
+  },
+  (table) => ({
+    userTagUnique: unique().on(table.name, table.userId),
+    userIdx: index('tags_user_idx').on(table.userId),
+  }),
+);
+
+export const userToFeedsRelations = relations(userToFeeds, ({ one, many }) => ({
+  user: one(user, {
+    fields: [userToFeeds.userId],
+    references: [user.id],
+  }),
+  feed: one(feeds, {
+    fields: [userToFeeds.feedId],
+    references: [feeds.id],
+  }),
+  folder: one(folders, {
+    fields: [userToFeeds.folderId],
+    references: [folders.id],
+  }),
+  tags: many(userFeedTags),
+}));
+
+export const feedRelations = relations(feeds, ({ many }) => ({
+  articles: many(articles),
+  userToFeeds: many(userToFeeds),
+}));
+
 export const folderRelations = relations(folders, ({ many, one }) => ({
-  feeds: many(feeds),
+  userToFeeds: many(userToFeeds), // Changed from feeds to userToFeeds
   user: one(user, {
     fields: [folders.userId],
     references: [user.id],
+  }),
+}));
+
+export const tagRelations = relations(tags, ({ many, one }) => ({
+  userFeedTags: many(userFeedTags),
+  user: one(user, {
+    fields: [tags.userId],
+    references: [user.id],
+  }),
+}));
+
+export const userFeedTagsRelations = relations(userFeedTags, ({ one }) => ({
+  userFeed: one(userToFeeds, {
+    fields: [userFeedTags.userFeedId],
+    references: [userToFeeds.id],
+  }),
+  tag: one(tags, {
+    fields: [userFeedTags.tagId],
+    references: [tags.id],
   }),
 }));
 
@@ -100,77 +177,15 @@ export const articles = pgTable(
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),
-    userId: text()
-      .references(() => user.id)
-      .notNull(),
   },
   (table) => ({
     feedIdx: index('articles_feed_idx').on(table.feedId),
-    userIdx: index('articles_user_idx').on(table.userId),
-    userStarredIdx: index('articles_user_starred_idx').on(
-      table.userId,
-      table.isStarred,
-    ),
-    userReadIdx: index('articles_user_read_idx').on(table.userId, table.isRead),
-    userReadPublishedIdx: index('articles_user_read_published_idx').on(
-      table.userId,
-      table.isRead,
-      table.published,
-    ),
   }),
 );
 
 export const articleRelations = relations(articles, ({ one }) => ({
   feed: one(feeds, {
     fields: [articles.feedId],
-    references: [feeds.id],
-  }),
-  user: one(user, {
-    fields: [articles.userId],
-    references: [user.id],
-  }),
-}));
-
-export const tags = pgTable(
-  'tags',
-  {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => v7()),
-    name: varchar({ length: 50 }).notNull(),
-    userId: text()
-      .references(() => user.id)
-      .notNull(),
-  },
-  (table) => ({
-    userTagUnique: unique().on(table.name, table.userId),
-  }),
-);
-
-export const tagRelations = relations(tags, ({ many, one }) => ({
-  tagsToFeeds: many(tagsToFeeds),
-  user: one(user, {
-    fields: [tags.userId],
-    references: [user.id],
-  }),
-}));
-
-export const tagsToFeeds = pgTable('tags_to_feeds', {
-  tagId: uuid()
-    .notNull()
-    .references(() => tags.id, { onDelete: 'cascade' }),
-  feedId: uuid()
-    .notNull()
-    .references(() => feeds.id, { onDelete: 'cascade' }),
-});
-
-export const tagsToFeedsRelations = relations(tagsToFeeds, ({ one }) => ({
-  tag: one(tags, {
-    fields: [tagsToFeeds.tagId],
-    references: [tags.id],
-  }),
-  feed: one(feeds, {
-    fields: [tagsToFeeds.feedId],
     references: [feeds.id],
   }),
 }));
