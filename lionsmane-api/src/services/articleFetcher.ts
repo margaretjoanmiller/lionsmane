@@ -1,6 +1,6 @@
 import { Readability } from '@mozilla/readability';
 import { parseFeed } from '@rowanmanning/feed-parser';
-import { isAfter } from 'date-fns';
+import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
 import { JSDOM } from 'jsdom';
@@ -34,7 +34,10 @@ export async function parseArticlesFromFeed(
 
     const feedProcess = feed.items
       .filter((i) => {
-        return isAfter(i.published!, feedfromDb[0]?.updated!);
+        return isAfter(
+          i.published!,
+          feedfromDb[0]?.updated || subWeeks(new Date(), 6),
+        );
       })
       .map((item) => {
         if (!item.title || !item.url || !item.published) {
@@ -119,7 +122,7 @@ export async function extractKeywords(textContent: string): Promise<string[]> {
       ?.map((i) => {
         const node = i.matches[0]?.node;
         if (node) {
-          return treeToString(node);
+          return treeToString(node).toLowerCase();
         } else {
           return null;
         }

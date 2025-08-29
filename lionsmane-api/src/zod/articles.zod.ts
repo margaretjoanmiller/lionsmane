@@ -16,3 +16,23 @@ export const articleOut = z.object({
   published: z.date(),
   updated: z.date().nullable(),
 });
+
+export const articlesListOut = z.object({
+  articles: z.array(
+    z.object({
+      id: z.uuid(),
+      title: z.string().max(256),
+      url: z.url(),
+      authors: z.array(z.string().max(256)),
+      categories: z.array(z.string().max(256)),
+      description: z.string().max(256).nullable(),
+      readableText: z.string().nullable(),
+      keywords: z.array(z.string().max(256)),
+      image: z.url().nullable(),
+      media: z.array(z.url()),
+      published: z.date(),
+      updated: z.date().nullable(),
+    }),
+  ),
+  cursor: z.string().nullish(),
+});

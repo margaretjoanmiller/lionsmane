@@ -1,11 +1,11 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { asc, gt } from 'drizzle-orm';
+import { and, asc, gt } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
 import { articles } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedQueue } from '@/tasks/queues';
-import { articleOut } from '@/zod/articles.zod';
+import { articleOut, articlesListOut } from '@/zod/articles.zod';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -51,10 +51,7 @@ export const articlesRouter = createRoute({
       description: 'List of articles with pagination',
       content: {
         'application/json': {
-          schema: z.object({
-            articles: z.array(articleOut),
-            cursor: z.string().nullish(),
-          }),
+          schema: articlesListOut
         },
       },
     },
@@ -77,8 +74,6 @@ app.openapi(articlesRouter, async (c) => {
       authors: articles.authors,
       categories: articles.categories,
       description: articles.description,
-      rawContent: articles.rawContent,
-      readableHtml: articles.readableHtml,
       readableText: articles.readableText,
       keywords: articles.keywords,
       image: articles.image,
@@ -99,6 +94,54 @@ app.openapi(articlesRouter, async (c) => {
     articles: items,
     cursor: hasNextPage ? items[items.length - 1]?.id : null,
   });
+});
+
+const articleDetailsRoute = createRoute({
+  method: 'get',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z.string().uuid().describe('The ID of the article to retrieve'),
+    }),
+  },
+  responses: {
+    200: {
+      description: 'Article details',
+      content: {
+        'application/json': {
+          schema: articleOut,
+        },
+      },
+    },
+    404: {
+      description: 'Article not found',
+      content: {
+        'application/json': {
+          schema: z.object({
+            message: z.string(),
+          }),
+        },
+      },
+    },
+  },
+  tags: ['Articles'],
+});
+
+app.openapi(articleDetailsRoute, async (c) => {
+  const user = c.get('user');
+  if (!user) {
+    throw new HTTPException(401, { message: 'Unauthorized' });
+  }
+  const { id } = c.req.valid('param');
+
+  const article = await db.query.articles.findFirst({
+    where: (articles, { eq }) =>
+      and(eq(articles.id, id), eq(articles.userId, user.id)),
+  });
+  if (!article) {
+    throw new HTTPException(404, { message: 'Article not found' });
+  }
+  return c.json(article, 200);
 });
 
 const updateArticlesRoute = createRoute({
