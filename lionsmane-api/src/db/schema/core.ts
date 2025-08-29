@@ -19,11 +19,10 @@ export const feeds = pgTable(
       .primaryKey()
       .$defaultFn(() => v7()),
     title: varchar({ length: 50 }),
-    url: varchar({ length: 256 }).notNull(),
+    url: varchar({ length: 256 }).notNull().unique(),
     authors: varchar({ length: 256 }).array(),
     categories: varchar({ length: 256 }).array(),
     copyright: varchar({ length: 50 }),
-    description: varchar({ length: 500 }),
     image: varchar({ length: 256 }),
     updated: timestamp(),
   },

@@ -4,7 +4,6 @@ import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
 import { articles, userToFeeds } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
-import { feedQueue } from '@/tasks/queues';
 import { articleOut, articlesListOut } from '@/zod/articles.zod';
 
 const app = new OpenAPIHono<{
@@ -82,7 +81,13 @@ app.openapi(articlesRouter, async (c) => {
       updated: articles.updated,
     })
     .from(articles)
-    .where(cursor ? gt(articles.id, cursor) : undefined) // if cursor is provided, get rows after it
+    .leftJoin(userToFeeds, eq(articles.feedId, userToFeeds.feedId))
+    .where(
+      and(
+        eq(userToFeeds.feedId, articles.feedId),
+        cursor ? gt(articles.id, cursor) : undefined,
+      ),
+    ) // if cursor is provided, get rows after it
     .limit(pageSize + 1) // the number of rows to return
     .orderBy(asc(articles.id)); // ordering
 
@@ -134,8 +139,23 @@ app.openapi(articleDetailsRoute, async (c) => {
   }
   const { id } = c.req.valid('param');
 
-  const article = await db
-    .select()
+  const [article] = await db
+    .select({
+      id: articles.id,
+      title: articles.title,
+      url: articles.url,
+      authors: articles.authors,
+      categories: articles.categories,
+      description: articles.description,
+      rawContent: articles.rawContent,
+      readableHtml: articles.readableHtml,
+      readableText: articles.readableText,
+      keywords: articles.keywords,
+      image: articles.image,
+      media: articles.media,
+      published: articles.published,
+      updated: articles.updated,
+    })
     .from(articles)
     .leftJoin(userToFeeds, eq(articles.feedId, userToFeeds.feedId))
     .where(and(eq(articles.id, id), eq(userToFeeds.userId, user.id)));

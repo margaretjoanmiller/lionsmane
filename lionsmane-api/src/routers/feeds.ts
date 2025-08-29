@@ -3,7 +3,13 @@ import { subMonths } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
-import { feeds, folders, tags, tagsToFeeds } from '@/db/schema/core';
+import {
+  feeds,
+  folders,
+  tags,
+  userToFeeds,
+  userFeedTags,
+} from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedOut, newFeed } from '@/zod/feeds.zod';
 
@@ -63,32 +69,71 @@ app.openapi(newFeedRoute, async (c) => {
   const validatedBody = c.req.valid('json');
 
   try {
-    const insertedFeed = await db.transaction(async (tx) => {
-      // Create feed with folder in single operation
-      const [feedNew] = await tx
-        .insert(feeds)
-        .values({
-          title: validatedBody.title,
-          url: validatedBody.url,
-          description: validatedBody.description,
-          folderId: validatedBody.folderId || null, // Handle folder in initial insert
-          userId: user.id,
-          updated: subMonths(new Date(), 3),
-        })
-        .returning();
+    const result = await db.transaction(async (tx) => {
+      // Check if feed already exists
+      let feed = await tx.query.feeds.findFirst({
+        where: eq(feeds.url, validatedBody.url),
+      });
 
-      if (!feedNew) {
-        throw new HTTPException(500, { message: 'Failed to create feed' });
+      // Create feed if it doesn't exist
+      if (!feed) {
+        const [newFeed] = await tx
+          .insert(feeds)
+          .values({
+            title: validatedBody.title,
+            url: validatedBody.url,
+            updated: subMonths(new Date(), 3),
+          })
+          .returning();
+
+        if (!newFeed) {
+          throw new HTTPException(500, { message: 'Failed to create feed' });
+        }
+        feed = newFeed;
+      }
+
+      // Check if user is already subscribed
+      const existingSubscription = await tx.query.userToFeeds.findFirst({
+        where: and(
+          eq(userToFeeds.userId, user.id),
+          eq(userToFeeds.feedId, feed.id),
+        ),
+      });
+
+      if (existingSubscription) {
+        throw new HTTPException(400, {
+          message: 'Already subscribed to this feed',
+        });
       }
 
       // Validate folder if provided
       if (validatedBody.folderId) {
         const folder = await tx.query.folders.findFirst({
-          where: eq(folders.id, validatedBody.folderId),
+          where: and(
+            eq(folders.id, validatedBody.folderId),
+            eq(folders.userId, user.id),
+          ),
         });
         if (!folder) {
           throw new HTTPException(400, { message: 'Folder not found' });
         }
+      }
+
+      // Create user subscription
+      const [userFeed] = await tx
+        .insert(userToFeeds)
+        .values({
+          userId: user.id,
+          feedId: feed.id,
+          description: validatedBody.description,
+          folderId: validatedBody.folderId || null,
+        })
+        .returning();
+
+      if (!userFeed) {
+        throw new HTTPException(500, {
+          message: 'Failed to create subscription',
+        });
       }
 
       // Handle tags if provided
@@ -96,7 +141,7 @@ app.openapi(newFeedRoute, async (c) => {
         for (const tagName of validatedBody.tags) {
           let tagId: string;
 
-          // Check if tag exists
+          // Check if tag exists for this user
           const existingTag = await tx.query.tags.findFirst({
             where: and(eq(tags.name, tagName), eq(tags.userId, user.id)),
           });
@@ -116,18 +161,18 @@ app.openapi(newFeedRoute, async (c) => {
             tagId = newTag.id;
           }
 
-          // Link tag to feed
-          await tx.insert(tagsToFeeds).values({
+          // Link tag to user subscription
+          await tx.insert(userFeedTags).values({
+            userFeedId: userFeed.id,
             tagId,
-            feedId: feedNew.id,
           });
         }
       }
 
-      return feedNew;
+      return { ...feed, subscription: userFeed };
     });
 
-    return c.json(insertedFeed, 201);
+    return c.json(result, 201);
   } catch (error) {
     if (error instanceof HTTPException) {
       throw error;
@@ -158,26 +203,34 @@ const listFeeds = createRoute({
 app.openapi(listFeeds, async (c) => {
   const user = c.get('user');
   if (!user) {
-    c.status(401);
-    return c.text('Unauthorized');
+    throw new HTTPException(401, { message: 'Unauthorized' });
   }
+
   try {
-    const feedList = await db
+    const userFeeds = await db
       .select({
         id: feeds.id,
         title: feeds.title,
         url: feeds.url,
-        description: feeds.description,
-        userId: feeds.userId,
+        authors: feeds.authors,
+        categories: feeds.categories,
+        copyright: feeds.copyright,
+        image: feeds.image,
         updated: feeds.updated,
+        description: userToFeeds.description,
+        folderId: userToFeeds.folderId,
+        subscriptionId: userToFeeds.id,
       })
-      .from(feeds)
-      .where(eq(feeds.userId, user.id));
-    c.status(200);
-    return c.json(feedList);
-  } catch {
-    c.status(500);
-    return c.text('Internal Server Error');
+      .from(userToFeeds)
+      .innerJoin(feeds, eq(userToFeeds.feedId, feeds.id))
+      .where(eq(userToFeeds.userId, user.id));
+
+    return c.json(userFeeds, 200);
+  } catch (error) {
+    throw new HTTPException(500, {
+      message: 'Internal Server Error',
+      cause: error,
+    });
   }
 });
 
@@ -212,24 +265,40 @@ const getFeedRoute = createRoute({
 app.openapi(getFeedRoute, async (c) => {
   const user = c.get('user');
   if (!user) {
-    c.status(401);
-    return c.text('Unauthorized');
+    throw new HTTPException(401, { message: 'Unauthorized' });
   }
 
   const { id } = c.req.valid('param');
 
   try {
-    // get only if feed belongs to user
-    const feed = await db.query.feeds.findFirst({
-      where: (feeds, { and, eq }) =>
-        and(eq(feeds.id, id), eq(feeds.userId, user.id)),
-    });
-    if (!feed) {
+    const userFeed = await db
+      .select({
+        id: feeds.id,
+        title: feeds.title,
+        url: feeds.url,
+        authors: feeds.authors,
+        categories: feeds.categories,
+        copyright: feeds.copyright,
+        image: feeds.image,
+        updated: feeds.updated,
+        description: userToFeeds.description,
+        folderId: userToFeeds.folderId,
+        subscriptionId: userToFeeds.id,
+      })
+      .from(userToFeeds)
+      .innerJoin(feeds, eq(userToFeeds.feedId, feeds.id))
+      .where(and(eq(feeds.id, id), eq(userToFeeds.userId, user.id)))
+      .limit(1);
+
+    if (userFeed.length === 0) {
       throw new HTTPException(404, { message: 'Feed not found' });
     }
-    c.status(200);
-    return c.json(feed);
+
+    return c.json(userFeed[0], 200);
   } catch (error) {
+    if (error instanceof HTTPException) {
+      throw error;
+    }
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,
@@ -282,49 +351,70 @@ app.openapi(updateFeedRoute, async (c) => {
 
   try {
     const result = await db.transaction(async (tx) => {
-      // Update feed (this will fail if feed doesn't exist or doesn't belong to user)
-      const [updatedFeed] = await tx
-        .update(feeds)
-        .set(validatedBody) // Drizzle will ignore undefined fields
-        .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)))
+      // Update user subscription (not the feed itself)
+      const [updatedSubscription] = await tx
+        .update(userToFeeds)
+        .set({
+          description: validatedBody.description,
+          folderId: validatedBody.folderId,
+        })
+        .where(and(eq(userToFeeds.feedId, id), eq(userToFeeds.userId, user.id)))
         .returning();
 
-      if (!updatedFeed) {
-        throw new HTTPException(404, { message: 'Feed not found' });
+      if (!updatedSubscription) {
+        throw new HTTPException(404, {
+          message: 'Feed subscription not found',
+        });
       }
 
       // Handle tags if provided
       if (validatedBody.tags !== undefined) {
-        // Clear existing tags
-        await tx.delete(tagsToFeeds).where(eq(tagsToFeeds.feedId, id));
+        // Clear existing tags for this subscription
+        await tx
+          .delete(userFeedTags)
+          .where(eq(userFeedTags.userFeedId, updatedSubscription.id));
 
         if (validatedBody.tags.length > 0) {
-          // Upsert all tags in one operation
-          const tagValues = validatedBody.tags.map((name) => ({
-            name,
-            userId: user.id,
-          }));
+          for (const tagName of validatedBody.tags) {
+            let tagId: string;
 
-          const upsertedTags = await tx
-            .insert(tags)
-            .values(tagValues)
-            .onConflictDoUpdate({
-              target: [tags.name, tags.userId],
-              set: { name: tags.name }, // No-op update to return existing tags
-            })
-            .returning({ id: tags.id });
+            // Check if tag exists for this user
+            const existingTag = await tx.query.tags.findFirst({
+              where: and(eq(tags.name, tagName), eq(tags.userId, user.id)),
+            });
 
-          // Link all tags to feed in one operation
-          const tagFeedLinks = upsertedTags.map((tag) => ({
-            tagId: tag.id,
-            feedId: id,
-          }));
+            if (existingTag) {
+              tagId = existingTag.id;
+            } else {
+              // Create new tag
+              const [newTag] = await tx
+                .insert(tags)
+                .values({ name: tagName, userId: user.id })
+                .returning({ id: tags.id });
 
-          await tx.insert(tagsToFeeds).values(tagFeedLinks);
+              if (!newTag) {
+                throw new HTTPException(500, {
+                  message: 'Failed to create tag',
+                });
+              }
+              tagId = newTag.id;
+            }
+
+            // Link tag to subscription
+            await tx.insert(userFeedTags).values({
+              userFeedId: updatedSubscription.id,
+              tagId,
+            });
+          }
         }
       }
 
-      return updatedFeed;
+      // Return the feed with subscription details
+      const feed = await tx.query.feeds.findFirst({
+        where: eq(feeds.id, id),
+      });
+
+      return { ...feed, subscription: updatedSubscription };
     });
 
     return c.json(result, 200);
@@ -332,7 +422,6 @@ app.openapi(updateFeedRoute, async (c) => {
     if (error instanceof HTTPException) {
       throw error;
     }
-    console.error(error);
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,
@@ -365,20 +454,19 @@ const deleteFeedRoute = createRoute({
 app.openapi(deleteFeedRoute, async (c) => {
   const user = c.get('user');
   if (!user) {
-    c.status(401);
-    return c.text('Unauthorized');
+    throw new HTTPException(401, { message: 'Unauthorized' });
   }
 
   const { id } = c.req.valid('param');
 
-  // Delete the feed
   try {
+    // Delete the user's subscription (not the feed itself)
     await db
-      .delete(feeds)
-      .where(and(eq(feeds.id, id), eq(feeds.userId, user.id)));
+      .delete(userToFeeds)
+      .where(and(eq(userToFeeds.feedId, id), eq(userToFeeds.userId, user.id)));
+
     return c.body(null, 204);
   } catch (error) {
-    console.error(error);
     throw new HTTPException(500, {
       message: 'Internal Server Error',
       cause: error,

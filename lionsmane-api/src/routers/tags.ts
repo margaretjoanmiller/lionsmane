@@ -1,7 +1,7 @@
 import { db } from '@/db';
-import { feeds, tags, tagsToFeeds } from '@/db/schema/core';
+import { tags, userFeedTags } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
-import { tagsList, tagDetails } from '@/zod/tags.zod';
+import { tagsList } from '@/zod/tags.zod';
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
 import { count, eq } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
@@ -51,10 +51,10 @@ app.openapi(listTags, async (c) => {
     .select({
       id: tags.id,
       name: tags.name,
-      feedCount: count(tagsToFeeds.feedId),
+      feedCount: count(userFeedTags.userFeedId),
     })
     .from(tags)
-    .leftJoin(tagsToFeeds, eq(tags.id, tagsToFeeds.tagId))
+    .leftJoin(userFeedTags, eq(tags.id, userFeedTags.tagId))
     .where(eq(tags.userId, user.id))
     .groupBy(tags.id, tags.name);
 
