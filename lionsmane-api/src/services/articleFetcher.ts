@@ -14,7 +14,11 @@ import { articleQueue } from '@/tasks/queues';
 
 export async function parseArticlesFromFeed(feedUrl: string, feedId: string) {
   try {
-    const feedXML = await fetch(feedUrl).then((res) => res.text());
+    const feedXML = await fetch(feedUrl, {
+      headers: {
+        'User-Agent': 'LionsMane/0.1',
+      },
+    }).then((res) => res.text());
     const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
@@ -80,7 +84,11 @@ export async function readablity(url: string): Promise<{
   htmlContent: string;
 }> {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'LionsMane/0.1',
+      },
+    });
     if (!response.ok) {
       throw new Error(`Failed to fetch URL: ${response.statusText}`);
     }
@@ -128,7 +136,11 @@ export async function extractKeywords(textContent: string): Promise<string[]> {
 
 export async function extractFeedTitle(feedUrl: string): Promise<string> {
   try {
-    const feedXML = await fetch(feedUrl).then((res) => res.text());
+    const feedXML = await fetch(feedUrl, {
+      headers: {
+        'User-Agent': 'LionsMane/0.1',
+      },
+    }).then((res) => res.text());
     const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
