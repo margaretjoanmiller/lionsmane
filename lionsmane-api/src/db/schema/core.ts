@@ -12,27 +12,21 @@ import { v7 } from 'uuid';
 import { user } from '@/db/schema/auth';
 import { index } from 'drizzle-orm/pg-core';
 
-export const feeds = pgTable(
-  'feeds',
-  {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => v7()),
-    title: varchar({ length: 50 }),
-    url: varchar({ length: 256 }).notNull().unique(),
-    authors: varchar({ length: 256 }).array(),
-    categories: varchar({ length: 256 }).array(),
-    copyright: varchar({ length: 50 }),
-    image: varchar({ length: 256 }),
-    updated: timestamp(),
-  },
-  (table) => ({
-    urlIdx: index('feeds_url_idx').on(table.url), // Index for finding existing feeds
-  }),
-);
+export const feeds = pgTable('feeds', {
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
+  title: varchar({ length: 50 }),
+  url: varchar({ length: 256 }).notNull().unique(),
+  authors: varchar({ length: 256 }).array(),
+  categories: varchar({ length: 256 }).array(),
+  copyright: varchar({ length: 50 }),
+  image: varchar({ length: 256 }),
+  updated: timestamp(),
+});
 
-export const userToFeeds = pgTable(
-  'users_to_feeds',
+export const subscriptions = pgTable(
+  'subscriptions',
   {
     id: uuid()
       .primaryKey()
@@ -77,7 +71,7 @@ export const userFeedTags = pgTable(
   {
     userFeedId: uuid()
       .notNull()
-      .references(() => userToFeeds.id, { onDelete: 'cascade' }),
+      .references(() => subscriptions.id, { onDelete: 'cascade' }),
     tagId: uuid()
       .notNull()
       .references(() => tags.id, { onDelete: 'cascade' }),
@@ -104,29 +98,32 @@ export const tags = pgTable(
   }),
 );
 
-export const userToFeedsRelations = relations(userToFeeds, ({ one, many }) => ({
-  user: one(user, {
-    fields: [userToFeeds.userId],
-    references: [user.id],
+export const subscriptionsRelations = relations(
+  subscriptions,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [subscriptions.userId],
+      references: [user.id],
+    }),
+    feed: one(feeds, {
+      fields: [subscriptions.feedId],
+      references: [feeds.id],
+    }),
+    folder: one(folders, {
+      fields: [subscriptions.folderId],
+      references: [folders.id],
+    }),
+    tags: many(userFeedTags),
   }),
-  feed: one(feeds, {
-    fields: [userToFeeds.feedId],
-    references: [feeds.id],
-  }),
-  folder: one(folders, {
-    fields: [userToFeeds.folderId],
-    references: [folders.id],
-  }),
-  tags: many(userFeedTags),
-}));
+);
 
 export const feedRelations = relations(feeds, ({ many }) => ({
   articles: many(articles),
-  userToFeeds: many(userToFeeds),
+  subscriptions: many(subscriptions),
 }));
 
 export const folderRelations = relations(folders, ({ many, one }) => ({
-  userToFeeds: many(userToFeeds), // Changed from feeds to userToFeeds
+  subscriptions: many(subscriptions), // Changed from feeds to subscriptions
   user: one(user, {
     fields: [folders.userId],
     references: [user.id],
@@ -142,9 +139,9 @@ export const tagRelations = relations(tags, ({ many, one }) => ({
 }));
 
 export const userFeedTagsRelations = relations(userFeedTags, ({ one }) => ({
-  userFeed: one(userToFeeds, {
+  userFeed: one(subscriptions, {
     fields: [userFeedTags.userFeedId],
-    references: [userToFeeds.id],
+    references: [subscriptions.id],
   }),
   tag: one(tags, {
     fields: [userFeedTags.tagId],

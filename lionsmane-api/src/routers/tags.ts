@@ -47,16 +47,19 @@ app.openapi(listTags, async (c) => {
     throw new HTTPException(401, { message: 'Unauthorized' });
   }
 
-  const tagsWithCounts = await db
-    .select({
-      id: tags.id,
-      name: tags.name,
-      feedCount: count(userFeedTags.userFeedId),
-    })
-    .from(tags)
-    .leftJoin(userFeedTags, eq(tags.id, userFeedTags.tagId))
-    .where(eq(tags.userId, user.id))
-    .groupBy(tags.id, tags.name);
+  const tagsWithCounts = await db.query.tags.findMany({
+    with: {
+      userFeedTags: {
+        columns: {
+          tagId: false,
+          userFeedId: false,
+        },
+        with: {
+          userFeed: true,
+        },
+      },
+    },
+  });
 
   return c.json(tagsWithCounts, 200);
 });

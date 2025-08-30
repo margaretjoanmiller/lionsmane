@@ -2,7 +2,7 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { db } from '@/db';
-import { articles, userToFeeds } from '@/db/schema/core';
+import { articles, subscriptions } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { articleOut, articlesListOut } from '@/zod/articles.zod';
 
@@ -81,10 +81,10 @@ app.openapi(articlesRouter, async (c) => {
       updated: articles.updated,
     })
     .from(articles)
-    .leftJoin(userToFeeds, eq(articles.feedId, userToFeeds.feedId))
+    .leftJoin(subscriptions, eq(articles.feedId, subscriptions.feedId))
     .where(
       and(
-        eq(userToFeeds.feedId, articles.feedId),
+        eq(subscriptions.feedId, articles.feedId),
         cursor ? gt(articles.id, cursor) : undefined,
       ),
     ) // if cursor is provided, get rows after it
@@ -157,8 +157,8 @@ app.openapi(articleDetailsRoute, async (c) => {
       updated: articles.updated,
     })
     .from(articles)
-    .leftJoin(userToFeeds, eq(articles.feedId, userToFeeds.feedId))
-    .where(and(eq(articles.id, id), eq(userToFeeds.userId, user.id)));
+    .leftJoin(subscriptions, eq(articles.feedId, subscriptions.feedId))
+    .where(and(eq(articles.id, id), eq(subscriptions.userId, user.id)));
   if (!article) {
     throw new HTTPException(404, { message: 'Article not found' });
   }

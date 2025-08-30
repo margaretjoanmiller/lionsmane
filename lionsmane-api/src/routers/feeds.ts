@@ -7,7 +7,7 @@ import {
   feeds,
   folders,
   tags,
-  userToFeeds,
+  subscriptions,
   userFeedTags,
 } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
@@ -93,10 +93,10 @@ app.openapi(newFeedRoute, async (c) => {
       }
 
       // Check if user is already subscribed
-      const existingSubscription = await tx.query.userToFeeds.findFirst({
+      const existingSubscription = await tx.query.subscriptions.findFirst({
         where: and(
-          eq(userToFeeds.userId, user.id),
-          eq(userToFeeds.feedId, feed.id),
+          eq(subscriptions.userId, user.id),
+          eq(subscriptions.feedId, feed.id),
         ),
       });
 
@@ -121,7 +121,7 @@ app.openapi(newFeedRoute, async (c) => {
 
       // Create user subscription
       const [userFeed] = await tx
-        .insert(userToFeeds)
+        .insert(subscriptions)
         .values({
           userId: user.id,
           feedId: feed.id,
@@ -217,13 +217,13 @@ app.openapi(listFeeds, async (c) => {
         copyright: feeds.copyright,
         image: feeds.image,
         updated: feeds.updated,
-        description: userToFeeds.description,
-        folderId: userToFeeds.folderId,
-        subscriptionId: userToFeeds.id,
+        description: subscriptions.description,
+        folderId: subscriptions.folderId,
+        subscriptionId: subscriptions.id,
       })
-      .from(userToFeeds)
-      .innerJoin(feeds, eq(userToFeeds.feedId, feeds.id))
-      .where(eq(userToFeeds.userId, user.id));
+      .from(subscriptions)
+      .innerJoin(feeds, eq(subscriptions.feedId, feeds.id))
+      .where(eq(subscriptions.userId, user.id));
 
     return c.json(userFeeds, 200);
   } catch (error) {
@@ -281,13 +281,13 @@ app.openapi(getFeedRoute, async (c) => {
         copyright: feeds.copyright,
         image: feeds.image,
         updated: feeds.updated,
-        description: userToFeeds.description,
-        folderId: userToFeeds.folderId,
-        subscriptionId: userToFeeds.id,
+        description: subscriptions.description,
+        folderId: subscriptions.folderId,
+        subscriptionId: subscriptions.id,
       })
-      .from(userToFeeds)
-      .innerJoin(feeds, eq(userToFeeds.feedId, feeds.id))
-      .where(and(eq(feeds.id, id), eq(userToFeeds.userId, user.id)))
+      .from(subscriptions)
+      .innerJoin(feeds, eq(subscriptions.feedId, feeds.id))
+      .where(and(eq(feeds.id, id), eq(subscriptions.userId, user.id)))
       .limit(1);
 
     if (userFeed.length === 0) {
@@ -353,12 +353,14 @@ app.openapi(updateFeedRoute, async (c) => {
     const result = await db.transaction(async (tx) => {
       // Update user subscription (not the feed itself)
       const [updatedSubscription] = await tx
-        .update(userToFeeds)
+        .update(subscriptions)
         .set({
           description: validatedBody.description,
           folderId: validatedBody.folderId,
         })
-        .where(and(eq(userToFeeds.feedId, id), eq(userToFeeds.userId, user.id)))
+        .where(
+          and(eq(subscriptions.feedId, id), eq(subscriptions.userId, user.id)),
+        )
         .returning();
 
       if (!updatedSubscription) {
@@ -462,8 +464,10 @@ app.openapi(deleteFeedRoute, async (c) => {
   try {
     // Delete the user's subscription (not the feed itself)
     await db
-      .delete(userToFeeds)
-      .where(and(eq(userToFeeds.feedId, id), eq(userToFeeds.userId, user.id)));
+      .delete(subscriptions)
+      .where(
+        and(eq(subscriptions.feedId, id), eq(subscriptions.userId, user.id)),
+      );
 
     return c.body(null, 204);
   } catch (error) {
