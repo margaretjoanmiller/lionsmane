@@ -1,7 +1,7 @@
 import { Worker } from 'bullmq';
 import { connection } from './config/redis';
 import { db } from './db';
-import { articles } from './db/schema/core';
+import { articles, feeds } from './db/schema/core';
 import {
   extractKeywords,
   parseArticlesFromFeed,
@@ -42,12 +42,19 @@ const articleWorker = new Worker(
 export const feedWorker = new Worker(
   'feedQueue',
   async (job) => {
-    console.log(`Processing job ${job.id} of type ${job.name}`);
-    await parseArticlesFromFeed(
-      job.data.feedUrl,
-      job.data.feedId,
-      job.data.userId,
-    );
+    await parseArticlesFromFeed(job.data.feedUrl, job.data.feedId);
+  },
+  { connection },
+);
+
+export const updateWorker = new Worker(
+  'updateQueue',
+  async (job) => {
+    console.log('Running scheduled feed update job');
+    const allFeeds = await db.select().from(feeds);
+    for (const feed of allFeeds) {
+      await parseArticlesFromFeed(feed.url, feed.id);
+    }
   },
   { connection },
 );

@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { tags, userFeedTags } from '@/db/schema/core';
+import { tags, subscriptionTags, subscriptions, feeds } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { tagsList } from '@/zod/tags.zod';
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
@@ -47,19 +47,22 @@ app.openapi(listTags, async (c) => {
     throw new HTTPException(401, { message: 'Unauthorized' });
   }
 
-  const tagsWithCounts = await db.query.tags.findMany({
-    with: {
-      userFeedTags: {
-        columns: {
-          tagId: false,
-          userFeedId: false,
-        },
-        with: {
-          userFeed: true,
-        },
-      },
-    },
-  });
+  const tagsWithCounts = await db
+    .select({
+      id: tags.id,
+      name: tags.name,
+      userId: tags.userId,
+      feedCount: count(subscriptions.feedId),
+    })
+    .from(feeds)
+    .innerJoin(subscriptions, eq(feeds.id, subscriptions.feedId))
+    .innerJoin(
+      subscriptionTags,
+      eq(subscriptions.id, subscriptionTags.subscriptionId),
+    )
+    .innerJoin(tags, eq(subscriptionTags.tagId, tags.id))
+    .where(eq(tags.userId, user.id))
+    .groupBy(tags.id);
 
   return c.json(tagsWithCounts, 200);
 });

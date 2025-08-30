@@ -84,9 +84,9 @@ app.openapi(createFolder, async (c) => {
           ),
         );
 
-      const userFeedIds = userFeeds.map((f) => f.id);
+      const subscriptionIds = userFeeds.map((f) => f.id);
       const unauthorizedFeeds = newFolderData.feedIds.filter(
-        (id) => !userFeedIds.includes(id),
+        (id) => !subscriptionIds.includes(id),
       );
 
       if (unauthorizedFeeds.length > 0) {

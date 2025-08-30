@@ -42,7 +42,6 @@ export const subscriptions = pgTable(
   },
   (table) => ({
     userFeedUnique: unique().on(table.userId, table.feedId), // Prevent duplicate subscriptions
-    userIdx: index('user_feeds_user_idx').on(table.userId),
     feedIdx: index('user_feeds_feed_idx').on(table.feedId),
     folderIdx: index('user_feeds_folder_idx').on(table.folderId),
   }),
@@ -66,10 +65,10 @@ export const folders = pgTable(
 );
 
 // Junction table for user-specific tags on their feed subscriptions
-export const userFeedTags = pgTable(
-  'user_feed_tags',
+export const subscriptionTags = pgTable(
+  'subscription_tags',
   {
-    userFeedId: uuid()
+    subscriptionId: uuid()
       .notNull()
       .references(() => subscriptions.id, { onDelete: 'cascade' }),
     tagId: uuid()
@@ -77,7 +76,11 @@ export const userFeedTags = pgTable(
       .references(() => tags.id, { onDelete: 'cascade' }),
   },
   (table) => ({
-    userFeedTagUnique: unique().on(table.userFeedId, table.tagId),
+    userFeedTagUnique: unique().on(table.subscriptionId, table.tagId),
+    tagSubscriptionIdx: index('subscription_tags_idx').on(
+      table.tagId,
+      table.subscriptionId,
+    ),
   }),
 );
 
@@ -113,7 +116,7 @@ export const subscriptionsRelations = relations(
       fields: [subscriptions.folderId],
       references: [folders.id],
     }),
-    tags: many(userFeedTags),
+    tags: many(subscriptionTags),
   }),
 );
 
@@ -131,23 +134,26 @@ export const folderRelations = relations(folders, ({ many, one }) => ({
 }));
 
 export const tagRelations = relations(tags, ({ many, one }) => ({
-  userFeedTags: many(userFeedTags),
+  subscriptionTags: many(subscriptionTags),
   user: one(user, {
     fields: [tags.userId],
     references: [user.id],
   }),
 }));
 
-export const userFeedTagsRelations = relations(userFeedTags, ({ one }) => ({
-  userFeed: one(subscriptions, {
-    fields: [userFeedTags.userFeedId],
-    references: [subscriptions.id],
+export const subscriptionTagsRelations = relations(
+  subscriptionTags,
+  ({ one }) => ({
+    userFeed: one(subscriptions, {
+      fields: [subscriptionTags.subscriptionId],
+      references: [subscriptions.id],
+    }),
+    tag: one(tags, {
+      fields: [subscriptionTags.tagId],
+      references: [tags.id],
+    }),
   }),
-  tag: one(tags, {
-    fields: [userFeedTags.tagId],
-    references: [tags.id],
-  }),
-}));
+);
 
 export const articles = pgTable(
   'articles',
@@ -176,6 +182,7 @@ export const articles = pgTable(
   },
   (table) => ({
     feedIdx: index('articles_feed_idx').on(table.feedId),
+    publishedIdx: index('articles_published_idx').on(table.published),
   }),
 );
 

@@ -8,10 +8,12 @@ import {
   folders,
   tags,
   subscriptions,
-  userFeedTags,
+  subscriptionTags,
 } from '@/db/schema/core';
 import type { auth } from '@/lib/auth';
 import { feedOut, newFeed } from '@/zod/feeds.zod';
+import { feedQueue } from '@/tasks/queues';
+import { extractFeedTitle } from '@/services/articleFetcher';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -77,10 +79,11 @@ app.openapi(newFeedRoute, async (c) => {
 
       // Create feed if it doesn't exist
       if (!feed) {
+        const feedName = await extractFeedTitle(validatedBody.url);
         const [newFeed] = await tx
           .insert(feeds)
           .values({
-            title: validatedBody.title,
+            title: feedName,
             url: validatedBody.url,
             updated: subMonths(new Date(), 3),
           })
@@ -162,12 +165,14 @@ app.openapi(newFeedRoute, async (c) => {
           }
 
           // Link tag to user subscription
-          await tx.insert(userFeedTags).values({
-            userFeedId: userFeed.id,
+          await tx.insert(subscriptionTags).values({
+            subscriptionId: userFeed.id,
             tagId,
           });
         }
       }
+
+      await feedQueue.add('fetchFeed', { feedUrl: feed.url, feedId: feed.id });
 
       return { ...feed, subscription: userFeed };
     });
@@ -373,8 +378,8 @@ app.openapi(updateFeedRoute, async (c) => {
       if (validatedBody.tags !== undefined) {
         // Clear existing tags for this subscription
         await tx
-          .delete(userFeedTags)
-          .where(eq(userFeedTags.userFeedId, updatedSubscription.id));
+          .delete(subscriptionTags)
+          .where(eq(subscriptionTags.subscriptionId, updatedSubscription.id));
 
         if (validatedBody.tags.length > 0) {
           for (const tagName of validatedBody.tags) {
@@ -403,8 +408,8 @@ app.openapi(updateFeedRoute, async (c) => {
             }
 
             // Link tag to subscription
-            await tx.insert(userFeedTags).values({
-              userFeedId: updatedSubscription.id,
+            await tx.insert(subscriptionTags).values({
+              subscriptionId: updatedSubscription.id,
               tagId,
             });
           }

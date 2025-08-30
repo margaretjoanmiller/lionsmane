@@ -14,7 +14,7 @@ import feedRoutes from '@/routers/feeds';
 import foldersRoutes from '@/routers/folders';
 import tagsRoutes from '@/routers/tags';
 import { requireAuth } from './middleware/auth';
-import { articleQueue, feedQueue } from './tasks/queues';
+import { articleQueue, feedQueue, updateQueue } from './tasks/queues';
 
 const app = new OpenAPIHono<{
   Variables: {
@@ -103,11 +103,25 @@ app.get('/scalar', Scalar({ url: '/docs' }));
 // bull board
 const serverAdapter = new HonoAdapter(serveStatic);
 createBullBoard({
-  queues: [new BullMQAdapter(feedQueue), new BullMQAdapter(articleQueue)],
+  queues: [
+    //@ts-expect-error: BullMQAdapter types are wrong
+    new BullMQAdapter(feedQueue),
+    //@ts-expect-error: BullMQAdapter types are wrong
+    new BullMQAdapter(articleQueue),
+    //@ts-expect-error: BullMQAdapter types are wrong
+    new BullMQAdapter(updateQueue),
+  ],
   serverAdapter,
 });
 serverAdapter.setBasePath('/jobs');
 app.route('/jobs', serverAdapter.registerPlugin());
+
+await updateQueue.upsertJobScheduler(
+  'update-all-feeds',
+  {
+    pattern: '*/30 * * * *', // every 30 minutes
+  },
+);
 
 export default {
   port: 8181,

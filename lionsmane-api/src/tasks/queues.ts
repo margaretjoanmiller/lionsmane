@@ -4,7 +4,6 @@ import { connection } from '@/config/redis';
 export interface FeedJob {
   feedUrl: string;
   feedId: string;
-  userId: string;
 }
 export const feedQueue = new Queue<FeedJob>('feedQueue', {
   connection,
@@ -22,8 +21,11 @@ export interface ArticleJob {
   published: Date;
   updated: Date | null;
   feedId: string;
-  userId: string;
 }
 export const articleQueue = new Queue<ArticleJob>('articleQueue', {
   connection,
+});
+
+export const updateQueue = new Queue('updateQueue', {
+  connection
 });

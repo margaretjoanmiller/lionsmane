@@ -12,11 +12,7 @@ import { db } from '@/db';
 import { feeds } from '@/db/schema/core';
 import { articleQueue } from '@/tasks/queues';
 
-export async function parseArticlesFromFeed(
-  feedUrl: string,
-  feedId: string,
-  userId: string,
-) {
+export async function parseArticlesFromFeed(feedUrl: string, feedId: string) {
   try {
     const feedXML = await fetch(feedUrl).then((res) => res.text());
     const feed = parseFeed(feedXML);
@@ -58,7 +54,6 @@ export async function parseArticlesFromFeed(
             published: new Date(item.published),
             updated: updated,
             feedId: feedId,
-            userId: userId,
           },
         };
       });
@@ -129,4 +124,19 @@ export async function extractKeywords(textContent: string): Promise<string[]> {
       })
       .filter((i) => i !== null) || []
   );
+}
+
+export async function extractFeedTitle(feedUrl: string): Promise<string> {
+  try {
+    const feedXML = await fetch(feedUrl).then((res) => res.text());
+    const feed = parseFeed(feedXML);
+    if (!feed || !feed.items) {
+      throw new Error('No items found in the feed');
+    }
+
+    return feed.title || feedUrl;
+  } catch (error) {
+    console.error('Error parsing feed for title:', error);
+    throw new Error('Failed to parse feed for title', { cause: error });
+  }
 }
