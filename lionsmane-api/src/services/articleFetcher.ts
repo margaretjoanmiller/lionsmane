@@ -16,7 +16,7 @@ export async function parseArticlesFromFeed(feedUrl: string, feedId: string) {
   try {
     const feedXML = await fetch(feedUrl, {
       headers: {
-        'User-Agent': 'LionsMane/0.1',
+        'User-Agent': 'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
       },
     }).then((res) => res.text());
     const feed = parseFeed(feedXML);
@@ -86,7 +86,7 @@ export async function readablity(url: string): Promise<{
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'LionsMane/0.1',
+        'User-Agent': 'Mozilla/5.0 (compatible; Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane); +https://codeberg.org/0x4d6165/lionsmane)',
       },
     });
     if (!response.ok) {
@@ -138,7 +138,7 @@ export async function extractFeedTitle(feedUrl: string): Promise<string> {
   try {
     const feedXML = await fetch(feedUrl, {
       headers: {
-        'User-Agent': 'LionsMane/0.1',
+        'User-Agent': 'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
       },
     }).then((res) => res.text());
     const feed = parseFeed(feedXML);
