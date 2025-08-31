@@ -21,12 +21,17 @@ services:
     image: valkey/valkey:latest
     ports:
       - "6379:6379"
+    environment:
+      VALKEY_EXTRA_FLAGS: "--appendonly yes"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "valkey-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
+    volumes:
+      - valkey:/data
 
 volumes:
   db:
+  valkey:

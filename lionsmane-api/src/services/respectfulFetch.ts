@@ -29,7 +29,7 @@ export async function respectfulFetch(url: string): Promise<string | null> {
       if (lastScrape) {
         const nextAllowedTime = addSeconds(lastScrape, crawlDelay);
         const now = new Date();
-        if (isAfter(now, nextAllowedTime) === false) {
+        if (isAfter(nextAllowedTime, now)) {
           console.log(
             `Respecting crawl delay, waiting until ${nextAllowedTime.toISOString()} to fetch ${url}`,
           );
@@ -38,6 +38,12 @@ export async function respectfulFetch(url: string): Promise<string | null> {
       }
       await storeLastScrapeTime(url, new Date(), robots.getCrawlDelay() || 5);
 
+      if (!lastScrape && crawlDelay > 0) {
+        console.log(
+          `Initial crawl delay, waiting ${crawlDelay} seconds before fetching ${url}`,
+        );
+        await sleep(addSeconds(new Date(), crawlDelay));
+      }
       const response = await fetch(url, {
         headers: {
           'User-Agent':

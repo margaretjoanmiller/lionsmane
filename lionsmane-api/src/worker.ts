@@ -34,9 +34,8 @@ const articleWorker = new Worker(
       throw error;
     }
   },
-  {
-    connection,
-  },
+  // @ts-expect-error: BullMQ types don't support Valkey yet
+  { connection },
 );
 
 export const feedWorker = new Worker(
@@ -44,6 +43,7 @@ export const feedWorker = new Worker(
   async (job) => {
     await parseArticlesFromFeed(job.data.feedUrl, job.data.feedId);
   },
+  // @ts-expect-error: BullMQ types don't support Valkey yet
   { connection },
 );
 
@@ -56,6 +56,7 @@ export const updateWorker = new Worker(
       await parseArticlesFromFeed(feed.url, feed.id);
     }
   },
+  // @ts-expect-error: BullMQ types don't support Valkey yet
   { connection },
 );
 
