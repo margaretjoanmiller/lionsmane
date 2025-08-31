@@ -11,14 +11,14 @@ import retextPos from 'retext-pos';
 import { db } from '@/db';
 import { feeds } from '@/db/schema/core';
 import { articleQueue } from '@/tasks/queues';
+import { respectfulFetch } from './respectfulFetch';
 
 export async function parseArticlesFromFeed(feedUrl: string, feedId: string) {
   try {
-    const feedXML = await fetch(feedUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-      },
-    }).then((res) => res.text());
+    const feedXML = await respectfulFetch(feedUrl);
+    if (feedXML === null) {
+      throw new Error('Failed to fetch feed');
+    }
     const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
@@ -84,16 +84,10 @@ export async function readablity(url: string): Promise<{
   htmlContent: string;
 }> {
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane); +https://codeberg.org/0x4d6165/lionsmane)',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch URL: ${response.statusText}`);
+    const text = await respectfulFetch(url);
+    if (text === null) {
+      throw new Error('Failed to fetch URL content');
     }
-    const text = await response.text();
-
     const window = new JSDOM('').window;
     const purify = createDOMPurify(window as WindowLike);
     const clean = purify.sanitize(text);
@@ -136,11 +130,10 @@ export async function extractKeywords(textContent: string): Promise<string[]> {
 
 export async function extractFeedTitle(feedUrl: string): Promise<string> {
   try {
-    const feedXML = await fetch(feedUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-      },
-    }).then((res) => res.text());
+    const feedXML = await respectfulFetch(feedUrl);
+    if (feedXML === null) {
+      throw new Error('Failed to fetch feed');
+    }
     const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
       throw new Error('No items found in the feed');
