@@ -6,6 +6,7 @@ export interface FeedJob {
   feedId: string;
 }
 export const feedQueue = new Queue<FeedJob>('feedQueue', {
+  //@ts-expect-error: BullMQ types don't support Valkey yet
   connection,
 });
 
@@ -23,9 +24,11 @@ export interface ArticleJob {
   feedId: string;
 }
 export const articleQueue = new Queue<ArticleJob>('articleQueue', {
+  //@ts-expect-error: BullMQ types don't support Valkey yet
   connection,
 });
 
 export const updateQueue = new Queue('updateQueue', {
-  connection
+  //@ts-expect-error: BullMQ types don't support Valkey yet
+  connection,
 });

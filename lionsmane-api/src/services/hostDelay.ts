@@ -22,6 +22,6 @@ export async function getLastScrapeTime(url: string): Promise<{
   const data = await connection.hgetall(`last-crawl:${host}`);
   return {
     lastScrape: data.lastScrape ? new Date(data.lastScrape) : null,
-    crawlDelay: data.crawlDelay ? parseInt(data.crawlDelay, 10) : 0,
+    crawlDelay: data.crawlDelay ? parseInt(data.crawlDelay, 10) : 5,
   };
 }
