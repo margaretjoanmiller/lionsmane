@@ -1,14 +1,12 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { passkey } from 'better-auth/plugins/passkey';
 import { oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { db } from './db';
 
 const authOptions = {
-  database: prismaAdapter(prisma, {
-    provider: 'postgresql',
+  database: drizzleAdapter(db, {
+    provider: 'pg',
   }),
   emailAndPassword: {
     enabled: true,

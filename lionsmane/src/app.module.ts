@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
   ZodValidationPipe,
   ZodSerializerInterceptor,
@@ -18,6 +19,9 @@ import {
   Logger,
   Catch,
 } from '@nestjs/common';
+import * as authSchema from './db/schema/auth';
+import * as coreSchema from './db/schema/core';
+import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
@@ -41,7 +45,19 @@ class HttpExceptionFilter extends BaseExceptionFilter {
 }
 
 @Module({
-  imports: [AuthModule.forRoot(auth)],
+  imports: [
+    AuthModule.forRoot(auth),
+    DrizzlePGModule.register({
+      tag: 'DB',
+      pg: {
+        connection: 'pool',
+        config: {
+          connectionString: process.env.DATABASE_URL!,
+        },
+      },
+      config: { schema: { ...authSchema, ...coreSchema }, logger: true },
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
