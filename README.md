@@ -15,6 +15,11 @@ Project goals:
 
 - [x] !!Only fetch articles from after last sync datetime
 
+
+## Contact
+Is lionsmane sending requests to your website too often or in a way you don't want? Please let us know!
+mmiller [at] wanderingwires [dot] com
+
 ## License
 
 Copyright (c) 2024-2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
