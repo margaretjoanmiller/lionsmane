@@ -19,6 +19,7 @@ import {
   Logger,
   Catch,
 } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
 import * as authSchema from './db/schema/auth';
 import * as coreSchema from './db/schema/core';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
@@ -26,6 +27,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth';
+import { FetcherModule } from './fetcher/fetcher.module';
+import { FeedModule } from './feed/feed.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -46,6 +49,14 @@ class HttpExceptionFilter extends BaseExceptionFilter {
 
 @Module({
   imports: [
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+    BullModule.registerQueue({ name: 'feed' }),
+    BullModule.registerQueue({ name: 'article' }),
     AuthModule.forRoot(auth),
     DrizzlePGModule.register({
       tag: 'DB',
@@ -57,6 +68,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       },
       config: { schema: { ...authSchema, ...coreSchema }, logger: true },
     }),
+    FetcherModule,
+    FeedModule,
   ],
   controllers: [AppController],
   providers: [
