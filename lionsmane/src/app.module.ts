@@ -66,7 +66,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
           connectionString: process.env.DATABASE_URL!,
         },
       },
-      config: { schema: { ...authSchema, ...coreSchema }, logger: true },
+      config: { schema: { ...authSchema, ...coreSchema } },
     }),
     FetcherModule,
     FeedModule,

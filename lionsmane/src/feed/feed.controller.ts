@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { FeedService } from './feed.service';
-import { CreateFeedDto } from './dto/create-feed.dto';
-import { UpdateFeedDto } from './dto/update-feed.dto';
+import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 
+@ApiTags('feed')
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
 
   @Post()
-  create(@Body() createFeedDto: CreateFeedDto) {
-    return this.feedService.create(createFeedDto);
+  create(
+    @Body() newSubscription: SubscribeFeedDto,
+    @Session() session: UserSession,
+  ) {
+    return this.feedService.create(newSubscription, session.user.id);
   }
 
   @Get()
-  findAll() {
-    return this.feedService.findAll();
+  findAll(@Session() session: UserSession) {
+    return this.feedService.findAll(session.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.feedService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFeedDto: UpdateFeedDto) {
-    return this.feedService.update(+id, updateFeedDto);
+  findOne(@Param('id') id: string, @Session() session: UserSession) {
+    return this.feedService.findOne(id, session.user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.feedService.remove(+id);
+  remove(@Param('id') id: string, @Session() session: UserSession) {
+    return this.feedService.remove(id, session.user.id);
   }
 }

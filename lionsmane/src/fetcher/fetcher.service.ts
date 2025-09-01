@@ -15,13 +15,12 @@ import { InjectQueue } from '@nestjs/bullmq';
 import robotsParser from 'robots-parser';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
-import { feeds } from 'src/db/schema/core';
 
 @Injectable()
 export class FetcherService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
-    @InjectQueue('artices') private articleQueue: Queue,
+    @InjectQueue('article') private articleQueue: Queue,
   ) {}
 
   async respectfulFetch(url: string): Promise<string | null> {
@@ -162,8 +161,8 @@ export class FetcherService {
       }
       const feedfromDb = await this.db
         .select()
-        .from(feeds)
-        .where(eq(feeds.id, feedId));
+        .from(schema.feeds)
+        .where(eq(schema.feeds.id, feedId));
 
       if (!feedfromDb || !feedfromDb[0]?.updated) {
         throw new Error('Malformed feed in database');
@@ -204,11 +203,11 @@ export class FetcherService {
         return [];
       }
       await this.db
-        .update(feeds)
+        .update(schema.feeds)
         .set({
           updated: new Date(),
         })
-        .where(eq(feeds.id, feedId));
+        .where(eq(schema.feeds.id, feedId));
       return jobs;
     } catch (error) {
       console.error('Error parsing feed:', error);
