@@ -33,6 +33,7 @@ import { auth } from './auth';
 import { FetcherModule } from './fetcher/fetcher.module';
 import { FeedModule } from './feed/feed.module';
 import { ArticleModule } from './article/article.module';
+import { FolderModule } from './folder/folder.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -86,6 +87,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     FetcherModule,
     FeedModule,
     ArticleModule,
+    FolderModule,
   ],
   controllers: [AppController],
   providers: [
