@@ -32,6 +32,7 @@ import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth';
 import { FetcherModule } from './fetcher/fetcher.module';
 import { FeedModule } from './feed/feed.module';
+import { ArticleModule } from './article/article.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -58,8 +59,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         port: 6379,
       },
     }),
-    BullModule.registerQueue({ name: 'feed' }),
-    BullModule.registerQueue({ name: 'article' }),
+    BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
     BullBoardModule.forRoot({
       route: '/queues',
       adapter: ExpressAdapter,
@@ -85,6 +85,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     }),
     FetcherModule,
     FeedModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
   pgTable,
@@ -11,6 +11,7 @@ import {
 import { v7 } from 'uuid';
 import { user } from './auth';
 import { index } from 'drizzle-orm/pg-core';
+import { primaryKey } from 'drizzle-orm/pg-core';
 
 export const feeds = pgTable('feeds', {
   id: uuid()
@@ -64,61 +65,20 @@ export const folders = pgTable(
   }),
 );
 
-// Junction table for user-specific tags on their feed subscriptions
-export const subscriptionTags = pgTable(
-  'subscription_tags',
-  {
-    subscriptionId: uuid()
-      .notNull()
-      .references(() => subscriptions.id, { onDelete: 'cascade' }),
-    tagId: uuid()
-      .notNull()
-      .references(() => tags.id, { onDelete: 'cascade' }),
-  },
-  (table) => ({
-    userFeedTagUnique: unique().on(table.subscriptionId, table.tagId),
-    tagSubscriptionIdx: index('subscription_tags_idx').on(
-      table.tagId,
-      table.subscriptionId,
-    ),
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(user, {
+    fields: [subscriptions.userId],
+    references: [user.id],
   }),
-);
-
-export const tags = pgTable(
-  'tags',
-  {
-    id: uuid()
-      .primaryKey()
-      .$defaultFn(() => v7()),
-    name: varchar({ length: 50 }).notNull(),
-    userId: text()
-      .references(() => user.id)
-      .notNull(),
-  },
-  (table) => ({
-    userTagUnique: unique().on(table.name, table.userId),
-    userIdx: index('tags_user_idx').on(table.userId),
+  feed: one(feeds, {
+    fields: [subscriptions.feedId],
+    references: [feeds.id],
   }),
-);
-
-export const subscriptionsRelations = relations(
-  subscriptions,
-  ({ one, many }) => ({
-    user: one(user, {
-      fields: [subscriptions.userId],
-      references: [user.id],
-    }),
-    feed: one(feeds, {
-      fields: [subscriptions.feedId],
-      references: [feeds.id],
-    }),
-    folder: one(folders, {
-      fields: [subscriptions.folderId],
-      references: [folders.id],
-    }),
-    tags: many(subscriptionTags),
+  folder: one(folders, {
+    fields: [subscriptions.folderId],
+    references: [folders.id],
   }),
-);
+}));
 
 export const feedRelations = relations(feeds, ({ many }) => ({
   articles: many(articles),
@@ -133,36 +93,12 @@ export const folderRelations = relations(folders, ({ many, one }) => ({
   }),
 }));
 
-export const tagRelations = relations(tags, ({ many, one }) => ({
-  subscriptionTags: many(subscriptionTags),
-  user: one(user, {
-    fields: [tags.userId],
-    references: [user.id],
-  }),
-}));
-
-export const subscriptionTagsRelations = relations(
-  subscriptionTags,
-  ({ one }) => ({
-    userFeed: one(subscriptions, {
-      fields: [subscriptionTags.subscriptionId],
-      references: [subscriptions.id],
-    }),
-    tag: one(tags, {
-      fields: [subscriptionTags.tagId],
-      references: [tags.id],
-    }),
-  }),
-);
-
 export const articles = pgTable(
   'articles',
   {
     id: uuid()
       .primaryKey()
       .$defaultFn(() => v7()),
-    isRead: boolean().default(false),
-    isStarred: boolean().default(false),
     title: text().notNull(),
     url: text().notNull(),
     authors: varchar({ length: 256 }).array().notNull().default([]),
@@ -174,8 +110,8 @@ export const articles = pgTable(
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 256 }),
     media: varchar({ length: 256 }).array().notNull().default([]),
-    published: timestamp({ mode: 'string' }).notNull(),
-    updated: timestamp({ mode: 'string' }),
+    published: timestamp({ mode: 'string', withTimezone: true }).notNull(),
+    updated: timestamp({ mode: 'string', withTimezone: true }),
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),
@@ -183,6 +119,14 @@ export const articles = pgTable(
   (table) => ({
     feedIdx: index('articles_feed_idx').on(table.feedId),
     publishedIdx: index('articles_published_idx').on(table.published),
+    titleIdx: index('articles_title_idx').using(
+      'gin',
+      sql`to_tsvector('english', ${table.title})`,
+    ),
+    fullTextIndex: index('articles_full_text_idx').using(
+      'gin',
+      sql`to_tsvector('english', ${table.readableText})`,
+    ),
   }),
 );
 
@@ -192,3 +136,22 @@ export const articleRelations = relations(articles, ({ one }) => ({
     references: [feeds.id],
   }),
 }));
+
+export const userArticleStates = pgTable(
+  'user_article_states',
+  {
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    articleId: uuid()
+      .notNull()
+      .references(() => articles.id, { onDelete: 'cascade' }),
+    isRead: boolean().notNull().default(false),
+    isStarred: boolean().notNull().default(false),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.articleId] }),
+    userIdx: index('user_article_states_user_idx').on(table.userId),
+    articleIdx: index('user_article_states_article_idx').on(table.articleId),
+  }),
+);

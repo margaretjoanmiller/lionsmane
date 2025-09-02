@@ -188,9 +188,8 @@ export class FetcherService {
           if (!item.title || !item.url || !item.published) {
             throw new Error('Item is missing required fields');
           }
-          const updated = item.updated ? new Date(item.updated) : null;
           return {
-            name: 'processArticle',
+            name: 'fetch-article',
             data: {
               title: item.title,
               url: item.url,
@@ -200,8 +199,8 @@ export class FetcherService {
               rawContent: item.content || '',
               image: item.image ? item.image.url : '',
               media: item.media.map((media) => media.url) || [],
-              published: new Date(item.published),
-              updated: updated,
+              published: item.published,
+              updated: item.updated,
               feedId: feedId,
             },
             opts: {

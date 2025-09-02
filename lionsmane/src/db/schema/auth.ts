@@ -6,7 +6,7 @@ import {
   integer,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { folders, tags, subscriptions } from './core';
+import { folders, subscriptions } from './core';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -28,7 +28,6 @@ export const user = pgTable('user', {
 export const userRelations = relations(user, ({ many }) => ({
   feeds: many(subscriptions),
   folders: many(folders),
-  tags: many(tags),
 }));
 
 export const session = pgTable('session', {
