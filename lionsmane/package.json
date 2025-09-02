@@ -20,6 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@bull-board/api": "^6.12.7",
+    "@bull-board/express": "^6.12.7",
+    "@bull-board/nestjs": "^6.12.7",
     "@knaadh/nestjs-drizzle-pg": "^1.2.0",
     "@mozilla/readability": "^0.6.0",
     "@nestjs/bullmq": "^11.0.3",
@@ -37,6 +40,7 @@
     "dompurify": "^3.2.6",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.5",
+    "ioredis": "^5.7.0",
     "jsdom": "^26.1.0",
     "nestjs-zod": "^5.0.1",
     "nlcst-to-string": "^4.0.0",

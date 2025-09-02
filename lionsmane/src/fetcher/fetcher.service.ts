@@ -12,9 +12,34 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 // import { addSeconds, isAfter } from 'date-fns';
+import { Redis, Result } from 'ioredis';
+import { readFileSync } from 'node:fs';
 import robotsParser from 'robots-parser';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
+import { Callback } from 'ioredis';
+
+const redis = new Redis();
+const luaScript = readFileSync('src/fetcher/reserve-time-block.lua', {
+  encoding: 'utf-8',
+});
+
+redis.defineCommand('getNextTimeSlot', {
+  numberOfKeys: 1,
+  lua: luaScript,
+});
+
+// Add declarations
+declare module 'ioredis' {
+  interface RedisCommander<Context> {
+    getNextTimeSlot(
+      key: string,
+      crawlDelay: number,
+      numberOfJobs: number,
+      callback?: Callback<string>,
+    ): Result<string, Context>;
+  }
+}
 
 @Injectable()
 export class FetcherService {
@@ -23,19 +48,22 @@ export class FetcherService {
     @InjectQueue('article') private articleQueue: Queue,
   ) {}
 
+  async robots(url: string) {
+    const urlObj = new URL(url);
+    const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
+    const robotsResponse = await fetch(robotsUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+      },
+    });
+    const robotsTxt = await robotsResponse.text();
+    return robotsParser(robotsUrl, robotsTxt);
+  }
+
   async respectfulFetch(url: string): Promise<string | null> {
     try {
-      const urlObj = new URL(url);
-      const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-      const robotsResponse = await fetch(robotsUrl, {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        },
-      });
-      const robotsTxt = await robotsResponse.text();
-      const robots = robotsParser(robotsUrl, robotsTxt);
-
+      const robots = await this.robots(url);
       if (
         !robots.isAllowed(
           url,
@@ -45,25 +73,6 @@ export class FetcherService {
         console.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
       } else {
-        // const { lastScrape, crawlDelay } = await getLastScrapeTime(url);
-        // if (lastScrape) {
-        //   const nextAllowedTime = addSeconds(lastScrape, crawlDelay);
-        //   const now = new Date();
-        //   if (isAfter(nextAllowedTime, now)) {
-        //     console.log(
-        //       `Respecting crawl delay, waiting until ${nextAllowedTime.toISOString()} to fetch ${url}`,
-        //     );
-        //     await sleep(nextAllowedTime);
-        //   }
-        // }
-        // await storeLastScrapeTime(url, new Date(), robots.getCrawlDelay() || 5);
-        //
-        // if (!lastScrape && crawlDelay > 0) {
-        //   console.log(
-        //     `Initial crawl delay, waiting ${crawlDelay} seconds before fetching ${url}`,
-        //   );
-        //   await sleep(addSeconds(new Date(), crawlDelay));
-        // }
         const response = await fetch(url, {
           headers: {
             'User-Agent':
@@ -195,13 +204,35 @@ export class FetcherService {
               updated: updated,
               feedId: feedId,
             },
+            opts: {
+              delay: 0, // Will be set later based on rate limiting
+            },
           };
         });
-      const jobs = await this.articleQueue.addBulk(feedProcess);
-      if (jobs.length === 0) {
-        console.log('No new articles to add');
+      if (feedProcess.length === 0) {
+        console.log('No new articles to process');
         return [];
       }
+
+      // Rate limiting logic
+      const host = new URL(feedUrl).host;
+      const lockKey = `feed-time-slot:${host}`;
+      const robots = await this.robots(feedUrl);
+      const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
+
+      const startingPoint = await redis.getNextTimeSlot(
+        lockKey,
+        crawlDelay,
+        feedProcess.length,
+      );
+      for (let job = 0; job < feedProcess.length; job++) {
+        const job_delay =
+          parseInt(startingPoint) + job * crawlDelay - Date.now();
+
+        feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
+      }
+
+      const jobs = await this.articleQueue.addBulk(feedProcess);
       await this.db
         .update(schema.feeds)
         .set({

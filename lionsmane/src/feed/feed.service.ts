@@ -4,10 +4,15 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { subMonths } from 'date-fns';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class FeedService {
-  constructor(@Inject('DB') private db: NodePgDatabase<typeof schema>) {}
+  constructor(
+    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @InjectQueue('feed') private feedQueue: Queue,
+  ) {}
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const result = await this.db.transaction(async (tx) => {
@@ -81,9 +86,8 @@ export class FeedService {
           .returning();
         return { ...feed, subscription: newSubscriptionRecord };
       }
-
-      //TODO Fetch feed items job
     });
+    await this.feedQueue.add('fetch', { feedId: result.id });
     return result;
   }
 

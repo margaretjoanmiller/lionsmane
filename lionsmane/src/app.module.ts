@@ -20,9 +20,12 @@ import {
   Catch,
 } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import * as authSchema from './db/schema/auth';
 import * as coreSchema from './db/schema/core';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
@@ -57,6 +60,18 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     }),
     BullModule.registerQueue({ name: 'feed' }),
     BullModule.registerQueue({ name: 'article' }),
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: 'feed',
+      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
+    }),
+    BullBoardModule.forFeature({
+      name: 'article',
+      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
+    }),
     AuthModule.forRoot(auth),
     DrizzlePGModule.register({
       tag: 'DB',
