@@ -27,7 +27,6 @@ import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth';
 import { FetcherModule } from './fetcher/fetcher.module';
@@ -91,7 +90,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
   ],
   controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

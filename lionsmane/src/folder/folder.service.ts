@@ -12,33 +12,41 @@ export class FolderService {
   async create(createFolderDto: CreateFolderDto, userId: string) {
     const result = await this.db.transaction(async (tx) => {
       // Create the folder without feeds
-      const [folder] = await tx
-        .insert(schema.folders)
-        .values({
-          userId,
-          name: createFolderDto.name,
-        })
-        .returning();
+      try {
+        const [folder] = await tx
+          .insert(schema.folders)
+          .values({
+            userId,
+            name: createFolderDto.name,
+          })
+          .returning();
 
-      if (!folder) {
-        throw new Error('Could not create folder');
-      }
+        if (!folder) {
+          throw new Error('Could not create folder');
+        }
 
-      if (createFolderDto.feedIds && createFolderDto.feedIds.length > 0) {
-        // Add folderId to all subscriptions that are in the new list
-        await tx
-          .update(schema.subscriptions)
-          .set({ folderId: folder.id })
-          .where(
-            and(
-              eq(schema.subscriptions.userId, userId),
-              inArray(schema.subscriptions.feedId, createFolderDto.feedIds),
-            ),
-          );
+        if (createFolderDto.feedIds && createFolderDto.feedIds.length > 0) {
+          // Add folderId to all subscriptions that are in the new list
+          await tx
+            .update(schema.subscriptions)
+            .set({ folderId: folder.id })
+            .where(
+              and(
+                eq(schema.subscriptions.userId, userId),
+                inArray(schema.subscriptions.feedId, createFolderDto.feedIds),
+              ),
+            );
 
-        return { ...folder, feedIds: createFolderDto.feedIds };
+          return { ...folder, feedIds: createFolderDto.feedIds };
+        }
+        return { ...folder, feedIds: [] };
+      } catch (error) {
+        throw new Error('Could not create folder', { cause: error });
       }
     });
+    if (!result) {
+      throw new Error('Could not create folder');
+    }
     return result;
   }
 
@@ -77,7 +85,7 @@ export class FolderService {
     };
   }
 
-  async update(id: string, updateFolderDto: UpdateFolderDto) {
+  async update(id: string, updateFolderDto: UpdateFolderDto, userId: string) {
     return await this.db.transaction(async (tx) => {
       const [folder] = await tx
         .update(schema.folders)
@@ -102,18 +110,21 @@ export class FolderService {
             .set({ folderId: folder.id })
             .where(
               and(
-                eq(schema.subscriptions.userId, folder.userId),
+                eq(schema.subscriptions.userId, userId),
                 inArray(schema.subscriptions.feedId, updateFolderDto.feedIds),
               ),
             );
         }
       }
-      return { ...folder, feedIds: updateFolderDto.feedIds };
+      if (!folder) {
+        throw new Error('Could not update folder');
+      }
+      return { ...folder, feedIds: updateFolderDto.feedIds || [] };
     });
   }
 
   async remove(id: string, userId: string) {
-    return this.db.transaction(async (tx) => {
+    await this.db.transaction(async (tx) => {
       // Remove folderId from all subscriptions that are currently in the folder
       await tx
         .update(schema.subscriptions)
@@ -125,13 +136,12 @@ export class FolderService {
           ),
         );
       // Delete the folder
-      const [deleted] = await tx
+      await tx
         .delete(schema.folders)
         .where(
           and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),
         )
         .returning();
-      return deleted;
     });
   }
 }
