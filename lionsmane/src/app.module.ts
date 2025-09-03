@@ -21,6 +21,8 @@ import {
 } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { CacheModule } from '@nestjs/cache-manager';
+import { createKeyv } from '@keyv/redis';
 import * as authSchema from './db/schema/auth';
 import * as coreSchema from './db/schema/core';
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
@@ -82,6 +84,14 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         },
       },
       config: { schema: { ...authSchema, ...coreSchema } },
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async () => {
+        return {
+          stores: [createKeyv('redis://localhost:6379')],
+        };
+      },
     }),
     FetcherModule,
     FeedModule,

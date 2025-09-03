@@ -45,6 +45,10 @@ export const subscriptions = pgTable(
     userFeedUnique: unique().on(table.userId, table.feedId), // Prevent duplicate subscriptions
     feedIdx: index('user_feeds_feed_idx').on(table.feedId),
     folderIdx: index('user_feeds_folder_idx').on(table.folderId),
+    userFeedIdx: index('user_feeds_user_feed_idx').on(
+      table.userId,
+      table.feedId,
+    ),
   }),
 );
 
@@ -152,5 +156,13 @@ export const userArticleStates = pgTable(
     pk: primaryKey({ columns: [table.userId, table.articleId] }),
     userIdx: index('user_article_states_user_idx').on(table.userId),
     articleIdx: index('user_article_states_article_idx').on(table.articleId),
+    userReadIdx: index('user_article_states_user_read_idx').on(
+      table.userId,
+      table.isRead,
+    ),
+    userStarredIdx: index('user_article_states_user_starred_idx').on(
+      table.userId,
+      table.isStarred,
+    ),
   }),
 );

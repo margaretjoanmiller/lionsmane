@@ -3,7 +3,9 @@ import {
   DefaultValuePipe,
   Get,
   Param,
+  Patch,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -18,7 +20,10 @@ import { ArticleService } from './article.service';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ArticleStatusDto } from './dto/article-status.dto';
 
+@UseInterceptors(CacheInterceptor)
 @ApiTags('articles')
 @ApiCookieAuth()
 @ApiBearerAuth()
@@ -48,7 +53,25 @@ export class ArticleController {
     return this.articleService.getArticles(session.user.id, cursor, pageSize);
   }
 
-  //TODO: mark read or starred
+  @Patch('status/:id')
+  @ApiQuery({
+    name: 'status',
+    required: true,
+    description:
+      "The status to update. Must be one of 'read', 'unread', 'starred', or 'unstarred'.",
+  })
+  @ZodResponse({ type: ArticleStatusDto, status: 200 })
+  async updateArticleStatus(
+    @Param('id') id: string,
+    @Query('status') status: 'read' | 'unread' | 'starred' | 'unstarred',
+    @Session() session: UserSession,
+  ) {
+    return await this.articleService.updateArticleStatus(
+      id,
+      status,
+      session.user.id,
+    );
+  }
 
   @Get('search')
   @ZodResponse({ type: ArticleSearchDto })
@@ -78,6 +101,83 @@ export class ArticleController {
       query,
       offset,
       pageSize,
+    );
+  }
+
+  // TODO: Get articles for feeds
+
+  @Get('unread')
+  @ZodResponse({ type: ArticleListDto })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getUnreadArticles(
+    @Session() session: UserSession,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getUnreadArticles(
+      session.user.id,
+      pageSize,
+      cursor,
+    );
+  }
+
+  @Get('read')
+  @ZodResponse({ type: ArticleListDto })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getReadArticles(
+    @Session() session: UserSession,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getReadArticles(
+      session.user.id,
+      pageSize,
+      cursor,
+    );
+  }
+
+  @Get('starred')
+  @ZodResponse({ type: ArticleListDto })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getStarredArticles(
+    @Session() session: UserSession,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getStarredArticles(
+      session.user.id,
+      pageSize,
+      cursor,
     );
   }
 
