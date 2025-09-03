@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
-const articleSearch = z
-  .array(
+const articleSearch = z.object({
+  articles: z.array(
     z.object({
       id: z.uuid(),
       title: z.string(),
@@ -38,7 +38,7 @@ const articleSearch = z
         .nullable(), // Then, validate that the result is a valid ISO datetime string.
       feedId: z.uuid(),
     }),
-  )
-  .default([]);
+  ),
+});
 
 export class ArticleSearchDto extends createZodDto(articleSearch) {}

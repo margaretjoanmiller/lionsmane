@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { and, asc, eq, gt, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, sql } from 'drizzle-orm';
 
 @Injectable()
 export class ArticleService {
@@ -84,6 +84,10 @@ export class ArticleService {
     offset: number,
     pageSize = 10,
   ) {
+    const matchQuery = sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
+              setweight(to_tsvector('english', ${schema.articles.readableText}), 'B')),
+              to_tsquery('english', ${query})`;
+
     const searchedArticles = await this.db
       .select({
         id: schema.articles.id,
@@ -99,6 +103,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
       .leftJoin(
@@ -113,12 +118,12 @@ export class ArticleService {
               @@ to_tsquery('english', ${query})`,
         ),
       )
-      .orderBy(asc(schema.articles.id))
+      .orderBy((t) => desc(t.rank))
       .limit(pageSize)
       .offset(offset);
     if (!searchedArticles) {
-      return [];
+      return { articles: [] };
     }
-    return searchedArticles;
+    return { articles: searchedArticles };
   }
 }
