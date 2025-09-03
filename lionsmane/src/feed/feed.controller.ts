@@ -4,7 +4,7 @@ import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 
-@ApiTags('feed')
+@ApiTags('feeds')
 @Controller('feed')
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}

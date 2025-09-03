@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { and, asc, eq, gt } from 'drizzle-orm';
+import { and, asc, eq, gt, sql } from 'drizzle-orm';
 
 @Injectable()
 export class ArticleService {
@@ -41,7 +41,7 @@ export class ArticleService {
       )
       .where(
         and(
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
           cursor ? gt(schema.articles.id, cursor) : undefined,
         ),
       ) // if cursor is provided, get rows after it
@@ -76,5 +76,49 @@ export class ArticleService {
       throw new Error('Article not found or access denied');
     }
     return { ...article.articles };
+  }
+
+  async articleSearch(
+    userId: string,
+    query: string,
+    offset: number,
+    pageSize = 10,
+  ) {
+    const searchedArticles = await this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+      })
+      .from(schema.articles)
+      .leftJoin(
+        schema.subscriptions,
+        eq(schema.articles.feedId, schema.subscriptions.feedId),
+      )
+      .where(
+        and(
+          eq(schema.subscriptions.userId, userId),
+          sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
+              setweight(to_tsvector('english', ${schema.articles.readableText}), 'B'))
+              @@ to_tsquery('english', ${query})`,
+        ),
+      )
+      .orderBy(asc(schema.articles.id))
+      .limit(pageSize)
+      .offset(offset);
+    if (!searchedArticles) {
+      return [];
+    }
+    return searchedArticles;
   }
 }

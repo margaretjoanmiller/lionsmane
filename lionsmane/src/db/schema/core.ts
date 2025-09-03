@@ -119,13 +119,12 @@ export const articles = pgTable(
   (table) => ({
     feedIdx: index('articles_feed_idx').on(table.feedId),
     publishedIdx: index('articles_published_idx').on(table.published),
-    titleIdx: index('articles_title_idx').using(
+    searchIdx: index('articles_search_idx').using(
       'gin',
-      sql`to_tsvector('english', ${table.title})`,
-    ),
-    fullTextIndex: index('articles_full_text_idx').using(
-      'gin',
-      sql`to_tsvector('english', ${table.readableText})`,
+      sql`(
+      setweight(to_tsvector('english', ${table.title}), 'A') ||
+      setweight(to_tsvector('english', ${table.readableText}), 'B')
+      )`,
     ),
   }),
 );
