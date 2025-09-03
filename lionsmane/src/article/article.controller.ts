@@ -104,7 +104,32 @@ export class ArticleController {
     );
   }
 
-  // TODO: Get articles for feeds
+  @Get('feed/:id')
+  @ZodResponse({ type: ArticleListDto })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getPagedArticlesForFeed(
+    @Session() session: UserSession,
+    @Param('id') id: string,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getArticlesForFeed(
+      session.user.id,
+      id,
+      cursor,
+      pageSize,
+    );
+  }
 
   @Get('unread')
   @ZodResponse({ type: ArticleListDto })

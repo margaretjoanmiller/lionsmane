@@ -57,6 +57,52 @@ export class ArticleService {
     };
   }
 
+  async getArticlesForFeed(
+    userId: string,
+    feedId: string,
+    cursor: string | undefined,
+    pageSize = 10,
+  ) {
+    const artPages = await this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+      })
+      .from(schema.articles)
+      .leftJoin(
+        schema.subscriptions,
+        eq(schema.articles.feedId, schema.subscriptions.feedId),
+      )
+      .where(
+        and(
+          eq(schema.subscriptions.userId, userId),
+          eq(schema.articles.feedId, feedId),
+          cursor ? gt(schema.articles.id, cursor) : undefined,
+        ),
+      ) // if cursor is provided, get rows after it
+      .limit(pageSize + 1) // the number of rows to return
+      .orderBy(asc(schema.articles.id)); // ordering
+
+    const hasNextPage = artPages.length > pageSize;
+    const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
+
+    return {
+      articles: items,
+      cursor: hasNextPage ? items[items.length - 1]?.id : null,
+    };
+  }
+
   async getArticle(id: string, userId: string) {
     const [article] = await this.db
       .select()
