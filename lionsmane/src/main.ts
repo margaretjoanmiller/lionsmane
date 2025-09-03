@@ -15,6 +15,9 @@ async function bootstrap() {
       .setTitle('Lionsmane API')
       .setDescription('the api for lionsmane')
       .setVersion('1.0')
+      .addCookieAuth()
+      .addBearerAuth()
+      .addOAuth2()
       .build(),
   );
 

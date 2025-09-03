@@ -5,7 +5,13 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiBearerAuth,
+  ApiOAuth2,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
 import { ArticleDetailDto } from './dto/article-detail.dto';
 import { ArticleService } from './article.service';
@@ -14,6 +20,9 @@ import { ArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
 
 @ApiTags('articles')
+@ApiCookieAuth()
+@ApiBearerAuth()
+@ApiOAuth2(['openid', 'profile', 'email'])
 @Controller('article')
 export class ArticleController {
   constructor(private articleService: ArticleService) {}

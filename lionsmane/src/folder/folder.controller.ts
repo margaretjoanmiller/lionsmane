@@ -11,11 +11,20 @@ import { FolderService } from './folder.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiOAuth2,
+} from '@nestjs/swagger';
 import { FolderOutDto } from './dto/folder-out.dto';
 import { ZodResponse } from 'nestjs-zod';
 
 @ApiTags('folders')
+@ApiCookieAuth()
+@ApiBearerAuth()
+@ApiOAuth2(['openid', 'profile', 'email'])
 @Controller('folder')
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
