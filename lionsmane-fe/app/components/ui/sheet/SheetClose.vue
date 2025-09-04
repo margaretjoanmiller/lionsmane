@@ -1,9 +1,6 @@
-<!--
-  - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later.
-  -->
-
 <script setup lang="ts">
-import { DialogClose, type DialogCloseProps } from 'reka-ui'
+import type { DialogCloseProps } from "reka-ui"
+import { DialogClose } from "reka-ui"
 
 const props = defineProps<DialogCloseProps>()
 </script>

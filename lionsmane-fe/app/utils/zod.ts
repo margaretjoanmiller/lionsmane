@@ -5,10 +5,9 @@ import z from 'zod';
  */
 export const postFeedsBody = z.object({
   title: z.string(),
-  description: z.string().nullish(),
+  description: z.string().default(''),
   url: z.string(),
-  folderId: z.union([z.uuid(), z.null()]).optional(),
-  tags: z.array(z.string()),
+  folderId: z.uuid().nullable(),
 });
 
 /**
@@ -29,9 +28,7 @@ export const postFeedsUpdateIdBody = z.object({
   description: z.string().nullish(),
   url: z.string().nullish(),
   folderId: z.union([z.uuid(), z.null()]).optional(),
-  tags: z.array(z.string()),
 });
-
 
 export const getFeedsBody = z.object({
   id: z.uuid(),
@@ -39,5 +36,4 @@ export const getFeedsBody = z.object({
   description: z.string().optional(),
   url: z.string(),
   folderId: z.union([z.uuid(), z.null()]).optional(),
-  tags: z.array(z.string()),
-})
+});

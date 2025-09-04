@@ -16,7 +16,9 @@ const {
 } = useQuery({
   queryKey: ['articles-all'],
   queryFn: async () => {
-    const resp = await $lion('/articles');
+    const resp = await apiClient.GET('/article', {
+      credentials: 'include',
+    });
     if (!resp) {
       throw new Error('Failed to fetch feeds');
     }

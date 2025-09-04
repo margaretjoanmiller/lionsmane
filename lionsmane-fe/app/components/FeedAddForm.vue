@@ -18,7 +18,6 @@ const feedState = ref({
     label: '',
     value: '',
   },
-  tags: [],
 });
 
 const {
@@ -29,7 +28,9 @@ const {
 } = useQuery({
   queryKey: ['folders'],
   queryFn: async () => {
-    const resp = await $lion('/folders');
+    const resp = await apiClient.GET('/folder', {
+      credentials: 'include',
+    });
     if (!resp) {
       throw new Error('Failed to fetch folders');
     }
@@ -39,7 +40,7 @@ const {
 
 const { isPending, isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (newFeed: z.infer<typeof postFeedsBody>) =>
-    $lion('/feeds', {
+    apiClient.POST('/feed', {
       method: 'POST',
       body: {
         ...newFeed,
@@ -60,13 +61,17 @@ function onSubmit() {
     description: feedState.value.description,
     url: feedState.value.url,
     folderId: feedState.value.folder.value,
-    tags: feedState.value.tags,
   });
 }
 </script>
 
 <template>
-  <UForm :schema="postFeedsBody" :state="feedState" class="space-y-4" @submit="onSubmit">
+  <UForm
+    :schema="postFeedsBody"
+    :state="feedState"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
     <UFormField label="title" name="title">
       <UInput v-model="feedState.title" />
     </UFormField>
@@ -78,15 +83,17 @@ function onSubmit() {
     </UFormField>
 
     <UFormField label="folderId" name="folderId">
-      <USelectMenu v-model="feedState.folder" label="Folders" :items="folders?.map((folder) => ({
-        label: folder.name || '',
-        value: folder.id,
-      }))
-        " class="w-48" />
-    </UFormField>
-
-    <UFormField label="tags" name="tags">
-      <UInputTags v-model="feedState.tags" />
+      <USelectMenu
+        v-model="feedState.folder"
+        label="Folders"
+        :items="
+          folders?.data?.map((folder) => ({
+            label: folder.name || '',
+            value: folder.id,
+          }))
+        "
+        class="w-48"
+      />
     </UFormField>
 
     <UButton type="submit"> Submit</UButton>

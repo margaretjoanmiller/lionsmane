@@ -2,6 +2,8 @@
   - Copyright (c) 2025 Margaret Miller.  Licensed under the EUPL-1.2-or-later
   -->
 <script setup lang="ts">
+import { apiClient } from '@/utils/apiClient';
+
 definePageMeta({
   layout: 'dash',
 });
@@ -12,9 +14,17 @@ const queryClient = useQueryClient();
 
 let id: string;
 if (Array.isArray(route.params.id)) {
-  id = route.params.id[0];
+  if (route.params.id[0]) {
+    id = route.params.id[0];
+  } else {
+    throw new Error('No article ID provided');
+  }
 } else {
-  id = route.params.id;
+  if (route.params.id) {
+    id = route.params.id;
+  } else {
+    throw new Error('No article ID provided');
+  }
 }
 
 const {
@@ -25,33 +35,39 @@ const {
 } = useQuery({
   queryKey: ['articles', { articleId: id }],
   queryFn: async () => {
-    const resp = await $lion('/articles/{id}', {
-      path: {
-        id,
+    const { data, error } = await apiClient.GET('/article/{id}', {
+      params: {
+        path: {
+          id,
+        },
       },
+      credentials: 'include',
     });
-    if (!resp) {
-      throw new Error('Failed to fetch feeds');
+    if (error) {
+      throw new Error(`Failed to fetch feeds: ${error}`);
     }
-    return resp;
+    return data;
   },
 });
 
 // we clean the HTML server-side
 const content = computed(
-  () => article.value?.content ?? article.value?.textPreview,
+  () => article.value?.readableText ?? '<p>No content</p>',
 );
 
 const { isError, error, isSuccess, mutate } = useMutation({
   mutationFn: (artId: string) =>
-    $lion('/articles/{id}', {
+    apiClient.PATCH('/article/status/{id}', {
       method: 'PATCH',
-      path: {
-        id: artId,
+      params: {
+        path: {
+          id: artId,
+        },
+        query: {
+          status: 'read',
+        },
       },
-      body: {
-        read: true,
-      },
+      credentials: 'include',
     }),
   onSuccess: async () => {
     await queryClient.invalidateQueries({ queryKey: ['articles'] });
@@ -75,14 +91,17 @@ const {
   mutate: starMutate,
 } = useMutation({
   mutationFn: (art: ArticleStarring) =>
-    $lion('/articles/{id}', {
+    apiClient.PATCH('/article/status/{id}', {
       method: 'PATCH',
-      path: {
-        id: art.id,
+      params: {
+        path: {
+          id: art.id,
+        },
+        query: {
+          status: 'starred',
+        },
       },
-      body: {
-        starred: art.starred,
-      },
+      credentials: 'include',
     }),
   onSuccess: async () => {
     await queryClient.invalidateQueries({
@@ -132,7 +151,7 @@ watch(article, async (newArt) => {
           {{ article?.title }}
 
           <UButton
-            v-if="article.starred === true"
+            v-if="article.isStarred === true"
             icon="i-fluent-star-12-filled"
             variant="ghost"
             @click="onUnStar"

@@ -27,10 +27,11 @@ const {
 } = useQuery({
   queryKey: ['articles', { feedId: id }],
   queryFn: async () => {
-    const resp = await $lion('/articles/feed/{feedId}', {
-      path: {
-        feedId: id,
+    const resp = await apiClient.GET('/article/feed/{id}', {
+      params: {
+        path: { id },
       },
+      credentials: 'include',
     });
     if (!resp) {
       throw new Error('Failed to fetch feeds');
@@ -42,17 +43,17 @@ const {
 const filteredArticles = computed(() => {
   if (!articles.value) return [];
 
-  let filtered = articles.value;
+  let filtered = articles.value.data?.articles || [];
 
   switch (readStatusStore.readStatus) {
     case readStatus.UNREAD:
-      filtered = articles.value.filter((a) => !a.read);
+      filtered = articles.value.data?.articles.filter((a) => !a.isRead) || [];
       break;
     case readStatus.READ:
-      filtered = articles.value.filter((a) => a.read);
+      filtered = articles.value.data?.articles.filter((a) => a.isRead) || [];
       break;
     case readStatus.STARRED:
-      filtered = articles.value.filter((a) => a.starred); // TODO: Add starred state
+      filtered = articles.value.data?.articles.filter((a) => a.isStarred) || [];
       break;
     default:
       break;
@@ -61,10 +62,10 @@ const filteredArticles = computed(() => {
   return filtered.map((a) => ({
     id: a.id || '',
     title: a.title || '',
-    preview: `${a.textPreview?.substring(0, 70)}...`,
-    date: a.publishedAt || '',
-    isRead: a.read || false,
-    starred: a.starred || false,
+    preview: `${a.readableText?.substring(0, 70)}...`,
+    date: a.published || '',
+    isRead: a.isRead || false,
+    starred: a.isStarred || false,
   }));
 });
 </script>
