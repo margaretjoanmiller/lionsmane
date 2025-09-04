@@ -3,7 +3,6 @@ import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
 import { BullModule } from '@nestjs/bullmq';
 import { ArticleConsumer } from './article.consumer';
-import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
 
 @Module({
@@ -13,7 +12,7 @@ import { FetcherModule } from 'src/fetcher/fetcher.module';
     }),
     FetcherModule,
   ],
-  providers: [ArticleService, ArticleConsumer, FetcherService],
+  providers: [ArticleService, ArticleConsumer],
   controllers: [ArticleController],
 })
 export class ArticleModule {}

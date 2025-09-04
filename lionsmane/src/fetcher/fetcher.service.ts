@@ -12,40 +12,17 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 // import { addSeconds, isAfter } from 'date-fns';
-import { Redis, Result } from 'ioredis';
-import { readFileSync } from 'node:fs';
 import robotsParser from 'robots-parser';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
-import { Callback } from 'ioredis';
-
-const redis = new Redis();
-const luaScript = readFileSync('src/fetcher/reserve-time-block.lua', {
-  encoding: 'utf-8',
-});
-
-redis.defineCommand('getNextTimeSlot', {
-  numberOfKeys: 1,
-  lua: luaScript,
-});
-
-// Add declarations
-declare module 'ioredis' {
-  interface RedisCommander<Context> {
-    getNextTimeSlot(
-      key: string,
-      crawlDelay: number,
-      numberOfJobs: number,
-      callback?: Callback<string>,
-    ): Result<string, Context>;
-  }
-}
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class FetcherService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     @InjectQueue('article') private articleQueue: Queue,
+    private redisService: RedisService,
   ) {}
 
   async robots(url: string) {
@@ -159,6 +136,8 @@ export class FetcherService {
   }
 
   async parseArticlesFromFeed(feedUrl: string, feedId: string) {
+    const redis = this.redisService.getClient();
+
     try {
       const feedXML = await this.respectfulFetch(feedUrl);
       if (feedXML === null) {
