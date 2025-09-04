@@ -19,6 +19,7 @@ import {
   Logger,
   Catch,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -35,6 +36,7 @@ import { FetcherModule } from './fetcher/fetcher.module';
 import { FeedModule } from './feed/feed.module';
 import { ArticleModule } from './article/article.module';
 import { FolderModule } from './folder/folder.module';
+import { RedisModule } from './redis/redis.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -93,10 +95,15 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         };
       },
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    RedisModule,
     FetcherModule,
     FeedModule,
     ArticleModule,
     FolderModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [

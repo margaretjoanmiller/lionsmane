@@ -4,7 +4,6 @@ import { FeedController } from './feed.controller';
 import { BullModule } from '@nestjs/bullmq';
 import { FeedConsumer } from './feed.consumer';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
-import { FetcherService } from 'src/fetcher/fetcher.service';
 
 @Module({
   imports: [
@@ -12,6 +11,6 @@ import { FetcherService } from 'src/fetcher/fetcher.service';
     FetcherModule,
   ],
   controllers: [FeedController],
-  providers: [FeedService, FeedConsumer, FetcherService],
+  providers: [FeedService, FeedConsumer],
 })
 export class FeedModule {}
