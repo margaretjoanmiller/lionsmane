@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useAppForm } from '../hooks/form'
 
 export const Route = createFileRoute('/demo/form/simple')({
@@ -10,6 +11,11 @@ import { useAppForm } from '../hooks/demo.form'
 
 export const Route = createFileRoute('/demo/form')({
 >>>>>>> 1268f26 (Create tanstack router app)
+=======
+import { useAppForm } from '../hooks/form'
+
+export const Route = createFileRoute('/demo/form/simple')({
+>>>>>>> ca52f31 (Setting up better auth login form)
   component: SimpleForm,
 })
 
