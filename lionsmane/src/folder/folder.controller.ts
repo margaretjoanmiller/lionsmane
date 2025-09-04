@@ -39,13 +39,13 @@ export class FolderController {
   }
 
   @Get()
-  @ZodResponse({ type: [FolderOutDto] })
+  @ZodResponse({ type: [FolderOutDto], status: 200 })
   findAll(@Session() session: UserSession) {
     return this.folderService.findAll(session.user.id);
   }
 
   @Get(':id')
-  @ZodResponse({ type: FolderOutDto })
+  @ZodResponse({ type: FolderOutDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {
     return this.folderService.findOne(id, session.user.id);
   }

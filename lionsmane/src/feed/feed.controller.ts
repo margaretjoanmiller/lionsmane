@@ -21,6 +21,7 @@ export class FeedController {
   constructor(private readonly feedService: FeedService) {}
 
   @Post()
+  @ApiResponse({ status: 201, description: 'Feed subscribed' })
   create(
     @Body() newSubscription: SubscribeFeedDto,
     @Session() session: UserSession,
@@ -29,13 +30,13 @@ export class FeedController {
   }
 
   @Get()
-  @ZodResponse({ type: FeedListOutDto })
+  @ZodResponse({ type: FeedListOutDto, status: 200 })
   findAll(@Session() session: UserSession) {
     return this.feedService.findAll(session.user.id);
   }
 
   @Get(':id')
-  @ZodResponse({ type: FeedOutDto })
+  @ZodResponse({ type: FeedOutDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {
     return this.feedService.findOne(id, session.user.id);
   }

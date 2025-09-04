@@ -33,7 +33,7 @@ export class ArticleController {
   constructor(private articleService: ArticleService) {}
 
   @Get()
-  @ZodResponse({ type: ArticleListDto })
+  @ZodResponse({ type: ArticleListDto, status: 200 })
   @ApiQuery({
     name: 'cursor',
     required: false,
@@ -74,7 +74,7 @@ export class ArticleController {
   }
 
   @Get('search')
-  @ZodResponse({ type: ArticleSearchDto })
+  @ZodResponse({ type: ArticleSearchDto, status: 200 })
   @ApiQuery({
     name: 'query',
     required: true,
@@ -105,7 +105,7 @@ export class ArticleController {
   }
 
   @Get('feed/:id')
-  @ZodResponse({ type: ArticleListDto })
+  @ZodResponse({ type: ArticleListDto, status: 200 })
   @ApiQuery({
     name: 'cursor',
     required: false,
@@ -207,7 +207,7 @@ export class ArticleController {
   }
 
   @Get(':id')
-  @ZodResponse({ type: ArticleDetailDto })
+  @ZodResponse({ type: ArticleDetailDto, status: 200 })
   async getArticle(@Param('id') id: string, @Session() session: UserSession) {
     return this.articleService.getArticle(id, session.user.id);
   }

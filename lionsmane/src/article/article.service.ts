@@ -78,6 +78,8 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        isRead: schema.userArticleStates.isRead ?? false,
+        isStarred: schema.userArticleStates.isStarred ?? false,
       })
       .from(schema.articles)
       .leftJoin(
@@ -105,11 +107,35 @@ export class ArticleService {
 
   async getArticle(id: string, userId: string) {
     const [article] = await this.db
-      .select()
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        readableHtml: schema.articles.readableHtml,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+        isStarred: schema.userArticleStates.isStarred ?? false,
+        isRead: schema.userArticleStates.isRead ?? false,
+      })
       .from(schema.articles)
       .leftJoin(
         schema.subscriptions,
         eq(schema.articles.feedId, schema.subscriptions.feedId),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.articles.id, schema.userArticleStates.articleId),
+          eq(schema.userArticleStates.userId, userId),
+        ),
       )
       .where(
         and(
@@ -121,7 +147,7 @@ export class ArticleService {
     if (!article) {
       throw new Error('Article not found or access denied');
     }
-    return { ...article.articles };
+    return { ...article };
   }
 
   async articleSearch(

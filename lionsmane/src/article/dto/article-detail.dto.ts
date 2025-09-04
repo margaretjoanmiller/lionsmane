@@ -8,7 +8,6 @@ const articleDetail = z.object({
   authors: z.array(z.string()),
   categories: z.array(z.string()),
   description: z.string().nullable(),
-  rawContent: z.string().nullable(),
   readableHtml: z.string().nullable(),
   readableText: z.string().nullable(),
   keywords: z.array(z.string()),
@@ -37,6 +36,8 @@ const articleDetail = z.object({
     }, z.iso.datetime())
     .nullable(), // Then, validate that the result is a valid ISO datetime string.
   feedId: z.uuid(),
+  isRead: z.boolean().nullable().default(false),
+  isStarred: z.boolean().nullable().default(false),
 });
 
 export class ArticleDetailDto extends createZodDto(articleDetail) {}
