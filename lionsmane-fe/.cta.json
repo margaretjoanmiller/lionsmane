@@ -9,7 +9,6 @@
   "framework": "react-cra",
   "chosenAddOns": [
     "eslint",
-    "form",
     "shadcn",
     "table",
     "tanstack-query"

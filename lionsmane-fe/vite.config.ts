@@ -16,6 +16,9 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
   },
+  optimizeDeps: {
+    exclude: ['better-auth'],
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
