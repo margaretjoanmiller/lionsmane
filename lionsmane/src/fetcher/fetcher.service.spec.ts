@@ -88,4 +88,27 @@ describe('FetcherService', () => {
     expect(robots).toBeDefined();
     expect(robots.getCrawlDelay()).toBe(10);
   });
+
+  it('Should handle the respectful fetch', async () => {
+    const url = 'https://example.com/any/old/path';
+    const fetchedText = await service.respectfulFetch(url);
+    expect(fetchedText).toEqual('mocked fetch');
+  });
+
+  it('Should extract feed title', async () => {
+    const url = 'https://example.com/feed';
+    const title = await service.extractFeedTitle(url);
+    expect(title).toEqual('Hiking Treks');
+  });
+
+  it('Should generate readable text', async () => {
+    const url = 'https://example.com/hiking-guide';
+    const { textContent, htmlContent } = await service.readablity(url);
+    expect(htmlContent.replace(/\s+/g, ' ')).toMatch(
+      `<div id="readability-page-1" class="page"><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p> </div>`,
+    );
+    expect(textContent).toMatch(
+      'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+    );
+  });
 });
