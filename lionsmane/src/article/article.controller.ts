@@ -20,10 +20,8 @@ import { ArticleService } from './article.service';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ArticleStatusDto } from './dto/article-status.dto';
 
-@UseInterceptors(CacheInterceptor)
 @ApiTags('articles')
 @ApiCookieAuth()
 @ApiBearerAuth()
