@@ -116,22 +116,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/article/unread": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getUnreadArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/article/read": {
         parameters: {
             query?: never;
@@ -555,30 +539,6 @@ export interface operations {
             };
         };
     };
-    ArticleController_getUnreadArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-        };
-    };
     ArticleController_getReadArticles: {
         parameters: {
             query?: {
@@ -593,7 +553,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            default: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -617,7 +577,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            default: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

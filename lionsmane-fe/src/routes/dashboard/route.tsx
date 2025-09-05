@@ -15,6 +15,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/mode-toggle';
+import { ArticleFilterSelect } from '@/components/article-filter';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
@@ -55,6 +56,9 @@ function DashLayout() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+            <div className="right-15 absolute">
+              <ArticleFilterSelect />
+            </div>
             <div className="right-5 absolute">
               <ModeToggle />
             </div>

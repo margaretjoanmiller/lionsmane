@@ -351,13 +351,6 @@ export class ArticleService {
   ) {
     return await this.getArticleByState(userId, 'starred', pageSize, cursor);
   }
-  async getUnreadArticles(
-    userId: string,
-    pageSize = 10,
-    cursor: string | undefined,
-  ) {
-    return await this.getArticleByState(userId, 'unread', pageSize, cursor);
-  }
   async getReadArticles(
     userId: string,
     pageSize = 10,
