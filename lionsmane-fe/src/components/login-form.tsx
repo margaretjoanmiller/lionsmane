@@ -1,9 +1,9 @@
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { authClient } from '@/lib/auth-client'
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { authClient } from '@/lib/auth-client';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -12,13 +12,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
 const formSchema = z.object({
   email: z.email(),
-  password: z.string().min(50),
-})
+  password: z.string().min(15),
+});
 
 export function LoginForm() {
   // 1. Define your form.
@@ -28,13 +28,13 @@ export function LoginForm() {
       email: '',
       password: '',
     },
-  })
+  });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await authClient.signIn.email({
       ...values,
-    })
+    });
   }
 
   return (
@@ -73,5 +73,5 @@ export function LoginForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  )
+  );
 }
