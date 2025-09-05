@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { schema } from 'src/db/schema';
 import { vi } from 'vitest';
 import { FetcherService } from './fetcher.service';
 import { RedisService } from 'src/redis/redis.service';
@@ -22,7 +24,7 @@ describe('FetcherService', () => {
         {
           provide: 'DB',
           useValue: {
-            db: vi.fn(),
+            db: drizzle.mock({ schema }),
           },
         },
         {
