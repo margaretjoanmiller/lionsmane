@@ -11,6 +11,9 @@ import './styles.css';
 import reportWebVitals from './reportWebVitals.ts';
 import { ThemeProvider } from './components/theme-provider.tsx';
 
+import { createAuthClient } from 'better-auth/react';
+import { authClient } from './lib/auth-client.ts';
+
 // Create a new router instance
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
@@ -18,6 +21,7 @@ const router = createRouter({
   routeTree,
   context: {
     ...TanStackQueryProviderContext,
+    auth: undefined!, // Placeholder, will be set after auth client is initialized
   },
   defaultPreload: 'intent',
   scrollRestoration: true,
@@ -32,6 +36,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+function App() {
+  const {
+    data: session,
+    isPending, //loading state
+    error, //error object
+    refetch, //refetch the session
+  } = authClient.useSession();
+  return <RouterProvider router={router} context={{ auth: session }} />;
+}
+
 // Render the app
 const rootElement = document.getElementById('app');
 if (rootElement && !rootElement.innerHTML) {
@@ -40,7 +54,7 @@ if (rootElement && !rootElement.innerHTML) {
     <StrictMode>
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <RouterProvider router={router} />
+          <App />
         </ThemeProvider>
       </TanStackQueryProvider.Provider>
     </StrictMode>,

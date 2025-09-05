@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { AppSidebar } from '@/components/app-sidebar';
 import {
   Breadcrumb,
@@ -18,6 +18,16 @@ import { ModeToggle } from '@/components/mode-toggle';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth?.user) {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
 });
 
 function DashLayout() {

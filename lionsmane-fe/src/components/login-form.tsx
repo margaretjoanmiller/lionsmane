@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useNavigate } from '@tanstack/react-router';
 
 const formSchema = z.object({
   email: z.email(),
@@ -21,6 +22,8 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const navigate = useNavigate({ from: '/login' });
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,6 +38,8 @@ export function LoginForm() {
     await authClient.signIn.email({
       ...values,
     });
+
+    await navigate({ to: '/dashboard' });
   }
 
   return (
