@@ -57,6 +57,7 @@
     "@iconify-json/noto-v1": "^1.2.5",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
+    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/eslint-config": "^0.3.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
