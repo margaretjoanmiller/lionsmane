@@ -4,6 +4,7 @@ export enum ArticleFilter {
   Unread,
   Starred,
   Read,
+  All,
 }
 
 interface FilterState {
@@ -11,6 +12,7 @@ interface FilterState {
   setToUnread: () => void;
   setToRead: () => void;
   setToStarred: () => void;
+  setToAll(): void;
 }
 
 export const useArticleFilterStore = create<FilterState>((set) => ({
@@ -18,4 +20,5 @@ export const useArticleFilterStore = create<FilterState>((set) => ({
   setToUnread: () => set(() => ({ filter: ArticleFilter.Unread })),
   setToRead: () => set(() => ({ filter: ArticleFilter.Read })),
   setToStarred: () => set(() => ({ filter: ArticleFilter.Starred })),
+  setToAll: () => set(() => ({ filter: ArticleFilter.All })),
 }));

@@ -132,6 +132,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/article/unread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArticleController_getUnReadArticles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/article/starred": {
         parameters: {
             query?: never;
@@ -666,6 +682,44 @@ export interface operations {
         };
     };
     ArticleController_getReadArticles: {
+        parameters: {
+            query?: {
+                /** @description The cursor for pagination. If not provided, starts from the beginning. */
+                cursor?: string;
+                /** @description The number of articles to return. Default is 10. */
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ArticleController_getUnReadArticles: {
         parameters: {
             query?: {
                 /** @description The cursor for pagination. If not provided, starts from the beginning. */

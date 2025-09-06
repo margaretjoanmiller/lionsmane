@@ -20,9 +20,13 @@ function DashIndex() {
   const filter = useArticleFilterStore((state) => state.filter);
 
   if (filter === ArticleFilter.Unread) {
-    const { data, isLoading } = $api.useSuspenseQuery('get', '/article', {
-      credentials: 'include',
-    });
+    const { data, isLoading } = $api.useSuspenseQuery(
+      'get',
+      '/article/unread',
+      {
+        credentials: 'include',
+      },
+    );
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.articles.map((i) => {
@@ -46,6 +50,19 @@ function DashIndex() {
     );
   } else if (filter === ArticleFilter.Starred) {
     const { data, isLoading } = $api.useQuery('get', '/article/starred', {
+      credentials: 'include',
+    });
+    if (isLoading || !data) return 'Loading...';
+
+    const articles = data.articles.map((i) => {
+      return <ArticleCard article={i} />;
+    });
+
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
+  } else if (filter === ArticleFilter.All) {
+    const { data, isLoading } = $api.useQuery('get', '/article', {
       credentials: 'include',
     });
     if (isLoading || !data) return 'Loading...';

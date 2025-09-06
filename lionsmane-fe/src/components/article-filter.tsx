@@ -29,6 +29,7 @@ const statuses: Status[] = [
   { label: 'Unread', value: 'unread' },
   { label: 'Read', value: 'read' },
   { label: 'Starred', value: 'starred' },
+  { label: 'All', value: 'all' },
 ];
 
 export function ArticleFilterSelect() {
@@ -80,6 +81,7 @@ function StatusList({
   const setUnread = useArticleFilterStore((state) => state.setToUnread);
   const setStarred = useArticleFilterStore((state) => state.setToStarred);
   const setRead = useArticleFilterStore((state) => state.setToRead);
+  const setAll = useArticleFilterStore((state) => state.setToAll);
 
   return (
     <Command>
@@ -99,8 +101,10 @@ function StatusList({
                   setStarred();
                 } else if (value === 'read') {
                   setRead();
-                } else {
+                } else if (value === 'unread') {
                   setUnread();
+                } else if (value === 'all') {
+                  setAll();
                 }
                 setOpen(false);
               }}

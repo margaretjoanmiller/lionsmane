@@ -13,6 +13,7 @@ import { ThemeProvider } from './components/theme-provider.tsx';
 
 import { createAuthClient } from 'better-auth/react';
 import { authClient } from './lib/auth-client.ts';
+import { Toaster } from 'sonner';
 
 // Create a new router instance
 
@@ -55,6 +56,7 @@ if (rootElement && !rootElement.innerHTML) {
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
           <App />
+          <Toaster/>
         </ThemeProvider>
       </TanStackQueryProvider.Provider>
     </StrictMode>,

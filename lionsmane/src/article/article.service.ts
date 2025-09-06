@@ -33,6 +33,8 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        isRead: schema.userArticleStates.isRead ?? false,
+        isStarred: schema.userArticleStates.isStarred ?? false,
       })
       .from(schema.articles)
       .innerJoin(
@@ -41,6 +43,10 @@ export class ArticleService {
           eq(schema.articles.feedId, schema.subscriptions.feedId),
           eq(schema.subscriptions.userId, userId),
         ),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        eq(schema.userArticleStates.articleId, schema.articles.id),
       )
       .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
       .limit(pageSize + 1) // the number of rows to return
@@ -86,6 +92,10 @@ export class ArticleService {
           eq(schema.articles.feedId, schema.subscriptions.feedId),
           eq(schema.subscriptions.userId, userId),
         ),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        eq(schema.userArticleStates.articleId, schema.articles.id),
       )
       .where(
         and(
@@ -135,10 +145,7 @@ export class ArticleService {
       )
       .leftJoin(
         schema.userArticleStates,
-        and(
-          eq(schema.articles.id, schema.userArticleStates.articleId),
-          eq(schema.userArticleStates.userId, userId),
-        ),
+        eq(schema.userArticleStates.articleId, schema.articles.id),
       )
       .where(eq(schema.articles.id, id))
       .limit(1);
@@ -350,6 +357,13 @@ export class ArticleService {
     cursor: string | undefined,
   ) {
     return await this.getArticleByState(userId, 'starred', pageSize, cursor);
+  }
+  async getUnreadArticles(
+    userId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByState(userId, 'unread', pageSize, cursor);
   }
   async getReadArticles(
     userId: string,
