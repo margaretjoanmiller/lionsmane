@@ -20,10 +20,8 @@ import { ArticleService } from './article.service';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ArticleStatusDto } from './dto/article-status.dto';
 
-@UseInterceptors(CacheInterceptor)
 @ApiTags('articles')
 @ApiCookieAuth()
 @ApiBearerAuth()
@@ -131,33 +129,8 @@ export class ArticleController {
     );
   }
 
-  @Get('unread')
-  @ZodResponse({ type: ArticleListDto })
-  @ApiQuery({
-    name: 'cursor',
-    required: false,
-    description:
-      'The cursor for pagination. If not provided, starts from the beginning.',
-  })
-  @ApiQuery({
-    name: 'pageSize',
-    required: false,
-    description: 'The number of articles to return. Default is 10.',
-  })
-  async getUnreadArticles(
-    @Session() session: UserSession,
-    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
-    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
-  ) {
-    return this.articleService.getUnreadArticles(
-      session.user.id,
-      pageSize,
-      cursor,
-    );
-  }
-
   @Get('read')
-  @ZodResponse({ type: ArticleListDto })
+  @ZodResponse({ type: ArticleListDto, status: 200 })
   @ApiQuery({
     name: 'cursor',
     required: false,
@@ -182,7 +155,7 @@ export class ArticleController {
   }
 
   @Get('starred')
-  @ZodResponse({ type: ArticleListDto })
+  @ZodResponse({ type: ArticleListDto, status: 200 })
   @ApiQuery({
     name: 'cursor',
     required: false,

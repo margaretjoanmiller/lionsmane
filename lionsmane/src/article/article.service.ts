@@ -35,16 +35,14 @@ export class ArticleService {
         feedId: schema.articles.feedId,
       })
       .from(schema.articles)
-      .leftJoin(
+      .innerJoin(
         schema.subscriptions,
-        eq(schema.articles.feedId, schema.subscriptions.feedId),
-      )
-      .where(
         and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
           eq(schema.subscriptions.userId, userId),
-          cursor ? gt(schema.articles.id, cursor) : undefined,
         ),
-      ) // if cursor is provided, get rows after it
+      )
+      .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
       .limit(pageSize + 1) // the number of rows to return
       .orderBy(asc(schema.articles.id)); // ordering
 
@@ -82,13 +80,15 @@ export class ArticleService {
         isStarred: schema.userArticleStates.isStarred ?? false,
       })
       .from(schema.articles)
-      .leftJoin(
+      .innerJoin(
         schema.subscriptions,
-        eq(schema.articles.feedId, schema.subscriptions.feedId),
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
       )
       .where(
         and(
-          eq(schema.subscriptions.userId, userId),
           eq(schema.articles.feedId, feedId),
           cursor ? gt(schema.articles.id, cursor) : undefined,
         ),
@@ -126,9 +126,12 @@ export class ArticleService {
         isRead: schema.userArticleStates.isRead ?? false,
       })
       .from(schema.articles)
-      .leftJoin(
+      .innerJoin(
         schema.subscriptions,
-        eq(schema.articles.feedId, schema.subscriptions.feedId),
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
       )
       .leftJoin(
         schema.userArticleStates,
@@ -137,12 +140,7 @@ export class ArticleService {
           eq(schema.userArticleStates.userId, userId),
         ),
       )
-      .where(
-        and(
-          eq(schema.articles.id, id),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
+      .where(eq(schema.articles.id, id))
       .limit(1);
     if (!article) {
       throw new Error('Article not found or access denied');
@@ -178,17 +176,17 @@ export class ArticleService {
         rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
-      .leftJoin(
+      .innerJoin(
         schema.subscriptions,
-        eq(schema.articles.feedId, schema.subscriptions.feedId),
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
       )
       .where(
-        and(
-          eq(schema.subscriptions.userId, userId),
-          sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
+        sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
               setweight(to_tsvector('english', ${schema.articles.readableText}), 'B'))
               @@ to_tsquery('english', ${query})`,
-        ),
       )
       .orderBy((t) => desc(t.rank))
       .limit(pageSize)
@@ -209,16 +207,14 @@ export class ArticleService {
       const [article] = await tx
         .select({ id: schema.articles.id })
         .from(schema.articles)
-        .leftJoin(
+        .innerJoin(
           schema.subscriptions,
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-        )
-        .where(
           and(
-            eq(schema.articles.id, id),
+            eq(schema.articles.feedId, schema.subscriptions.feedId),
             eq(schema.subscriptions.userId, userId),
           ),
         )
+        .where(eq(schema.articles.id, id))
         .limit(1);
       if (!article) {
         throw new Error('Article not found or access denied');
@@ -286,7 +282,10 @@ export class ArticleService {
       .from(schema.articles)
       .innerJoin(
         schema.subscriptions,
-        eq(schema.articles.feedId, schema.subscriptions.feedId),
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
       );
 
     if (stateFilter === 'unread') {
@@ -300,7 +299,6 @@ export class ArticleService {
         )
         .where(
           and(
-            eq(schema.subscriptions.userId, userId),
             sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
             cursor ? gt(schema.articles.id, cursor) : undefined,
           ),
@@ -324,14 +322,10 @@ export class ArticleService {
       const query = baseQuery
         .innerJoin(
           schema.userArticleStates,
-          and(
-            eq(schema.articles.id, schema.userArticleStates.articleId),
-            eq(schema.userArticleStates.userId, userId),
-          ),
+          eq(schema.articles.id, schema.userArticleStates.articleId),
         )
         .where(
           and(
-            eq(schema.subscriptions.userId, userId),
             stateCondition,
             cursor ? gt(schema.articles.id, cursor) : undefined,
           ),
@@ -356,13 +350,6 @@ export class ArticleService {
     cursor: string | undefined,
   ) {
     return await this.getArticleByState(userId, 'starred', pageSize, cursor);
-  }
-  async getUnreadArticles(
-    userId: string,
-    pageSize = 10,
-    cursor: string | undefined,
-  ) {
-    return await this.getArticleByState(userId, 'unread', pageSize, cursor);
   }
   async getReadArticles(
     userId: string,
