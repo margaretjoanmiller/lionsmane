@@ -9,7 +9,7 @@ import { createFileRoute } from '@tanstack/react-router';
 export const Route = createFileRoute('/dashboard/feed/$feedId')({
   loader: ({ params, context }) =>
     context.queryClient.ensureQueryData(
-      $api.queryOptions('get', '/article/feed/{id}', {
+      $api.queryOptions('get', '/article/unread/feed/{id}', {
         params: {
           path: {
             id: params.feedId,
@@ -28,7 +28,7 @@ function FeedId() {
   if (filter === ArticleFilter.Unread) {
     const { data, isLoading } = $api.useSuspenseQuery(
       'get',
-      '/article/feed/{id}',
+      '/article/unread/feed/{id}',
       {
         params: {
           path: {
@@ -47,9 +47,14 @@ function FeedId() {
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
     );
   } else if (filter === ArticleFilter.Read) {
-    const { data, isLoading } = $api.useQuery('get', '/article/read', {
-      credentials: 'include',
-    });
+    const { data, isLoading } = $api.useQuery(
+      'get',
+      '/article/read/feed/{id}',
+      {
+        params: { path: { id: feedId } },
+        credentials: 'include',
+      },
+    );
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.articles.map((i) => {
@@ -60,9 +65,14 @@ function FeedId() {
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
     );
   } else if (filter === ArticleFilter.Starred) {
-    const { data, isLoading } = $api.useQuery('get', '/article/starred', {
-      credentials: 'include',
-    });
+    const { data, isLoading } = $api.useQuery(
+      'get',
+      '/article/starred/feed/{id}',
+      {
+        credentials: 'include',
+        params: { path: { id: feedId } },
+      },
+    );
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.articles.map((i) => {
@@ -73,8 +83,9 @@ function FeedId() {
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
     );
   } else if (filter === ArticleFilter.All) {
-    const { data, isLoading } = $api.useQuery('get', '/article', {
+    const { data, isLoading } = $api.useQuery('get', '/article/feed/{id}', {
       credentials: 'include',
+      params: { path: { id: feedId } },
     });
     if (isLoading || !data) return 'Loading...';
 
