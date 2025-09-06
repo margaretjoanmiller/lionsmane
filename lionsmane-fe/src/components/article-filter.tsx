@@ -66,7 +66,7 @@ export function ArticleFilterSelect() {
       }}
     >
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Theme" />
+        <SelectValue placeholder="Filter" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="unread">Unread</SelectItem>

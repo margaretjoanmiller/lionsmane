@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import IconParkOutlineRss from '~icons/icon-park-outline/rss';
 import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
@@ -17,6 +18,31 @@ import {
 import { ModeToggle } from '@/components/mode-toggle';
 import { ArticleFilterSelect } from '@/components/article-filter';
 import { authClient } from '@/lib/auth-client';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import React from 'react';
+import { z } from 'zod';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { ComboBoxResponsive } from '@/components/combobox';
+import { $api } from '@/lib/fetch-client';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
@@ -36,7 +62,41 @@ export const Route = createFileRoute('/dashboard')({
   },
 });
 
+const formSchema = z.object({
+  url: z.url(),
+  description: z.string(),
+  folderId: z.string().nullable(),
+});
 function DashLayout() {
+  const [open, setOpen] = React.useState(false);
+  const [comboOpen, setComboOpen] = React.useState(false);
+  const isMobile = useIsMobile();
+  const { data: folders } = $api.useQuery('get', '/folder', {
+    credentials: 'include',
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      url: '',
+      description: '',
+      folderId: null,
+    },
+  });
+
+  const { mutate } = $api.useMutation('post', '/feed');
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Handle form submission here
+    mutate(
+      { body: values, credentials: 'include' },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          form.reset();
+        },
+      },
+    );
+  }
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -66,6 +126,80 @@ function DashLayout() {
             </div>
             <div className="right-5 absolute">
               <ModeToggle />
+            </div>
+            <div className="group fixed bottom-6 right-6">
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger>
+                  <Button>
+                    <IconParkOutlineRss />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Feed</DialogTitle>
+                  </DialogHeader>
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-8"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="https://coolfeed.com/feed"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              This is your feed URL.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Cool feed" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              This is your feed description.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="folderId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Folder</FormLabel>
+                            <ComboBoxResponsive
+                              setOpen={setComboOpen}
+                              setSelectedStatus={field.onChange}
+                            />
+                            <FormDescription>
+                              This is your feed folder.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit">Submit</Button>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </header>

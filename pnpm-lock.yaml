@@ -349,6 +349,9 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1))
     devDependencies:
+      '@iconify-json/icon-park-outline':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@iconify-json/noto-v1':
         specifier: ^1.2.5
         version: 1.2.5
@@ -1226,6 +1229,9 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@iconify-json/icon-park-outline@1.2.4':
+    resolution: {integrity: sha512-NyZxXe2gD2TbTOyoRRMdtEJhr6i2KQCdDlYYoOn5oZLndQjwpIhw79hzeFhXvP38/o40D3gQ+l+IaSJgbB+0TQ==}
 
   '@iconify-json/noto-v1@1.2.5':
     resolution: {integrity: sha512-/DsVMius69Q0fRS53z7QK1TROSuar606jiIx+laXtdsYGMXpf6LtHBx6CGfoo3UHHb/XpBsw+1L1x3eyPqMuVA==}
@@ -8386,6 +8392,10 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@iconify-json/icon-park-outline@1.2.4':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify-json/noto-v1@1.2.5':
     dependencies:
