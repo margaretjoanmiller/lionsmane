@@ -16,17 +16,22 @@ import {
 } from '@/components/ui/sidebar';
 import { ModeToggle } from '@/components/mode-toggle';
 import { ArticleFilterSelect } from '@/components/article-filter';
+import { authClient } from '@/lib/auth-client';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
-  beforeLoad: ({ context, location }) => {
-    if (!context.auth?.user) {
-      throw redirect({
-        to: '/login',
-        search: {
-          redirect: location.href,
-        },
-      });
+  beforeLoad: async ({ context, location }) => {
+    if (!context.auth?.session) {
+      const { data: session, error } = await authClient.getSession();
+
+      if (!session || error) {
+        throw redirect({
+          to: '/login',
+          search: {
+            redirect: location.href,
+          },
+        });
+      }
     }
   },
 });
@@ -65,9 +70,7 @@ function DashLayout() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <Outlet />
-          </div>
+          <Outlet />
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
       </SidebarInset>

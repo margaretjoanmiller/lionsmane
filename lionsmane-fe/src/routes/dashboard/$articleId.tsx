@@ -13,7 +13,7 @@ export const Route = createFileRoute('/dashboard/$articleId')({
         credentials: 'include',
       }),
     ),
-    component: ArticlePage
+  component: ArticlePage,
 });
 
 function ArticlePage() {
@@ -27,5 +27,16 @@ function ArticlePage() {
     credentials: 'include',
   });
 
-  return <>{data.readableText}</>;
+  return (
+    <div className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
+      <div className="m-6">
+        <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+          {data.title}
+        </h1>
+        <div className="prose prose-lg prose-card prose-pink">
+          {data.readableText}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -21,6 +21,12 @@ const authOptions = {
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 10 * 60, // Cache duration in seconds
+    },
+  },
   plugins: [
     passkey(),
     twoFactor(),

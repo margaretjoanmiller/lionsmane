@@ -28,8 +28,9 @@ function DashIndex() {
     const articles = data.articles.map((i) => {
       return <ArticleCard article={i} />;
     });
-
-    return <>{articles}</>;
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
   } else if (filter === ArticleFilter.Read) {
     const { data, isLoading } = $api.useQuery('get', '/article/read', {
       credentials: 'include',
@@ -40,7 +41,9 @@ function DashIndex() {
       return <ArticleCard article={i} />;
     });
 
-    return <>{articles}</>;
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
   } else if (filter === ArticleFilter.Starred) {
     const { data, isLoading } = $api.useQuery('get', '/article/starred', {
       credentials: 'include',
@@ -51,6 +54,8 @@ function DashIndex() {
       return <ArticleCard article={i} />;
     });
 
-    return <>{articles}</>;
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
   }
 }
