@@ -19,6 +19,7 @@ import {
   Logger,
   Catch,
 } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
@@ -37,6 +38,8 @@ import { FeedModule } from './feed/feed.module';
 import { ArticleModule } from './article/article.module';
 import { FolderModule } from './folder/folder.module';
 import { RedisModule } from './redis/redis.module';
+import { Cron } from './cron/cron';
+import { CronModule } from './cron/cron.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -98,12 +101,14 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     RedisModule,
     FetcherModule,
     FeedModule,
     ArticleModule,
     FolderModule,
     RedisModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [
@@ -123,6 +128,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
+    Cron,
   ],
 })
 export class AppModule {}
