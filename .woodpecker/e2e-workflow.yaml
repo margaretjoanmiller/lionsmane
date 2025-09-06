@@ -4,10 +4,9 @@ when:
 
 steps:
   - name: playwright
-    image: codeberg.org/woodpecker-plugins/node-pm
+    image: mcr.microsoft.com/playwright:v1.55.0-noble
     directory: lionsmane-fe
-    settings:
-      run: test:e2e # script name
-      with: pnpm # if `with` is set, enforce to use this package manager
-      frozen_lockfile: true # recommended
-      ignore_node_modules: true # recommended
+    commands:
+      - npm ci
+      - npx playwright install --with-deps
+      - npx playwright test --reporter=github
