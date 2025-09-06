@@ -8,17 +8,6 @@ import {
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/dashboard/feed/$feedId')({
-  loader: ({ params, context }) =>
-    context.queryClient.ensureQueryData(
-      $api.queryOptions('get', '/article/unread/feed/{id}', {
-        params: {
-          path: {
-            id: params.feedId,
-          },
-        },
-        credentials: 'include',
-      }),
-    ),
   component: FeedId,
 });
 

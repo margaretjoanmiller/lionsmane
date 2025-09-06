@@ -8,12 +8,6 @@ import {
 } from '@/stores/articleFilter.store';
 
 export const Route = createFileRoute('/dashboard/')({
-  loader: ({ params, context }) =>
-    context.queryClient.ensureQueryData(
-      $api.queryOptions('get', '/article', {
-        credentials: 'include',
-      }),
-    ),
   component: DashIndex,
 });
 

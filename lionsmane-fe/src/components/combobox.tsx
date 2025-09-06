@@ -6,6 +6,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import {
   Popover,
   PopoverContent,
@@ -16,12 +17,12 @@ import { $api } from '@/lib/fetch-client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import React from 'react';
 
-type Status = {
+export type Status = {
   value: string;
   label: string;
 };
 
-function StatusList({
+export function StatusList({
   setOpen,
   setSelectedStatus,
 }: {
@@ -64,25 +65,46 @@ function StatusList({
   );
 }
 
-export function ComboBoxResponsive() {
-  const [open, setOpen] = React.useState(false);
+export function ComboBoxResponsive({
+  setSelectedStatus,
+  fieldValue,
+}: {
+  setSelectedStatus: (status: Status | null) => void;
+  fieldValue: string | null;
+}) {
   const isMobile = useIsMobile();
-  const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
-    null,
-  );
+  const [open, setOpen] = React.useState(false);
 
   if (!isMobile) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-[150px] justify-start">
-            {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
+            {fieldValue ? <>{fieldValue}</> : <>+ Set status</>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
           <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
         </PopoverContent>
       </Popover>
+    );
+  } else {
+    return (
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
+          <Button variant="outline" className="w-[150px] justify-start">
+            {fieldValue ? <>{fieldValue}</> : <>+ Set status</>}
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className="mt-4 border-t">
+            <StatusList
+              setOpen={setOpen}
+              setSelectedStatus={setSelectedStatus}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
     );
   }
 }

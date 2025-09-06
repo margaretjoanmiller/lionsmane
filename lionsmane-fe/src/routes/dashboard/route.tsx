@@ -41,8 +41,22 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
-import { ComboBoxResponsive } from '@/components/combobox';
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from '@/components/ui/command';
 import { $api } from '@/lib/fetch-client';
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
@@ -74,6 +88,10 @@ function DashLayout() {
   const { data: folders } = $api.useQuery('get', '/folder', {
     credentials: 'include',
   });
+  const folderSelect = folders?.map((folder) => ({
+    value: folder.id,
+    label: folder.name,
+  }));
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -182,14 +200,61 @@ function DashLayout() {
                         control={form.control}
                         name="folderId"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Folder</FormLabel>
-                            <ComboBoxResponsive
-                              setOpen={setComboOpen}
-                              setSelectedStatus={field.onChange}
-                            />
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Language</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      'w-[200px] justify-between',
+                                      !field.value && 'text-muted-foreground',
+                                    )}
+                                  >
+                                    {field.value
+                                      ? folderSelect?.find(
+                                          (folder) =>
+                                            folder.value === field.value,
+                                        )?.label
+                                      : 'Select language'}
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                  <CommandInput
+                                    placeholder="Search framework..."
+                                    className="h-9"
+                                  />
+                                  <CommandList>
+                                    <CommandEmpty>
+                                      No framework found.
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      {folderSelect?.map((folder) => (
+                                        <CommandItem
+                                          value={folder.label}
+                                          key={folder.value}
+                                          onSelect={() => {
+                                            form.setValue(
+                                              'folderId',
+                                              folder.value,
+                                            );
+                                          }}
+                                        >
+                                          {folder.label}
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
                             <FormDescription>
-                              This is your feed folder.
+                              This is the language that will be used in the
+                              dashboard.
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
