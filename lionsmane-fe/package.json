@@ -11,7 +11,8 @@
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
-    "test:browser": "vitest --config=vitest.browser.config.ts"
+    "test:browser": "vitest --config=vitest.browser.config.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
@@ -59,12 +60,14 @@
   "devDependencies": {
     "@iconify-json/icon-park-outline": "^1.2.4",
     "@iconify-json/noto-v1": "^1.2.5",
+    "@playwright/test": "^1.55.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/eslint-config": "^0.3.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
+    "@types/node": "^22.18.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
