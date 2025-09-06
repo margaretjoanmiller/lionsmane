@@ -1,4 +1,9 @@
+import { ArticleCard } from '@/components/article-card';
 import { $api } from '@/lib/fetch-client';
+import {
+  ArticleFilter,
+  useArticleFilterStore,
+} from '@/stores/articleFilter.store';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/dashboard/feed/$feedId')({
@@ -18,12 +23,67 @@ export const Route = createFileRoute('/dashboard/feed/$feedId')({
 
 function FeedId() {
   const feedId = Route.useParams().feedId;
-  const { data } = $api.useSuspenseQuery('get', '/article/feed/{id}', {
-    params: {
-      path: {
-        id: feedId,
+  const filter = useArticleFilterStore((state) => state.filter);
+
+  if (filter === ArticleFilter.Unread) {
+    const { data, isLoading } = $api.useSuspenseQuery(
+      'get',
+      '/article/feed/{id}',
+      {
+        params: {
+          path: {
+            id: feedId,
+          },
+        },
+        credentials: 'include',
       },
-    },
-    credentials: 'include',
-  });
+    );
+    if (isLoading || !data) return 'Loading...';
+
+    const articles = data.articles.map((i) => {
+      return <ArticleCard article={i} />;
+    });
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
+  } else if (filter === ArticleFilter.Read) {
+    const { data, isLoading } = $api.useQuery('get', '/article/read', {
+      credentials: 'include',
+    });
+    if (isLoading || !data) return 'Loading...';
+
+    const articles = data.articles.map((i) => {
+      return <ArticleCard article={i} />;
+    });
+
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
+  } else if (filter === ArticleFilter.Starred) {
+    const { data, isLoading } = $api.useQuery('get', '/article/starred', {
+      credentials: 'include',
+    });
+    if (isLoading || !data) return 'Loading...';
+
+    const articles = data.articles.map((i) => {
+      return <ArticleCard article={i} />;
+    });
+
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
+  } else if (filter === ArticleFilter.All) {
+    const { data, isLoading } = $api.useQuery('get', '/article', {
+      credentials: 'include',
+    });
+    if (isLoading || !data) return 'Loading...';
+
+    const articles = data.articles.map((i) => {
+      return <ArticleCard article={i} />;
+    });
+
+    return (
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">{articles}</div>
+    );
+  }
 }

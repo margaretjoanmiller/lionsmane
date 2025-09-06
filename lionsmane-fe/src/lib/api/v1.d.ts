@@ -196,6 +196,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/folder/feeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FolderController_findAllWithFeeds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/folder/{id}": {
         parameters: {
             query?: never;
@@ -223,7 +239,7 @@ export interface components {
             folderId: string | null;
         };
         FeedListOutDto_Output: {
-            root?: {
+            feeds: {
                 /** Format: uuid */
                 id: string;
                 /** Format: uri */
@@ -342,6 +358,24 @@ export interface components {
             name: string;
             userId: string;
             feedIds: string[];
+        };
+        FolderWithFeedsOutDto_Output: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            userId: string;
+            feeds: {
+                /** Format: uuid */
+                id: string;
+                /** Format: uri */
+                url: string;
+                title: string | null;
+                authors: string[] | null;
+                categories: string[] | null;
+                copyright: string | null;
+                image: string | null;
+                updated: string | null;
+            }[];
         };
         UpdateFolderDto: {
             name?: string;
@@ -882,6 +916,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolderOutDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FolderController_findAllWithFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolderWithFeedsOutDto_Output"][];
                 };
             };
             /** @description Unauthorized */

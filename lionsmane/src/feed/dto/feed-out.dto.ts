@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
-const feedOutDto = z.object({
+export const feedOutDto = z.object({
   id: z.uuid(),
   url: z.url(),
   title: z.string().min(1).max(255).nullable(),
@@ -27,7 +27,7 @@ const feedOutDto = z.object({
   folderId: z.uuid().nullable(),
 });
 
-const feedListOutDto = z.array(feedOutDto);
+const feedListOutDto = z.object({ feeds: z.array(feedOutDto) });
 
 export class FeedOutDto extends createZodDto(feedOutDto) {}
 export class FeedListOutDto extends createZodDto(feedListOutDto) {}

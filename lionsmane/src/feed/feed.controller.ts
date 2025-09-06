@@ -31,8 +31,8 @@ export class FeedController {
 
   @Get()
   @ZodResponse({ type: FeedListOutDto, status: 200 })
-  findAll(@Session() session: UserSession) {
-    return this.feedService.findAll(session.user.id);
+  async findAll(@Session() session: UserSession) {
+    return { feeds: await this.feedService.findAll(session.user.id) };
   }
 
   @Get(':id')

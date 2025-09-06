@@ -18,7 +18,7 @@ import {
   ApiCookieAuth,
   ApiOAuth2,
 } from '@nestjs/swagger';
-import { FolderOutDto } from './dto/folder-out.dto';
+import { FolderOutDto, FolderWithFeedsOutDto } from './dto/folder-out.dto';
 import { ZodResponse } from 'nestjs-zod';
 
 @ApiTags('folders')
@@ -42,6 +42,12 @@ export class FolderController {
   @ZodResponse({ type: [FolderOutDto], status: 200 })
   findAll(@Session() session: UserSession) {
     return this.folderService.findAll(session.user.id);
+  }
+
+  @Get('feeds')
+  @ZodResponse({ type: [FolderWithFeedsOutDto], status: 200 })
+  async findAllWithFeeds(@Session() session: UserSession) {
+    return this.folderService.findAllWithFeeds(session.user.id);
   }
 
   @Get(':id')

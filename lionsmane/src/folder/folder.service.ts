@@ -67,6 +67,27 @@ export class FolderService {
     });
   }
 
+  async findAllWithFeeds(userId: string) {
+    const folders = await this.db.query.folders.findMany({
+      where: and(eq(schema.folders.userId, userId)),
+      with: {
+        subscriptions: {
+          with: {
+            feed: true,
+          },
+        },
+      },
+    });
+    return folders.map((f) => {
+      return {
+        id: f.id,
+        name: f.name,
+        userId: f.userId,
+        feeds: f.subscriptions.map((sub) => sub.feed) || [],
+      };
+    });
+  }
+
   async findOne(id: string, userId: string) {
     const folder = await this.db.query.folders.findFirst({
       where: and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),

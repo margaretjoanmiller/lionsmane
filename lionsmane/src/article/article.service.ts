@@ -33,6 +33,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
       })
@@ -40,17 +41,18 @@ export class ArticleService {
       .innerJoin(
         schema.subscriptions,
         and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
           eq(schema.subscriptions.userId, userId),
         ),
       )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
         eq(schema.userArticleStates.articleId, schema.articles.id),
       )
+      .orderBy(desc(schema.articles.id)) // ordering
       .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
-      .limit(pageSize + 1) // the number of rows to return
-      .orderBy(asc(schema.articles.id)); // ordering
+      .limit(pageSize + 1); // the number of rows to return
 
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
@@ -93,18 +95,14 @@ export class ArticleService {
           eq(schema.subscriptions.userId, userId),
         ),
       )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
         eq(schema.userArticleStates.articleId, schema.articles.id),
       )
-      .where(
-        and(
-          eq(schema.articles.feedId, feedId),
-          cursor ? gt(schema.articles.id, cursor) : undefined,
-        ),
-      ) // if cursor is provided, get rows after it
-      .limit(pageSize + 1) // the number of rows to return
-      .orderBy(asc(schema.articles.id)); // ordering
+      .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
+      .orderBy(desc(schema.articles.id)) // ordering
+      .limit(pageSize + 1); // the number of rows to return
 
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
@@ -183,13 +181,8 @@ export class ArticleService {
         rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
-      .innerJoin(
-        schema.subscriptions,
-        and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
+      .innerJoin(schema.subscriptions, eq(schema.subscriptions.userId, userId))
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .where(
         sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
               setweight(to_tsvector('english', ${schema.articles.readableText}), 'B'))
@@ -290,19 +283,17 @@ export class ArticleService {
       .innerJoin(
         schema.subscriptions,
         and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
           eq(schema.subscriptions.userId, userId),
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
         ),
-      );
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
 
     if (stateFilter === 'unread') {
       const query = baseQuery
         .leftJoin(
           schema.userArticleStates,
-          and(
-            eq(schema.articles.id, schema.userArticleStates.articleId),
-            eq(schema.userArticleStates.userId, userId),
-          ),
+          eq(schema.userArticleStates.articleId, schema.articles.id),
         )
         .where(
           and(
@@ -311,8 +302,25 @@ export class ArticleService {
           ),
         );
       const articles = await query
-        .limit(pageSize + 1)
-        .orderBy(asc(schema.articles.id));
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      };
+    } else if (stateFilter === 'read') {
+      const query = baseQuery
+        .innerJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(eq(schema.userArticleStates.isRead, true));
+      const articles = await query
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
@@ -329,7 +337,7 @@ export class ArticleService {
       const query = baseQuery
         .innerJoin(
           schema.userArticleStates,
-          eq(schema.articles.id, schema.userArticleStates.articleId),
+          eq(schema.userArticleStates.articleId, schema.articles.id),
         )
         .where(
           and(
@@ -339,8 +347,8 @@ export class ArticleService {
         );
 
       const articles = await query
-        .limit(pageSize + 1)
-        .orderBy(asc(schema.articles.id));
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
