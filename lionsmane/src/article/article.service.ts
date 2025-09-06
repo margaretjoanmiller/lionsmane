@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { and, asc, desc, eq, gt, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, sql } from 'drizzle-orm';
 
 @Injectable()
 export class ArticleService {
@@ -379,5 +379,157 @@ export class ArticleService {
     cursor: string | undefined,
   ) {
     return await this.getArticleByState(userId, 'read', pageSize, cursor);
+  }
+
+  private async getArticleByStateFeed(
+    userId: string,
+    feedId: string,
+    stateFilter: 'starred' | 'read' | 'unread',
+    pageSize = 10,
+    cursor?: string,
+  ) {
+    const baseQuery = this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+        isStarred: schema.userArticleStates.isStarred,
+        isRead: schema.userArticleStates.isRead,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.userId, userId),
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+
+    if (stateFilter === 'unread') {
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            eq(schema.articles.feedId, feedId),
+            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            cursor ? gt(schema.articles.id, cursor) : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      };
+    } else if (stateFilter === 'read') {
+      const query = baseQuery
+        .innerJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            eq(schema.articles.feedId, feedId),
+            eq(schema.userArticleStates.isRead, true),
+            cursor ? gt(schema.articles.id, cursor) : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      };
+    } else {
+      const query = baseQuery
+        .innerJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            eq(schema.articles.feedId, feedId),
+            eq(schema.userArticleStates.isStarred, true),
+
+            cursor ? gt(schema.articles.id, cursor) : undefined,
+          ),
+        );
+
+      const articles = await query
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      };
+    }
+  }
+
+  async getStarredArticlesForFeed(
+    userId: string,
+    feedId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFeed(
+      userId,
+      feedId,
+      'starred',
+      pageSize,
+      cursor,
+    );
+  }
+  async getUnreadArticlesForFeed(
+    userId: string,
+    feedId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFeed(
+      userId,
+      feedId,
+      'unread',
+      pageSize,
+      cursor,
+    );
+  }
+  async getReadArticlesForFeed(
+    userId: string,
+    feedId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFeed(
+      userId,
+      feedId,
+      'read',
+      pageSize,
+      cursor,
+    );
   }
 }

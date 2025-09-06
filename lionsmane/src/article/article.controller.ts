@@ -5,7 +5,6 @@ import {
   Param,
   Patch,
   Query,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -198,6 +197,84 @@ export class ArticleController {
   ) {
     return this.articleService.getStarredArticles(
       session.user.id,
+      pageSize,
+      cursor,
+    );
+  }
+  @Get('unread/feed/:id')
+  @ZodResponse({ type: ArticleListDto, status: 200 })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getUnReadArticlesForFeed(
+    @Session() session: UserSession,
+    @Param('id') id: string,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getUnreadArticlesForFeed(
+      session.user.id,
+      id,
+      pageSize,
+      cursor,
+    );
+  }
+  @Get('starred/feed/:id')
+  @ZodResponse({ type: ArticleListDto, status: 200 })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getStarredArticlesForFeed(
+    @Session() session: UserSession,
+    @Param('id') id: string,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getStarredArticlesForFeed(
+      session.user.id,
+      id,
+      pageSize,
+      cursor,
+    );
+  }
+  @Get('read/feed/:id')
+  @ZodResponse({ type: ArticleListDto, status: 200 })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getReadArticlesForFeed(
+    @Session() session: UserSession,
+    @Param('id') id: string,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return this.articleService.getReadArticlesForFeed(
+      session.user.id,
+      id,
       pageSize,
       cursor,
     );

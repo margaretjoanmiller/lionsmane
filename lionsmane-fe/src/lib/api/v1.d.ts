@@ -164,6 +164,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/article/unread/feed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArticleController_getUnReadArticlesForFeed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/article/starred/feed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArticleController_getStarredArticlesForFeed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/article/read/feed/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArticleController_getReadArticlesForFeed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/article/{id}": {
         parameters: {
             query?: never;
@@ -801,6 +849,126 @@ export interface operations {
             };
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ArticleController_getUnReadArticlesForFeed: {
+        parameters: {
+            query?: {
+                /** @description The cursor for pagination. If not provided, starts from the beginning. */
+                cursor?: string;
+                /** @description The number of articles to return. Default is 10. */
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ArticleController_getStarredArticlesForFeed: {
+        parameters: {
+            query?: {
+                /** @description The cursor for pagination. If not provided, starts from the beginning. */
+                cursor?: string;
+                /** @description The number of articles to return. Default is 10. */
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ArticleController_getReadArticlesForFeed: {
+        parameters: {
+            query?: {
+                /** @description The cursor for pagination. If not provided, starts from the beginning. */
+                cursor?: string;
+                /** @description The number of articles to return. Default is 10. */
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
