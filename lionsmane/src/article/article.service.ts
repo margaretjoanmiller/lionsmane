@@ -33,7 +33,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
-        feedTitle: schema.feeds.title || schema.feeds.url,
+        feedTitle: schema.feeds.title,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
       })
