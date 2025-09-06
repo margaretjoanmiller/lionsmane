@@ -18,6 +18,14 @@ async function bootstrap() {
       .addCookieAuth()
       .addBearerAuth()
       .addOAuth2()
+      .addGlobalResponse({
+        status: 500,
+        description: 'Internal server error',
+      })
+      .addGlobalResponse({
+        status: 401,
+        description: 'Unauthorized',
+      })
       .build(),
   );
 
