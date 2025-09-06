@@ -50,7 +50,6 @@ import {
   CommandItem,
 } from '@/components/ui/command';
 import { $api } from '@/lib/fetch-client';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
 import {
   Popover,
   PopoverContent,
@@ -83,8 +82,6 @@ const formSchema = z.object({
 });
 function DashLayout() {
   const [open, setOpen] = React.useState(false);
-  const [comboOpen, setComboOpen] = React.useState(false);
-  const isMobile = useIsMobile();
   const { data: folders } = $api.useQuery('get', '/folder', {
     credentials: 'include',
   });
@@ -270,7 +267,6 @@ function DashLayout() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
       </SidebarInset>
     </SidebarProvider>
