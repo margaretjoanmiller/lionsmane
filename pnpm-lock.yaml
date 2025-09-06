@@ -349,12 +349,18 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1))
     devDependencies:
+      '@iconify-json/fluent':
+        specifier: ^1.2.30
+        version: 1.2.30
       '@iconify-json/icon-park-outline':
         specifier: ^1.2.4
         version: 1.2.4
       '@iconify-json/noto-v1':
         specifier: ^1.2.5
         version: 1.2.5
+      '@iconify-json/solar':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@playwright/test':
         specifier: ^1.55.0
         version: 1.55.0
@@ -1236,11 +1242,17 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
+  '@iconify-json/fluent@1.2.30':
+    resolution: {integrity: sha512-tR0E0As25LGV95vryo/bZbLJ3kcUiOva99MP7nB7gQV82K08zaaaSYZWcyKbLgV4BxHOfMuBgNoOvQpYqm9Oyg==}
+
   '@iconify-json/icon-park-outline@1.2.4':
     resolution: {integrity: sha512-NyZxXe2gD2TbTOyoRRMdtEJhr6i2KQCdDlYYoOn5oZLndQjwpIhw79hzeFhXvP38/o40D3gQ+l+IaSJgbB+0TQ==}
 
   '@iconify-json/noto-v1@1.2.5':
     resolution: {integrity: sha512-/DsVMius69Q0fRS53z7QK1TROSuar606jiIx+laXtdsYGMXpf6LtHBx6CGfoo3UHHb/XpBsw+1L1x3eyPqMuVA==}
+
+  '@iconify-json/solar@1.2.4':
+    resolution: {integrity: sha512-ruAh+bbYimlzqXW6MtqmvWlfatvFjE7o1fZWieps1h42Dx7AaHu4Z/dgOYSO1RR4MIhNzD+2xgEbFjASgBcEyg==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -8404,11 +8416,19 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
+  '@iconify-json/fluent@1.2.30':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/icon-park-outline@1.2.4':
     dependencies:
       '@iconify/types': 2.0.0
 
   '@iconify-json/noto-v1@1.2.5':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/solar@1.2.4':
     dependencies:
       '@iconify/types': 2.0.0
 

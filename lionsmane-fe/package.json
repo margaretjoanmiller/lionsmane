@@ -58,8 +58,10 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@iconify-json/fluent": "^1.2.30",
     "@iconify-json/icon-park-outline": "^1.2.4",
     "@iconify-json/noto-v1": "^1.2.5",
+    "@iconify-json/solar": "^1.2.4",
     "@playwright/test": "^1.55.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",

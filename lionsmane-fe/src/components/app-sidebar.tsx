@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
+import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
 import {
   BookOpen,
   Bot,
@@ -37,6 +39,31 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible';
+import {
+  Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogContent,
+  DialogTrigger,
+} from './ui/dialog';
+import { Button } from './ui/button';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormField, FormLabel, FormItem, Form, FormControl } from './ui/form';
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { Input } from './ui/input';
+
+const formSchema = z.object({
+  name: z.string().min(1).max(255),
+  feedIds: z.array(z.uuid()).optional(),
+});
 
 const data = {
   navSecondary: [
@@ -55,6 +82,14 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [formOpen, setFormOpen] = React.useState(false);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      feedIds: [],
+    },
+  });
   const { data: folders } = $api.useQuery('get', '/folder/feeds', {
     credentials: 'include',
   });
@@ -62,8 +97,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     credentials: 'include',
   });
 
-  console.log(feeds);
+  const { mutate } = $api.useMutation('post', '/folder');
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    mutate(
+      { body: values, credentials: 'include' },
+      {
+        onSuccess: () => {
+          setFormOpen(false);
+        },
+      },
+    );
+  }
   const orphanedFeeds =
     feeds?.feeds
       .filter((feed) => feed.folderId == null)
@@ -108,8 +153,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton>
-                    <SidebarMenuButton>{item.name}</SidebarMenuButton>
-                    <SidebarMenuBadge>{item.feeds.length}</SidebarMenuBadge>
+                    <SidebarMenuButton>
+                      {item.name}
+                      <FluentChevronRight12Filled className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -142,6 +189,58 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+          <Dialog open={formOpen} onOpenChange={setFormOpen}>
+            <DialogTrigger>
+              <Button variant="outline">
+                <SolarAddFolderOutline />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Folder</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Name" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="feedIds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Feeds</FormLabel>
+                        <FormControl>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a feed" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {feeds?.feeds.map((feed) => (
+                                <SelectItem key={feed.id} value={feed.id}>
+                                  {feed.title || feed.url}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Submit</Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </SidebarMenu>
         <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
