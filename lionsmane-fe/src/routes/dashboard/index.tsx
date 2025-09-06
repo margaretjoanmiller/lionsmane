@@ -7,6 +7,12 @@ import {
 } from '@/stores/articleFilter.store';
 
 export const Route = createFileRoute('/dashboard/')({
+  loader: ({ params, context }) =>
+    context.queryClient.ensureQueryData(
+      $api.queryOptions('get', '/article', {
+        credentials: 'include',
+      }),
+    ),
   component: DashIndex,
 });
 
@@ -14,7 +20,7 @@ function DashIndex() {
   const filter = useArticleFilterStore((state) => state.filter);
 
   if (filter === ArticleFilter.Unread) {
-    const { data, isLoading } = $api.useQuery('get', '/article', {
+    const { data, isLoading } = $api.useSuspenseQuery('get', '/article', {
       credentials: 'include',
     });
     if (isLoading || !data) return 'Loading...';

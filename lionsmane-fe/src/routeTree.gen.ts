@@ -15,6 +15,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo.table'
+import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId'
+import { Route as DashboardFeedFeedIdRouteImport } from './routes/dashboard/feed.$feedId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -46,30 +48,46 @@ const DemoTableRoute = DemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardArticleIdRoute = DashboardArticleIdRouteImport.update({
+  id: '/$articleId',
+  path: '/$articleId',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardFeedFeedIdRoute = DashboardFeedFeedIdRouteImport.update({
+  id: '/feed/$feedId',
+  path: '/feed/$feedId',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -77,19 +95,30 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/dashboard/$articleId'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/dashboard/'
+    | '/dashboard/feed/$feedId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/demo/table' | '/demo/tanstack-query' | '/dashboard'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard/$articleId'
+    | '/demo/table'
+    | '/demo/tanstack-query'
+    | '/dashboard'
+    | '/dashboard/feed/$feedId'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/login'
+    | '/dashboard/$articleId'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/dashboard/'
+    | '/dashboard/feed/$feedId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,15 +173,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/$articleId': {
+      id: '/dashboard/$articleId'
+      path: '/$articleId'
+      fullPath: '/dashboard/$articleId'
+      preLoaderRoute: typeof DashboardArticleIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/feed/$feedId': {
+      id: '/dashboard/feed/$feedId'
+      path: '/feed/$feedId'
+      fullPath: '/dashboard/feed/$feedId'
+      preLoaderRoute: typeof DashboardFeedFeedIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
 interface DashboardRouteRouteChildren {
+  DashboardArticleIdRoute: typeof DashboardArticleIdRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardFeedFeedIdRoute: typeof DashboardFeedFeedIdRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardArticleIdRoute: DashboardArticleIdRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardFeedFeedIdRoute: DashboardFeedFeedIdRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
