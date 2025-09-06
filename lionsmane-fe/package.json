@@ -67,6 +67,8 @@
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/browser": "^3.2.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "jsdom": "^26.0.0",
     "openapi-typescript": "^7.9.1",
     "playwright": "^1.55.0",
