@@ -40,6 +40,7 @@ const articleList = z.object({
       isRead: z.boolean().default(false).nullable(),
       isStarred: z.boolean().default(false).nullable(),
       feedId: z.uuid(),
+      feedTitle: z.string(),
     }),
   ),
 });

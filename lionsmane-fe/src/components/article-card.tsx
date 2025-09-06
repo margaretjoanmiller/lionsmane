@@ -20,6 +20,11 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     toast.error('Error marking article as read');
   }
 
+  const articleFeed =
+    article.feedTitle.length > 50
+      ? article.feedTitle.slice(0, 50) + '...'
+      : article.feedTitle;
+
   return (
     <Card>
       <CardHeader>
@@ -45,6 +50,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           </Link>
           <div className="justify">
             <ReadBadge read={article.isRead || false} />
+            <Badge variant="outline">{articleFeed}</Badge>
           </div>
         </CardTitle>
       </CardHeader>

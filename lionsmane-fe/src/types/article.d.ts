@@ -12,6 +12,7 @@ export interface ArticleDetail {
   published: string;
   updated: string | null;
   feedId: string;
+  feedTitle: string;
   isRead: boolean | null;
   isStarred: boolean | null;
 }

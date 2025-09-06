@@ -342,6 +342,7 @@ export interface components {
                 isStarred: boolean | null;
                 /** Format: uuid */
                 feedId: string;
+                feedTitle: string;
             }[];
         };
         ArticleStatusDto_Output: {
@@ -391,6 +392,7 @@ export interface components {
             updated: string | null;
             /** Format: uuid */
             feedId: string;
+            feedTitle: string | null;
             /** @default false */
             isRead: boolean | null;
             /** @default false */

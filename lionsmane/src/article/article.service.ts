@@ -84,6 +84,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
       })
@@ -100,7 +101,12 @@ export class ArticleService {
         schema.userArticleStates,
         eq(schema.userArticleStates.articleId, schema.articles.id),
       )
-      .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
+      .where(
+        and(
+          cursor ? gt(schema.articles.id, cursor) : undefined,
+          eq(schema.articles.feedId, feedId),
+        ),
+      ) // if cursor is provided, get rows after it
       .orderBy(desc(schema.articles.id)) // ordering
       .limit(pageSize + 1); // the number of rows to return
 
@@ -130,6 +136,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isRead: schema.userArticleStates.isRead ?? false,
       })
@@ -141,6 +148,7 @@ export class ArticleService {
           eq(schema.subscriptions.userId, userId),
         ),
       )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
         eq(schema.userArticleStates.articleId, schema.articles.id),
@@ -178,6 +186,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
@@ -276,6 +285,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
       })
@@ -403,6 +413,7 @@ export class ArticleService {
         published: schema.articles.published,
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
       })

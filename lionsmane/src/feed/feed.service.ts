@@ -6,12 +6,14 @@ import { and, eq } from 'drizzle-orm';
 import { subMonths } from 'date-fns';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { FetcherService } from 'src/fetcher/fetcher.service';
 
 @Injectable()
 export class FeedService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     @InjectQueue('feed') private feedQueue: Queue,
+    private fetcher: FetcherService,
   ) {}
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
@@ -21,10 +23,13 @@ export class FeedService {
         .from(schema.feeds)
         .where(eq(schema.feeds.url, newSubscription.url));
 
+      const title = await this.fetcher.extractFeedTitle(newSubscription.url);
+
       if (!feed) {
         const [newFeed] = await tx
           .insert(schema.feeds)
           .values({
+            title: title ?? newSubscription.url,
             url: newSubscription.url,
             updated: subMonths(new Date(), 3),
           })
