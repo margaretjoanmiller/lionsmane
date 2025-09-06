@@ -7,6 +7,6 @@ steps:
     image: mcr.microsoft.com/playwright:v1.55.0-noble
     directory: lionsmane-fe
     commands:
-      - npm ci
-      - npx playwright install --with-deps
-      - npx playwright test --reporter=github
+      - pnpm install
+      - pnpx playwright install --with-deps
+      - pnpm run test:e2e
