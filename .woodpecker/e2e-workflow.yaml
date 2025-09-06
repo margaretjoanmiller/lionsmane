@@ -1,0 +1,13 @@
+when:
+  - event: push
+    branch: main
+
+steps:
+  - name: playwright
+    image: codeberg.org/woodpecker-plugins/node-pm
+    directory: lionsmane-fe
+    settings:
+      run: test:e2e # script name
+      with: pnpm # if `with` is set, enforce to use this package manager
+      frozen_lockfile: true # recommended
+      ignore_node_modules: true # recommended
