@@ -3,10 +3,30 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
 import { and, desc, eq, gt, sql } from 'drizzle-orm';
+import { JSDOM } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+import createDOMPurify, { WindowLike } from 'dompurify';
 
 @Injectable()
 export class ArticleService {
   constructor(@Inject('DB') private db: NodePgDatabase<typeof schema>) {}
+
+  cleanRaw(newArt: NewArticle) {
+    const window = new JSDOM('').window;
+    const purify = createDOMPurify(window as WindowLike);
+    const clean = purify.sanitize(newArt.rawContent || '');
+    const cleanDoc = new JSDOM(clean);
+    const readableRaw = new Readability(cleanDoc.window.document).parse();
+    const readableText = readableRaw?.textContent;
+    const readableHtml = readableRaw?.content;
+    if (!readableHtml || !readableText) {
+      throw new Error('Failed to extract article text');
+    }
+    return {
+      textContent: readableText,
+      htmlContent: readableHtml,
+    };
+  }
 
   async newArticle(newArt: NewArticle) {
     try {
@@ -27,6 +47,8 @@ export class ArticleService {
         categories: schema.articles.categories,
         description: schema.articles.description,
         readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -78,6 +100,8 @@ export class ArticleService {
         categories: schema.articles.categories,
         description: schema.articles.description,
         readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -128,8 +152,11 @@ export class ArticleService {
         authors: schema.articles.authors,
         categories: schema.articles.categories,
         description: schema.articles.description,
+        rawContent: schema.articles.rawContent,
         readableText: schema.articles.readableText,
         readableHtml: schema.articles.readableHtml,
+        fullArticleText: schema.articles.fullArticleText,
+        fullArticleHtml: schema.articles.fullArticleHtml,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -279,6 +306,8 @@ export class ArticleService {
         categories: schema.articles.categories,
         description: schema.articles.description,
         readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -407,6 +436,8 @@ export class ArticleService {
         categories: schema.articles.categories,
         description: schema.articles.description,
         readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,

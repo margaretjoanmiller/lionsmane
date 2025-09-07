@@ -15,9 +15,8 @@ export class ArticleConsumer extends WorkerHost {
 
   async process(job: Job<NewArticle>) {
     const data = job.data;
-    const { textContent, htmlContent } = await this.fetcherService.readablity(
-      data.url,
-    );
+
+    const { textContent, htmlContent } = this.articleService.cleanRaw(data);
 
     const keywords = await this.fetcherService.extractKeywords(textContent);
 

@@ -4,8 +4,8 @@ import { createZodDto } from 'nestjs-zod';
 export const feedOutDto = z.object({
   id: z.uuid(),
   url: z.url(),
-  title: z.string().min(1).max(255).nullable(),
-  description: z.string().max(1024).nullable(),
+  title: z.string().min(1).max(255),
+  description: z.string().max(1024).optional().default(''),
   authors: z.array(z.string().max(255)).nullable(),
   categories: z.array(z.string().max(255)).nullable(),
   copyright: z.string().max(255).nullable(),

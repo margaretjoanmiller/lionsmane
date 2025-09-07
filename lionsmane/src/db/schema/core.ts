@@ -17,7 +17,7 @@ export const feeds = pgTable('feeds', {
   id: uuid()
     .primaryKey()
     .$defaultFn(() => v7()),
-  title: varchar({ length: 50 }),
+  title: varchar({ length: 50 }).notNull(),
   url: varchar({ length: 256 }).notNull().unique(),
   authors: varchar({ length: 256 }).array(),
   categories: varchar({ length: 256 }).array(),
@@ -111,6 +111,8 @@ export const articles = pgTable(
     rawContent: text(),
     readableHtml: text(),
     readableText: text(),
+    fullArticleHtml: text(),
+    fullArticleText: text(),
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 256 }),
     media: varchar({ length: 256 }).array().notNull().default([]),
