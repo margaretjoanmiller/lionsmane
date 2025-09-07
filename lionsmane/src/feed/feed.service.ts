@@ -7,6 +7,7 @@ import { subMonths } from 'date-fns';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { FetcherService } from 'src/fetcher/fetcher.service';
+import { UpdateFeedDto } from './dto/update-feed.dto';
 
 @Injectable()
 export class FeedService {
@@ -148,9 +149,73 @@ export class FeedService {
     return userFeed;
   }
 
-  // update(id: number, updateFeedDto: UpdateFeedDto) {
-  //   return `This action updates a #${id} feed`;
-  // }
+  async update(id: string, userId: string, updateFeedDto: UpdateFeedDto) {
+    return await this.db.transaction(async (tx) => {
+      const [feed] = await tx
+        .select()
+        .from(schema.feeds)
+        .innerJoin(
+          schema.subscriptions,
+          eq(schema.subscriptions.feedId, schema.feeds.id),
+        )
+        .where(
+          and(eq(schema.feeds.id, id), eq(schema.subscriptions.userId, userId)),
+        )
+        .limit(1);
+      if (!feed) {
+        throw new Error('Feed not found');
+      }
+      if (updateFeedDto.folderId) {
+        const [folder] = await tx
+          .select()
+          .from(schema.folders)
+          .where(
+            and(
+              eq(schema.folders.id, updateFeedDto.folderId),
+              eq(schema.folders.userId, userId),
+            ),
+          )
+          .limit(1);
+        if (!folder) {
+          throw new Error('Folder not found');
+        }
+        const [subscription] = await tx
+          .update(schema.subscriptions)
+          .set({
+            description: updateFeedDto.description,
+            folderId: folder.id,
+          })
+          .where(
+            and(
+              eq(schema.subscriptions.feedId, id),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .returning();
+        if (!subscription) {
+          throw new Error('Subscription not found');
+        }
+        return subscription;
+      } else {
+        const [subscription] = await tx
+          .update(schema.subscriptions)
+          .set({
+            description: updateFeedDto.description,
+          })
+          .where(
+            and(
+              eq(schema.subscriptions.feedId, id),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .returning();
+        if (!subscription) {
+          throw new Error('Subscription not found');
+        }
+        return subscription;
+      }
+    });
+  }
 
   async remove(id: string, userId: string) {
     await this.db

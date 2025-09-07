@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { FeedService } from './feed.service';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import {
@@ -11,6 +19,8 @@ import {
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
+import { UpdateFeedDto } from './dto/update-feed.dto';
+import { SubscriptionOutDto } from './dto/subscription-out.dto';
 
 @ApiTags('feeds')
 @ApiCookieAuth()
@@ -45,5 +55,15 @@ export class FeedController {
   @ApiResponse({ status: 204, description: 'Feed unsubscribed' })
   remove(@Param('id') id: string, @Session() session: UserSession) {
     return this.feedService.remove(id, session.user.id);
+  }
+
+  @Put(':id')
+  @ZodResponse({ type: SubscriptionOutDto, status: 200 })
+  update(
+    @Param('id') id: string,
+    @Body() updateFeedDto: UpdateFeedDto,
+    @Session() session: UserSession,
+  ) {
+    return this.feedService.update(id, session.user.id, updateFeedDto);
   }
 }
