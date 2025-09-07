@@ -37,7 +37,6 @@ import {
 } from '@/components/ui/form';
 import React from 'react';
 import { z } from 'zod';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
@@ -198,7 +197,7 @@ function DashLayout() {
                         name="folderId"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
-                            <FormLabel>Language</FormLabel>
+                            <FormLabel>Folder</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <FormControl>
@@ -215,19 +214,19 @@ function DashLayout() {
                                           (folder) =>
                                             folder.value === field.value,
                                         )?.label
-                                      : 'Select language'}
+                                      : 'Select folder'}
                                   </Button>
                                 </FormControl>
                               </PopoverTrigger>
                               <PopoverContent className="w-[200px] p-0">
                                 <Command>
                                   <CommandInput
-                                    placeholder="Search framework..."
+                                    placeholder="Search folder..."
                                     className="h-9"
                                   />
                                   <CommandList>
                                     <CommandEmpty>
-                                      No framework found.
+                                      No folder found.
                                     </CommandEmpty>
                                     <CommandGroup>
                                       {folderSelect?.map((folder) => (
@@ -249,10 +248,7 @@ function DashLayout() {
                                 </Command>
                               </PopoverContent>
                             </Popover>
-                            <FormDescription>
-                              This is the language that will be used in the
-                              dashboard.
-                            </FormDescription>
+                            <FormDescription>The feed's folder</FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}

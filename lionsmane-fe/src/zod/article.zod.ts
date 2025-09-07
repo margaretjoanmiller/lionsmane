@@ -7,6 +7,7 @@ export const articleDetail = z.object({
   authors: z.array(z.string()),
   categories: z.array(z.string()),
   description: z.string().nullable(),
+  rawContent: z.string().nullable(),
   readableHtml: z.string().nullable(),
   readableText: z.string().nullable(),
   keywords: z.array(z.string()),

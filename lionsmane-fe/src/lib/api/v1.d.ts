@@ -44,7 +44,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["FeedController_findOne"];
-        put?: never;
+        put: operations["FeedController_update"];
         post?: never;
         delete: operations["FeedController_remove"];
         options?: never;
@@ -292,7 +292,7 @@ export interface components {
                 id: string;
                 /** Format: uri */
                 url: string;
-                title: string | null;
+                title: string;
                 description: string | null;
                 authors: string[] | null;
                 categories: string[] | null;
@@ -309,7 +309,7 @@ export interface components {
             id: string;
             /** Format: uri */
             url: string;
-            title: string | null;
+            title: string;
             description: string | null;
             authors: string[] | null;
             categories: string[] | null;
@@ -318,6 +318,21 @@ export interface components {
             updated: string | null;
             /** Format: uuid */
             subscriptionId: string;
+            folderId: string | null;
+        };
+        UpdateFeedDto: {
+            /** Format: uri */
+            url: string;
+            description?: string;
+            folderId: string | null;
+        };
+        SubscriptionOutDto_Output: {
+            /** Format: uuid */
+            id: string;
+            userId: string;
+            /** Format: uuid */
+            feedId: string;
+            description: string | null;
             folderId: string | null;
         };
         ArticleListDto_Output: {
@@ -342,7 +357,7 @@ export interface components {
                 isStarred: boolean | null;
                 /** Format: uuid */
                 feedId: string;
-                feedTitle: string;
+                feedTitle: string | null;
             }[];
         };
         ArticleStatusDto_Output: {
@@ -384,6 +399,9 @@ export interface components {
             description: string | null;
             readableHtml: string | null;
             readableText: string | null;
+            rawContent: string | null;
+            fullArticleHtml: string | null;
+            fullArticleText: string | null;
             keywords: string[];
             image: string | null;
             media: string[] | null;
@@ -557,6 +575,45 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FeedOutDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FeedController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFeedDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionOutDto_Output"];
                 };
             };
             /** @description Unauthorized */
