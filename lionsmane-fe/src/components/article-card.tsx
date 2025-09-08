@@ -1,5 +1,11 @@
 import { Link } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
 import type { ArticleDetail } from '@/types/article';
 import { $api } from '@/lib/fetch-client';
 import { toast } from 'sonner';
@@ -7,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
 import { Button } from './ui/button';
+import { format } from 'date-fns';
 
 function ReadBadge({ read }: { read: boolean }) {
   if (read) {
@@ -98,6 +105,9 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
             )}
           </div>
         </CardTitle>
+        <CardDescription>
+          {format(new Date(article.published), 'MMM d, yyyy HH:mm')}
+        </CardDescription>
       </CardHeader>
       <CardContent>{article.readableText?.slice(0, 150) + '...'}</CardContent>
     </Card>
