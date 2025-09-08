@@ -106,7 +106,10 @@ function ArticlePage() {
           {
             <div
               dangerouslySetInnerHTML={{
-                __html: data.readableHtml || '<p>error loading</p>',
+                __html:
+                  data.fullArticleHtml ||
+                  data.readableHtml ||
+                  '<p>error loading</p>',
               }} // we clean this on the backend
             />
           }
