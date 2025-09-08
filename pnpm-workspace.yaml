@@ -1,3 +1,6 @@
 packages:
   - lionsmane
   - lionsmane-fe
+
+onlyBuiltDependencies:
+  - '@swc/core'

@@ -2,10 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { and, desc, eq, gt, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, or, sql } from 'drizzle-orm';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import createDOMPurify, { WindowLike } from 'dompurify';
+import z from 'zod';
 
 @Injectable()
 export class ArticleService {
@@ -38,6 +39,16 @@ export class ArticleService {
   }
 
   async getArticles(userId: string, cursor: string | undefined, pageSize = 10) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
     const artPages = await this.db
       .select({
         id: schema.articles.id,
@@ -63,7 +74,7 @@ export class ArticleService {
       .innerJoin(
         schema.subscriptions,
         and(
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
           eq(schema.subscriptions.userId, userId),
         ),
       )
@@ -72,8 +83,21 @@ export class ArticleService {
         schema.userArticleStates,
         eq(schema.userArticleStates.articleId, schema.articles.id),
       )
-      .orderBy(desc(schema.articles.id)) // ordering
-      .where(cursor ? gt(schema.articles.id, cursor) : undefined) // if cursor is provided, get rows after it
+      .orderBy(desc(schema.articles.published), desc(schema.articles.id)) // ordering
+      .where(
+        and(
+          cursorDate && cursorId
+            ? or(
+                gt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  gt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
       .limit(pageSize + 1); // the number of rows to return
 
     const hasNextPage = artPages.length > pageSize;
@@ -81,7 +105,12 @@ export class ArticleService {
 
     return {
       articles: items,
-      cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      cursor: hasNextPage
+        ? this.createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
     };
   }
 
@@ -91,6 +120,17 @@ export class ArticleService {
     cursor: string | undefined,
     pageSize = 10,
   ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
+
     const artPages = await this.db
       .select({
         id: schema.articles.id,
@@ -127,11 +167,19 @@ export class ArticleService {
       )
       .where(
         and(
-          cursor ? gt(schema.articles.id, cursor) : undefined,
+          cursorDate && cursorId
+            ? or(
+                gt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  gt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
           eq(schema.articles.feedId, feedId),
         ),
       ) // if cursor is provided, get rows after it
-      .orderBy(desc(schema.articles.id)) // ordering
+      .orderBy(schema.articles.published, schema.articles.id)
       .limit(pageSize + 1); // the number of rows to return
 
     const hasNextPage = artPages.length > pageSize;
@@ -139,7 +187,12 @@ export class ArticleService {
 
     return {
       articles: items,
-      cursor: hasNextPage ? items[items.length - 1]?.id : null,
+      cursor: hasNextPage
+        ? this.createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
     };
   }
 
@@ -217,7 +270,13 @@ export class ArticleService {
         rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
-      .innerJoin(schema.subscriptions, eq(schema.subscriptions.userId, userId))
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .where(
         sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
@@ -297,6 +356,16 @@ export class ArticleService {
     pageSize = 10,
     cursor?: string,
   ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
     const baseQuery = this.db
       .select({
         id: schema.articles.id,
@@ -322,8 +391,8 @@ export class ArticleService {
       .innerJoin(
         schema.subscriptions,
         and(
-          eq(schema.subscriptions.userId, userId),
           eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
         ),
       )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
@@ -332,40 +401,77 @@ export class ArticleService {
       const query = baseQuery
         .leftJoin(
           schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
         )
         .where(
           and(
             sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
-            cursor ? gt(schema.articles.id, cursor) : undefined,
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.id))
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     } else if (stateFilter === 'read') {
       const query = baseQuery
         .innerJoin(
           schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
         )
-        .where(eq(schema.userArticleStates.isRead, true));
+        .where(
+          and(
+            eq(schema.userArticleStates.isRead, true),
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
       const articles = await query
-        .orderBy(desc(schema.articles.id))
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     } else {
       const stateCondition =
@@ -376,24 +482,40 @@ export class ArticleService {
       const query = baseQuery
         .innerJoin(
           schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
         )
         .where(
           and(
             stateCondition,
-            cursor ? gt(schema.articles.id, cursor) : undefined,
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
           ),
         );
 
       const articles = await query
-        .orderBy(desc(schema.articles.id))
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     }
   }
@@ -427,6 +549,16 @@ export class ArticleService {
     pageSize = 10,
     cursor?: string,
   ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
     const baseQuery = this.db
       .select({
         id: schema.articles.id,
@@ -468,18 +600,31 @@ export class ArticleService {
           and(
             eq(schema.articles.feedId, feedId),
             sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
-            cursor ? gt(schema.articles.id, cursor) : undefined,
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.id))
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     } else if (stateFilter === 'read') {
       const query = baseQuery
@@ -491,18 +636,31 @@ export class ArticleService {
           and(
             eq(schema.articles.feedId, feedId),
             eq(schema.userArticleStates.isRead, true),
-            cursor ? gt(schema.articles.id, cursor) : undefined,
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.id))
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     } else {
       const query = baseQuery
@@ -515,7 +673,15 @@ export class ArticleService {
             eq(schema.articles.feedId, feedId),
             eq(schema.userArticleStates.isStarred, true),
 
-            cursor ? gt(schema.articles.id, cursor) : undefined,
+            cursorDate && cursorId
+              ? or(
+                  gt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    gt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
           ),
         );
 
@@ -527,7 +693,12 @@ export class ArticleService {
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
         articles: items,
-        cursor: hasNextPage ? items[items.length - 1]?.id : null,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
       };
     }
   }
@@ -573,5 +744,40 @@ export class ArticleService {
       pageSize,
       cursor,
     );
+  }
+
+  private safeParseBase64Json(cursor: string) {
+    const cursorSchema = z.object({
+      id: z.uuid(),
+      published: z.string(),
+    });
+    const parsedCursor = cursorSchema.safeParse(
+      JSON.parse(Buffer.from(cursor, 'base64url').toString('ascii')),
+    );
+    if (!parsedCursor.success) {
+      throw new Error('Invalid cursor format');
+    }
+    return parsedCursor.data;
+  }
+
+  private parseCursor(cursor: string): { published: string; id: string } {
+    try {
+      const decoded = this.safeParseBase64Json(cursor);
+      if (!decoded.published || !decoded.id) {
+        throw new Error('Invalid cursor format');
+      }
+      return decoded;
+    } catch (error) {
+      throw new Error('Invalid cursor provided', { cause: error });
+    }
+  }
+
+  private createCursor(published: string, id: string): string {
+    return Buffer.from(
+      JSON.stringify({
+        published: published,
+        id,
+      }),
+    ).toString('base64url');
   }
 }

@@ -1,5 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { $api } from '@/lib/fetch-client';
+import { Button } from '@/components/ui/button';
+import SolarStarBold from '~icons/solar/star-bold';
+import SolarStarLinear from '~icons/solar/star-linear';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/dashboard/$articleId')({
   component: ArticlePage,
@@ -7,6 +11,7 @@ export const Route = createFileRoute('/dashboard/$articleId')({
 
 function ArticlePage() {
   const articleId = Route.useParams().articleId;
+  const queryClient = useQueryClient();
   const { data } = $api.useSuspenseQuery('get', '/article/{id}', {
     params: {
       path: {
@@ -16,11 +21,61 @@ function ArticlePage() {
     credentials: 'include',
   });
 
+  const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/article/{id}'],
+      });
+    },
+  });
+
   return (
     <div className="bg-card flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
       <div className="m-6">
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
           {data.title}
+          {data.isStarred && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                mutate({
+                  params: {
+                    path: {
+                      id: data.id,
+                    },
+                    query: {
+                      status: 'unstarred',
+                    },
+                  },
+                  credentials: 'include',
+                })
+              }
+            >
+              <SolarStarBold />
+            </Button>
+          )}
+          {!data.isStarred && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                mutate({
+                  params: {
+                    path: {
+                      id: data.id,
+                    },
+                    query: {
+                      status: 'starred',
+                    },
+                  },
+                  credentials: 'include',
+                })
+              }
+            >
+              <SolarStarLinear />
+            </Button>
+          )}
         </h1>
         <div className="prose prose-lg prose-pink">
           {

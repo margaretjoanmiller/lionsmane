@@ -1,4 +1,4 @@
-import { Link, useRouteContext } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import type { ArticleDetail } from '@/types/article';
 import { $api } from '@/lib/fetch-client';

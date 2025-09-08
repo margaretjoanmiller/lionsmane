@@ -59,6 +59,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { Input } from './ui/input';
+import { useQueryClient } from '@tanstack/react-query';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -99,12 +100,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { mutate } = $api.useMutation('post', '/folder');
 
+  const queryClient = useQueryClient();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     mutate(
       { body: values, credentials: 'include' },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           setFormOpen(false);
+          await queryClient.invalidateQueries();
+          form.reset();
         },
       },
     );
