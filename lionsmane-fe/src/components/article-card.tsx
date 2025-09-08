@@ -14,6 +14,7 @@ import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
 import { Button } from './ui/button';
 import { format } from 'date-fns';
+import { useQueryClient } from '@tanstack/react-query';
 
 function ReadBadge({ read }: { read: boolean }) {
   if (read) {
@@ -24,7 +25,20 @@ function ReadBadge({ read }: { read: boolean }) {
 }
 
 export function ArticleCard({ article }: { article: ArticleDetail }) {
-  const { mutate, error } = $api.useMutation('patch', '/article/status/{id}');
+  const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/article/unread'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/article/read'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/article/starred'],
+      });
+    },
+  });
+  const queryClient = useQueryClient();
 
   if (error) {
     toast.error('Error marking article as read');
@@ -34,6 +48,32 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     article.feedTitle.length > 50
       ? article.feedTitle.slice(0, 50) + '...'
       : article.feedTitle;
+
+  function markStarred() {
+    mutate({
+      params: {
+        path: {
+          id: article.id,
+        },
+        query: {
+          status: 'starred',
+        },
+      },
+      credentials: 'include',
+    });
+  }
+  function markUnstarred() {
+    mutate({
+      params: {
+        path: {
+          id: article.id,
+        },
+        query: {
+          status: 'unstarred',
+        },
+      },
+    });
+  }
 
   return (
     <Card>
@@ -61,46 +101,14 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           <div className="justify">
             <ReadBadge read={article.isRead || false} />
             <Badge variant="outline">{articleFeed}</Badge>
-            {article.isStarred && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  mutate({
-                    params: {
-                      path: {
-                        id: article.id,
-                      },
-                      query: {
-                        status: 'unstarred',
-                      },
-                    },
-                    credentials: 'include',
-                  })
-                }
-              >
-                <SolarStarBold />
+            {!article.isStarred && (
+              <Button variant="ghost" size="icon" onClick={markStarred}>
+                <SolarStarLinear />
               </Button>
             )}
-            {!article.isStarred && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  mutate({
-                    params: {
-                      path: {
-                        id: article.id,
-                      },
-                      query: {
-                        status: 'starred',
-                      },
-                    },
-                    credentials: 'include',
-                  })
-                }
-              >
-                <SolarStarLinear />
+            {article.isStarred && (
+              <Button variant="ghost" size="icon" onClick={markUnstarred}>
+                <SolarStarBold />
               </Button>
             )}
           </div>

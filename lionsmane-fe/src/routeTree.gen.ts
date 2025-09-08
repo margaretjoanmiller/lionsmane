@@ -13,8 +13,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo.tanstack-query'
-import { Route as DemoTableRouteImport } from './routes/demo.table'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId'
 import { Route as DashboardFeedFeedIdRouteImport } from './routes/dashboard/feed.$feedId'
@@ -39,16 +37,6 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTableRoute = DemoTableRouteImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -71,8 +59,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
@@ -81,8 +67,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
@@ -93,8 +77,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
 }
@@ -106,8 +88,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard/$articleId'
     | '/dashboard/settings'
-    | '/demo/table'
-    | '/demo/tanstack-query'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
   fileRoutesByTo: FileRoutesByTo
@@ -116,8 +96,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard/$articleId'
     | '/dashboard/settings'
-    | '/demo/table'
-    | '/demo/tanstack-query'
     | '/dashboard'
     | '/dashboard/feed/$feedId'
   id:
@@ -127,8 +105,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard/$articleId'
     | '/dashboard/settings'
-    | '/demo/table'
-    | '/demo/tanstack-query'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
   fileRoutesById: FileRoutesById
@@ -137,8 +113,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  DemoTableRoute: typeof DemoTableRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -170,20 +144,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/table': {
-      id: '/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof DemoTableRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/dashboard/settings': {
       id: '/dashboard/settings'
@@ -231,8 +191,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   LoginRoute: LoginRoute,
-  DemoTableRoute: DemoTableRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

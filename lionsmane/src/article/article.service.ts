@@ -278,7 +278,6 @@ export class ArticleService {
       )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .where(sql`${schema.articles.readableText} &@~ ${query}`)
-      .orderBy((t) => desc(t.rank))
       .limit(pageSize)
       .offset(offset);
     if (!searchedArticles) {
