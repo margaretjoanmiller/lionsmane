@@ -39,6 +39,7 @@ import { ArticleModule } from './article/article.module';
 import { FolderModule } from './folder/folder.module';
 import { RedisModule } from './redis/redis.module';
 import { CronModule } from './cron/cron.module';
+import { FilterModule } from './filter/filter.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -108,6 +109,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     FolderModule,
     RedisModule,
     CronModule,
+    FilterModule,
   ],
   controllers: [AppController],
   providers: [

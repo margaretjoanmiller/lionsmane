@@ -3,6 +3,7 @@ import { $api } from '@/lib/fetch-client';
 import { Button } from '@/components/ui/button';
 import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
+import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/dashboard/$articleId')({
@@ -28,6 +29,18 @@ function ArticlePage() {
       });
     },
   });
+
+  const { mutate: requestFullArticleText } = $api.useMutation(
+    'post',
+    '/article/readable/{id}',
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ['get', '/article/{id}'],
+        });
+      },
+    },
+  );
 
   return (
     <div className="bg-card flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
@@ -76,6 +89,18 @@ function ArticlePage() {
               <SolarStarLinear />
             </Button>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              requestFullArticleText({
+                params: { path: { id: data.id } },
+                credentials: 'include',
+              })
+            }
+          >
+            <SolarGlassesLineDuotone />
+          </Button>
         </h1>
         <div className="prose prose-lg prose-pink">
           {

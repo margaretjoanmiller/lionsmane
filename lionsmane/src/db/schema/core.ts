@@ -1,6 +1,7 @@
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -41,15 +42,12 @@ export const subscriptions = pgTable(
     description: varchar({ length: 500 }),
     folderId: uuid().references(() => folders.id),
   },
-  (table) => ({
-    userFeedUnique: unique().on(table.userId, table.feedId), // Prevent duplicate subscriptions
-    feedIdx: index('user_feeds_feed_idx').on(table.feedId),
-    folderIdx: index('user_feeds_folder_idx').on(table.folderId),
-    userFeedIdx: index('user_feeds_user_feed_idx').on(
-      table.userId,
-      table.feedId,
-    ),
-  }),
+  (table) => [
+    unique('subscriptions_userId_feedId_unique').on(table.userId, table.feedId), // Prevent duplicate subscriptions
+    index('user_feeds_feed_idx').on(table.feedId),
+    index('user_feeds_folder_idx').on(table.folderId),
+    index('user_feeds_user_feed_idx').on(table.userId, table.feedId),
+  ],
 );
 
 export const folders = pgTable(
@@ -63,10 +61,10 @@ export const folders = pgTable(
       .references(() => user.id)
       .notNull(),
   },
-  (table) => ({
-    userFolderUnique: unique().on(table.name, table.userId),
-    userIdx: index('folders_user_idx').on(table.userId),
-  }),
+  (table) => [
+    unique('folders_name_userId_unique').on(table.name, table.userId),
+    index('folders_user_idx').on(table.userId),
+  ],
 );
 
 export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
@@ -122,14 +120,11 @@ export const articles = pgTable(
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),
   },
-  (table) => ({
-    feedIdx: index('articles_feed_idx').on(table.feedId),
-    publishedIdx: index('articles_published_idx').on(table.published),
-    searchIdx: index('articles_search_idx').using(
-      'pgroonga',
-      table.readableText,
-    ),
-  }),
+  (table) => [
+    index('articles_feed_idx').on(table.feedId),
+    index('articles_published_idx').on(table.published),
+    index('articles_search_idx').using('pgroonga', table.readableText),
+  ],
 );
 
 export const articleRelations = relations(articles, ({ one }) => ({
@@ -150,18 +145,64 @@ export const userArticleStates = pgTable(
       .references(() => articles.id, { onDelete: 'cascade' }),
     isRead: boolean().notNull().default(false),
     isStarred: boolean().notNull().default(false),
+    isBlurred: boolean().default(false),
+    isHidden: boolean().default(false),
   },
-  (table) => ({
-    pk: primaryKey({ columns: [table.userId, table.articleId] }),
-    userIdx: index('user_article_states_user_idx').on(table.userId),
-    articleIdx: index('user_article_states_article_idx').on(table.articleId),
-    userReadIdx: index('user_article_states_user_read_idx').on(
-      table.userId,
-      table.isRead,
-    ),
-    userStarredIdx: index('user_article_states_user_starred_idx').on(
+  (table) => [
+    primaryKey({ columns: [table.userId, table.articleId] }),
+    index('user_article_states_user_idx').on(table.userId),
+    index('user_article_states_article_idx').on(table.articleId),
+    index('user_article_states_user_read_idx').on(table.userId, table.isRead),
+    index('user_article_states_user_starred_idx').on(
       table.userId,
       table.isStarred,
     ),
-  }),
+  ],
+);
+
+export const userFilters = pgTable(
+  'user_filters',
+  {
+    id: uuid()
+      .primaryKey()
+      .$defaultFn(() => v7()),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    conditions: jsonb(),
+    actions: jsonb(),
+    enabled: boolean().notNull().default(true),
+  },
+  (table) => [
+    index('user_filters_user_idx').on(table.userId, table.conditions),
+    index('user_filters_actions_idx').on(table.userId, table.actions),
+  ],
+);
+
+export const appliedRules = pgTable(
+  'applied_rules',
+  {
+    id: uuid()
+      .primaryKey()
+      .$defaultFn(() => v7()),
+    userId: text()
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    articleId: uuid()
+      .notNull()
+      .references(() => articles.id, { onDelete: 'cascade' }),
+    ruleId: uuid()
+      .notNull()
+      .references(() => userFilters.id, { onDelete: 'cascade' }),
+    appliedAt: timestamp().notNull().defaultNow(),
+    action: varchar({ length: 20 }).notNull(), // 'blur', 'markRead', 'hide'
+    contentWarning: text(), // For blur actions
+    isUndone: boolean().notNull().default(false),
+    undoneAt: timestamp(),
+  },
+  (table) => [
+    index('applied_rules_user_article_idx').on(table.userId, table.articleId),
+    index('applied_rules_rule_idx').on(table.ruleId),
+    index('applied_rules_applied_at_idx').on(table.appliedAt),
+  ],
 );

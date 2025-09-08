@@ -7,10 +7,14 @@ import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import createDOMPurify, { WindowLike } from 'dompurify';
 import z from 'zod';
+import { FetcherService } from 'src/fetcher/fetcher.service';
 
 @Injectable()
 export class ArticleService {
-  constructor(@Inject('DB') private db: NodePgDatabase<typeof schema>) {}
+  constructor(
+    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    private fetcher: FetcherService,
+  ) {}
 
   cleanRaw(newArt: NewArticle) {
     const window = new JSDOM('').window;
@@ -36,6 +40,38 @@ export class ArticleService {
       console.error('Error inserting article:', error);
       throw Error('Could not insert article', { cause: error });
     }
+  }
+
+  async requestFullArticletext(id: string, userId: string) {
+    const result = await this.db.transaction(async (tx) => {
+      const [article] = await tx
+        .select()
+        .from(schema.articles)
+        .innerJoin(
+          schema.subscriptions,
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+        )
+        .innerJoin(schema.feeds, eq(schema.articles.feedId, schema.feeds.id))
+        .where(
+          and(
+            eq(schema.articles.id, id),
+            eq(schema.subscriptions.userId, userId),
+          ),
+        )
+        .limit(1);
+      if (!article) {
+        throw new Error('Article not found or access denied');
+      }
+      const { textContent, htmlContent } = await this.fetcher.readablity(
+        article.articles.url,
+      );
+      await tx
+        .update(schema.articles)
+        .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
+        .where(eq(schema.articles.id, id));
+      return article;
+    });
+    return { ...result.articles, feedTitle: result.feeds.title };
   }
 
   async getArticles(userId: string, cursor: string | undefined, pageSize = 10) {
@@ -247,10 +283,6 @@ export class ArticleService {
     offset: number,
     pageSize = 10,
   ) {
-    const matchQuery = sql`(setweight(to_tsvector('english', ${schema.articles.title}), 'A') ||
-              setweight(to_tsvector('english', ${schema.articles.readableText}), 'B')),
-              to_tsquery('english', ${query})`;
-
     const searchedArticles = await this.db
       .select({
         id: schema.articles.id,

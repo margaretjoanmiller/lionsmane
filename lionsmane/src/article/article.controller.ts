@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import {
@@ -278,6 +279,15 @@ export class ArticleController {
       pageSize,
       cursor,
     );
+  }
+
+  @Post('readable/:id')
+  @ZodResponse({ type: ArticleDetailDto, status: 200 })
+  async requestFullArticleText(
+    @Param('id') id: string,
+    @Session() session: UserSession,
+  ) {
+    return this.articleService.requestFullArticletext(id, session.user.id);
   }
 
   @Get(':id')
