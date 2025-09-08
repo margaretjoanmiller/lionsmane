@@ -267,7 +267,6 @@ export class ArticleService {
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
         feedTitle: schema.feeds.title || schema.feeds.url,
-        rank: sql`ts_rank(${matchQuery})`,
       })
       .from(schema.articles)
       .innerJoin(
