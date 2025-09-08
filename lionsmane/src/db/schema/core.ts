@@ -126,11 +126,8 @@ export const articles = pgTable(
     feedIdx: index('articles_feed_idx').on(table.feedId),
     publishedIdx: index('articles_published_idx').on(table.published),
     searchIdx: index('articles_search_idx').using(
-      'gin',
-      sql`(
-      setweight(to_tsvector('english', ${table.title}), 'A') ||
-      setweight(to_tsvector('english', ${table.readableText}), 'B')
-      )`,
+      'pgroonga',
+      table.readableText,
     ),
   }),
 );
