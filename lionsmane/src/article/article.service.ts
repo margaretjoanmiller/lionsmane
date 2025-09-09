@@ -126,7 +126,10 @@ export class ArticleService {
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
-        eq(schema.userArticleStates.articleId, schema.articles.id),
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
       )
       .orderBy(desc(schema.articles.published), desc(schema.articles.id)) // ordering
       .where(
@@ -210,7 +213,10 @@ export class ArticleService {
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
-        eq(schema.userArticleStates.articleId, schema.articles.id),
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
       )
       .where(
         and(
@@ -226,7 +232,7 @@ export class ArticleService {
           eq(schema.articles.feedId, feedId),
         ),
       ) // if cursor is provided, get rows after it
-      .orderBy(schema.articles.published, schema.articles.id)
+      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
       .limit(pageSize + 1); // the number of rows to return
 
     const hasNextPage = artPages.length > pageSize;
@@ -281,7 +287,10 @@ export class ArticleService {
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
         schema.userArticleStates,
-        eq(schema.userArticleStates.articleId, schema.articles.id),
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
       )
       .where(eq(schema.articles.id, id))
       .limit(1);
@@ -328,9 +337,17 @@ export class ArticleService {
         ),
       )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
       .where(sql`${schema.articles.readableText} &@~ ${query}`)
       .limit(pageSize)
       .offset(offset);
+
     if (!searchedArticles) {
       return { articles: [] };
     }
