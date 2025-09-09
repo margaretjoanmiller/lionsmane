@@ -450,7 +450,7 @@ export class ArticleService {
         isRead: schema.userArticleStates.isRead,
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
+        contentWarning: schema.userArticleStates.contentWarning,
       })
       .from(schema.articles)
       .innerJoin(
@@ -646,7 +646,7 @@ export class ArticleService {
         isRead: schema.userArticleStates.isRead,
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
+        contentWarning: schema.userArticleStates.contentWarning,
       })
       .from(schema.articles)
       .innerJoin(

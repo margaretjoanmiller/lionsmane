@@ -8,7 +8,7 @@ import { Article } from 'src/article/article';
 import { AppliedRules, FilterRule } from './filter';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { subMonths } from 'date-fns';
+import { isAfter, subMonths } from 'date-fns';
 
 @Injectable()
 export class FilterService {
@@ -228,6 +228,7 @@ export class FilterService {
           isRead: schema.userArticleStates.isRead,
           isHidden: schema.userArticleStates.isHidden,
           isBlurred: schema.userArticleStates.isBlurred,
+          contentWarning: schema.userArticleStates.contentWarning,
         })
         .from(schema.userArticleStates)
         .where(
@@ -241,55 +242,64 @@ export class FilterService {
         isRead: false,
         isHidden: false,
         isBlurred: false,
+        contentWarning: null as string | null,
       };
       if (!currentState) {
         finalState = {
           isRead: false,
           isHidden: false,
           isBlurred: false,
+          contentWarning: '',
         };
       } else {
         finalState = {
           isRead: currentState.isRead ?? false,
           isHidden: currentState.isHidden ?? false,
           isBlurred: currentState.isBlurred ?? false,
+          contentWarning: currentState.contentWarning ?? '',
         };
       }
 
-      if (matchingRules.some((rule) => rule.action === 'markRead')) {
-        if (!appliedRules.some((r) => r.action === 'markRead')) {
-          await tx.insert(schema.appliedRules).values({
-            userId,
-            articleId,
-            ruleId: matchingRules.find((r) => r.action === 'markRead')!.ruleId,
-            action: 'markRead',
-          });
-          finalState.isRead = true;
-        }
+      const matchingRuleMarkRead = matchingRules.find(
+        (r) => r.action === 'markRead',
+      );
+      if (
+        matchingRuleMarkRead &&
+        !appliedRules.some((r) => r.articleId === articleId)
+      ) {
+        await tx.insert(schema.appliedRules).values({
+          userId,
+          articleId,
+          ruleId: matchingRuleMarkRead.ruleId,
+          action: 'markRead',
+        });
+        finalState.isRead = true;
       }
-      if (matchingRules.some((rule) => rule.action === 'hide')) {
-        if (!appliedRules.some((r) => r.action === 'hide')) {
-          await tx.insert(schema.appliedRules).values({
-            userId,
-            articleId,
-            ruleId: matchingRules.find((r) => r.action === 'hide')!.ruleId,
-            action: 'hide',
-          });
-          finalState.isHidden = true;
-        }
+      const matchingRuleHide = matchingRules.find((r) => r.action === 'hide');
+      if (matchingRuleHide && !appliedRules.some((r) => r.action === 'hide')) {
+        await tx.insert(schema.appliedRules).values({
+          userId,
+          articleId,
+          ruleId: matchingRuleHide.ruleId,
+          action: 'hide',
+        });
+        finalState.isHidden = true;
       }
-      if (matchingRules.some((rule) => rule.action === 'blur')) {
-        if (!appliedRules.some((r) => r.action === 'blur')) {
-          await tx.insert(schema.appliedRules).values({
-            userId,
-            articleId,
-            ruleId: matchingRules.find((r) => r.action === 'blur')!.ruleId,
-            action: 'blur',
-            contentWarning: matchingRules.find((r) => r.action === 'blur')!
-              .contentWarning,
-          });
-          finalState.isBlurred = true;
-        }
+      const matchingRuleBlur = matchingRules
+        .sort((a, b) => {
+          return isAfter(a.appliedAt, b.appliedAt) ? -1 : 1;
+        })
+        .findLast((r) => r.action === 'blur');
+      if (matchingRuleBlur && !appliedRules.some((r) => r.action === 'blur')) {
+        await tx.insert(schema.appliedRules).values({
+          userId,
+          articleId,
+          ruleId: matchingRuleBlur.ruleId,
+          action: 'blur',
+          contentWarning: matchingRuleBlur.contentWarning,
+        });
+        finalState.contentWarning = matchingRuleBlur.contentWarning;
+        finalState.isBlurred = true;
       }
       return await tx
         .insert(schema.userArticleStates)

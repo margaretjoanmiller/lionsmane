@@ -15,6 +15,6 @@ export const filterFormSchema = z.object({
     .optional(),
   feeds: z.array(z.string()).optional(),
   type: z.enum(['blur', 'markRead', 'hide']),
-  contentWarning: z.string().max(512).nullable(),
+  contentWarning: z.string().max(512).optional(),
   enabled: z.boolean(),
 });

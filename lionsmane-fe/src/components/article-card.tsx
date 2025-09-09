@@ -127,12 +127,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
   if (article.isBlurred && !dismissBlur) {
     return (
       <Card>
-        <div className="blur-sm">
-          {article.contentWarning && (
-            <Badge className="mask-center">{article.contentWarning}</Badge>
-          )}
-          {card}
-        </div>
+        {article.contentWarning && (
+          <Badge className="mask-center">{article.contentWarning}</Badge>
+        )}
+        <div className="blur-sm">{card}</div>
         <Button variant="ghost" onClick={() => setDismissBlur(true)}>
           Dismiss blur
         </Button>

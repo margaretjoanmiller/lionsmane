@@ -11,7 +11,7 @@ export interface FilterRule {
   conditions: Conditions;
   action: {
     type: 'blur' | 'hide' | 'markRead';
-    contentWarning: string | null; // For blur action
+    contentWarning: string | undefined; // For blur action
   };
   isActive: boolean;
 }

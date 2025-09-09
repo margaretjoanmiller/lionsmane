@@ -58,7 +58,7 @@ function NewFilter() {
       },
       action: {
         type: values.type,
-        contentWarning: values.contentWarning,
+        contentWarning: values.contentWarning || null,
       },
       isActive: values.enabled,
     };
@@ -262,6 +262,44 @@ function NewFilter() {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="blur">Blur</SelectItem>
+                <SelectItem value="warn">Warn</SelectItem>
+                <SelectItem value="hide">Hide</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {form.watch('type') === 'blur' && (
+          <FormField
+            control={form.control}
+            name="contentWarning"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Content Warning</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="This content has been blurred"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is the content warning shown when the action is set to
+                  blur.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <Button type="submit">Submit</Button>
       </form>
     </Form>

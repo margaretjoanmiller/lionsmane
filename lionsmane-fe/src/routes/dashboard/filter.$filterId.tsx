@@ -23,6 +23,7 @@ import {
   SelectContent,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 export const Route = createFileRoute('/dashboard/filter/$filterId')({
   component: RouteComponent,
@@ -311,6 +312,28 @@ function RouteComponent() {
             </FormItem>
           )}
         />
+        {form.watch('type') === 'blur' && (
+          <FormField
+            control={form.control}
+            name="contentWarning"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Content Warning</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="This content has been blurred"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is the content warning shown when the action is set to
+                  blur.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <Button type="submit">Submit</Button>
       </form>
     </Form>
