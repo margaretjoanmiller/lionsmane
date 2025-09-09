@@ -403,6 +403,9 @@ export interface components {
                 updated: string | null;
                 isRead: boolean | null;
                 isStarred: boolean | null;
+                isBlurred: boolean | null;
+                isHidden: boolean | null;
+                contentWarning: string | null;
                 /** Format: uuid */
                 feedId: string;
                 feedTitle: string | null;
@@ -414,6 +417,9 @@ export interface components {
             articleId: string;
             isRead?: boolean;
             isStarred?: boolean;
+            isBlurred?: boolean;
+            isHidden?: boolean;
+            contentWarning: string | null;
         };
         ArticleSearchDto_Output: {
             articles: {
@@ -434,6 +440,13 @@ export interface components {
                 updated: string | null;
                 /** Format: uuid */
                 feedId: string;
+                /** @default false */
+                isRead: boolean | null;
+                /** @default false */
+                isBlurred: boolean | null;
+                /** @default false */
+                isHidden: boolean | null;
+                contentWarning: string | null;
             }[];
         };
         ArticleDetailDto_Output: {
@@ -463,6 +476,11 @@ export interface components {
             isRead: boolean | null;
             /** @default false */
             isStarred: boolean | null;
+            /** @default false */
+            isBlurred: boolean | null;
+            /** @default false */
+            isHidden: boolean | null;
+            contentWarning: string | null;
         };
         CreateFolderDto: {
             name: string;
@@ -497,8 +515,44 @@ export interface components {
             name?: string;
             feedIds?: string[];
         };
-        CreateFilterDto: Record<string, never>;
-        UpdateFilterDto: Record<string, never>;
+        CreateFilterDto: {
+            name: string;
+            description?: string;
+            conditions: {
+                keywords?: string[];
+                titleContains?: string[];
+                contentContains?: string[];
+                authors?: string[];
+                categories?: string[];
+                feeds?: string[];
+            };
+            /** @default true */
+            isActive: boolean;
+            action: {
+                /** @enum {string} */
+                type: "blur" | "markRead" | "hide";
+                contentWarning: string | null;
+            };
+        };
+        UpdateFilterDto: {
+            name?: string;
+            description?: string;
+            conditions: {
+                keywords?: string[];
+                titleContains?: string[];
+                contentContains?: string[];
+                authors?: string[];
+                categories?: string[];
+                feeds?: string[];
+            };
+            /** @default true */
+            isActive: boolean;
+            action: {
+                /** @enum {string} */
+                type?: "blur" | "markRead" | "hide";
+                contentWarning?: string | null;
+            };
+        };
     };
     responses: never;
     parameters: never;
@@ -1117,13 +1171,12 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            /** @description Request accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ArticleDetailDto_Output"];
-                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {

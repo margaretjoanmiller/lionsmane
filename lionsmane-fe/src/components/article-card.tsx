@@ -15,6 +15,7 @@ import SolarStarLinear from '~icons/solar/star-linear';
 import { Button } from './ui/button';
 import { format } from 'date-fns';
 import { useQueryClient } from '@tanstack/react-query';
+import React from 'react';
 
 function ReadBadge({ read }: { read: boolean }) {
   if (read) {
@@ -25,6 +26,8 @@ function ReadBadge({ read }: { read: boolean }) {
 }
 
 export function ArticleCard({ article }: { article: ArticleDetail }) {
+  const [dismissBlur, setDismissBlur] = React.useState(false);
+
   const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -75,8 +78,8 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     });
   }
 
-  return (
-    <Card>
+  const card = (
+    <>
       <CardHeader>
         <CardTitle>
           <Link
@@ -118,6 +121,33 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         </CardDescription>
       </CardHeader>
       <CardContent>{article.readableText?.slice(0, 150) + '...'}</CardContent>
-    </Card>
+    </>
   );
+
+  if (article.isBlurred && !dismissBlur) {
+    return (
+      <Card>
+        <div className="blur-sm">
+          {article.contentWarning && (
+            <Badge className="mask-center">{article.contentWarning}</Badge>
+          )}
+          {card}
+        </div>
+        <Button variant="ghost" onClick={() => setDismissBlur(true)}>
+          Dismiss blur
+        </Button>
+      </Card>
+    );
+  } else if (article.isBlurred && dismissBlur) {
+    return (
+      <Card>
+        {card}
+        <Button variant="ghost" onClick={() => setDismissBlur(false)}>
+          Reapply Blur
+        </Button>
+      </Card>
+    );
+  } else {
+    return <Card>{card}</Card>;
+  }
 }

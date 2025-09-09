@@ -15,4 +15,7 @@ export interface ArticleDetail {
   feedTitle: string;
   isRead: boolean | null;
   isStarred: boolean | null;
+  isBlurred: boolean | null;
+  isHidden: boolean | null;
+  contentWarning: string | null;
 }
