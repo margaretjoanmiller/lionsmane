@@ -15,8 +15,11 @@ import {
   ApiBearerAuth,
   ApiCookieAuth,
   ApiOAuth2,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { FilterOutDto } from './dto/filter-out.dto';
+import { ZodResponse } from 'nestjs-zod';
 
 @ApiTags('filter')
 @ApiCookieAuth()
@@ -27,6 +30,7 @@ export class FilterController {
   constructor(private readonly filterService: FilterService) {}
 
   @Post()
+  @ZodResponse({ type: FilterOutDto, status: 201 })
   create(
     @Body() createFilterDto: CreateFilterDto,
     @Session() session: UserSession,
@@ -35,16 +39,19 @@ export class FilterController {
   }
 
   @Get()
+  @ZodResponse({ type: [FilterOutDto], status: 200 })
   findAll(@Session() session: UserSession) {
     return this.filterService.findAll(session.user.id);
   }
 
   @Get(':id')
+  @ZodResponse({ type: FilterOutDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {
     return this.filterService.findOne(id, session.user.id);
   }
 
   @Patch(':id')
+  @ZodResponse({ type: FilterOutDto, status: 200 })
   update(
     @Param('id') id: string,
     @Body() updateFilterDto: UpdateFilterDto,
@@ -54,6 +61,7 @@ export class FilterController {
   }
 
   @Delete(':id')
+  @ApiResponse({ status: 200, description: 'Filter deleted successfully' })
   remove(@Param('id') id: string, @Session() session: UserSession) {
     return this.filterService.remove(id, session.user.id);
   }

@@ -534,6 +534,26 @@ export interface components {
                 contentWarning: string | null;
             };
         };
+        FilterOutDto_Output: {
+            /** Format: uuid */
+            id: string;
+            description?: string;
+            conditions: {
+                keywords?: string[];
+                titleContains?: string[];
+                contentContains?: string[];
+                authors?: string[];
+                categories?: string[];
+                feeds?: string[];
+            };
+            /** @default true */
+            isActive: boolean;
+            action: {
+                /** @enum {string} */
+                type: "blur" | "markRead" | "hide";
+                contentWarning: string | null;
+            };
+        };
         UpdateFilterDto: {
             name?: string;
             description?: string;
@@ -1453,7 +1473,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FilterOutDto_Output"][];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -1488,7 +1510,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FilterOutDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -1521,7 +1545,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FilterOutDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -1550,6 +1576,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Filter deleted successfully */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1591,7 +1618,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FilterOutDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
