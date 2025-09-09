@@ -8,7 +8,7 @@ export const articleStatus = z.object({
   isStarred: z.boolean().optional(),
   isBlurred: z.boolean().optional(),
   isHidden: z.boolean().optional(),
-  contentWarning: z.string().nullable(),
+  contentWarning: z.array(z.string()).nullable().default([]),
 });
 
 export class ArticleStatusDto extends createZodDto(articleStatus) {}

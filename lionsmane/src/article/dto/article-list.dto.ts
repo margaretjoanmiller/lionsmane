@@ -41,7 +41,7 @@ const articleList = z.object({
       isStarred: z.boolean().default(false).nullable(),
       isBlurred: z.boolean().default(false).nullable(),
       isHidden: z.boolean().default(false).nullable(),
-      contentWarning: z.string().nullable(),
+      contentWarning: z.array(z.string()).nullable().default([]),
       feedId: z.uuid(),
       feedTitle: z.string().nullable(),
     }),

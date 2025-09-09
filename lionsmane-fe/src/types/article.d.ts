@@ -17,5 +17,5 @@ export interface ArticleDetail {
   isStarred: boolean | null;
   isBlurred: boolean | null;
   isHidden: boolean | null;
-  contentWarning: string | null;
+  contentWarning: string[];
 }

@@ -405,7 +405,8 @@ export interface components {
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
-                contentWarning: string | null;
+                /** @default [] */
+                contentWarning: string[] | null;
                 /** Format: uuid */
                 feedId: string;
                 feedTitle: string | null;
@@ -419,7 +420,8 @@ export interface components {
             isStarred?: boolean;
             isBlurred?: boolean;
             isHidden?: boolean;
-            contentWarning: string | null;
+            /** @default [] */
+            contentWarning: string[] | null;
         };
         ArticleSearchDto_Output: {
             articles: {
@@ -446,7 +448,8 @@ export interface components {
                 isBlurred: boolean | null;
                 /** @default false */
                 isHidden: boolean | null;
-                contentWarning: string | null;
+                /** @default [] */
+                contentWarning: string[] | null;
             }[];
         };
         ArticleDetailDto_Output: {
@@ -480,7 +483,8 @@ export interface components {
             isBlurred: boolean | null;
             /** @default false */
             isHidden: boolean | null;
-            contentWarning: string | null;
+            /** @default [] */
+            contentWarning: string[] | null;
         };
         CreateFolderDto: {
             name: string;
@@ -537,7 +541,7 @@ export interface components {
         FilterOutDto_Output: {
             /** Format: uuid */
             id: string;
-            name: string;
+            name: string | null;
             description?: string;
             conditions: {
                 keywords?: string[];

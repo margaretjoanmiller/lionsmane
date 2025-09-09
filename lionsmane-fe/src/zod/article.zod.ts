@@ -41,5 +41,5 @@ export const articleDetail = z.object({
   isStarred: z.boolean().nullable().default(false),
   isBlurred: z.boolean().nullable().default(false),
   isHidden: z.boolean().nullable().default(false),
-  contentWarning: z.string().max(256).nullable().default(null),
+  contentWarning: z.array(z.string().max(256).nullable()).default([]),
 });

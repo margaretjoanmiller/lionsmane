@@ -149,7 +149,7 @@ export const userArticleStates = pgTable(
     isStarred: boolean().notNull().default(false),
     isBlurred: boolean().notNull().default(false),
     isHidden: boolean().notNull().default(false),
-    contentWarning: varchar({ length: 256 }),
+    contentWarning: varchar({ length: 256 }).array(),
   },
   (table) => [
     primaryKey({ columns: [table.userId, table.articleId] }),

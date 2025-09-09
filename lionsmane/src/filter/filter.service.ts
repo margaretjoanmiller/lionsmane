@@ -101,6 +101,7 @@ export class FilterService {
       .returning();
   }
 
+  // match article against all filters
   evaluateArticleAgainstFilters(
     article: Article,
     usersFilters: FilterRule[],
@@ -208,21 +209,14 @@ export class FilterService {
       })
       .filter((action) => action !== undefined);
   }
+
+  // apply matching filter rules to article
   async applyMatchingRules(
     articleId: string,
     userId: string,
     matchingRules: AppliedRules[],
   ) {
     return await this.db.transaction(async (tx) => {
-      const appliedRules = await tx
-        .select()
-        .from(schema.appliedRules)
-        .where(
-          and(
-            eq(schema.appliedRules.articleId, articleId),
-            eq(schema.appliedRules.userId, userId),
-          ),
-        );
       const currentState = await tx
         .select({
           isRead: schema.userArticleStates.isRead,
@@ -242,31 +236,28 @@ export class FilterService {
         isRead: false,
         isHidden: false,
         isBlurred: false,
-        contentWarning: null as string | null,
+        contentWarning: [] as string[],
       };
       if (!currentState) {
         finalState = {
           isRead: false,
           isHidden: false,
           isBlurred: false,
-          contentWarning: '',
+          contentWarning: [],
         };
       } else {
         finalState = {
           isRead: currentState.isRead ?? false,
           isHidden: currentState.isHidden ?? false,
           isBlurred: currentState.isBlurred ?? false,
-          contentWarning: currentState.contentWarning ?? '',
+          contentWarning: currentState.contentWarning ?? [],
         };
       }
 
       const matchingRuleMarkRead = matchingRules.find(
         (r) => r.action === 'markRead',
       );
-      if (
-        matchingRuleMarkRead &&
-        !appliedRules.some((r) => r.articleId === articleId)
-      ) {
+      if (matchingRuleMarkRead) {
         await tx.insert(schema.appliedRules).values({
           userId,
           articleId,
@@ -276,7 +267,7 @@ export class FilterService {
         finalState.isRead = true;
       }
       const matchingRuleHide = matchingRules.find((r) => r.action === 'hide');
-      if (matchingRuleHide && !appliedRules.some((r) => r.action === 'hide')) {
+      if (matchingRuleHide) {
         await tx.insert(schema.appliedRules).values({
           userId,
           articleId,
@@ -287,10 +278,10 @@ export class FilterService {
       }
       const matchingRuleBlur = matchingRules
         .sort((a, b) => {
-          return isAfter(a.appliedAt, b.appliedAt) ? -1 : 1;
+          return isAfter(a.appliedAt, b.appliedAt) ? 1 : -1;
         })
         .findLast((r) => r.action === 'blur');
-      if (matchingRuleBlur && !appliedRules.some((r) => r.action === 'blur')) {
+      if (matchingRuleBlur) {
         await tx.insert(schema.appliedRules).values({
           userId,
           articleId,
@@ -298,9 +289,11 @@ export class FilterService {
           action: 'blur',
           contentWarning: matchingRuleBlur.contentWarning,
         });
-        finalState.contentWarning = matchingRuleBlur.contentWarning;
+        if (matchingRuleBlur.contentWarning)
+          finalState.contentWarning.push(matchingRuleBlur.contentWarning);
         finalState.isBlurred = true;
       }
+
       return await tx
         .insert(schema.userArticleStates)
         .values({

@@ -1,5 +1,5 @@
 {
-  "id": "1e37dec2-8bec-4c7d-a243-3795a4386ce3",
+  "id": "128803af-4818-47e9-8c85-6460d1a23355",
   "prevId": "8983340a-ee3f-4821-8d7f-6ce50629b2f3",
   "version": "7",
   "dialect": "postgresql",
@@ -1360,7 +1360,7 @@
         },
         "contentWarning": {
           "name": "contentWarning",
-          "type": "varchar(256)",
+          "type": "varchar(256)[]",
           "primaryKey": false,
           "notNull": false
         }
@@ -1490,6 +1490,12 @@
           "type": "uuid",
           "primaryKey": true,
           "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
         },
         "userId": {
           "name": "userId",
