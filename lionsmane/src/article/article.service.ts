@@ -8,11 +8,14 @@ import { Readability } from '@mozilla/readability';
 import createDOMPurify, { WindowLike } from 'dompurify';
 import z from 'zod';
 import { FetcherService } from 'src/fetcher/fetcher.service';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @InjectQueue('article') private articlesQueue: Queue,
     private fetcher: FetcherService,
   ) {}
 
@@ -40,6 +43,11 @@ export class ArticleService {
       console.error('Error inserting article:', error);
       throw Error('Could not insert article', { cause: error });
     }
+  }
+
+  async fullArticleTextJob(id: string, userId: string) {
+    // enqueue a job to fetch the full article text
+    return await this.articlesQueue.add('readable-article', { id, userId });
   }
 
   async requestFullArticletext(id: string, userId: string) {
@@ -94,8 +102,6 @@ export class ArticleService {
         categories: schema.articles.categories,
         description: schema.articles.description,
         readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -105,6 +111,9 @@ export class ArticleService {
         feedTitle: schema.feeds.title,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
+        isBlurred: schema.userArticleStates.isBlurred ?? false,
+        isHidden: schema.userArticleStates.isHidden ?? false,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(
@@ -177,7 +186,6 @@ export class ArticleService {
         description: schema.articles.description,
         readableText: schema.articles.readableText,
         rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
         media: schema.articles.media,
@@ -187,6 +195,9 @@ export class ArticleService {
         feedTitle: schema.feeds.title || schema.feeds.url,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
+        isBlurred: schema.userArticleStates.isBlurred ?? false,
+        isHidden: schema.userArticleStates.isHidden ?? false,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(
@@ -255,6 +266,9 @@ export class ArticleService {
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isRead: schema.userArticleStates.isRead ?? false,
+        isBlurred: schema.userArticleStates.isBlurred ?? false,
+        isHidden: schema.userArticleStates.isHidden ?? false,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(
@@ -299,6 +313,11 @@ export class ArticleService {
         updated: schema.articles.updated,
         feedId: schema.articles.feedId,
         feedTitle: schema.feeds.title || schema.feeds.url,
+        isStarred: schema.userArticleStates.isStarred ?? false,
+        isRead: schema.userArticleStates.isRead ?? false,
+        isBlurred: schema.userArticleStates.isBlurred ?? false,
+        isHidden: schema.userArticleStates.isHidden ?? false,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(
@@ -412,6 +431,9 @@ export class ArticleService {
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
+        isBlurred: schema.userArticleStates.isBlurred,
+        isHidden: schema.userArticleStates.isHidden,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(
@@ -605,6 +627,9 @@ export class ArticleService {
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
+        isBlurred: schema.userArticleStates.isBlurred,
+        isHidden: schema.userArticleStates.isHidden,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
       })
       .from(schema.articles)
       .innerJoin(

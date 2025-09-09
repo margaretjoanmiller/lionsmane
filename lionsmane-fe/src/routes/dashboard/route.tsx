@@ -55,6 +55,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
@@ -81,6 +82,7 @@ const formSchema = z.object({
 });
 function DashLayout() {
   const [open, setOpen] = React.useState(false);
+  const queryClient = useQueryClient();
   const { data: folders } = $api.useQuery('get', '/folder', {
     credentials: 'include',
   });
@@ -107,6 +109,12 @@ function DashLayout() {
         onSuccess: () => {
           setOpen(false);
           form.reset();
+          queryClient.invalidateQueries({
+            queryKey: ['get', '/folder/feeds'],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ['get', '/feed'],
+          });
         },
       },
     );

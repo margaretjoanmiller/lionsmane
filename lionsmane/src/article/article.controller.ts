@@ -13,6 +13,7 @@ import {
   ApiOAuth2,
   ApiQuery,
   ApiTags,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { ZodResponse } from 'nestjs-zod';
 import { ArticleDetailDto } from './dto/article-detail.dto';
@@ -282,12 +283,12 @@ export class ArticleController {
   }
 
   @Post('readable/:id')
-  @ZodResponse({ type: ArticleDetailDto, status: 200 })
+  @ApiResponse({ status: 202, description: 'Request accepted' })
   async requestFullArticleText(
     @Param('id') id: string,
     @Session() session: UserSession,
   ) {
-    return this.articleService.requestFullArticletext(id, session.user.id);
+    return this.articleService.fullArticleTextJob(id, session.user.id);
   }
 
   @Get(':id')

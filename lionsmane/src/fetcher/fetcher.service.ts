@@ -167,7 +167,7 @@ export class FetcherService {
             throw new Error('Item is missing required fields');
           }
           return {
-            name: 'fetch-article',
+            name: 'new-article',
             data: {
               title: item.title,
               url: item.url,

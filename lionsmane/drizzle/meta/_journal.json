@@ -15,6 +15,20 @@
       "when": 1757303734896,
       "tag": "0001_romantic_spirit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757319273793,
+      "tag": "0002_premium_the_hood",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757404287149,
+      "tag": "0003_grey_maelstrom",
+      "breakpoints": true
     }
   ]
 }

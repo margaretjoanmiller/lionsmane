@@ -1,4 +1,4 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 import {
   boolean,
   jsonb,
@@ -13,12 +13,14 @@ import { v7 } from 'uuid';
 import { user } from './auth';
 import { index } from 'drizzle-orm/pg-core';
 import { primaryKey } from 'drizzle-orm/pg-core';
+import { pgEnum } from 'drizzle-orm/pg-core';
+import { Conditions } from 'src/filter/filter';
 
 export const feeds = pgTable('feeds', {
   id: uuid()
     .primaryKey()
     .$defaultFn(() => v7()),
-  title: varchar({ length: 50 }).notNull(),
+  title: text().notNull(),
   url: varchar({ length: 256 }).notNull().unique(),
   authors: varchar({ length: 256 }).array(),
   categories: varchar({ length: 256 }).array(),
@@ -39,7 +41,7 @@ export const subscriptions = pgTable(
     feedId: uuid()
       .notNull()
       .references(() => feeds.id, { onDelete: 'cascade' }),
-    description: varchar({ length: 500 }),
+    description: text(),
     folderId: uuid().references(() => folders.id),
   },
   (table) => [
@@ -145,8 +147,9 @@ export const userArticleStates = pgTable(
       .references(() => articles.id, { onDelete: 'cascade' }),
     isRead: boolean().notNull().default(false),
     isStarred: boolean().notNull().default(false),
-    isBlurred: boolean().default(false),
-    isHidden: boolean().default(false),
+    isBlurred: boolean().notNull().default(false),
+    isHidden: boolean().notNull().default(false),
+    contentWarning: varchar({ length: 256 }),
   },
   (table) => [
     primaryKey({ columns: [table.userId, table.articleId] }),
@@ -169,15 +172,33 @@ export const userFilters = pgTable(
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    conditions: jsonb(),
-    actions: jsonb(),
+    conditions: jsonb().$type<Conditions>().notNull(),
+    action: jsonb()
+      .$type<{
+        type: 'blur' | 'hide' | 'markRead';
+        contentWarning: string | null;
+      }>()
+      .notNull(),
     enabled: boolean().notNull().default(true),
   },
   (table) => [
     index('user_filters_user_idx').on(table.userId, table.conditions),
-    index('user_filters_actions_idx').on(table.userId, table.actions),
+    index('user_filters_actions_idx').on(table.userId, table.action),
   ],
 );
+
+export const userFilterRelations = relations(userFilters, ({ one }) => ({
+  user: one(user, {
+    fields: [userFilters.userId],
+    references: [user.id],
+  }),
+}));
+
+export const userFilterActions = pgEnum('user_filter_actions', [
+  'blur',
+  'markRead',
+  'hide',
+]);
 
 export const appliedRules = pgTable(
   'applied_rules',
@@ -195,8 +216,8 @@ export const appliedRules = pgTable(
       .notNull()
       .references(() => userFilters.id, { onDelete: 'cascade' }),
     appliedAt: timestamp().notNull().defaultNow(),
-    action: varchar({ length: 20 }).notNull(), // 'blur', 'markRead', 'hide'
-    contentWarning: text(), // For blur actions
+    action: userFilterActions().notNull(), // 'blur', 'markRead', 'hide'
+    contentWarning: varchar({ length: 256 }), // For blur actions
     isUndone: boolean().notNull().default(false),
     undoneAt: timestamp(),
   },

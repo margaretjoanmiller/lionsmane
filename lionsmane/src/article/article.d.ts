@@ -3,14 +3,22 @@ export interface NewArticle {
   url: string;
   authors: string[];
   categories: string[];
-  description?: string;
-  rawContent?: string;
-  readableHtml?: string;
-  readableText?: string;
+  description: string | null;
+  rawContent: string | null;
+  readableHtml: string | null;
+  readableText: string | null;
   keywords: string[];
-  image?: string;
+  image: string | null;
   media: string[];
   published: string;
-  updated?: string | null;
+  updated: string | null;
   feedId: string;
+}
+
+export interface Article extends NewArticle {
+  id: string;
+  fullArticleText: string | null;
+  fullArticleHtml: string | null;
+  isRead?: boolean;
+  isStarred?: boolean;
 }

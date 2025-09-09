@@ -1,0 +1,1 @@
+ALTER TABLE "user_article_states" ADD COLUMN "contentWarning" varchar(256);

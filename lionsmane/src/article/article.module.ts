@@ -7,9 +7,7 @@ import { FetcherModule } from 'src/fetcher/fetcher.module';
 
 @Module({
   imports: [
-    BullModule.registerQueue({
-      name: 'article',
-    }),
+    BullModule.registerQueue({ name: 'article' }, { name: 'filter' }),
     FetcherModule,
   ],
   providers: [ArticleService, ArticleConsumer],

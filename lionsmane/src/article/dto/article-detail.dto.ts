@@ -42,6 +42,9 @@ const articleDetail = z.object({
   feedTitle: z.string().nullable(),
   isRead: z.boolean().nullable().default(false),
   isStarred: z.boolean().nullable().default(false),
+  isBlurred: z.boolean().nullable().default(false),
+  isHidden: z.boolean().nullable().default(false),
+  contentWarning: z.string().nullable(),
 });
 
 export class ArticleDetailDto extends createZodDto(articleDetail) {}

@@ -39,6 +39,9 @@ const articleList = z.object({
         .nullable(), // Then, validate that the result is a valid ISO datetime string.
       isRead: z.boolean().default(false).nullable(),
       isStarred: z.boolean().default(false).nullable(),
+      isBlurred: z.boolean().default(false).nullable(),
+      isHidden: z.boolean().default(false).nullable(),
+      contentWarning: z.string().nullable(),
       feedId: z.uuid(),
       feedTitle: z.string().nullable(),
     }),

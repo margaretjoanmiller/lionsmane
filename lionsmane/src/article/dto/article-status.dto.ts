@@ -6,6 +6,9 @@ export const articleStatus = z.object({
   articleId: z.uuid(),
   isRead: z.boolean().optional(),
   isStarred: z.boolean().optional(),
+  isBlurred: z.boolean().optional(),
+  isHidden: z.boolean().optional(),
+  contentWarning: z.string().nullable(),
 });
 
 export class ArticleStatusDto extends createZodDto(articleStatus) {}

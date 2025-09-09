@@ -66,7 +66,11 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         port: 6379,
       },
     }),
-    BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
+    BullModule.registerQueue(
+      { name: 'feed' },
+      { name: 'article' },
+      { name: 'filter' },
+    ),
     BullBoardModule.forRoot({
       route: '/queues',
       adapter: ExpressAdapter,
@@ -77,6 +81,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     }),
     BullBoardModule.forFeature({
       name: 'article',
+      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
+    }),
+    BullBoardModule.forFeature({
+      name: 'filter',
       adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
     }),
     AuthModule.forRoot(auth),

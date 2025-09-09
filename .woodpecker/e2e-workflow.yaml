@@ -1,13 +1,1 @@
-when:
-  - event: push
-    branch: main
 
-steps:
-  - name: playwright
-    image: mcr.microsoft.com/playwright:v1.55.0-noble
-    directory: lionsmane-fe
-    commands:
-      - corepack enable pnpm
-      - pnpm install
-      - pnpx playwright install --with-deps
-      - pnpm run test:e2e
