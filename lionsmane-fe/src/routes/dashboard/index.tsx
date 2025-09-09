@@ -6,6 +6,7 @@ import {
   ArticleFilter,
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
+import React from 'react';
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashIndex,
@@ -13,6 +14,7 @@ export const Route = createFileRoute('/dashboard/')({
 
 function DashIndex() {
   const filter = useArticleFilterStore((state) => state.filter);
+  const [isHidden, setHidden] = React.useState(true);
 
   if (filter === ArticleFilter.Unread) {
     const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
@@ -30,10 +32,23 @@ function DashIndex() {
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
+    const areHiddenArticles = data.pages.some(({ articles }) =>
+      articles.some((i) => i.isHidden),
+    );
+    const hiddenArticles = data.pages.map(({ articles }) => {
+      return articles
+        .filter((i) => i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
+    });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -43,6 +58,14 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
+        )}
+        {areHiddenArticles && isHidden && (
+          <Button>Show hidden articles?</Button>
+        )}
+        {!isHidden && (
+          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
+            {hiddenArticles}
+          </div>
         )}
       </>
     );
@@ -62,10 +85,23 @@ function DashIndex() {
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
+    const areHiddenArticles = data.pages.some(({ articles }) =>
+      articles.some((i) => i.isHidden),
+    );
+    const hiddenArticles = data.pages.map(({ articles }) => {
+      return articles
+        .filter((i) => i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
+    });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -75,6 +111,14 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
+        )}
+        {areHiddenArticles && isHidden && (
+          <Button>Show hidden articles?</Button>
+        )}
+        {!isHidden && (
+          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
+            {hiddenArticles}
+          </div>
         )}
       </>
     );
@@ -94,10 +138,23 @@ function DashIndex() {
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
+    const areHiddenArticles = data.pages.some(({ articles }) =>
+      articles.some((i) => i.isHidden),
+    );
+    const hiddenArticles = data.pages.map(({ articles }) => {
+      return articles
+        .filter((i) => i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
+    });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -107,6 +164,14 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
+        )}
+        {areHiddenArticles && isHidden && (
+          <Button>Show hidden articles?</Button>
+        )}
+        {!isHidden && (
+          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
+            {hiddenArticles}
+          </div>
         )}
       </>
     );
@@ -126,10 +191,25 @@ function DashIndex() {
     if (isLoading || !data) return 'Loading...';
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
+
+    const areHiddenArticles = data.pages.some(({ articles }) =>
+      articles.some((i) => i.isHidden),
+    );
+
+    const hiddenArticles = data.pages.map(({ articles }) => {
+      return articles
+        .filter((i) => i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
+    });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -139,6 +219,14 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
+        )}
+        {areHiddenArticles && isHidden && (
+          <Button>Show hidden articles?</Button>
+        )}
+        {!isHidden && (
+          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
+            {hiddenArticles}
+          </div>
         )}
       </>
     );

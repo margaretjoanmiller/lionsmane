@@ -173,35 +173,55 @@ export class FilterService {
         isHidden: false,
         isBlurred: false,
       };
+      const appliedRules = await tx
+        .select()
+        .from(schema.appliedRules)
+        .where(
+          and(
+            eq(schema.appliedRules.articleId, articleId),
+            eq(schema.appliedRules.userId, userId),
+            eq(schema.appliedRules.isUndone, false),
+          ),
+        );
+
       if (matchingRules.some((rule) => rule.action === 'markRead')) {
-        await tx.insert(schema.appliedRules).values({
-          userId,
-          articleId,
-          ruleId: matchingRules.find((rule) => rule.action === 'markRead')!
-            .ruleId,
-          action: 'markRead',
-        });
-        finalState.isRead = true;
+        if (!appliedRules.some((rule) => rule.action === 'markRead')) {
+          await tx.insert(schema.appliedRules).values({
+            userId,
+            articleId,
+            ruleId: matchingRules.find((rule) => rule.action === 'markRead')!
+              .ruleId,
+            action: 'markRead',
+          });
+          finalState.isRead = true;
+        }
       }
       if (matchingRules.some((rule) => rule.action === 'hide')) {
-        await tx.insert(schema.appliedRules).values({
-          userId,
-          articleId,
-          ruleId: matchingRules.find((rule) => rule.action === 'hide')!.ruleId,
-          action: 'hide',
-        });
-        finalState.isHidden = true;
+        if (!appliedRules.some((rule) => rule.action === 'hide')) {
+          await tx.insert(schema.appliedRules).values({
+            userId,
+            articleId,
+            ruleId: matchingRules.find((rule) => rule.action === 'hide')!
+              .ruleId,
+            action: 'hide',
+          });
+          finalState.isHidden = true;
+        }
       }
       if (matchingRules.some((rule) => rule.action === 'blur')) {
-        await tx.insert(schema.appliedRules).values({
-          userId,
-          articleId,
-          ruleId: matchingRules.find((rule) => rule.action === 'blur')!.ruleId,
-          action: 'blur',
-          contentWarning: matchingRules.find((rule) => rule.action === 'blur')!
-            .contentWarning,
-        });
-        finalState.isBlurred = true;
+        if (!appliedRules.some((rule) => rule.action === 'blur')) {
+          await tx.insert(schema.appliedRules).values({
+            userId,
+            articleId,
+            ruleId: matchingRules.find((rule) => rule.action === 'blur')!
+              .ruleId,
+            action: 'blur',
+            contentWarning: matchingRules.find(
+              (rule) => rule.action === 'blur',
+            )!.contentWarning,
+          });
+          finalState.isBlurred = true;
+        }
       }
       return await tx
         .insert(schema.userArticleStates)
