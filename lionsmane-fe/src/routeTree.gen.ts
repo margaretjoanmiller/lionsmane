@@ -15,6 +15,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId'
+import { Route as DashboardFilterIndexRouteImport } from './routes/dashboard/filter.index'
+import { Route as DashboardFilterFilterIdRouteImport } from './routes/dashboard/filter.$filterId'
 import { Route as DashboardFeedFeedIdRouteImport } from './routes/dashboard/feed.$feedId'
 
 const LoginRoute = LoginRouteImport.update({
@@ -47,6 +49,16 @@ const DashboardArticleIdRoute = DashboardArticleIdRouteImport.update({
   path: '/$articleId',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardFilterIndexRoute = DashboardFilterIndexRouteImport.update({
+  id: '/filter/',
+  path: '/filter/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardFilterFilterIdRoute = DashboardFilterFilterIdRouteImport.update({
+  id: '/filter/$filterId',
+  path: '/filter/$filterId',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardFeedFeedIdRoute = DashboardFeedFeedIdRouteImport.update({
   id: '/feed/$feedId',
   path: '/feed/$feedId',
@@ -61,6 +73,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
+  '/dashboard/filter': typeof DashboardFilterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,6 +83,8 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
+  '/dashboard/filter': typeof DashboardFilterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,6 +95,8 @@ export interface FileRoutesById {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
+  '/dashboard/filter/': typeof DashboardFilterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,6 +108,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/filter/$filterId'
+    | '/dashboard/filter'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -98,6 +118,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/filter/$filterId'
+    | '/dashboard/filter'
   id:
     | '__root__'
     | '/'
@@ -107,6 +129,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/filter/$filterId'
+    | '/dashboard/filter/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,6 +183,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardArticleIdRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/filter/': {
+      id: '/dashboard/filter/'
+      path: '/filter'
+      fullPath: '/dashboard/filter'
+      preLoaderRoute: typeof DashboardFilterIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/filter/$filterId': {
+      id: '/dashboard/filter/$filterId'
+      path: '/filter/$filterId'
+      fullPath: '/dashboard/filter/$filterId'
+      preLoaderRoute: typeof DashboardFilterFilterIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/feed/$feedId': {
       id: '/dashboard/feed/$feedId'
       path: '/feed/$feedId'
@@ -174,6 +212,8 @@ interface DashboardRouteRouteChildren {
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardFeedFeedIdRoute: typeof DashboardFeedFeedIdRoute
+  DashboardFilterFilterIdRoute: typeof DashboardFilterFilterIdRoute
+  DashboardFilterIndexRoute: typeof DashboardFilterIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -181,6 +221,8 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardFeedFeedIdRoute: DashboardFeedFeedIdRoute,
+  DashboardFilterFilterIdRoute: DashboardFilterFilterIdRoute,
+  DashboardFilterIndexRoute: DashboardFilterIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(

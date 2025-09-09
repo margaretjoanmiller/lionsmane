@@ -3,17 +3,6 @@
 import * as React from 'react';
 import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
 import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-} from 'lucide-react';
 import NotoV1Mushroom from '~icons/noto-v1/mushroom';
 import { Link } from '@tanstack/react-router';
 
@@ -34,6 +23,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { $api } from '@/lib/fetch-client';
+import SolarFilterLinear from '~icons/solar/filter-linear';
 import {
   Collapsible,
   CollapsibleContent,
@@ -69,17 +59,11 @@ const formSchema = z.object({
 const data = {
   navSecondary: [
     {
-      title: 'Support',
-      url: '#',
-      icon: LifeBuoy,
-    },
-    {
-      title: 'Feedback',
-      url: '#',
-      icon: Send,
+      title: 'Filters',
+      url: '/dashboard/filters',
+      icon: SolarFilterLinear,
     },
   ],
-  projects: [],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -247,7 +231,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </DialogContent>
           </Dialog>
         </SidebarMenu>
-        <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
