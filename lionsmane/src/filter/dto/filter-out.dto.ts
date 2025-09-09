@@ -3,6 +3,7 @@ import { createZodDto } from 'nestjs-zod';
 
 export const filterOutSchema = z.object({
   id: z.uuid(),
+  name: z.string().max(255),
   description: z.string().max(1024).optional(),
   conditions: z.object({
     keywords: z.array(z.string()).optional(),

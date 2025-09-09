@@ -537,6 +537,7 @@ export interface components {
         FilterOutDto_Output: {
             /** Format: uuid */
             id: string;
+            name: string;
             description?: string;
             conditions: {
                 keywords?: string[];

@@ -159,6 +159,52 @@ export class FilterService {
             contentWarning: filter.action.contentWarning,
             ruleId: filter.id,
           };
+        if (
+          filter.conditions.contentContains &&
+          filter.conditions.contentContains.some((content) =>
+            article.readableText?.includes(content),
+          )
+        ) {
+          return {
+            ...filter,
+            userId: filter.userId,
+            action: filter.action.type,
+            articleId: article.id,
+            appliedAt: new Date(),
+            contentWarning: filter.action.contentWarning,
+            ruleId: filter.id,
+          };
+        }
+        if (
+          filter.conditions.feeds &&
+          filter.conditions.feeds.some((feed) => article.feedId === feed)
+        ) {
+          return {
+            ...filter,
+            userId: filter.userId,
+            action: filter.action.type,
+            articleId: article.id,
+            appliedAt: new Date(),
+            contentWarning: filter.action.contentWarning,
+            ruleId: filter.id,
+          };
+        }
+        if (
+          filter.conditions.categories &&
+          filter.conditions.categories.some((category) =>
+            article.categories.includes(category),
+          )
+        ) {
+          return {
+            ...filter,
+            userId: filter.userId,
+            action: filter.action.type,
+            articleId: article.id,
+            appliedAt: new Date(),
+            contentWarning: filter.action.contentWarning,
+            ruleId: filter.id,
+          };
+        }
       })
       .filter((action) => action !== undefined);
   }
@@ -168,11 +214,6 @@ export class FilterService {
     matchingRules: AppliedRules[],
   ) {
     return await this.db.transaction(async (tx) => {
-      const finalState = {
-        isRead: false,
-        isHidden: false,
-        isBlurred: false,
-      };
       const appliedRules = await tx
         .select()
         .from(schema.appliedRules)
@@ -180,45 +221,72 @@ export class FilterService {
           and(
             eq(schema.appliedRules.articleId, articleId),
             eq(schema.appliedRules.userId, userId),
-            eq(schema.appliedRules.isUndone, false),
           ),
         );
+      const currentState = await tx
+        .select({
+          isRead: schema.userArticleStates.isRead,
+          isHidden: schema.userArticleStates.isHidden,
+          isBlurred: schema.userArticleStates.isBlurred,
+        })
+        .from(schema.userArticleStates)
+        .where(
+          and(
+            eq(schema.userArticleStates.articleId, articleId),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .then((rows) => rows[0]);
+      let finalState = {
+        isRead: false,
+        isHidden: false,
+        isBlurred: false,
+      };
+      if (!currentState) {
+        finalState = {
+          isRead: false,
+          isHidden: false,
+          isBlurred: false,
+        };
+      } else {
+        finalState = {
+          isRead: currentState.isRead ?? false,
+          isHidden: currentState.isHidden ?? false,
+          isBlurred: currentState.isBlurred ?? false,
+        };
+      }
 
       if (matchingRules.some((rule) => rule.action === 'markRead')) {
-        if (!appliedRules.some((rule) => rule.action === 'markRead')) {
+        if (!appliedRules.some((r) => r.action === 'markRead')) {
           await tx.insert(schema.appliedRules).values({
             userId,
             articleId,
-            ruleId: matchingRules.find((rule) => rule.action === 'markRead')!
-              .ruleId,
+            ruleId: matchingRules.find((r) => r.action === 'markRead')!.ruleId,
             action: 'markRead',
           });
           finalState.isRead = true;
         }
       }
       if (matchingRules.some((rule) => rule.action === 'hide')) {
-        if (!appliedRules.some((rule) => rule.action === 'hide')) {
+        if (!appliedRules.some((r) => r.action === 'hide')) {
           await tx.insert(schema.appliedRules).values({
             userId,
             articleId,
-            ruleId: matchingRules.find((rule) => rule.action === 'hide')!
-              .ruleId,
+            ruleId: matchingRules.find((r) => r.action === 'hide')!.ruleId,
             action: 'hide',
           });
           finalState.isHidden = true;
         }
       }
       if (matchingRules.some((rule) => rule.action === 'blur')) {
-        if (!appliedRules.some((rule) => rule.action === 'blur')) {
+        if (!appliedRules.some((r) => r.action === 'blur')) {
           await tx.insert(schema.appliedRules).values({
             userId,
             articleId,
-            ruleId: matchingRules.find((rule) => rule.action === 'blur')!
-              .ruleId,
+            ruleId: matchingRules.find((r) => r.action === 'blur')!.ruleId,
             action: 'blur',
-            contentWarning: matchingRules.find(
-              (rule) => rule.action === 'blur',
-            )!.contentWarning,
+            contentWarning: matchingRules.find((r) => r.action === 'blur')!
+              .contentWarning,
           });
           finalState.isBlurred = true;
         }

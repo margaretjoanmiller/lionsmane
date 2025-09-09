@@ -6,6 +6,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { RowExpanding, type ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/data-table';
 import { Link } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/dashboard/filter/')({
   component: FiltersDash,
@@ -71,5 +72,10 @@ function FiltersDash() {
       },
     },
   ];
-  return <DataTable columns={columns} data={data || []} />;
+  return (
+    <>
+      <DataTable columns={columns} data={data || []} />
+      <Link to="/dashboard/filter/new">New filter rule</Link>
+    </>
+  );
 }

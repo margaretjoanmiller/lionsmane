@@ -60,7 +60,7 @@ const data = {
   navSecondary: [
     {
       title: 'Filters',
-      url: '/dashboard/filters',
+      url: '/dashboard/filter',
       icon: SolarFilterLinear,
     },
   ],

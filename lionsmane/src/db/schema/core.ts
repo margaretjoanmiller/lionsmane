@@ -169,6 +169,7 @@ export const userFilters = pgTable(
     id: uuid()
       .primaryKey()
       .$defaultFn(() => v7()),
+    name: varchar({ length: 256 }),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),

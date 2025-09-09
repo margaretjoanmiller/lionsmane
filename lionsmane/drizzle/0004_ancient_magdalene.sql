@@ -1,0 +1,1 @@
+ALTER TABLE "user_filters" ADD COLUMN "name" varchar(256);

@@ -3,4 +3,11 @@ packages:
   - lionsmane-fe
 
 onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@scarf/scarf'
   - '@swc/core'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - msgpackr-extract
+  - msw
+  - unrs-resolver

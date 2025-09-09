@@ -16,100 +16,28 @@ import { Button } from '@/components/ui/button';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { filterFormSchema } from '@/zod/filter.zod';
+import { Input } from '@/components/ui/input';
 import {
   Select,
+  SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectContent,
   SelectValue,
 } from '@/components/ui/select';
 
-export const Route = createFileRoute('/dashboard/filter/$filterId')({
-  component: RouteComponent,
+export const Route = createFileRoute('/dashboard/filter/new')({
+  component: NewFilter,
 });
 
-function RouteComponent() {
-  const formSchema = z.object({
-    keywords: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    titleContains: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    contentContains: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    authors: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-    categories: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    feeds: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-    type: z.enum(['blur', 'markRead', 'hide']),
-    contentWarning: z.string().max(512).nullable(),
-    enabled: z.boolean(),
-  });
-
-  const filterId = Route.useParams().filterId;
-  const { data } = $api.useSuspenseQuery('get', '/filter/{id}', {
-    params: {
-      path: {
-        id: filterId,
-      },
-    },
-    credentials: 'include',
-  });
-
-  const [keywords, setKeywords] = React.useState<Tag[]>(
-    data.conditions.keywords?.map((keyword) => ({
-      text: keyword,
-      id: keyword,
-    })) || [],
-  );
-  const [keywordsIndex, setKeywordsIndex] = React.useState<number | null>(0);
-  const [titleContains, setTitleContains] = React.useState<Tag[]>(
-    data.conditions.titleContains?.map((title) => ({
-      text: title,
-      id: title,
-    })) || [],
-  );
-  const [titleContainsIndex, setTitleContainsIndex] = React.useState<
-    number | null
-  >(0);
-  const [contentContains, setContentContains] = React.useState<Tag[]>(
-    data.conditions.contentContains?.map((content) => ({
-      text: content,
-      id: content,
-    })) || [],
-  );
-  const [contentContainsIndex, setContentContainsIndex] = React.useState<
-    number | null
-  >(0);
-  const [authors, setAuthors] = React.useState<Tag[]>(
-    data.conditions.authors?.map((author) => ({
-      text: author,
-      id: author,
-    })) || [],
-  );
-  const [authorsIndex, setAuthorsIndex] = React.useState<number | null>(0);
-  const [categories, setCategories] = React.useState<Tag[]>(
-    data.conditions.categories?.map((category) => ({
-      text: category,
-      id: category,
-    })) || [],
-  );
-  const [categoriesIndex, setCategoriesIndex] = React.useState<number | null>(
-    0,
-  );
-
+function NewFilter() {
   const { data: feeds } = $api.useQuery('get', '/feed', {
     credentials: 'include',
   });
 
+  const navigate = useNavigate({ from: Route.id });
   const queryClient = useQueryClient();
-
-  const navigate = useNavigate({ from: '/dashboard/filter/$filterId' });
-
-  const { mutate } = $api.useMutation('patch', '/filter/{id}', {
+  const { mutate } = $api.useMutation('post', '/filter', {
     onSuccess: async () => {
       form.reset();
       await queryClient.invalidateQueries();
@@ -117,15 +45,16 @@ function RouteComponent() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof filterFormSchema>) {
     const valuesToSend = {
+      name: values.name,
       conditions: {
         keywords: values.keywords?.map((keyword) => keyword.text),
         titleContains: values.titleContains?.map((title) => title.text),
         contentContains: values.contentContains?.map((content) => content.text),
         authors: values.authors?.map((author) => author.text),
         categories: values.categories?.map((category) => category.text),
-        feeds: values.feeds?.map((feed) => feed.text),
+        feeds: values.feeds,
       },
       action: {
         type: values.type,
@@ -134,34 +63,56 @@ function RouteComponent() {
       isActive: values.enabled,
     };
     mutate({
-      params: {
-        path: {
-          id: filterId,
-        },
-      },
       credentials: 'include',
       body: valuesToSend,
     });
   }
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof filterFormSchema>>({
+    resolver: zodResolver(filterFormSchema),
     defaultValues: {
-      keywords: keywords,
-      titleContains: titleContains,
-      contentContains: contentContains,
-      authors: authors,
-      categories: categories,
-      feeds: feeds?.feeds.map((f) => ({ text: f.title, id: f.id })),
-      type: data.action.type,
-      contentWarning: data.action.contentWarning,
-      enabled: data.isActive,
+      keywords: [],
+      titleContains: [],
+      contentContains: [],
+      authors: [],
+      categories: [],
+      feeds: [],
+      type: 'blur',
+      contentWarning: '',
+      enabled: true,
     },
   });
+
+  const [keywords, setKeywords] = React.useState<Tag[]>([]);
+  const [keywordsIndex, setKeywordsIndex] = React.useState<number | null>(0);
+  const [titleContains, setTitleContains] = React.useState<Tag[]>([]);
+  const [titleContainsIndex, setTitleContainsIndex] = React.useState<
+    number | null
+  >(0);
+  const [contentContains, setContentContains] = React.useState<Tag[]>([]);
+  const [contentContainsIndex, setContentContainsIndex] = React.useState<
+    number | null
+  >(0);
+  const [authors, setAuthors] = React.useState<Tag[]>([]);
+  const [authorsIndex, setAuthorsIndex] = React.useState<number | null>(0);
+  const [categories, setCategories] = React.useState<Tag[]>([]);
+  const [categoriesIndex, setCategoriesIndex] = React.useState<number | null>(
+    0,
+  );
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <Input placeholder="name" {...field}></Input>
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="keywords"
