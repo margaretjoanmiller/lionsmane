@@ -49,43 +49,64 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import type { Folder } from '@/types/folder';
+import MultipleSelector from '@/components/multi-select';
 
 export const Route = createFileRoute('/dashboard/settings')({
   component: Settings,
 });
 
 function Settings() {
-  const [formOpen, setFormOpen] = React.useState(false);
-  const formSchema = z.object({
+  // feed form
+  const [feedFormOpen, setFeedFormOpen] = React.useState(false);
+  const feedFormSchema = z.object({
     feedId: z.uuid(),
     url: z.url(),
     description: z.string().optional(),
     folderId: z.string().nullable(),
   });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const feedForm = useForm<z.infer<typeof feedFormSchema>>({
+    resolver: zodResolver(feedFormSchema),
   });
 
-  const { mutate } = $api.useMutation('put', '/feed/{id}');
+  const { mutate: updateFeed } = $api.useMutation('put', '/feed/{id}');
 
-  const { data } = $api.useQuery('get', '/feed', {
+  // folder form
+  const [folderFormOpen, setFolderFormOpen] = React.useState(false);
+  const folderFormSchema = z.object({
+    folderId: z.uuid(),
+    feedIds: z.array(z.object({ value: z.uuid(), label: z.string() })),
+    name: z.string().min(2).max(100),
+  });
+  const folderForm = useForm<z.infer<typeof folderFormSchema>>({
+    resolver: zodResolver(folderFormSchema),
+  });
+
+  const { mutate: updateFolder } = $api.useMutation('patch', '/folder/{id}');
+
+  const { data: feeds } = $api.useQuery('get', '/feed', {
     credentials: 'include',
   });
+  const feedSelect = feeds?.feeds.map((feed) => ({
+    label: feed.title,
+    value: feed.id,
+  }));
 
   const { data: folders } = $api.useQuery('get', '/folder', {
     credentials: 'include',
   });
-  const folderSelect = folders?.map((folder) => ({
-    label: folder.name,
-    value: folder.id,
-  }));
+  const folderSelect =
+    folders?.map((folder) => ({
+      label: folder.name,
+      value: folder.id,
+    })) || [];
 
-  if (!data) {
+  if (!feeds || !folders) {
     return null;
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate(
+  function onSubmitFeed(values: z.infer<typeof feedFormSchema>) {
+    updateFeed(
       {
         body: values,
         params: {
@@ -96,7 +117,7 @@ function Settings() {
       {
         onSuccess: () => {
           // setFormOpen(false);
-          form.reset();
+          feedForm.reset();
         },
       },
     );
@@ -104,18 +125,13 @@ function Settings() {
 
   const columns: ColumnDef<Feed>[] = [
     {
-      accessorKey: 'id',
-      header: () => <div className="text-right">ID</div>,
-      cell: ({ row }) => {
-        const id = row.original.id;
-        return <div className="text-right font-medium">{id}</div>;
-      },
-    },
-    {
       accessorKey: 'url',
       header: () => <div className="text-right">URL</div>,
       cell: ({ row }) => {
-        const url = row.original.url;
+        const url =
+          row.original.url.length > 50
+            ? `${row.original.url.slice(0, 50)}...`
+            : row.original.url;
         return <div className="text-right font-medium">{url}</div>;
       },
     },
@@ -139,27 +155,29 @@ function Settings() {
       id: 'actions',
       cell: ({ row }) => {
         const feed = row.original;
-        form.setValue('feedId', feed.id);
-        form.setValue('url', feed.url);
-        form.setValue('description', feed.description || '');
+        feedForm.setValue('feedId', feed.id);
+        feedForm.setValue('url', feed.url);
+        feedForm.setValue('description', feed.description || '');
 
         return (
-          <Dialog open={formOpen} onOpenChange={setFormOpen}>
+          <Dialog open={feedFormOpen} onOpenChange={setFeedFormOpen}>
             <DialogTrigger>
-              <PencilIcon className="h-4 w-4" />
+              <Button variant="outline">
+                <PencilIcon className="h-4 w-4" />
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Edit feed</DialogTitle>
               </DialogHeader>
 
-              <Form {...form}>
+              <Form {...feedForm}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={feedForm.handleSubmit(onSubmitFeed)}
                   className="space-y-8"
                 >
                   <FormField
-                    control={form.control}
+                    control={feedForm.control}
                     name="url"
                     render={({ field }) => (
                       <FormItem>
@@ -178,7 +196,7 @@ function Settings() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={feedForm.control}
                     name="description"
                     render={({ field }) => (
                       <FormItem>
@@ -194,7 +212,7 @@ function Settings() {
                     )}
                   />
                   <FormField
-                    control={form.control}
+                    control={feedForm.control}
                     name="folderId"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
@@ -232,7 +250,10 @@ function Settings() {
                                       value={folder.label}
                                       key={folder.value}
                                       onSelect={() => {
-                                        form.setValue('folderId', folder.value);
+                                        feedForm.setValue(
+                                          'folderId',
+                                          folder.value,
+                                        );
                                       }}
                                     >
                                       {folder.label}
@@ -258,9 +279,127 @@ function Settings() {
     },
   ];
 
+  function onSubmitFolder(values: z.infer<typeof folderFormSchema>) {
+    const feeds = values.feedIds.map((feed) => feed.value);
+    updateFolder(
+      {
+        body: {
+          feedIds: feeds,
+          name: values.name,
+        },
+        params: {
+          path: {
+            id: values.folderId,
+          },
+        },
+      },
+      {
+        onSuccess: () => {
+          folderForm.reset();
+        },
+      },
+    );
+  }
+
+  const folderColumns: ColumnDef<Folder>[] = [
+    {
+      id: 'name',
+      header: 'Name',
+      accessorKey: 'name',
+    },
+    {
+      id: 'feeds',
+      header: 'Feeds',
+      accessorKey: 'feeds',
+      cell: ({ row }) => {
+        const feeds = row.original.feedIds;
+        return (
+          <div className="flex items-center">
+            <span>{feeds.length}</span>
+          </div>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const folder = row.original;
+        folderForm.setValue('folderId', folder.id);
+        folderForm.setValue('name', folder.name);
+        folderForm.setValue(
+          'feedIds',
+          folder.feedIds.map((feed) => ({
+            value: feed,
+            label:
+              feeds.feeds.find((f) => f.id === feed)?.title || 'Unnamed feed',
+          })),
+        );
+        return (
+          <Dialog open={folderFormOpen} onOpenChange={setFolderFormOpen}>
+            <DialogTrigger>
+              <Button variant="outline">
+                <PencilIcon />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Folder</DialogTitle>
+              </DialogHeader>
+              <Form {...folderForm}>
+                <form
+                  onSubmit={folderForm.handleSubmit(onSubmitFolder)}
+                  className="m-8"
+                >
+                  <FormField
+                    control={folderForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Name" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={folderForm.control}
+                    name="feedIds"
+                    render={({ field }) => (
+                      <FormItem className="my-6">
+                        <FormLabel>Feeds</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            {...field}
+                            defaultOptions={feedSelect}
+                            placeholder="Select feeds you want to add to your folder..."
+                            emptyIndicator={
+                              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Add Folder</Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        );
+      },
+    },
+  ];
+
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data.feeds} />
+      <DataTable columns={columns} data={feeds?.feeds} />
+      <div className="my-6">
+        <DataTable columns={folderColumns} data={folders} />
+      </div>
     </div>
   );
 }

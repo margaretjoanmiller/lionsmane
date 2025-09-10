@@ -237,7 +237,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <DialogTitle>Add Folder</DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="m-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="m-8">
                 <FormField
                   control={form.control}
                   name="name"
@@ -254,7 +254,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   control={form.control}
                   name="feedIds"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="my-6">
                       <FormLabel>Feeds</FormLabel>
                       <FormControl>
                         <MultipleSelector

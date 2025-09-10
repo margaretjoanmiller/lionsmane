@@ -148,13 +148,13 @@ function DashLayout() {
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-8"
+                      className="m-8"
                     >
                       <FormField
                         control={form.control}
                         name="url"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="my-6">
                             <FormLabel>URL</FormLabel>
                             <FormControl>
                               <Input
@@ -173,7 +173,7 @@ function DashLayout() {
                         control={form.control}
                         name="description"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="my-6">
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                               <Input placeholder="Cool feed" {...field} />
@@ -189,7 +189,7 @@ function DashLayout() {
                         control={form.control}
                         name="folderId"
                         render={({ field }) => (
-                          <FormItem className="flex flex-col">
+                          <FormItem className="flex flex-col my-6">
                             <FormLabel>Folder</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
