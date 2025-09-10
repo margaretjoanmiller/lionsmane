@@ -14,6 +14,7 @@ Project goals:
 ## TODO
 
 - [x] !!Only fetch articles from after last sync datetime
+- [x] Delete feeds (and articles) no user is subscribed to
 
 
 ## Contact

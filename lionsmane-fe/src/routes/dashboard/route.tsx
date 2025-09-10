@@ -134,7 +134,7 @@ function DashLayout() {
               <ArticleFilterSelect />
               <ModeToggle />
             </div>
-            <div className="group fixed bottom-6 right-6">
+            <div className="group fixed bottom-6 right-6 z-10">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger>
                   <Button>

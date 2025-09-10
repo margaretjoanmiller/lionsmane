@@ -67,6 +67,12 @@ function Settings() {
   });
   const feedForm = useForm<z.infer<typeof feedFormSchema>>({
     resolver: zodResolver(feedFormSchema),
+    defaultValues: {
+      feedId: '',
+      url: '',
+      description: '',
+      folderId: null,
+    },
   });
 
   const { mutate: updateFeed } = $api.useMutation('put', '/feed/{id}');
@@ -80,6 +86,11 @@ function Settings() {
   });
   const folderForm = useForm<z.infer<typeof folderFormSchema>>({
     resolver: zodResolver(folderFormSchema),
+    defaultValues: {
+      folderId: '',
+      feedIds: [],
+      name: '',
+    },
   });
 
   const { mutate: updateFolder } = $api.useMutation('patch', '/folder/{id}');
@@ -154,13 +165,17 @@ function Settings() {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const feed = row.original;
-        feedForm.setValue('feedId', feed.id);
-        feedForm.setValue('url', feed.url);
-        feedForm.setValue('description', feed.description || '');
-
         return (
-          <Dialog open={feedFormOpen} onOpenChange={setFeedFormOpen}>
+          <Dialog
+            open={feedFormOpen}
+            onOpenChange={(open) => {
+              setFeedFormOpen(open);
+              const feed = row.original;
+              feedForm.setValue('feedId', feed.id);
+              feedForm.setValue('url', feed.url);
+              feedForm.setValue('description', feed.description || '');
+            }}
+          >
             <DialogTrigger>
               <Button variant="outline">
                 <PencilIcon className="h-4 w-4" />

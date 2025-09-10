@@ -164,7 +164,10 @@ export class FetcherService {
           );
         })
         .map((item) => {
-          if (!item.title || !item.url || !item.published) {
+          if (!item.url || !item.published) {
+            this.logger.error(
+              `Item is missing required fields: ${JSON.stringify(item)}`,
+            );
             throw new Error('Item is missing required fields');
           }
           return {
