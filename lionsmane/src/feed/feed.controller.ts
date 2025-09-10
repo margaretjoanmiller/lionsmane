@@ -6,11 +6,17 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipeBuilder,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { FeedService } from './feed.service';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiCookieAuth,
   ApiOAuth2,
   ApiResponse,
@@ -21,6 +27,7 @@ import { ZodResponse } from 'nestjs-zod';
 import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
+import { FileDto } from './dto/file.dto';
 
 @ApiTags('feeds')
 @ApiCookieAuth()
@@ -65,5 +72,26 @@ export class FeedController {
     @Session() session: UserSession,
   ) {
     return this.feedService.update(id, session.user.id, updateFeedDto);
+  }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'OPML file to import',
+    required: true,
+    type: FileDto,
+  })
+  @ApiResponse({ status: 201, description: 'Feed imported' })
+  async import(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: 'application/xml' })
+        .build({ fileIsRequired: true }),
+    )
+    file: Express.Multer.File,
+    @Session() session: UserSession,
+  ) {
+    return this.feedService.importOpml(session.user.id, file.buffer.toString());
   }
 }

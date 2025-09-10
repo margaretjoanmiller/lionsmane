@@ -8,6 +8,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { UpdateFeedDto } from './dto/update-feed.dto';
+import { OpmlService } from 'src/opml/opml.service';
 
 @Injectable()
 export class FeedService {
@@ -15,23 +16,27 @@ export class FeedService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
+    private opmlService: OpmlService,
   ) {}
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
+    const url = newSubscription.url.endsWith('/')
+      ? newSubscription.url.slice(0, -1)
+      : newSubscription.url;
     const result = await this.db.transaction(async (tx) => {
       let [feed] = await tx
         .select()
         .from(schema.feeds)
-        .where(eq(schema.feeds.url, newSubscription.url));
+        .where(eq(schema.feeds.url, url));
 
-      const title = await this.fetcher.extractFeedTitle(newSubscription.url);
+      const title = await this.fetcher.extractFeedTitle(url);
 
       if (!feed) {
         const [newFeed] = await tx
           .insert(schema.feeds)
           .values({
             title: title ?? newSubscription.url,
-            url: newSubscription.url,
+            url: url,
             updated: subMonths(new Date(), 3),
           })
           .returning();
@@ -226,5 +231,14 @@ export class FeedService {
           eq(schema.subscriptions.userId, userId),
         ),
       );
+  }
+
+  async importOpml(userId: string, opml: string) {
+    const feeds = this.opmlService.getFeedsFromOpml(opml);
+    await Promise.all(
+      feeds.map(async (feed) => {
+        await this.feedQueue.add('import', { url: feed.url, userId });
+      }),
+    );
   }
 }

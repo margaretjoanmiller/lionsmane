@@ -4,11 +4,13 @@ import { FeedController } from './feed.controller';
 import { BullModule } from '@nestjs/bullmq';
 import { FeedConsumer } from './feed.consumer';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
+import { OpmlModule } from 'src/opml/opml.module';
 
 @Module({
   imports: [
     BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
     FetcherModule,
+    OpmlModule,
   ],
   controllers: [FeedController],
   providers: [FeedService, FeedConsumer],
