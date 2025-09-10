@@ -126,23 +126,35 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   if (article.isBlurred && !dismissBlur) {
     return (
-      <Card>
-        {article.contentWarning.map((cw) => (
-          <Badge variant="outline" className="mask-center">
-            {cw}
-          </Badge>
-        ))}
+      <Card className="relative">
         <div className="blur-sm">{card}</div>
-        <Button variant="ghost" onClick={() => setDismissBlur(true)}>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {article.contentWarning.map((cw, index) => (
+              <Badge key={index} variant="outline">
+                {cw}
+              </Badge>
+            ))}
+          </div>
+        </div>
+        <Button
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+          variant="ghost"
+          onClick={() => setDismissBlur(true)}
+        >
           Dismiss blur
         </Button>
       </Card>
     );
   } else if (article.isBlurred && dismissBlur) {
     return (
-      <Card>
+      <Card className="relative">
         {card}
-        <Button variant="ghost" onClick={() => setDismissBlur(false)}>
+        <Button
+          className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+          variant="ghost"
+          onClick={() => setDismissBlur(false)}
+        >
           Reapply Blur
         </Button>
       </Card>
