@@ -289,7 +289,10 @@ export class FilterService {
           action: 'blur',
           contentWarning: matchingRuleBlur.contentWarning,
         });
-        if (matchingRuleBlur.contentWarning)
+        if (
+          matchingRuleBlur.contentWarning &&
+          !finalState.contentWarning.includes(matchingRuleBlur.contentWarning)
+        )
           finalState.contentWarning.push(matchingRuleBlur.contentWarning);
         finalState.isBlurred = true;
       }
