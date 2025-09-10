@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { z } from 'zod';
 
 import { opmlSchema } from './opml.zod';
@@ -44,5 +44,27 @@ export class OpmlService {
       }
     });
     return feeds;
+  }
+  createOpml(feeds: { title: string; url: string }[]) {
+    const opml = {
+      opml: {
+        '@version': '2.0',
+        body: {
+          outline: {
+            '@text': 'Lionsmane Feeds',
+            outline: feeds.map((feed) => ({
+              '@text': feed.title,
+              '@xmlurl': feed.url,
+            })),
+          },
+        },
+      },
+    };
+    const builder = new XMLBuilder({
+      format: true,
+      ignoreAttributes: false,
+      attributeNamePrefix: '@',
+    });
+    return builder.build(opml);
   }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
@@ -9,6 +9,7 @@ import { Queue } from 'bullmq';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 import { OpmlService } from 'src/opml/opml.service';
+import { Readable } from 'node:stream';
 
 @Injectable()
 export class FeedService {
@@ -19,6 +20,7 @@ export class FeedService {
     private opmlService: OpmlService,
   ) {}
 
+  private readonly logger = new Logger(FeedService.name);
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const url = newSubscription.url.endsWith('/')
       ? newSubscription.url.slice(0, -1)
@@ -240,5 +242,28 @@ export class FeedService {
         await this.feedQueue.add('import', { url: feed.url, userId });
       }),
     );
+  }
+
+  async buildOpml(userId: string) {
+    const subscriptions = await this.db
+      .select({
+        title: schema.feeds.title,
+        url: schema.feeds.url,
+      })
+      .from(schema.subscriptions)
+      .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .where(eq(schema.subscriptions.userId, userId));
+    const subs = subscriptions.map((s) => ({
+      title: s.title,
+      url: s.url,
+    }));
+    const opml = this.opmlService.createOpml(subs);
+    const s = new Readable({
+      read() {
+        this.push(opml);
+        this.push(null);
+      },
+    });
+    return s;
   }
 }

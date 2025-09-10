@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseFilePipeBuilder,
+  StreamableFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FeedService } from './feed.service';
@@ -52,27 +53,6 @@ export class FeedController {
     return { feeds: await this.feedService.findAll(session.user.id) };
   }
 
-  @Get(':id')
-  @ZodResponse({ type: FeedOutDto, status: 200 })
-  findOne(@Param('id') id: string, @Session() session: UserSession) {
-    return this.feedService.findOne(id, session.user.id);
-  }
-
-  @Delete(':id')
-  @ApiResponse({ status: 204, description: 'Feed unsubscribed' })
-  remove(@Param('id') id: string, @Session() session: UserSession) {
-    return this.feedService.remove(id, session.user.id);
-  }
-
-  @Put(':id')
-  @ZodResponse({ type: SubscriptionOutDto, status: 200 })
-  update(
-    @Param('id') id: string,
-    @Body() updateFeedDto: UpdateFeedDto,
-    @Session() session: UserSession,
-  ) {
-    return this.feedService.update(id, session.user.id, updateFeedDto);
-  }
 
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))
@@ -93,5 +73,34 @@ export class FeedController {
     @Session() session: UserSession,
   ) {
     return this.feedService.importOpml(session.user.id, file.buffer.toString());
+  }
+
+  @Get('export')
+  @ApiResponse({ status: 200, description: 'OPML file exported' })
+  async export(@Session() session: UserSession): Promise<StreamableFile> {
+    const buffer = await this.feedService.buildOpml(session.user.id);
+    return new StreamableFile(buffer);
+  }
+
+  @Get(':id')
+  @ZodResponse({ type: FeedOutDto, status: 200 })
+  findOne(@Param('id') id: string, @Session() session: UserSession) {
+    return this.feedService.findOne(id, session.user.id);
+  }
+
+  @Delete(':id')
+  @ApiResponse({ status: 204, description: 'Feed unsubscribed' })
+  remove(@Param('id') id: string, @Session() session: UserSession) {
+    return this.feedService.remove(id, session.user.id);
+  }
+
+  @Put(':id')
+  @ZodResponse({ type: SubscriptionOutDto, status: 200 })
+  update(
+    @Param('id') id: string,
+    @Body() updateFeedDto: UpdateFeedDto,
+    @Session() session: UserSession,
+  ) {
+    return this.feedService.update(id, session.user.id, updateFeedDto);
   }
 }

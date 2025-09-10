@@ -8,7 +8,7 @@ import { toString as treeToString } from 'nlcst-to-string';
 import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import robotsParser from 'robots-parser';
@@ -23,6 +23,7 @@ export class FetcherService {
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
   ) {}
+  private readonly logger = new Logger(FetcherService.name);
 
   async robots(url: string) {
     const urlObj = new URL(url);
@@ -187,8 +188,10 @@ export class FetcherService {
           };
         });
       if (feedProcess.length === 0) {
-        console.log('No new articles to process');
+        this.logger.log('No new articles to process');
         return [];
+      } else {
+        this.logger.log(`Processing ${feedProcess.length} new articles`);
       }
 
       // Rate limiting logic
