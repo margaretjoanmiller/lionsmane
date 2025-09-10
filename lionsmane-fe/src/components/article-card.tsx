@@ -130,7 +130,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         <div className="blur-sm">{card}</div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex flex-wrap gap-2 justify-center">
-            {article.contentWarning.map((cw, index) => (
+            {article.contentWarning?.map((cw, index) => (
               <Badge key={index} variant="outline">
                 {cw}
               </Badge>

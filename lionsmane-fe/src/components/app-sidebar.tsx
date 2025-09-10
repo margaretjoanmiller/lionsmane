@@ -38,24 +38,43 @@ import { Button } from './ui/button';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormField, FormLabel, FormItem, Form, FormControl } from './ui/form';
 import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
+  FormField,
+  FormLabel,
+  FormItem,
+  Form,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from './ui/form';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Input } from './ui/input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { SearchBar } from './search-bar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Search } from 'lucide-react';
+import MultipleSelector from './multi-select';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
-  feedIds: z.array(z.uuid()).optional(),
+  feedIds: z.array(
+    z.object({
+      value: z.uuid(),
+      label: z.string().min(1).max(255),
+    }),
+  ),
 });
 
 const data = {
@@ -84,14 +103,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: feeds } = $api.useQuery('get', '/feed', {
     credentials: 'include',
   });
+  const feedSelect =
+    feeds?.feeds.map((feed) => ({
+      value: feed.id,
+      label: feed.title || feed.url,
+    })) || [];
 
   const { mutate } = $api.useMutation('post', '/folder');
 
   const queryClient = useQueryClient();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const bodyToSend = {
+      name: values.name,
+      feedIds: values.feedIds.map((feed) => feed.value),
+    };
     mutate(
-      { body: values, credentials: 'include' },
+      { body: bodyToSend, credentials: 'include' },
       {
         onSuccess: async () => {
           toast.success('Folder added');
@@ -190,67 +218,66 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-          <Dialog open={formOpen} onOpenChange={setFormOpen}>
-            <DialogTrigger>
-              <Button variant="outline">
-                <SolarAddFolderOutline />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Folder</DialogTitle>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Name" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="feedIds"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Feeds</FormLabel>
-                        <FormControl>
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a feed" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {feeds?.feeds.map((feed) => (
-                                <SelectItem key={feed.id} value={feed.id}>
-                                  {feed.title || feed.url}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit">Submit</Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
         </SidebarMenu>
+      </SidebarContent>
+      <SidebarFooter>
         {isMobile && (
           <div className="flex items-center justify-center">
             <SearchBar />
           </div>
         )}
+        <Dialog open={formOpen} onOpenChange={setFormOpen}>
+          <DialogTrigger>
+            <Button variant="outline">
+              <SolarAddFolderOutline />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Folder</DialogTitle>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="m-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Name" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="feedIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Feeds</FormLabel>
+                      <FormControl>
+                        <MultipleSelector
+                          {...field}
+                          defaultOptions={feedSelect}
+                          placeholder="Select feeds you want to add to your folder..."
+                          emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                              no results found.
+                            </p>
+                          }
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Add Folder</Button>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
         <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
         <NavUser />
       </SidebarFooter>
     </Sidebar>
