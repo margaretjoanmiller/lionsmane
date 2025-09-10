@@ -36,7 +36,7 @@ export const articleDetail = z.object({
     }, z.iso.datetime())
     .nullable(), // Then, validate that the result is a valid ISO datetime string.
   feedId: z.uuid(),
-  feedTitle: z.string().nullable(),
+  feedTitle: z.string(),
   isRead: z.boolean().nullable().default(false),
   isStarred: z.boolean().nullable().default(false),
   isBlurred: z.boolean().nullable().default(false),

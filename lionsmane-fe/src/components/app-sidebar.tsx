@@ -7,7 +7,6 @@ import NotoV1Mushroom from '~icons/noto-v1/mushroom';
 import { Link } from '@tanstack/react-router';
 
 import { Route as DashIndex } from '@/routes/dashboard/index';
-import { NavProjects } from '@/components/nav-projects';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -16,7 +15,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -51,6 +49,9 @@ import {
 import { Input } from './ui/input';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { SearchBar } from './search-bar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Search } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -68,6 +69,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const isMobile = useIsMobile();
   const [formOpen, setFormOpen] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -241,6 +243,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </DialogContent>
           </Dialog>
         </SidebarMenu>
+        {isMobile && (
+          <div className="flex items-center justify-center">
+            <SearchBar />
+          </div>
+        )}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

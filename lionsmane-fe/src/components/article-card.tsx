@@ -48,7 +48,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
   }
 
   const articleFeed =
-    article.feedTitle.length > 50
+    article.feedTitle && article.feedTitle.length > 50
       ? article.feedTitle.slice(0, 50) + '...'
       : article.feedTitle;
 

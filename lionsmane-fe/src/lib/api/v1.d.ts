@@ -442,8 +442,11 @@ export interface components {
                 updated: string | null;
                 /** Format: uuid */
                 feedId: string;
+                feedTitle: string | null;
                 /** @default false */
                 isRead: boolean | null;
+                /** @default false */
+                isStarred: boolean | null;
                 /** @default false */
                 isBlurred: boolean | null;
                 /** @default false */

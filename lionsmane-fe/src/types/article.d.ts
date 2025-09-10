@@ -12,10 +12,10 @@ export interface ArticleDetail {
   published: string;
   updated: string | null;
   feedId: string;
-  feedTitle: string;
+  feedTitle: string | null;
   isRead: boolean | null;
   isStarred: boolean | null;
   isBlurred: boolean | null;
   isHidden: boolean | null;
-  contentWarning: string[];
+  contentWarning: string[] | null;
 }

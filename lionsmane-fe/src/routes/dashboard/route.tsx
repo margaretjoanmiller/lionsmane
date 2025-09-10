@@ -1,13 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { AppSidebar } from '@/components/app-sidebar';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import IconParkOutlineRss from '~icons/icon-park-outline/rss';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -57,6 +49,8 @@ import {
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { SearchBar } from '@/components/search-bar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashLayout,
@@ -82,6 +76,7 @@ const formSchema = z.object({
   folderId: z.string().nullable(),
 });
 function DashLayout() {
+  const isMobile = useIsMobile();
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
   const { data: folders } = $api.useQuery('get', '/folder', {
@@ -134,23 +129,9 @@ function DashLayout() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <div className="right-15 absolute">
+            <div className="right-5 absolute flex items-center gap-2">
+              {!isMobile && <SearchBar />}
               <ArticleFilterSelect />
-            </div>
-            <div className="right-5 absolute">
               <ModeToggle />
             </div>
             <div className="group fixed bottom-6 right-6">
