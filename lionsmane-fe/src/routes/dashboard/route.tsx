@@ -35,6 +35,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { toast } from 'sonner';
 import React from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -115,6 +116,9 @@ function DashLayout() {
           queryClient.invalidateQueries({
             queryKey: ['get', '/feed'],
           });
+        },
+        onError: (error) => {
+          toast.error('Error adding feed', { description: error.message });
         },
       },
     );

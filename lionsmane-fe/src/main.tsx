@@ -12,7 +12,7 @@ import reportWebVitals from './reportWebVitals.ts';
 import { ThemeProvider } from './components/theme-provider.tsx';
 
 import { authClient } from './lib/auth-client.ts';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 
 // Create a new router instance
 

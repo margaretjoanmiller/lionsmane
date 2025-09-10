@@ -50,6 +50,7 @@ import {
 } from './ui/select';
 import { Input } from './ui/input';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -91,9 +92,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       { body: values, credentials: 'include' },
       {
         onSuccess: async () => {
+          toast.success('Folder added');
           setFormOpen(false);
           await queryClient.invalidateQueries();
           form.reset();
+        },
+        onError: (error) => {
+          toast.error('Error adding folder', {
+            description: error,
+          });
         },
       },
     );
@@ -112,8 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       name: folder.name,
       feeds: folder.feeds.map((feed) => ({
         id: feed.id,
-        title: feed.title,
-        url: feed.url,
+        name: feed.title || feed.url,
       })),
     })) || [];
 
@@ -156,7 +162,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           to="/dashboard/feed/$feedId"
                           params={{ feedId: feed.id }}
                         >
-                          {feed.title || feed.url}
+                          {feed.name.length > 70
+                            ? feed.name.slice(0, 70) + '...'
+                            : feed.name}
                         </Link>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
@@ -173,7 +181,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   params={{ feedId: feed.id }}
                   className="flex w-full"
                 >
-                  {feed.name}
+                  {feed.name.length > 70
+                    ? feed.name.slice(0, 70) + '...'
+                    : feed.name}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
