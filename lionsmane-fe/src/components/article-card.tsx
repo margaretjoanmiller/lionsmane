@@ -78,6 +78,8 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     });
   }
 
+  const truncatedText = article.readableText?.slice(0, 150) + '...';
+
   const card = (
     <>
       <CardHeader>
@@ -120,7 +122,13 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           {format(new Date(article.published), 'MMM d, yyyy HH:mm')}
         </CardDescription>
       </CardHeader>
-      <CardContent>{article.readableText?.slice(0, 150) + '...'}</CardContent>
+      <CardContent>
+        {article.image ? (
+          <img src={article.image} className="rounded-md" />
+        ) : (
+          <div className="text-sm text-muted-foreground">{truncatedText}</div>
+        )}
+      </CardContent>
     </>
   );
 

@@ -1,15 +1,15 @@
+import { Readability } from '@mozilla/readability';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
+import { Queue } from 'bullmq';
+import createDOMPurify, { WindowLike } from 'dompurify';
+import { and, desc, eq, gt, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { JSDOM } from 'jsdom';
+import { FetcherService } from 'src/fetcher/fetcher.service';
+import z from 'zod';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { and, desc, eq, gt, or, sql } from 'drizzle-orm';
-import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
-import createDOMPurify, { WindowLike } from 'dompurify';
-import z from 'zod';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import { Queue } from 'bullmq';
-import { InjectQueue } from '@nestjs/bullmq';
 
 @Injectable()
 export class ArticleService {
@@ -136,10 +136,10 @@ export class ArticleService {
         and(
           cursorDate && cursorId
             ? or(
-                gt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, cursorDate),
                 and(
                   eq(schema.articles.published, cursorDate),
-                  gt(schema.articles.id, cursorId),
+                  lt(schema.articles.id, cursorId),
                 ),
               )
             : undefined,
@@ -222,10 +222,10 @@ export class ArticleService {
         and(
           cursorDate && cursorId
             ? or(
-                gt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, cursorDate),
                 and(
                   eq(schema.articles.published, cursorDate),
-                  gt(schema.articles.id, cursorId),
+                  lt(schema.articles.id, cursorId),
                 ),
               )
             : undefined,
@@ -476,10 +476,10 @@ export class ArticleService {
             sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
@@ -514,10 +514,10 @@ export class ArticleService {
             eq(schema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
@@ -557,10 +557,10 @@ export class ArticleService {
             stateCondition,
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
