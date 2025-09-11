@@ -1,19 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Put,
-  UseInterceptors,
-  UploadedFile,
+  Get,
+  Param,
   ParseFilePipeBuilder,
+  Post,
+  Put,
   StreamableFile,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FeedService } from './feed.service';
-import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -26,9 +24,11 @@ import {
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
-import { UpdateFeedDto } from './dto/update-feed.dto';
-import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { FileDto } from './dto/file.dto';
+import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
+import { SubscriptionOutDto } from './dto/subscription-out.dto';
+import { UpdateFeedDto } from './dto/update-feed.dto';
+import { FeedService } from './feed.service';
 
 @ApiTags('feeds')
 @ApiCookieAuth()
@@ -52,7 +52,6 @@ export class FeedController {
   async findAll(@Session() session: UserSession) {
     return { feeds: await this.feedService.findAll(session.user.id) };
   }
-
 
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))

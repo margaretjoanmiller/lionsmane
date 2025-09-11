@@ -4,8 +4,9 @@
     "**/*.tsx",
     "eslint.config.js",
     "prettier.config.js",
-    "vite.config.js"
-, "tailwind.config.js"  ],
+    "vite.config.js",
+    "tailwind.config.js"
+  ],
 
   "compilerOptions": {
     "target": "ES2022",

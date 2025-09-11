@@ -1,0 +1,9 @@
+{
+  "root": false,
+  "extends": "//",
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  }
+}
