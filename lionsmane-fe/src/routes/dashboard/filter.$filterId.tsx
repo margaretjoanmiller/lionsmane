@@ -1,29 +1,29 @@
-import { $api } from '@/lib/fetch-client';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { type Tag, TagInput } from 'emblor';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  FormDescription,
   FormMessage,
 } from '@/components/ui/form';
-import { TagInput, type Tag } from 'emblor';
-import { Button } from '@/components/ui/button';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { Input } from '@/components/ui/input';
 import {
   Select,
+  SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectContent,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import { $api } from '@/lib/fetch-client';
 
 export const Route = createFileRoute('/dashboard/filter/$filterId')({
   component: RouteComponent,
@@ -46,7 +46,7 @@ function RouteComponent() {
       .optional(),
     feeds: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
     type: z.enum(['blur', 'markRead', 'hide']),
-    contentWarning: z.string().max(512).nullable(),
+    contentWarning: z.string().max(512).optional(),
     enabled: z.boolean(),
   });
 
@@ -155,7 +155,7 @@ function RouteComponent() {
       categories: categories,
       feeds: feeds?.feeds.map((f) => ({ text: f.title, id: f.id })),
       type: data.action.type,
-      contentWarning: data.action.contentWarning,
+      contentWarning: data.action.contentWarning || undefined,
       enabled: data.isActive,
     },
   });

@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { $api } from '@/lib/fetch-client';
+import React from 'react';
 import { ArticleCard } from '@/components/article-card';
 import { Button } from '@/components/ui/button';
+import { $api } from '@/lib/fetch-client';
 import {
   ArticleFilter,
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
-import React from 'react';
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashIndex,
@@ -60,11 +60,14 @@ function DashIndex() {
           </Button>
         )}
         {areHiddenArticles && isHidden && (
-          <Button>Show hidden articles?</Button>
+          <Button onClick={() => setHidden(false)}>
+            Show hidden articles?
+          </Button>
         )}
         {!isHidden && (
           <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
             {hiddenArticles}
+            <Button onClick={() => setHidden(true)}>Hide articles?</Button>
           </div>
         )}
       </>

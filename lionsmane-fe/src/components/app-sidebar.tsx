@@ -1,52 +1,14 @@
 'use client';
 
-import * as React from 'react';
-import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
-import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
-import NotoV1Mushroom from '~icons/noto-v1/mushroom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-
-import { Route as DashIndex } from '@/routes/dashboard/index';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-} from '@/components/ui/sidebar';
-import { $api } from '@/lib/fetch-client';
-import SolarFilterLinear from '~icons/solar/filter-linear';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './ui/collapsible';
-import {
-  Dialog,
-  DialogTitle,
-  DialogHeader,
-  DialogContent,
-  DialogTrigger,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  FormField,
-  FormLabel,
-  FormItem,
-  Form,
-  FormControl,
-  FormMessage,
-  FormDescription,
-} from './ui/form';
 import {
   Command,
   CommandEmpty,
@@ -60,12 +22,41 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Input } from './ui/input';
-import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { SearchBar } from './search-bar';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+} from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { $api } from '@/lib/fetch-client';
+import { Route as DashIndex } from '@/routes/dashboard/index';
+import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
+import NotoV1Mushroom from '~icons/noto-v1/mushroom';
+import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
+import SolarFilterLinear from '~icons/solar/filter-linear';
 import MultipleSelector from './multi-select';
+import { SearchBar } from './search-bar';
+import { Button } from './ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './ui/collapsible';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { Input } from './ui/input';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -113,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const queryClient = useQueryClient();
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     const bodyToSend = {
       name: values.name,
       feedIds: values.feedIds.map((feed) => feed.value),

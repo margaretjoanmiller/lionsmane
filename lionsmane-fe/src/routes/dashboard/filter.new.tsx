@@ -1,22 +1,21 @@
-import { $api } from '@/lib/fetch-client';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { type Tag, TagInput } from 'emblor';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import MultipleSelector from '@/components/multi-select';
+import { Button } from '@/components/ui/button';
 import {
   Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  FormDescription,
   FormMessage,
 } from '@/components/ui/form';
-import { TagInput, type Tag } from 'emblor';
-import { Button } from '@/components/ui/button';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import React from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { filterFormSchema } from '@/zod/filter.zod';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -25,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { $api } from '@/lib/fetch-client';
+import { filterFormSchema } from '@/zod/filter.zod';
 
 export const Route = createFileRoute('/dashboard/filter/new')({
   component: NewFilter,
@@ -54,7 +55,7 @@ function NewFilter() {
         contentContains: values.contentContains?.map((content) => content.text),
         authors: values.authors?.map((author) => author.text),
         categories: values.categories?.map((category) => category.text),
-        feeds: values.feeds,
+        feeds: values.feeds?.map((feed) => feed.value),
       },
       action: {
         type: values.type,
@@ -244,18 +245,19 @@ function NewFilter() {
             <FormItem>
               <FormLabel>Feeds</FormLabel>
               <FormControl>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a feed" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {feeds?.feeds.map((feed) => (
-                      <SelectItem key={feed.id} value={feed.id}>
-                        {feed.title || feed.url}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <MultipleSelector
+                  {...field}
+                  defaultOptions={feeds?.feeds.map((feed) => ({
+                    label: feed.title || feed.url,
+                    value: feed.id,
+                  }))}
+                  placeholder="Select feeds you want to add to your folder..."
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
               </FormControl>
               <FormDescription>These are your filtered feeds.</FormDescription>
               <FormMessage />
@@ -266,7 +268,7 @@ function NewFilter() {
           control={form.control}
           name="type"
           render={({ field }) => (
-            <Select>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an action" />
               </SelectTrigger>

@@ -41,8 +41,6 @@
 
     "JSONC": { "formatter": { "language_server": { "name": "biome" } } },
 
-    "CSS": { "formatter": { "language_server": { "name": "biome" } } },
-
-    "GraphQL": { "formatter": { "language_server": { "name": "biome" } } }
+    "CSS": { "formatter": { "language_server": { "name": "biome" } } }
   }
 }

@@ -13,7 +13,7 @@ export const filterFormSchema = z.object({
   categories: z
     .array(z.object({ text: z.string(), id: z.string() }))
     .optional(),
-  feeds: z.array(z.string()).optional(),
+  feeds: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
   type: z.enum(['blur', 'markRead', 'hide']),
   contentWarning: z.string().max(512).optional(),
   enabled: z.boolean(),
