@@ -1,12 +1,12 @@
 packages:
-  - lionsmane
+  - lionsmane-be
   - lionsmane-fe
 
 onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@scarf/scarf'
-  - '@swc/core'
-  - '@tailwindcss/oxide'
+  - "@nestjs/core"
+  - "@scarf/scarf"
+  - "@swc/core"
+  - "@tailwindcss/oxide"
   - esbuild
   - msgpackr-extract
   - msw
