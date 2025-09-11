@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
+  Logger,
   Param,
   ParseFilePipeBuilder,
   Post,
@@ -38,6 +41,8 @@ import { FeedService } from './feed.service';
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
 
+  private readonly logger = new Logger(FeedController.name);
+
   @Post()
   @ApiResponse({ status: 201, description: 'Feed subscribed' })
   create(
@@ -62,6 +67,7 @@ export class FeedController {
     type: FileDto,
   })
   @ApiResponse({ status: 201, description: 'Feed imported' })
+  @ApiResponse({ status: 400, description: 'Invalid OPML file' })
   async import(
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -71,14 +77,29 @@ export class FeedController {
     file: Express.Multer.File,
     @Session() session: UserSession,
   ) {
-    return this.feedService.importOpml(session.user.id, file.buffer.toString());
+    try {
+      return await this.feedService.importOpml(
+        session.user.id,
+        file.buffer.toString(),
+      );
+    } catch (error) {
+      this.logger.error('Error importing OPML', error);
+      throw new BadRequestException('Error importing OPML', { cause: error });
+    }
   }
 
   @Get('export')
   @ApiResponse({ status: 200, description: 'OPML file exported' })
   async export(@Session() session: UserSession): Promise<StreamableFile> {
-    const buffer = await this.feedService.buildOpml(session.user.id);
-    return new StreamableFile(buffer);
+    try {
+      const buffer = await this.feedService.buildOpml(session.user.id);
+      return new StreamableFile(buffer);
+    } catch (error) {
+      this.logger.error('Error exporting OPML', error);
+      throw new InternalServerErrorException('Error exporting OPML', {
+        cause: error,
+      });
+    }
   }
 
   @Get(':id')

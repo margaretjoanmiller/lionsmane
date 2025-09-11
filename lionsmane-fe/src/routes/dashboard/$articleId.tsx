@@ -1,10 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { $api } from '@/lib/fetch-client';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { $api } from '@/lib/fetch-client';
+import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
 import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
-import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
-import { useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/dashboard/$articleId')({
   component: ArticlePage,
@@ -28,6 +29,11 @@ function ArticlePage() {
         queryKey: ['get', '/article/{id}'],
       });
     },
+    onError: (error) => {
+      toast.error('Failed to update article status', {
+        description: error.message,
+      });
+    },
   });
 
   const { mutate: requestFullArticleText } = $api.useMutation(
@@ -37,6 +43,11 @@ function ArticlePage() {
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           queryKey: ['get', '/article/{id}'],
+        });
+      },
+      onError: (error) => {
+        toast.error('Failed to fetch full article text', {
+          description: error.message,
         });
       },
     },

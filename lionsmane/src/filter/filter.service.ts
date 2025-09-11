@@ -1,14 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CreateFilterDto } from './dto/create-filter.dto';
-import { UpdateFilterDto } from './dto/update-filter.dto';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { schema } from 'src/db/schema';
-import { and, eq, gte, ne, sql } from 'drizzle-orm';
-import { Article } from 'src/article/article';
-import { AppliedRules, FilterRule } from './filter';
 import { InjectQueue } from '@nestjs/bullmq';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { isAfter, subMonths } from 'date-fns';
+import { and, eq, gte, ne, sql } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { Article } from 'src/article/article';
+import { schema } from 'src/db/schema';
+import { CreateFilterDto } from './dto/create-filter.dto';
+import { UpdateFilterDto } from './dto/update-filter.dto';
+import { AppliedRules, FilterRule } from './filter';
 
 @Injectable()
 export class FilterService {
@@ -26,7 +31,7 @@ export class FilterService {
       })
       .returning();
     if (!filter) {
-      throw new Error('Filter not found');
+      throw new InternalServerErrorException('Filter not found');
     }
     const articles = await this.db
       .select({ articleId: schema.articles.id })
@@ -334,7 +339,7 @@ export class FilterService {
         .then((rows) => rows[0]);
 
       if (!appliedRule) {
-        throw new Error('No applied rule found to undo');
+        throw new NotFoundException('No applied rule found to undo');
       }
       const otherActiveRules = await tx
         .select()

@@ -1,16 +1,12 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
+  Put,
 } from '@nestjs/common';
-import { FilterService } from './filter.service';
-import { CreateFilterDto } from './dto/create-filter.dto';
-import { UpdateFilterDto } from './dto/update-filter.dto';
-import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import {
   ApiBearerAuth,
   ApiCookieAuth,
@@ -18,8 +14,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { FilterOutDto } from './dto/filter-out.dto';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
+import { CreateFilterDto } from './dto/create-filter.dto';
+import { FilterOutDto } from './dto/filter-out.dto';
+import { UpdateFilterDto } from './dto/update-filter.dto';
+import { FilterService } from './filter.service';
 
 @ApiTags('filter')
 @ApiCookieAuth()
@@ -50,7 +50,7 @@ export class FilterController {
     return this.filterService.findOne(id, session.user.id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ZodResponse({ type: FilterOutDto, status: 200 })
   update(
     @Param('id') id: string,

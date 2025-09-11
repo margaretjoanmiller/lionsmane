@@ -1,12 +1,11 @@
-'use client';
-
+import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   type ColumnDef,
+  type FilterFn,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
 import {
   Table,
   TableBody,
@@ -15,8 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-import { type FilterFn } from '@tanstack/react-table';
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item

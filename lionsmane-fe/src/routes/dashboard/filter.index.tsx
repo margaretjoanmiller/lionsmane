@@ -1,19 +1,18 @@
+import { createFileRoute, Link } from '@tanstack/react-router';
+import type { ColumnDef } from '@tanstack/react-table';
+import { toast } from 'sonner';
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
-import StashPencilWritingDuotone from '~icons/stash/pencil-writing-duotone';
 import { $api } from '@/lib/fetch-client';
 import type { FilterRule } from '@/types/filter';
-import { createFileRoute } from '@tanstack/react-router';
-import { RowExpanding, type ColumnDef } from '@tanstack/react-table';
-import { DataTable } from '@/components/data-table';
-import { Link } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
+import StashPencilWritingDuotone from '~icons/stash/pencil-writing-duotone';
 
 export const Route = createFileRoute('/dashboard/filter/')({
   component: FiltersDash,
 });
 
 function FiltersDash() {
-  const { data, error } = $api.useQuery('get', '/filter', {
+  const { data } = $api.useQuery('get', '/filter', {
     credentials: 'include',
   });
 

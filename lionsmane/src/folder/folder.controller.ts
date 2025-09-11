@@ -1,25 +1,25 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
+  Put,
 } from '@nestjs/common';
-import { FolderService } from './folder.service';
-import { CreateFolderDto } from './dto/create-folder.dto';
-import { UpdateFolderDto } from './dto/update-folder.dto';
-import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import {
-  ApiResponse,
-  ApiTags,
   ApiBearerAuth,
   ApiCookieAuth,
   ApiOAuth2,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { FolderOutDto, FolderWithFeedsOutDto } from './dto/folder-out.dto';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
+import { CreateFolderDto } from './dto/create-folder.dto';
+import { FolderOutDto, FolderWithFeedsOutDto } from './dto/folder-out.dto';
+import { UpdateFolderDto } from './dto/update-folder.dto';
+import { FolderService } from './folder.service';
 
 @ApiTags('folders')
 @ApiCookieAuth()
@@ -47,28 +47,32 @@ export class FolderController {
   @Get('feeds')
   @ZodResponse({ type: [FolderWithFeedsOutDto], status: 200 })
   async findAllWithFeeds(@Session() session: UserSession) {
-    return this.folderService.findAllWithFeeds(session.user.id);
+    return await this.folderService.findAllWithFeeds(session.user.id);
   }
 
   @Get(':id')
   @ZodResponse({ type: FolderOutDto, status: 200 })
-  findOne(@Param('id') id: string, @Session() session: UserSession) {
-    return this.folderService.findOne(id, session.user.id);
+  async findOne(@Param('id') id: string, @Session() session: UserSession) {
+    return await this.folderService.findOne(id, session.user.id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ZodResponse({ type: FolderOutDto, status: 200 })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateFolderDto: UpdateFolderDto,
     @Session() session: UserSession,
   ) {
-    return this.folderService.update(id, updateFolderDto, session.user.id);
+    return await this.folderService.update(
+      id,
+      updateFolderDto,
+      session.user.id,
+    );
   }
 
   @Delete(':id')
   @ApiResponse({ status: 204, description: 'Folder deleted successfully.' })
-  remove(@Param('id') id: string, @Session() session: UserSession) {
-    return this.folderService.remove(id, session.user.id);
+  async remove(@Param('id') id: string, @Session() session: UserSession) {
+    return await this.folderService.remove(id, session.user.id);
   }
 }

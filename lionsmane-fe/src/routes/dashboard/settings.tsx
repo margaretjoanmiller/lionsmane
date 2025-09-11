@@ -1,22 +1,26 @@
-import { DataTable } from '@/components/data-table';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
-import type { Feed } from '@/types/feed';
+import type { ColumnDef } from '@tanstack/react-table';
+import { PencilIcon } from 'lucide-react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { DataTable } from '@/components/data-table';
+import MultipleSelector from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import type { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Dialog,
-  DialogTitle,
-  DialogHeader,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
@@ -29,28 +33,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PencilIcon } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { $api } from '@/lib/fetch-client';
-import React from 'react';
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
+import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
-import MultipleSelector from '@/components/multi-select';
 
 export const Route = createFileRoute('/dashboard/settings')({
   component: Settings,
