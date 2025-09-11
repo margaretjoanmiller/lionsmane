@@ -1,7 +1,7 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-const subscriptionOutDto = z.object({
+export const subscriptionOutDto = z.object({
   id: z.uuid(),
   userId: z.string(),
   feedId: z.uuid(),

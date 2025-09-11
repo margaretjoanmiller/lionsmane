@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -56,7 +56,7 @@ export class FolderController {
     return await this.folderService.findOne(id, session.user.id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ZodResponse({ type: FolderOutDto, status: 200 })
   async update(
     @Param('id') id: string,

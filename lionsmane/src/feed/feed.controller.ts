@@ -8,8 +8,8 @@ import {
   Logger,
   Param,
   ParseFilePipeBuilder,
+  Patch,
   Post,
-  Put,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
@@ -28,6 +28,7 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
+import { NewSubscriptionDto } from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
@@ -44,12 +45,12 @@ export class FeedController {
   private readonly logger = new Logger(FeedController.name);
 
   @Post()
-  @ApiResponse({ status: 201, description: 'Feed subscribed' })
-  create(
+  @ZodResponse({ type: NewSubscriptionDto, status: 201 })
+  async create(
     @Body() newSubscription: SubscribeFeedDto,
     @Session() session: UserSession,
   ) {
-    return this.feedService.create(newSubscription, session.user.id);
+    return await this.feedService.create(newSubscription, session.user.id);
   }
 
   @Get()
@@ -114,7 +115,7 @@ export class FeedController {
     return this.feedService.remove(id, session.user.id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ZodResponse({ type: SubscriptionOutDto, status: 200 })
   update(
     @Param('id') id: string,

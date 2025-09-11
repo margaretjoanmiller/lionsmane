@@ -1,6 +1,13 @@
 import { Readable } from 'node:stream';
 import { InjectQueue } from '@nestjs/bullmq';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+    ConflictException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { subMonths } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
@@ -20,7 +27,6 @@ export class FeedService {
     private opmlService: OpmlService,
   ) {}
 
-  private readonly logger = new Logger(FeedService.name);
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const url = newSubscription.url.endsWith('/')
       ? newSubscription.url.slice(0, -1)
@@ -57,7 +63,7 @@ export class FeedService {
           ),
         );
       if (subscription) {
-        throw new Error('Already subscribed to this feed');
+        throw new ConflictException('Already subscribed to this feed');
       }
       if (newSubscription.folderId) {
         const [folder] = await tx
@@ -71,7 +77,7 @@ export class FeedService {
           );
 
         if (!folder) {
-          throw new Error('Folder not found');
+          throw new NotFoundException('Folder not found');
         }
 
         const [newSubscriptionRecord] = await tx
@@ -84,7 +90,9 @@ export class FeedService {
           .returning();
 
         if (!newSubscriptionRecord) {
-          throw new Error('Failed to create subscription');
+          throw new InternalServerErrorException(
+            'Failed to create subscription',
+          );
         }
 
         return { ...feed, subscription: newSubscriptionRecord };

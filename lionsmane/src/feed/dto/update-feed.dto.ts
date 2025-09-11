@@ -1,3 +1,9 @@
-import { SubscribeFeedDto } from './subscribe-feed.dto';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export class UpdateFeedDto extends SubscribeFeedDto {}
+export const updateSchema = z.object({
+  description: z.string().min(2).max(1000).optional(),
+  folderId: z.uuid().optional(),
+});
+
+export class UpdateFeedDto extends createZodDto(updateSchema) {}

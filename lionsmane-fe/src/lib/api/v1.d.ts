@@ -76,12 +76,12 @@ export interface paths {
             cookie?: never;
         };
         get: operations["FeedController_findOne"];
-        put: operations["FeedController_update"];
+        put?: never;
         post?: never;
         delete: operations["FeedController_remove"];
         options?: never;
         head?: never;
-        patch?: never;
+        patch: operations["FeedController_update"];
         trace?: never;
     };
     "/article": {
@@ -316,12 +316,12 @@ export interface paths {
             cookie?: never;
         };
         get: operations["FolderController_findOne"];
-        put: operations["FolderController_update"];
+        put?: never;
         post?: never;
         delete: operations["FolderController_remove"];
         options?: never;
         head?: never;
-        patch?: never;
+        patch: operations["FolderController_update"];
         trace?: never;
     };
     "/filter": {
@@ -366,6 +366,27 @@ export interface components {
             description?: string;
             folderId: string | null;
         };
+        NewSubscriptionDto_Output: {
+            subscription: {
+                /** Format: uuid */
+                id: string;
+                userId: string;
+                /** Format: uuid */
+                feedId: string;
+                description: string | null;
+                folderId: string | null;
+            };
+            /** Format: uuid */
+            id: string;
+            title: string;
+            /** Format: uri */
+            url: string;
+            authors: string[] | null;
+            categories: string[] | null;
+            copyright: string | null;
+            image: string | null;
+            updated: string | null;
+        };
         FeedListOutDto_Output: {
             feeds: {
                 /** Format: uuid */
@@ -408,10 +429,9 @@ export interface components {
             folderId: string | null;
         };
         UpdateFeedDto: {
-            /** Format: uri */
-            url: string;
             description?: string;
-            folderId: string | null;
+            /** Format: uuid */
+            folderId?: string;
         };
         SubscriptionOutDto_Output: {
             /** Format: uuid */
@@ -706,12 +726,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Feed subscribed */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewSubscriptionDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -840,6 +861,40 @@ export interface operations {
             };
         };
     };
+    FeedController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Feed unsubscribed */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     FeedController_update: {
         parameters: {
             query?: never;
@@ -862,40 +917,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SubscriptionOutDto_Output"];
                 };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    FeedController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Feed unsubscribed */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Unauthorized */
             401: {
@@ -1510,6 +1531,40 @@ export interface operations {
             };
         };
     };
+    FolderController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Folder deleted successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     FolderController_update: {
         parameters: {
             query?: never;
@@ -1532,40 +1587,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["FolderOutDto_Output"];
                 };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    FolderController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Folder deleted successfully. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Unauthorized */
             401: {
