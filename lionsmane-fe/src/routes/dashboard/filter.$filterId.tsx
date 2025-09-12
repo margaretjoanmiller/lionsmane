@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { type Tag, TagInput } from 'emblor';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -110,11 +111,14 @@ function RouteComponent() {
 
   const navigate = useNavigate({ from: '/dashboard/filter/$filterId' });
 
-  const { mutate } = $api.useMutation('patch', '/filter/{id}', {
+  const { mutate } = $api.useMutation('put', '/filter/{id}', {
     onSuccess: async () => {
       form.reset();
       await queryClient.invalidateQueries();
       await navigate({ to: '/dashboard/filter' });
+    },
+    onError: (error) => {
+      toast.error('Failed to update filter', { description: error.message });
     },
   });
 

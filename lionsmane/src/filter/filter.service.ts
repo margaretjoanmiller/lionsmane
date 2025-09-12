@@ -261,6 +261,21 @@ export class FilterService {
         };
       }
 
+      const appliedRules = await tx
+        .select({
+          ruleId: schema.appliedRules.ruleId,
+          action: schema.appliedRules.action,
+          contentWarning: schema.appliedRules.contentWarning,
+        })
+        .from(schema.appliedRules)
+        .where(
+          and(
+            eq(schema.appliedRules.articleId, articleId),
+            eq(schema.appliedRules.userId, userId),
+          ),
+        )
+        .then((rows) => rows);
+
       const matchingRuleMarkRead = matchingRules.find(
         (r) => r.action === 'markRead',
       );
@@ -297,10 +312,17 @@ export class FilterService {
           contentWarning: matchingRuleBlur.contentWarning,
         });
         if (
+          matchingRuleBlur.ruleId === matchingRuleBlur.ruleId &&
+          matchingRuleBlur.contentWarning
+        ) {
+          finalState.contentWarning = [];
+          finalState.contentWarning.push(matchingRuleBlur.contentWarning);
+        } else if (
           matchingRuleBlur.contentWarning &&
           !finalState.contentWarning.includes(matchingRuleBlur.contentWarning)
-        )
+        ) {
           finalState.contentWarning.push(matchingRuleBlur.contentWarning);
+        }
         finalState.isBlurred = true;
       }
 
