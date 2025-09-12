@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const feedOutDto = z.object({
   id: z.uuid(),
@@ -25,6 +25,7 @@ export const feedOutDto = z.object({
     .nullable(), // Then, validate that the result is a valid ISO datetime string.
   subscriptionId: z.uuid(),
   folderId: z.uuid().nullable(),
+  unreadCount: z.number().min(0).nullable(),
 });
 
 const feedListOutDto = z.object({ feeds: z.array(feedOutDto) });

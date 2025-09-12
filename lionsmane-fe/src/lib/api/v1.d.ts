@@ -403,6 +403,7 @@ export interface components {
                 /** Format: uuid */
                 subscriptionId: string;
                 folderId: string | null;
+                unreadCount: number | null;
             }[];
         };
         FileDto: {
@@ -427,6 +428,7 @@ export interface components {
             /** Format: uuid */
             subscriptionId: string;
             folderId: string | null;
+            unreadCount: number | null;
         };
         UpdateFeedDto: {
             description?: string;
@@ -448,8 +450,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 title: string;
-                /** Format: uri */
-                url: string;
+                url: string | null;
                 authors: {
                     name: string;
                     email: string | null;
@@ -473,6 +474,7 @@ export interface components {
                 /** Format: uuid */
                 feedId: string;
                 feedTitle: string | null;
+                count: number;
             }[];
         };
         ArticleStatusDto_Output: {
@@ -491,8 +493,7 @@ export interface components {
                 /** Format: uuid */
                 id: string;
                 title: string;
-                /** Format: uri */
-                url: string;
+                url: string | null;
                 authors: {
                     name: string;
                     email: string | null;
@@ -526,8 +527,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             title: string;
-            /** Format: uri */
-            url: string;
+            url: string | null;
             authors: {
                 name: string;
                 email: string | null;

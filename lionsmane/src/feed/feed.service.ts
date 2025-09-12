@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { subMonths } from 'date-fns';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, isNull, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -113,7 +113,38 @@ export class FeedService {
   }
 
   async findAll(userId: string) {
-    return await this.db
+    const unreadCounts = await this.db
+      .select({
+        feedId: schema.articles.feedId,
+        unreadCount: count().as('unreadCount'),
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(
+        or(
+          isNull(schema.userArticleStates.isRead),
+          eq(schema.userArticleStates.isRead, false),
+        ),
+      )
+      .groupBy(schema.articles.feedId);
+
+    const unreadCountMap = new Map(
+      unreadCounts.map(({ feedId, unreadCount }) => [feedId, unreadCount]),
+    );
+    const feeds = await this.db
       .select({
         id: schema.feeds.id,
         title: schema.feeds.title,
@@ -135,9 +166,45 @@ export class FeedService {
       )
       .where(eq(schema.subscriptions.userId, userId))
       .orderBy(schema.feeds.url);
+    return feeds.map((feed) => ({
+      ...feed,
+      unreadCount: unreadCountMap.get(feed.id) ?? 0,
+    }));
   }
 
   async findOne(id: string, userId: string) {
+    const [unreadCount] = await this.db
+      .select({
+        feedId: schema.articles.feedId,
+        unreadCount: count().as('unreadCount'),
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          or(
+            isNull(schema.userArticleStates.isRead),
+            eq(schema.userArticleStates.isRead, false),
+          ),
+          eq(schema.articles.feedId, id),
+        ),
+      )
+      .groupBy(schema.articles.feedId)
+      .limit(1);
+
     const [userFeed] = await this.db
       .select({
         id: schema.feeds.id,
@@ -161,7 +228,7 @@ export class FeedService {
     if (!userFeed) {
       throw new Error('Feed not found');
     }
-    return userFeed;
+    return { ...userFeed, unreadCount: unreadCount.unreadCount };
   }
 
   async update(id: string, userId: string, updateFeedDto: UpdateFeedDto) {

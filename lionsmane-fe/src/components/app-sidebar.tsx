@@ -13,6 +13,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -122,6 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .map((feed) => ({
         id: feed.id,
         name: feed.title || feed.url,
+        unreadCount: feed.unreadCount,
       })) || [];
 
   const folderFeeds =
@@ -131,6 +133,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       feeds: folder.feeds.map((feed) => ({
         id: feed.id,
         name: feed.title || feed.url,
+        unreadCount:
+          feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
       })),
     })) || [];
 
@@ -177,6 +181,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             ? feed.name.slice(0, 70) + '...'
                             : feed.name}
                         </Link>
+                        <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   ))}
@@ -197,6 +202,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     : feed.name}
                 </Link>
               </SidebarMenuButton>
+              <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
