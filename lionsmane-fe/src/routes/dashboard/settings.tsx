@@ -1,13 +1,14 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
-import type { ColumnDef } from "@tanstack/react-table";
-import { PencilIcon } from "lucide-react";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { DataTable } from "@/components/data-table";
-import MultipleSelector from "@/components/multi-select";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute } from '@tanstack/react-router';
+import type { ColumnDef } from '@tanstack/react-table';
+import { PencilIcon } from 'lucide-react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { DataTable } from '@/components/data-table';
+import MultipleSelector from '@/components/multi-select';
+import { OpmlUpload } from '@/components/opml-upload';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -15,14 +16,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -31,19 +32,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { $api } from "@/lib/fetch-client";
-import { cn } from "@/lib/utils";
-import type { Feed } from "@/types/feed";
-import type { Folder } from "@/types/folder";
+} from '@/components/ui/popover';
+import { $api } from '@/lib/fetch-client';
+import { cn } from '@/lib/utils';
+import type { Feed } from '@/types/feed';
+import type { Folder } from '@/types/folder';
 
-export const Route = createFileRoute("/dashboard/settings")({
+export const Route = createFileRoute('/dashboard/settings')({
   component: Settings,
 });
 
@@ -59,14 +60,14 @@ function Settings() {
   const feedForm = useForm<z.infer<typeof feedFormSchema>>({
     resolver: zodResolver(feedFormSchema),
     defaultValues: {
-      feedId: "",
-      url: "",
-      description: "",
+      feedId: '',
+      url: '',
+      description: '',
       folderId: undefined,
     },
   });
 
-  const { mutate: updateFeed } = $api.useMutation("patch", "/feed/{id}");
+  const { mutate: updateFeed } = $api.useMutation('patch', '/feed/{id}');
 
   // folder form
   const [folderFormOpen, setFolderFormOpen] = React.useState(false);
@@ -78,24 +79,24 @@ function Settings() {
   const folderForm = useForm<z.infer<typeof folderFormSchema>>({
     resolver: zodResolver(folderFormSchema),
     defaultValues: {
-      folderId: "",
+      folderId: '',
       feedIds: [],
-      name: "",
+      name: '',
     },
   });
 
-  const { mutate: updateFolder } = $api.useMutation("patch", "/folder/{id}");
+  const { mutate: updateFolder } = $api.useMutation('patch', '/folder/{id}');
 
-  const { data: feeds } = $api.useQuery("get", "/feed", {
-    credentials: "include",
+  const { data: feeds } = $api.useQuery('get', '/feed', {
+    credentials: 'include',
   });
   const feedSelect = feeds?.feeds.map((feed) => ({
     label: feed.title,
     value: feed.id,
   }));
 
-  const { data: folders } = $api.useQuery("get", "/folder", {
-    credentials: "include",
+  const { data: folders } = $api.useQuery('get', '/folder', {
+    credentials: 'include',
   });
   const folderSelect =
     folders?.map((folder) => ({
@@ -114,20 +115,20 @@ function Settings() {
         params: {
           path: { id: values.feedId },
         },
-        credentials: "include",
+        credentials: 'include',
       },
       {
         onSuccess: () => {
           // setFormOpen(false);
           feedForm.reset();
         },
-      }
+      },
     );
   }
 
   const columns: ColumnDef<Feed>[] = [
     {
-      accessorKey: "url",
+      accessorKey: 'url',
       header: () => <div className="text-right">URL</div>,
       cell: ({ row }) => {
         const url =
@@ -138,7 +139,7 @@ function Settings() {
       },
     },
     {
-      accessorKey: "title",
+      accessorKey: 'title',
       header: () => <div className="text-right">Title</div>,
       cell: ({ row }) => {
         const title = row.original.title;
@@ -146,7 +147,7 @@ function Settings() {
       },
     },
     {
-      accessorKey: "updated",
+      accessorKey: 'updated',
       header: () => <div className="text-right">Updated</div>,
       cell: ({ row }) => {
         const updated = row.original.updated;
@@ -154,7 +155,7 @@ function Settings() {
       },
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => {
         return (
           <Dialog
@@ -162,9 +163,9 @@ function Settings() {
             onOpenChange={(open) => {
               setFeedFormOpen(open);
               const feed = row.original;
-              feedForm.setValue("feedId", feed.id);
-              feedForm.setValue("url", feed.url);
-              feedForm.setValue("description", feed.description || "");
+              feedForm.setValue('feedId', feed.id);
+              feedForm.setValue('url', feed.url);
+              feedForm.setValue('description', feed.description || '');
             }}
           >
             <DialogTrigger>
@@ -230,15 +231,15 @@ function Settings() {
                                 variant="outline"
                                 role="combobox"
                                 className={cn(
-                                  "w-[200px] justify-between",
-                                  !field.value && "text-muted-foreground"
+                                  'w-[200px] justify-between',
+                                  !field.value && 'text-muted-foreground',
                                 )}
                               >
                                 {field.value
                                   ? folderSelect?.find(
-                                      (folder) => folder.value === field.value
+                                      (folder) => folder.value === field.value,
                                     )?.label
-                                  : "Select folder"}
+                                  : 'Select folder'}
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -257,8 +258,8 @@ function Settings() {
                                       key={folder.value}
                                       onSelect={() => {
                                         feedForm.setValue(
-                                          "folderId",
-                                          folder.value
+                                          'folderId',
+                                          folder.value,
                                         );
                                       }}
                                     >
@@ -303,20 +304,20 @@ function Settings() {
         onSuccess: () => {
           folderForm.reset();
         },
-      }
+      },
     );
   }
 
   const folderColumns: ColumnDef<Folder>[] = [
     {
-      id: "name",
-      header: "Name",
-      accessorKey: "name",
+      id: 'name',
+      header: 'Name',
+      accessorKey: 'name',
     },
     {
-      id: "feeds",
-      header: "Feeds",
-      accessorKey: "feeds",
+      id: 'feeds',
+      header: 'Feeds',
+      accessorKey: 'feeds',
       cell: ({ row }) => {
         const feeds = row.original.feedIds;
         return (
@@ -327,19 +328,19 @@ function Settings() {
       },
     },
     {
-      id: "actions",
-      header: "Actions",
+      id: 'actions',
+      header: 'Actions',
       cell: ({ row }) => {
         const folder = row.original;
-        folderForm.setValue("folderId", folder.id);
-        folderForm.setValue("name", folder.name);
+        folderForm.setValue('folderId', folder.id);
+        folderForm.setValue('name', folder.name);
         folderForm.setValue(
-          "feedIds",
+          'feedIds',
           folder.feedIds.map((feed) => ({
             value: feed,
             label:
-              feeds.feeds.find((f) => f.id === feed)?.title || "Unnamed feed",
-          }))
+              feeds.feeds.find((f) => f.id === feed)?.title || 'Unnamed feed',
+          })),
         );
         return (
           <Dialog open={folderFormOpen} onOpenChange={setFolderFormOpen}>
@@ -405,6 +406,9 @@ function Settings() {
       <DataTable columns={columns} data={feeds?.feeds} />
       <div className="my-6">
         <DataTable columns={folderColumns} data={folders} />
+      </div>
+      <div className="my-6">
+        <OpmlUpload />
       </div>
     </div>
   );
