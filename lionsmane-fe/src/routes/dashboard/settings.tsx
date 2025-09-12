@@ -34,12 +34,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { $api } from '@/lib/fetch-client';
+import { $api, fetchClient } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
@@ -401,14 +402,25 @@ function Settings() {
     },
   ];
 
+  const downloadUrl =
+    import.meta.env.VITE_API_URL || 'http://localhost:8181' + '/feed/export';
+
   return (
-    <div className="container mx-auto py-10">
+    <div className="flex flex-col container mx-auto py-10">
       <DataTable columns={columns} data={feeds?.feeds} />
       <div className="my-6">
         <DataTable columns={folderColumns} data={folders} />
       </div>
       <div className="my-6">
+        <Label>Import OPML File</Label>
         <OpmlUpload />
+        <a
+          className="no-underline hover:underline decoration-pink-400 my-2"
+          href={downloadUrl}
+          download="feeds.opml"
+        >
+          <Label>Export OPML File</Label>
+        </a>
       </div>
     </div>
   );

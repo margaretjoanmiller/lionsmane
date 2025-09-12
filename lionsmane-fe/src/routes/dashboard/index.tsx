@@ -23,6 +23,11 @@ function DashIndex() {
         '/article/unread',
         {
           credentials: 'include',
+          params: {
+            query: {
+              pageSize: 12,
+            },
+          },
         },
         {
           getNextPageParam: (lastPage) => lastPage.cursor,

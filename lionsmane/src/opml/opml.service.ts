@@ -43,7 +43,6 @@ export class OpmlService {
         })),
       },
     });
-    this.logger.log('Created OPML ', xml);
     return xml.toString();
   }
 }

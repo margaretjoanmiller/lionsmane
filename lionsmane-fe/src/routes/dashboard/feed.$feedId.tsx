@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router';
 import { ArticleCard } from '@/components/article-card';
 import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';
@@ -5,7 +6,6 @@ import {
   ArticleFilter,
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
-import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/dashboard/feed/$feedId')({
   component: FeedId,
@@ -24,6 +24,9 @@ function FeedId() {
           params: {
             path: {
               id: feedId,
+            },
+            query: {
+              pageSize: 12,
             },
           },
           credentials: 'include',

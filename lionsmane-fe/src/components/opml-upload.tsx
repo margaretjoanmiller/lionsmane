@@ -19,7 +19,7 @@ export function OpmlUpload() {
 
   const { mutate } = $api.useMutation('post', '/feed/import', {
     onSuccess: () => {
-      toast('File uploaded');
+      toast('File uploaded, starting import...');
     },
     onError: (error) => {
       toast.error(error.message);
@@ -37,13 +37,15 @@ export function OpmlUpload() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="my-4 w-2/3 space-y-4"
+      >
         <FormField
           control={form.control}
           name="file"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>File</FormLabel>
               <FormControl>
                 <Input
                   type="file"
