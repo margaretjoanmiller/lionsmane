@@ -18,6 +18,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { $api } from '@/lib/fetch-client';
 import { Route as DashIndex } from '@/routes/dashboard/index';
@@ -204,9 +209,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         )}
         <Dialog open={formOpen} onOpenChange={setFormOpen}>
           <DialogTrigger>
-            <Button variant="outline">
-              <SolarAddFolderOutline />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="outline">
+                  <SolarAddFolderOutline />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add a new folder</TooltipContent>
+            </Tooltip>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
