@@ -40,3 +40,5 @@ export const opmlSchema = z.object({
     '@version': z.string(),
   }),
 });
+
+export type Opml = z.infer<typeof opmlSchema>;

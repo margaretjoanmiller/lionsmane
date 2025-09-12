@@ -4,7 +4,12 @@ export const articleDetail = z.object({
   id: z.uuid(),
   title: z.string(),
   url: z.url(),
-  authors: z.array(z.string()),
+  authors: z.array(
+    z.object({
+      name: z.string(),
+      email: z.email().nullable(),
+    }),
+  ),
   categories: z.array(z.string()),
   description: z.string().nullable(),
   rawContent: z.string().nullable(),

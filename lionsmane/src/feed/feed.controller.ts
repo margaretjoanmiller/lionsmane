@@ -72,7 +72,7 @@ export class FeedController {
   async import(
     @UploadedFile(
       new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: 'application/xml' })
+        .addMaxSizeValidator({ maxSize: 5120 }) // 5KB
         .build({ fileIsRequired: true }),
     )
     file: Express.Multer.File,

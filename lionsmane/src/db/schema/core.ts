@@ -1,20 +1,20 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
+  index,
   jsonb,
+  pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { Conditions } from 'src/filter/filter';
 import { v7 } from 'uuid';
 import { user } from './auth';
-import { index } from 'drizzle-orm/pg-core';
-import { primaryKey } from 'drizzle-orm/pg-core';
-import { pgEnum } from 'drizzle-orm/pg-core';
-import { Conditions } from 'src/filter/filter';
 
 export const feeds = pgTable('feeds', {
   id: uuid()
@@ -105,7 +105,10 @@ export const articles = pgTable(
       .$defaultFn(() => v7()),
     title: text().notNull(),
     url: text().notNull(),
-    authors: varchar({ length: 256 }).array().notNull().default([]),
+    authors: jsonb()
+      .$type<{ name: string; email: string }[]>()
+      .notNull()
+      .default([] as { name: string; email: string }[]),
     categories: varchar({ length: 256 }).array().notNull().default([]),
     description: text(),
     rawContent: text(),

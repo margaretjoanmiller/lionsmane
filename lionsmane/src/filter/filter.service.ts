@@ -137,7 +137,9 @@ export class FilterService {
         if (
           filter.conditions.authors &&
           filter.conditions.authors.some((author) =>
-            article.authors.includes(author),
+            article.authors.some(
+              (a) => a.name === author || a.email === author,
+            ),
           )
         ) {
           return {

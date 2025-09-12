@@ -23,15 +23,10 @@ function ArticlePage() {
     credentials: 'include',
   });
 
-  const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
+  const { mutate } = $api.useMutation('patch', '/article/status/{id}', {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['get', '/article/{id}'],
-      });
-    },
-    onError: (error) => {
-      toast.error('Failed to update article status', {
-        description: error.message,
       });
     },
   });
@@ -43,11 +38,6 @@ function ArticlePage() {
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           queryKey: ['get', '/article/{id}'],
-        });
-      },
-      onError: (error) => {
-        toast.error('Failed to fetch full article text', {
-          description: error.message,
         });
       },
     },
@@ -113,6 +103,9 @@ function ArticlePage() {
             <SolarGlassesLineDuotone />
           </Button>
         </h1>
+        <h2 className="text-center font-bold">
+          {data.authors.map((author) => author.name).join(', ')}
+        </h2>
         <div className="prose prose-lg prose-pink">
           {
             <div

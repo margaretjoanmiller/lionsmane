@@ -1,18 +1,18 @@
 import { Readability } from '@mozilla/readability';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { parseFeed } from '@rowanmanning/feed-parser';
+import { Queue } from 'bullmq';
 import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { toString as treeToString } from 'nlcst-to-string';
 import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Queue } from 'bullmq';
-import { InjectQueue } from '@nestjs/bullmq';
 import robotsParser from 'robots-parser';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
 
@@ -175,7 +175,10 @@ export class FetcherService {
             data: {
               title: item.title,
               url: item.url,
-              authors: item.authors.map((i) => `${i.name} <${i.email}>`) || [],
+              authors: item.authors.map((author) => ({
+                name: author.name,
+                email: author.email,
+              })),
               categories: item.categories.map((i) => i.term) || [],
               description: item.description || '',
               rawContent: item.content || '',

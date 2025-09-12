@@ -1,7 +1,7 @@
 export interface NewArticle {
   title: string;
   url: string;
-  authors: string[];
+  authors: { name: string; email: string }[];
   categories: string[];
   description: string | null;
   rawContent: string | null;

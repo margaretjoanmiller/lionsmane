@@ -450,7 +450,10 @@ export interface components {
                 title: string;
                 /** Format: uri */
                 url: string;
-                authors: string[];
+                authors: {
+                    name: string;
+                    email: string | null;
+                }[];
                 categories: string[];
                 description: string | null;
                 readableText: string | null;
@@ -489,7 +492,10 @@ export interface components {
                 title: string;
                 /** Format: uri */
                 url: string;
-                authors: string[];
+                authors: {
+                    name: string;
+                    email: string | null;
+                }[];
                 categories: string[];
                 description: string | null;
                 readableText: string | null;
@@ -520,7 +526,10 @@ export interface components {
             title: string;
             /** Format: uri */
             url: string;
-            authors: string[];
+            authors: {
+                name: string;
+                email: string | null;
+            }[];
             categories: string[];
             description: string | null;
             readableHtml: string | null;

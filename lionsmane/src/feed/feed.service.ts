@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
-    ConflictException,
+  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -244,7 +244,7 @@ export class FeedService {
   }
 
   async importOpml(userId: string, opml: string) {
-    const feeds = this.opmlService.getFeedsFromOpml(opml);
+    const feeds = await this.opmlService.getFeedsFromOpml(opml);
     await Promise.all(
       feeds.map(async (feed) => {
         await this.feedQueue.add('import', { url: feed.url, userId });
@@ -265,7 +265,7 @@ export class FeedService {
       title: s.title,
       url: s.url,
     }));
-    const opml = this.opmlService.createOpml(subs);
+    const opml = await this.opmlService.createOpml(subs);
     const s = new Readable({
       read() {
         this.push(opml);

@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { isSaturday } from 'date-fns';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 const articleSearch = z.object({
   articles: z.array(
@@ -8,7 +8,9 @@ const articleSearch = z.object({
       id: z.uuid(),
       title: z.string(),
       url: z.url(),
-      authors: z.array(z.string()),
+      authors: z.array(
+        z.object({ name: z.string(), email: z.email().nullable() }),
+      ),
       categories: z.array(z.string()),
       description: z.string().nullable(),
       readableText: z.string().nullable(),

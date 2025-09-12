@@ -1,66 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { z } from 'zod';
-
-import { opmlSchema } from './opml.zod';
 
 @Injectable()
 export class OpmlService {
-  parseOpml(xml: string): z.infer<typeof opmlSchema> {
-    const parsed = new XMLParser({
-      trimValues: false,
-      processEntities: false,
-      htmlEntities: false,
-      parseTagValue: false,
-      parseAttributeValue: false,
-      alwaysCreateTextNode: false,
-      ignoreAttributes: false,
-      ignorePiTags: true,
-      ignoreDeclaration: true,
-      attributeNamePrefix: '@',
-      transformTagName: (name) => name.toLowerCase(),
-      transformAttributeName: (name) => name.toLowerCase(),
-    }).parse(xml);
-    console.log(JSON.stringify(parsed));
-    return opmlSchema.parse(parsed);
+  private readonly logger = new Logger(OpmlService.name);
+
+  importDynamic = new Function('modulePath', 'return import(modulePath)');
+
+  async parseOpml(xml: string) {
+    const feedSmith = await this.importDynamic('feedsmith');
+    const parse = feedSmith.parseOpml;
+    return parse(xml);
   }
-  getFeedsFromOpml(xml: string) {
-    const opml = this.parseOpml(xml);
-    const feeds = opml.opml.body.outline.flatMap((outline) => {
-      if (outline.outline instanceof Array) {
-        return outline.outline.map((subOutline) => ({
-          title: subOutline['@title'],
-          url: subOutline['@xmlurl'],
+  async getFeedsFromOpml(xml: string) {
+    const opml = await this.parseOpml(xml);
+    const feeds = opml?.body?.outlines?.flatMap((outline) => {
+      if (outline.outlines instanceof Array) {
+        return outline.outlines.map((subOutline) => ({
+          title: subOutline.title,
+          url: subOutline.xmlUrl,
         }));
       } else {
         return {
-          title: outline.outline['@text'],
-          url: outline.outline['@xmlurl'],
+          title: outline.title,
+          url: outline.xmlUrl,
         };
       }
     });
     return feeds;
   }
-  createOpml(feeds: { title: string; url: string }[]) {
-    const opml = {
-      opml: {
-        '@version': '2.0',
-        body: {
-          outline: {
-            '@text': 'Lionsmane Feeds',
-            outline: feeds.map((feed) => ({
-              '@text': feed.title,
-              '@xmlurl': feed.url,
-            })),
-          },
-        },
+  async createOpml(feeds: { title: string; url: string }[]) {
+    const generateOpml = (await this.importDynamic('feedsmith')).generateOpml;
+    const xml = generateOpml({
+      head: {
+        title: 'My Feeds',
       },
-    };
-    const builder = new XMLBuilder({
-      format: true,
-      ignoreAttributes: false,
-      attributeNamePrefix: '@',
+      body: {
+        outlines: feeds.map((feed) => ({
+          text: feed.title,
+          type: 'rss',
+          xmlUrl: feed.url,
+        })),
+      },
     });
-    return builder.build(opml);
+    this.logger.log('Created OPML ', xml);
+    return xml.toString();
   }
 }
