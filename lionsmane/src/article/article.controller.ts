@@ -8,17 +8,17 @@ import {
   Query,
 } from '@nestjs/common';
 import {
-  ApiCookieAuth,
   ApiBearerAuth,
+  ApiCookieAuth,
   ApiOAuth2,
   ApiQuery,
-  ApiTags,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { ZodResponse } from 'nestjs-zod';
-import { ArticleDetailDto } from './dto/article-detail.dto';
-import { ArticleService } from './article.service';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import { ZodResponse } from 'nestjs-zod';
+import { ArticleService } from './article.service';
+import { ArticleDetailDto } from './dto/article-detail.dto';
 import { ArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
 import { ArticleStatusDto } from './dto/article-status.dto';
@@ -49,7 +49,11 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getArticles(session.user.id, cursor, pageSize);
+    return await this.articleService.getArticles(
+      session.user.id,
+      cursor,
+      pageSize,
+    );
   }
 
   @Patch('status/:id')
@@ -122,7 +126,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getArticlesForFeed(
+    return await this.articleService.getArticlesForFeed(
       session.user.id,
       id,
       cursor,
@@ -148,7 +152,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getReadArticles(
+    return await this.articleService.getReadArticles(
       session.user.id,
       pageSize,
       cursor,
@@ -173,7 +177,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getUnreadArticles(
+    return await this.articleService.getUnreadArticles(
       session.user.id,
       pageSize,
       cursor,
@@ -197,7 +201,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getStarredArticles(
+    return await this.articleService.getStarredArticles(
       session.user.id,
       pageSize,
       cursor,
@@ -222,7 +226,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getUnreadArticlesForFeed(
+    return await this.articleService.getUnreadArticlesForFeed(
       session.user.id,
       id,
       pageSize,
@@ -248,7 +252,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getStarredArticlesForFeed(
+    return await this.articleService.getStarredArticlesForFeed(
       session.user.id,
       id,
       pageSize,
@@ -274,7 +278,7 @@ export class ArticleController {
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return this.articleService.getReadArticlesForFeed(
+    return await this.articleService.getReadArticlesForFeed(
       session.user.id,
       id,
       pageSize,
@@ -288,12 +292,12 @@ export class ArticleController {
     @Param('id') id: string,
     @Session() session: UserSession,
   ) {
-    return this.articleService.fullArticleTextJob(id, session.user.id);
+    return await this.articleService.fullArticleTextJob(id, session.user.id);
   }
 
   @Get(':id')
   @ZodResponse({ type: ArticleDetailDto, status: 200 })
   async getArticle(@Param('id') id: string, @Session() session: UserSession) {
-    return this.articleService.getArticle(id, session.user.id);
+    return await this.articleService.getArticle(id, session.user.id);
   }
 }

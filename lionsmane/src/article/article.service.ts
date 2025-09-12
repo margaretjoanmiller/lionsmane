@@ -70,16 +70,18 @@ export class ArticleService {
       if (!article) {
         throw new Error('Article not found or access denied');
       }
-      const { textContent, htmlContent } = await this.fetcher.readablity(
-        article.articles.url,
-      );
-      await tx
-        .update(schema.articles)
-        .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
-        .where(eq(schema.articles.id, id));
-      return article;
+      if (article.articles.url) {
+        const { textContent, htmlContent } = await this.fetcher.readablity(
+          article.articles.url,
+        );
+        await tx
+          .update(schema.articles)
+          .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
+          .where(eq(schema.articles.id, id));
+        return article;
+      }
     });
-    return { ...result.articles, feedTitle: result.feeds.title };
+    return { ...result?.articles, feedTitle: result?.feeds.title };
   }
 
   async getArticles(userId: string, cursor: string | undefined, pageSize = 10) {
@@ -104,6 +106,7 @@ export class ArticleService {
         readableText: schema.articles.readableText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,
@@ -191,6 +194,7 @@ export class ArticleService {
         rawContent: schema.articles.rawContent,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,
@@ -265,6 +269,7 @@ export class ArticleService {
         fullArticleHtml: schema.articles.fullArticleHtml,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,
@@ -317,6 +322,7 @@ export class ArticleService {
         readableText: schema.articles.readableText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,
@@ -441,6 +447,7 @@ export class ArticleService {
         fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,
@@ -637,6 +644,7 @@ export class ArticleService {
         fullArticleText: schema.articles.fullArticleText,
         keywords: schema.articles.keywords,
         image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
         media: schema.articles.media,
         published: schema.articles.published,
         updated: schema.articles.updated,

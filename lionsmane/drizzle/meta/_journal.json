@@ -8,6 +8,20 @@
       "when": 1757637849786,
       "tag": "0000_curved_sally_floyd",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757669912556,
+      "tag": "0001_dashing_sprite",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757674656805,
+      "tag": "0002_little_nightcrawler",
+      "breakpoints": true
     }
   ]
 }

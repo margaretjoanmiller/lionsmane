@@ -1,6 +1,6 @@
 export interface NewArticle {
   title: string;
-  url: string;
+  url: string | null;
   authors: { name: string; email: string }[];
   categories: string[];
   description: string | null;
@@ -9,6 +9,7 @@ export interface NewArticle {
   readableText: string | null;
   keywords: string[];
   image: string | null;
+  imageAlt: string | null;
   media: string[];
   published: string;
   updated: string | null;

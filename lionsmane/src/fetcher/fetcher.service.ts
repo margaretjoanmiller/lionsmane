@@ -183,6 +183,7 @@ export class FetcherService {
               description: item.description || '',
               rawContent: item.content || '',
               image: item.image ? item.image.url : '',
+              imageAlt: item.image ? item.image.title : '',
               media: item.media.map((media) => media.url) || [],
               published: item.published,
               updated: item.updated,

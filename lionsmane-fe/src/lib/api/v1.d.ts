@@ -459,6 +459,7 @@ export interface components {
                 readableText: string | null;
                 keywords: string[];
                 image: string | null;
+                imageAlt: string | null;
                 media: string[];
                 /** Format: date-time */
                 published: string;
@@ -501,6 +502,7 @@ export interface components {
                 readableText: string | null;
                 keywords: string[];
                 image: string | null;
+                imageAlt: string | null;
                 media: string[];
                 /** Format: date-time */
                 published: string;
@@ -539,6 +541,7 @@ export interface components {
             fullArticleText: string | null;
             keywords: string[];
             image: string | null;
+            imageAlt: string | null;
             media: string[] | null;
             /** Format: date-time */
             published: string;

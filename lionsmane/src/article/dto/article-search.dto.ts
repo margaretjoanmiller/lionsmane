@@ -7,7 +7,7 @@ const articleSearch = z.object({
     z.object({
       id: z.uuid(),
       title: z.string(),
-      url: z.url(),
+      url: z.url().nullable(),
       authors: z.array(
         z.object({ name: z.string(), email: z.email().nullable() }),
       ),
@@ -16,6 +16,7 @@ const articleSearch = z.object({
       readableText: z.string().nullable(),
       keywords: z.array(z.string()),
       image: z.string().nullable(),
+      imageAlt: z.string().nullable(),
       media: z.array(z.string()),
       published: z.preprocess((arg: Date | string) => {
         // If the input is a string, try to parse it into a Date object.

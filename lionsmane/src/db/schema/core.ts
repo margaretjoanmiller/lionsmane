@@ -104,7 +104,7 @@ export const articles = pgTable(
       .primaryKey()
       .$defaultFn(() => v7()),
     title: text().notNull(),
-    url: text().notNull(),
+    url: text(),
     authors: jsonb()
       .$type<{ name: string; email: string }[]>()
       .notNull()
@@ -117,8 +117,9 @@ export const articles = pgTable(
     fullArticleHtml: text(),
     fullArticleText: text(),
     keywords: varchar({ length: 256 }).array().notNull().default([]),
-    image: varchar({ length: 256 }),
-    media: varchar({ length: 256 }).array().notNull().default([]),
+    image: varchar({ length: 512 }),
+    imageAlt: varchar({ length: 512 }),
+    media: varchar({ length: 512 }).array().notNull().default([]),
     published: timestamp({ mode: 'string', withTimezone: true }).notNull(),
     updated: timestamp({ mode: 'string', withTimezone: true }),
     feedId: uuid()

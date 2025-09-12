@@ -124,7 +124,11 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       </CardHeader>
       <CardContent>
         {article.image ? (
-          <img src={article.image} alt={article.title} className="rounded-md" />
+          <img
+            src={article.image}
+            alt={article.imageAlt || article.title}
+            className="rounded-md"
+          />
         ) : (
           <div className="text-sm text-muted-foreground">{truncatedText}</div>
         )}

@@ -8,6 +8,7 @@ export interface ArticleDetail {
   readableText: string | null;
   keywords: string[];
   image: string | null;
+  imageAlt: string | null;
   media: string[];
   published: string;
   updated: string | null;
