@@ -5,11 +5,10 @@ and archival platform that you can host yourself!
 
 Project goals:
 
-- [ ] Filter rules
+- [x] Filter rules
 - [ ] Article saving and archival with archive.org/archive.is
 - [ ] Highlighting (down the road probably)
 - [ ] Article sharing
-- [ ] Keep the front end lightweight as possible
 
 ## TODO
 
