@@ -1,4 +1,10 @@
 {
   "root": false,
-  "extends": "//"
+  "extends": "//",
+  "linter": {
+    "rules": {
+      "a11y": "warn"
+    },
+    "includes": ["!node_modules/**", "!dist/**"]
+  }
 }

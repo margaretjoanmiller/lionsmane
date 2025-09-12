@@ -9,7 +9,9 @@
     "serve": "vite preview",
     "test": "vitest run",
     "test:browser": "vitest --config=vitest.browser.config.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "lint": "biome lint",
+    "format": "biome format --write"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
