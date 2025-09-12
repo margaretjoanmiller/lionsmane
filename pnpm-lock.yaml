@@ -370,6 +370,9 @@ importers:
         specifier: ^5.0.8
         version: 5.0.8(@types/react@19.1.12)(react@19.1.1)(use-sync-external-store@1.5.0(react@19.1.1))
     devDependencies:
+      '@iconify-json/flowbite':
+        specifier: ^1.2.7
+        version: 1.2.7
       '@iconify-json/fluent':
         specifier: ^1.2.30
         version: 1.2.30
@@ -1237,6 +1240,9 @@ packages:
     resolution: {integrity: sha512-u0+6X58gkjMcxur1wRWokA7XsiiBJ6aK17aPZxhkoYiK5J+HcTx0Vhu9ovXe6H+dVpO6cjrn2FkJTryXEMlryQ==}
     peerDependencies:
       react-hook-form: ^7.55.0
+
+  '@iconify-json/flowbite@1.2.7':
+    resolution: {integrity: sha512-YmjHMSe6zBWI6XMZ35OGxgkX9k0lMiKmJIYOOymhc8rEiVbtZnnujJnGrfTider1JOoArQcCJzhHH6hUoXgiYA==}
 
   '@iconify-json/fluent@1.2.30':
     resolution: {integrity: sha512-tR0E0As25LGV95vryo/bZbLJ3kcUiOva99MP7nB7gQV82K08zaaaSYZWcyKbLgV4BxHOfMuBgNoOvQpYqm9Oyg==}
@@ -8026,6 +8032,10 @@ snapshots:
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.62.0(react@19.1.1)
+
+  '@iconify-json/flowbite@1.2.7':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify-json/fluent@1.2.30':
     dependencies:

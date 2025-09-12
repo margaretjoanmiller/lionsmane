@@ -23,6 +23,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['better-auth'],
+    include: ['vaul'],
   },
   resolve: {
     alias: {
