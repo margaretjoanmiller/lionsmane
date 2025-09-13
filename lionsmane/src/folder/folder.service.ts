@@ -87,7 +87,6 @@ export class FolderService {
       };
     });
   }
-
   async findOne(id: string, userId: string) {
     const folder = await this.db.query.folders.findFirst({
       where: and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),

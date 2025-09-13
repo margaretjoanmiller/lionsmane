@@ -163,10 +163,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton>
-                    <SidebarMenuButton>
-                      {item.name}
-                      <FluentChevronRight12Filled className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
+                    {item.name}
+                    <FluentChevronRight12Filled className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -188,6 +186,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   ))}
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem className="flex flex-row">
+                      <Link
+                        className="flex text-muted-foreground"
+                        to="/dashboard/folder/$folderId"
+                        params={{ folderId: item.id }}
+                      >
+                        all
+                      </Link>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>

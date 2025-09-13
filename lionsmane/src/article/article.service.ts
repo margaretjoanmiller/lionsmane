@@ -3,14 +3,13 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import createDOMPurify, { WindowLike } from 'dompurify';
-import { and, desc, eq, gt, lt, or, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, isNull, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import z from 'zod';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
-import { isNull } from 'drizzle-orm';
 
 @Injectable()
 export class ArticleService {
@@ -820,6 +819,214 @@ export class ArticleService {
     return await this.getArticleByStateFeed(
       userId,
       feedId,
+      'read',
+      pageSize,
+      cursor,
+    );
+  }
+
+  private async getArticleByStateFolder(
+    userId: string,
+    folderId: string,
+    stateFilter: 'starred' | 'read' | 'unread',
+    pageSize = 10,
+    cursor?: string,
+  ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
+    const baseQuery = this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title || schema.feeds.url,
+        isStarred: schema.userArticleStates.isStarred,
+        isRead: schema.userArticleStates.isRead,
+        isBlurred: schema.userArticleStates.isBlurred,
+        isHidden: schema.userArticleStates.isHidden,
+        contentWarning: schema.userArticleStates.contentWarning,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.userId, userId),
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.folderId, folderId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+
+    if (stateFilter === 'unread') {
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            or(
+              isNull(schema.userArticleStates.isRead),
+              eq(schema.userArticleStates.isRead, false),
+            ),
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    } else if (stateFilter === 'read') {
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            eq(schema.userArticleStates.isRead, true),
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    } else {
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+        )
+        .where(
+          and(
+            eq(schema.userArticleStates.isStarred, true),
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+
+      const articles = await query
+        .orderBy(desc(schema.articles.id))
+        .limit(pageSize + 1);
+
+      const hasNextPage = articles.length > pageSize;
+      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+      return {
+        articles: items,
+        cursor: hasNextPage
+          ? this.createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    }
+  }
+
+  async getStarredArticlesForFolder(
+    userId: string,
+    folderId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFolder(
+      userId,
+      folderId,
+      'starred',
+      pageSize,
+      cursor,
+    );
+  }
+  async getUnreadArticlesForFolder(
+    userId: string,
+    folderId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFolder(
+      userId,
+      folderId,
+      'unread',
+      pageSize,
+      cursor,
+    );
+  }
+  async getReadArticlesForFolder(
+    userId: string,
+    folderId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    return await this.getArticleByStateFolder(
+      userId,
+      folderId,
       'read',
       pageSize,
       cursor,
