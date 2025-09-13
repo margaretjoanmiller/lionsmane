@@ -14,7 +14,6 @@ export const Route = createFileRoute('/dashboard/')({
 
 function DashIndex() {
   const filter = useArticleFilterStore((state) => state.filter);
-  const [isHidden, setHidden] = React.useState(true);
 
   if (filter === ArticleFilter.Unread) {
     const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
@@ -43,16 +42,6 @@ function DashIndex() {
           return <ArticleCard article={i} />;
         });
     });
-    const areHiddenArticles = data.pages.some(({ articles }) =>
-      articles.some((i) => i.isHidden),
-    );
-    const hiddenArticles = data.pages.map(({ articles }) => {
-      return articles
-        .filter((i) => i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
 
     return (
       <>
@@ -63,17 +52,6 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
-        )}
-        {areHiddenArticles && isHidden && (
-          <Button onClick={() => setHidden(false)}>
-            Show hidden articles?
-          </Button>
-        )}
-        {!isHidden && (
-          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
-            {hiddenArticles}
-            <Button onClick={() => setHidden(true)}>Hide articles?</Button>
-          </div>
         )}
       </>
     );
@@ -99,16 +77,6 @@ function DashIndex() {
           return <ArticleCard article={i} />;
         });
     });
-    const areHiddenArticles = data.pages.some(({ articles }) =>
-      articles.some((i) => i.isHidden),
-    );
-    const hiddenArticles = data.pages.map(({ articles }) => {
-      return articles
-        .filter((i) => i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
 
     return (
       <>
@@ -119,14 +87,6 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
-        )}
-        {areHiddenArticles && isHidden && (
-          <Button>Show hidden articles?</Button>
-        )}
-        {!isHidden && (
-          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
-            {hiddenArticles}
-          </div>
         )}
       </>
     );
@@ -152,17 +112,6 @@ function DashIndex() {
           return <ArticleCard article={i} />;
         });
     });
-    const areHiddenArticles = data.pages.some(({ articles }) =>
-      articles.some((i) => i.isHidden),
-    );
-    const hiddenArticles = data.pages.map(({ articles }) => {
-      return articles
-        .filter((i) => i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
-
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -172,14 +121,6 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
-        )}
-        {areHiddenArticles && isHidden && (
-          <Button>Show hidden articles?</Button>
-        )}
-        {!isHidden && (
-          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
-            {hiddenArticles}
-          </div>
         )}
       </>
     );
@@ -206,18 +147,6 @@ function DashIndex() {
         });
     });
 
-    const areHiddenArticles = data.pages.some(({ articles }) =>
-      articles.some((i) => i.isHidden),
-    );
-
-    const hiddenArticles = data.pages.map(({ articles }) => {
-      return articles
-        .filter((i) => i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
-
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -227,14 +156,6 @@ function DashIndex() {
           <Button onClick={() => fetchNextPage()} disabled={isFetching}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
-        )}
-        {areHiddenArticles && isHidden && (
-          <Button>Show hidden articles?</Button>
-        )}
-        {!isHidden && (
-          <div className="mt-4 grid auto-rows-min gap-4 md:grid-cols-3">
-            {hiddenArticles}
-          </div>
         )}
       </>
     );

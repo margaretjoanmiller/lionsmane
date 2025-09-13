@@ -420,7 +420,7 @@ export class ArticleService {
   // Private method for common logic for starred, read, unread
   private async getArticleByState(
     userId: string,
-    stateFilter: 'starred' | 'read' | 'unread',
+    stateFilter: 'starred' | 'read' | 'unread' | 'isHidden',
     pageSize = 10,
     cursor?: string,
   ) {
@@ -545,7 +545,10 @@ export class ArticleService {
             )
           : null,
       };
-    } else {
+    }
+    else if (stateCondition === 'isHidden') {
+    }
+     else {
       const stateCondition =
         stateFilter === 'starred'
           ? eq(schema.userArticleStates.isStarred, true)

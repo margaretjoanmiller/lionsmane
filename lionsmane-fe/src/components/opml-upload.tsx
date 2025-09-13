@@ -8,7 +8,6 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -54,7 +53,7 @@ export function OpmlUpload() {
                 />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                This is your OPML file of RSS feeds.
               </FormDescription>
               <FormMessage />
             </FormItem>

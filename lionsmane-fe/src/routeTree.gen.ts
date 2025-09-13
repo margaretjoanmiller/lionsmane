@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardSearchRouteImport } from './routes/dashboard/search'
+import { Route as DashboardHiddenRouteImport } from './routes/dashboard/hidden'
 import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId'
 import { Route as DashboardFilterIndexRouteImport } from './routes/dashboard/filter.index'
 import { Route as DashboardFolderFolderIdRouteImport } from './routes/dashboard/folder.$folderId'
@@ -58,6 +59,11 @@ const DashboardSearchRoute = DashboardSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardHiddenRoute = DashboardHiddenRouteImport.update({
+  id: '/hidden',
+  path: '/hidden',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardArticleIdRoute = DashboardArticleIdRouteImport.update({
   id: '/$articleId',
   path: '/$articleId',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
+  '/dashboard/hidden': typeof DashboardHiddenRoute
   '/dashboard/search': typeof DashboardSearchRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
+  '/dashboard/hidden': typeof DashboardHiddenRoute
   '/dashboard/search': typeof DashboardSearchRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/dashboard/$articleId': typeof DashboardArticleIdRoute
+  '/dashboard/hidden': typeof DashboardHiddenRoute
   '/dashboard/search': typeof DashboardSearchRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/$articleId'
+    | '/dashboard/hidden'
     | '/dashboard/search'
     | '/dashboard/settings'
     | '/dashboard/'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/$articleId'
+    | '/dashboard/hidden'
     | '/dashboard/search'
     | '/dashboard/settings'
     | '/dashboard'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/dashboard/$articleId'
+    | '/dashboard/hidden'
     | '/dashboard/search'
     | '/dashboard/settings'
     | '/dashboard/'
@@ -239,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSearchRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/hidden': {
+      id: '/dashboard/hidden'
+      path: '/hidden'
+      fullPath: '/dashboard/hidden'
+      preLoaderRoute: typeof DashboardHiddenRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/$articleId': {
       id: '/dashboard/$articleId'
       path: '/$articleId'
@@ -286,6 +305,7 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteRouteChildren {
   DashboardArticleIdRoute: typeof DashboardArticleIdRoute
+  DashboardHiddenRoute: typeof DashboardHiddenRoute
   DashboardSearchRoute: typeof DashboardSearchRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -298,6 +318,7 @@ interface DashboardRouteRouteChildren {
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardArticleIdRoute: DashboardArticleIdRoute,
+  DashboardHiddenRoute: DashboardHiddenRoute,
   DashboardSearchRoute: DashboardSearchRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,

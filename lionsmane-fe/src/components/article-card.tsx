@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { format } from 'date-fns';
-import React from 'react';
+import { motion, useMotionTemplate, useMotionValue } from 'motion/react';
+import React, { type MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { $api } from '@/lib/fetch-client';
@@ -26,6 +27,15 @@ function ReadBadge({ read }: { read: boolean }) {
 }
 
 export function ArticleCard({ article }: { article: ArticleDetail }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
   const [dismissBlur, setDismissBlur] = React.useState(false);
 
   const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
@@ -138,7 +148,19 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   if (article.isBlurred && !dismissBlur) {
     return (
-      <Card className="relative">
+      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+          style={{
+            background: useMotionTemplate`
+                   radial-gradient(
+                     650px circle at ${mouseX}px ${mouseY}px,
+                     oklch(0.6726 0.1916 341.4084 / 8%),
+                     transparent 50%
+                   )
+                 `,
+          }}
+        />
         <div className="blur-sm">{card}</div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex flex-wrap gap-2 justify-center">
@@ -160,7 +182,19 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     );
   } else if (article.isBlurred && dismissBlur) {
     return (
-      <Card className="relative">
+      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+          style={{
+            background: useMotionTemplate`
+                   radial-gradient(
+                     650px circle at ${mouseX}px ${mouseY}px,
+                     oklch(0.6726 0.1916 341.4084 / 8%),
+                     transparent 50%
+                   )
+                 `,
+          }}
+        />
         {card}
         <Button
           className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
@@ -172,6 +206,22 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       </Card>
     );
   } else {
-    return <Card>{card}</Card>;
+    return (
+      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+          style={{
+            background: useMotionTemplate`
+                 radial-gradient(
+                   650px circle at ${mouseX}px ${mouseY}px,
+                   oklch(0.6726 0.1916 341.4084 / 8%),
+                   transparent 50%
+                 )
+               `,
+          }}
+        />
+        {card}
+      </Card>
+    );
   }
 }

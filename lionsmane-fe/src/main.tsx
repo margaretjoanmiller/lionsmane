@@ -1,6 +1,6 @@
+import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx';
 
@@ -8,11 +8,11 @@ import * as TanStackQueryProvider from './integrations/tanstack-query/root-provi
 import { routeTree } from './routeTree.gen';
 
 import './styles.css';
-import reportWebVitals from './reportWebVitals.ts';
-import { ThemeProvider } from './components/theme-provider.tsx';
-
-import { authClient } from './lib/auth-client.ts';
+import { MotionConfig } from 'motion/react';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from './components/theme-provider.tsx';
+import { authClient } from './lib/auth-client.ts';
+import reportWebVitals from './reportWebVitals.ts';
 
 // Create a new router instance
 
@@ -54,8 +54,10 @@ if (rootElement && !rootElement.innerHTML) {
     <StrictMode>
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <App />
-          <Toaster />
+          <MotionConfig reducedMotion="user">
+            <App />
+            <Toaster />
+          </MotionConfig>
         </ThemeProvider>
       </TanStackQueryProvider.Provider>
     </StrictMode>,

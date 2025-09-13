@@ -7,29 +7,25 @@ import {
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
 
-export const Route = createFileRoute('/dashboard/feed/$feedId')({
-  component: FeedId,
+export const Route = createFileRoute('/dashboard/hidden')({
+  component: HiddenDashboard,
 });
 
-function FeedId() {
-  const feedId = Route.useParams().feedId;
+function HiddenDashboard() {
   const filter = useArticleFilterStore((state) => state.filter);
 
   if (filter === ArticleFilter.Unread) {
-    const { data, isLoading, isFetching, hasNextPage, fetchNextPage } =
+    const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
       $api.useInfiniteQuery(
         'get',
-        '/article/unread/feed/{id}',
+        '/article/unread',
         {
+          credentials: 'include',
           params: {
-            path: {
-              id: feedId,
-            },
             query: {
               pageSize: 12,
             },
           },
-          credentials: 'include',
         },
         {
           getNextPageParam: (lastPage) => lastPage.cursor,
@@ -40,11 +36,12 @@ function FeedId() {
 
     const articles = data.pages.map(({ articles }) => {
       return articles
-        .filter((i) => !i.isHidden)
+        .filter((i) => i.isHidden)
         .map((i) => {
           return <ArticleCard article={i} />;
         });
     });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -58,16 +55,11 @@ function FeedId() {
       </>
     );
   } else if (filter === ArticleFilter.Read) {
-    const { data, isLoading, isFetching, hasNextPage, fetchNextPage } =
+    const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
       $api.useInfiniteQuery(
         'get',
-        '/article/read/feed/{id}',
+        '/article/read',
         {
-          params: {
-            path: {
-              id: feedId,
-            },
-          },
           credentials: 'include',
         },
         {
@@ -79,11 +71,12 @@ function FeedId() {
 
     const articles = data.pages.map(({ articles }) => {
       return articles
-        .filter((i) => !i.isHidden)
+        .filter((i) => i.isHidden)
         .map((i) => {
           return <ArticleCard article={i} />;
         });
     });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -97,16 +90,11 @@ function FeedId() {
       </>
     );
   } else if (filter === ArticleFilter.Starred) {
-    const { data, isLoading, isFetching, hasNextPage, fetchNextPage } =
+    const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
       $api.useInfiniteQuery(
         'get',
-        '/article/starred/feed/{id}',
+        '/article/starred',
         {
-          params: {
-            path: {
-              id: feedId,
-            },
-          },
           credentials: 'include',
         },
         {
@@ -118,7 +106,7 @@ function FeedId() {
 
     const articles = data.pages.map(({ articles }) => {
       return articles
-        .filter((i) => !i.isHidden)
+        .filter((i) => i.isHidden)
         .map((i) => {
           return <ArticleCard article={i} />;
         });
@@ -136,16 +124,11 @@ function FeedId() {
       </>
     );
   } else if (filter === ArticleFilter.All) {
-    const { data, isLoading, isFetching, hasNextPage, fetchNextPage } =
+    const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
       $api.useInfiniteQuery(
         'get',
-        '/article/feed/{id}',
+        '/article',
         {
-          params: {
-            path: {
-              id: feedId,
-            },
-          },
           credentials: 'include',
         },
         {
@@ -157,11 +140,12 @@ function FeedId() {
 
     const articles = data.pages.map(({ articles }) => {
       return articles
-        .filter((i) => !i.isHidden)
+        .filter((i) => i.isHidden)
         .map((i) => {
           return <ArticleCard article={i} />;
         });
     });
+
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
