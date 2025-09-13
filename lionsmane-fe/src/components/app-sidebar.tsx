@@ -172,8 +172,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <CollapsibleContent>
                   {item.feeds.map((feed) => (
                     <SidebarMenuSub>
-                      <SidebarMenuSubItem>
+                      <SidebarMenuSubItem className="flex flex-row">
                         <Link
+                          className="flex"
                           to="/dashboard/feed/$feedId"
                           params={{ feedId: feed.id }}
                         >
@@ -181,7 +182,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             ? feed.name.slice(0, 70) + '...'
                             : feed.name}
                         </Link>
-                        <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>
+                        <SidebarMenuBadge className="flex">
+                          {feed.unreadCount}
+                        </SidebarMenuBadge>
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   ))}
