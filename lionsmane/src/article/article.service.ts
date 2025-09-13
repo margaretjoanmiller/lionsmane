@@ -10,6 +10,7 @@ import { FetcherService } from 'src/fetcher/fetcher.service';
 import z from 'zod';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
+import { isNull } from 'drizzle-orm';
 
 @Injectable()
 export class ArticleService {
@@ -509,7 +510,7 @@ export class ArticleService {
       };
     } else if (stateFilter === 'read') {
       const query = baseQuery
-        .innerJoin(
+        .leftJoin(
           schema.userArticleStates,
           and(
             eq(schema.userArticleStates.articleId, schema.articles.id),
@@ -552,7 +553,7 @@ export class ArticleService {
           : eq(schema.userArticleStates.isRead, true);
 
       const query = baseQuery
-        .innerJoin(
+        .leftJoin(
           schema.userArticleStates,
           and(
             eq(schema.userArticleStates.articleId, schema.articles.id),
@@ -675,13 +676,16 @@ export class ArticleService {
         .where(
           and(
             eq(schema.articles.feedId, feedId),
-            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            or(
+              isNull(schema.userArticleStates.isRead),
+              eq(schema.userArticleStates.isRead, false),
+            ),
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
@@ -704,7 +708,7 @@ export class ArticleService {
       };
     } else if (stateFilter === 'read') {
       const query = baseQuery
-        .innerJoin(
+        .leftJoin(
           schema.userArticleStates,
           eq(schema.userArticleStates.articleId, schema.articles.id),
         )
@@ -714,10 +718,10 @@ export class ArticleService {
             eq(schema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
@@ -740,7 +744,7 @@ export class ArticleService {
       };
     } else {
       const query = baseQuery
-        .innerJoin(
+        .leftJoin(
           schema.userArticleStates,
           eq(schema.userArticleStates.articleId, schema.articles.id),
         )
@@ -751,10 +755,10 @@ export class ArticleService {
 
             cursorDate && cursorId
               ? or(
-                  gt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, cursorDate),
                   and(
                     eq(schema.articles.published, cursorDate),
-                    gt(schema.articles.id, cursorId),
+                    lt(schema.articles.id, cursorId),
                   ),
                 )
               : undefined,
