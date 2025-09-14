@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import React from 'react';
 import { ArticleCard } from '@/components/article-card';
 import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';

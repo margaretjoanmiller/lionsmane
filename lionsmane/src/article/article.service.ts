@@ -420,7 +420,7 @@ export class ArticleService {
   // Private method for common logic for starred, read, unread
   private async getArticleByState(
     userId: string,
-    stateFilter: 'starred' | 'read' | 'unread' | 'isHidden',
+    stateFilter: 'starred' | 'read' | 'unread',
     pageSize = 10,
     cursor?: string,
   ) {
@@ -545,10 +545,7 @@ export class ArticleService {
             )
           : null,
       };
-    }
-    else if (stateCondition === 'isHidden') {
-    }
-     else {
+    } else {
       const stateCondition =
         stateFilter === 'starred'
           ? eq(schema.userArticleStates.isStarred, true)
@@ -593,6 +590,118 @@ export class ArticleService {
           : null,
       };
     }
+  }
+  async getHiddenArticles(
+    userId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
+    const query = this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        rawContent: schema.articles.rawContent,
+        fullArticleText: schema.articles.fullArticleText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title,
+        isStarred: schema.userArticleStates.isStarred,
+        isRead: schema.userArticleStates.isRead,
+        isBlurred: schema.userArticleStates.isBlurred,
+        isHidden: schema.userArticleStates.isHidden,
+        contentWarning: schema.userArticleStates.contentWarning,
+        filterConditions: sql`json_agg(${schema.userFilters.conditions})`,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .innerJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+          eq(schema.userArticleStates.isHidden, true),
+        ),
+      )
+      .innerJoin(
+        schema.appliedRules,
+        and(
+          eq(schema.appliedRules.articleId, schema.articles.id),
+          eq(schema.appliedRules.userId, userId),
+          eq(schema.appliedRules.action, 'hide'),
+        ),
+      )
+      .innerJoin(
+        schema.userFilters,
+        and(
+          eq(schema.userFilters.id, schema.appliedRules.ruleId),
+          eq(schema.userFilters.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+        ),
+      )
+      .groupBy(
+        schema.articles.id,
+        schema.feeds.title,
+        schema.userArticleStates.isStarred,
+        schema.userArticleStates.isRead,
+        schema.userArticleStates.isBlurred,
+        schema.userArticleStates.isHidden,
+        schema.userArticleStates.contentWarning,
+      );
+
+    const articles = await query
+      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+      .limit(pageSize + 1);
+
+    const hasNextPage = articles.length > pageSize;
+    const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+    return {
+      articles: items,
+      cursor: hasNextPage
+        ? this.createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
+    };
   }
 
   async getStarredArticles(

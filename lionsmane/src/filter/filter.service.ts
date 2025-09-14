@@ -261,25 +261,25 @@ export class FilterService {
         };
       }
 
-      const appliedRules = await tx
-        .select({
-          ruleId: schema.appliedRules.ruleId,
-          action: schema.appliedRules.action,
-          contentWarning: schema.appliedRules.contentWarning,
-        })
-        .from(schema.appliedRules)
-        .where(
-          and(
-            eq(schema.appliedRules.articleId, articleId),
-            eq(schema.appliedRules.userId, userId),
-          ),
-        )
-        .then((rows) => rows);
-
       const matchingRuleMarkRead = matchingRules.find(
         (r) => r.action === 'markRead',
       );
       if (matchingRuleMarkRead) {
+        const [existingMarkRead] = await tx
+          .select()
+          .from(schema.appliedRules)
+          .where(
+            and(
+              eq(schema.appliedRules.articleId, articleId),
+              eq(schema.appliedRules.userId, userId),
+              eq(schema.appliedRules.action, 'markRead'),
+              eq(schema.appliedRules.isUndone, false),
+            ),
+          );
+        if (existingMarkRead) {
+          return;
+        }
+
         await tx.insert(schema.appliedRules).values({
           userId,
           articleId,
@@ -290,6 +290,20 @@ export class FilterService {
       }
       const matchingRuleHide = matchingRules.find((r) => r.action === 'hide');
       if (matchingRuleHide) {
+        const [existingHide] = await tx
+          .select()
+          .from(schema.appliedRules)
+          .where(
+            and(
+              eq(schema.appliedRules.articleId, articleId),
+              eq(schema.appliedRules.userId, userId),
+              eq(schema.appliedRules.action, 'hide'),
+              eq(schema.appliedRules.isUndone, false),
+            ),
+          );
+        if (existingHide) {
+          return;
+        }
         await tx.insert(schema.appliedRules).values({
           userId,
           articleId,

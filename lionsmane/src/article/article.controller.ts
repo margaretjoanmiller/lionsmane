@@ -19,7 +19,7 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { ArticleService } from './article.service';
 import { ArticleDetailDto } from './dto/article-detail.dto';
-import { ArticleListDto } from './dto/article-list.dto';
+import { ArticleListDto, HiddenArticleListDto } from './dto/article-list.dto';
 import { ArticleSearchDto } from './dto/article-search.dto';
 import { ArticleStatusDto } from './dto/article-status.dto';
 
@@ -207,6 +207,32 @@ export class ArticleController {
       cursor,
     );
   }
+
+  @Get('hidden')
+  @ZodResponse({ type: HiddenArticleListDto, status: 200 })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getHiddenArticles(
+    @Session() session: UserSession,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return await this.articleService.getHiddenArticles(
+      session.user.id,
+      pageSize,
+      cursor,
+    );
+  }
+
   @Get('unread/feed/:id')
   @ZodResponse({ type: ArticleListDto, status: 200 })
   @ApiQuery({
