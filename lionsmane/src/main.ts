@@ -10,7 +10,9 @@ import { db } from './db/index';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // better-auth will turn it back on!
-    cors: true,
+    cors: {
+      origin: process.env.CORS_ORIGIN?.split(',') || '*',
+    },
   });
   app.use(helmet());
 
