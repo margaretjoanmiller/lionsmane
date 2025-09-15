@@ -1,47 +1,44 @@
 import 'dotenv/config';
-import {
-  ZodValidationPipe,
-  ZodSerializerInterceptor,
-  ZodSerializationException,
-} from 'nestjs-zod';
-import {
-  APP_PIPE,
-  APP_INTERCEPTOR,
-  APP_FILTER,
-  BaseExceptionFilter,
-  APP_GUARD,
-} from '@nestjs/core';
-import { ZodError } from 'zod';
-import {
-  Module,
-  HttpException,
-  ArgumentsHost,
-  Logger,
-  Catch,
-} from '@nestjs/common';
-import { ScheduleModule } from '@nestjs/schedule';
-import { ConfigModule } from '@nestjs/config';
-import { BullModule } from '@nestjs/bullmq';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
+import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
+import { BullModule } from '@nestjs/bullmq';
+import { CacheModule } from '@nestjs/cache-manager';
+import {
+  ArgumentsHost,
+  Catch,
+  HttpException,
+  Logger,
+  Module,
+} from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import {
+  APP_FILTER,
+  APP_GUARD,
+  APP_INTERCEPTOR,
+  APP_PIPE,
+  BaseExceptionFilter,
+} from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
+import {
+  ZodSerializationException,
+  ZodSerializerInterceptor,
+  ZodValidationPipe,
+} from 'nestjs-zod';
+import { ZodError } from 'zod';
+import { AppController } from './app.controller';
+import { ArticleModule } from './article/article.module';
+import { auth } from './auth';
+import { CronModule } from './cron/cron.module';
 import * as authSchema from './db/schema/auth';
 import * as coreSchema from './db/schema/core';
-import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { ExpressAdapter } from '@bull-board/express';
-import { AppController } from './app.controller';
-import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
-import { auth } from './auth';
-import { FetcherModule } from './fetcher/fetcher.module';
 import { FeedModule } from './feed/feed.module';
-import { ArticleModule } from './article/article.module';
-import { FolderModule } from './folder/folder.module';
-import { RedisModule } from './redis/redis.module';
-import { CronModule } from './cron/cron.module';
+import { FetcherModule } from './fetcher/fetcher.module';
 import { FilterModule } from './filter/filter.module';
-import { OpmlModule } from './opml/opml.module';
+import { FolderModule } from './folder/folder.module';
 import { HealthModule } from './health/health.module';
+import { OpmlModule } from './opml/opml.module';
+import { RedisModule } from './redis/redis.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -64,7 +61,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
   imports: [
     BullModule.forRoot({
       connection: {
-        host: 'localhost',
+        host: process.env.REDIS_HOST || 'localhost',
         port: 6379,
       },
     }),
@@ -73,22 +70,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       { name: 'article' },
       { name: 'filter' },
     ),
-    BullBoardModule.forRoot({
-      route: '/queues',
-      adapter: ExpressAdapter,
-    }),
-    BullBoardModule.forFeature({
-      name: 'feed',
-      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
-    }),
-    BullBoardModule.forFeature({
-      name: 'article',
-      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
-    }),
-    BullBoardModule.forFeature({
-      name: 'filter',
-      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
-    }),
     AuthModule.forRoot(auth),
     DrizzlePGModule.register({
       tag: 'DB',
