@@ -12,6 +12,7 @@ async function bootstrap() {
     bodyParser: false, // better-auth will turn it back on!
     cors: {
       origin: process.env.CORS_ORIGIN?.split(',') || '*',
+      credentials: true,
     },
   });
   app.use(helmet());
