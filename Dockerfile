@@ -14,4 +14,6 @@ FROM base AS lionsmane-be
 COPY --from=build /prod/lionsmane-be /prod/lionsmane-be
 WORKDIR /prod/lionsmane-be
 EXPOSE 8181
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:8181/health || exit 1
 CMD [ "node", "dist/main.js" ]

@@ -41,7 +41,9 @@ async function bootstrap() {
   );
 
   // Run migrations
-  await migrate(db, { migrationsFolder: 'drizzle' });
+  if (process.env.NODE_ENV === 'production') {
+    await migrate(db, { migrationsFolder: 'drizzle' });
+  }
 
   await app.listen(process.env.PORT ?? 8181);
 }

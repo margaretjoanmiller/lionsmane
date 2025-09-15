@@ -41,6 +41,7 @@ import { RedisModule } from './redis/redis.module';
 import { CronModule } from './cron/cron.module';
 import { FilterModule } from './filter/filter.module';
 import { OpmlModule } from './opml/opml.module';
+import { HealthModule } from './health/health.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -120,6 +121,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     CronModule,
     FilterModule,
     OpmlModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [
