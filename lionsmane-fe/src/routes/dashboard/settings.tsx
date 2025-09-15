@@ -40,7 +40,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { $api, fetchClient } from '@/lib/fetch-client';
+import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';

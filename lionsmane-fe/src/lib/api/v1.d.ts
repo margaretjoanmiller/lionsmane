@@ -324,6 +324,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/article/folder/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArticleController_getAllArticlesForFolder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/article/readable/{id}": {
         parameters: {
             query?: never;
@@ -1601,6 +1617,46 @@ export interface operations {
         };
     };
     ArticleController_getReadArticlesForFolder: {
+        parameters: {
+            query?: {
+                /** @description The cursor for pagination. If not provided, starts from the beginning. */
+                cursor?: string;
+                /** @description The number of articles to return. Default is 10. */
+                pageSize?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ArticleController_getAllArticlesForFolder: {
         parameters: {
             query?: {
                 /** @description The cursor for pagination. If not provided, starts from the beginning. */

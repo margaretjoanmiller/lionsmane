@@ -39,9 +39,6 @@ declare module '@tanstack/react-router' {
 function App() {
   const {
     data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
   } = authClient.useSession();
   return <RouterProvider router={router} context={{ auth: session }} />;
 }

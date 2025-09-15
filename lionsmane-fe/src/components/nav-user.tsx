@@ -1,12 +1,9 @@
+import { Link } from '@tanstack/react-router';
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from 'lucide-react';
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -24,7 +21,6 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { authClient } from '@/lib/auth-client';
-import { Link } from '@tanstack/react-router';
 
 async function handleLogout() {
   await authClient.signOut();
@@ -35,9 +31,6 @@ export function NavUser() {
 
   const {
     data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
   } = authClient.useSession();
 
   return (

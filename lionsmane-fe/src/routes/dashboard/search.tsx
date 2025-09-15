@@ -1,8 +1,8 @@
-import { ArticleCard } from '@/components/article-card';
-import { $api } from '@/lib/fetch-client';
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { z } from 'zod';
+import { ArticleCard } from '@/components/article-card';
+import { $api } from '@/lib/fetch-client';
 
 const searchSchema = z.object({
   query: z.string().min(1).max(256),
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/dashboard/search')({
 function SearchResults() {
   const { query, page, limit } = Route.useSearch();
 
-  const { data, error } = $api.useQuery('get', '/article/search', {
+  const { data } = $api.useQuery('get', '/article/search', {
     params: {
       query: {
         query,
@@ -28,9 +28,6 @@ function SearchResults() {
     credentials: 'include',
   });
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
   if (data?.articles.length === 0) {
     return <div>No results found</div>;
   }

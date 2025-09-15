@@ -1,51 +1,14 @@
-'use client';
-
-import * as React from 'react';
-
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { useArticleFilterStore } from '@/stores/articleFilter.store';
 import {
   Select,
   SelectContent,
-  SelectValue,
-  SelectTrigger,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
+import { useArticleFilterStore } from '@/stores/articleFilter.store';
 
-type Status = {
-  value: string;
-  label: string;
-};
-
-const statuses: Status[] = [
-  { label: 'Unread', value: 'unread' },
-  { label: 'Read', value: 'read' },
-  { label: 'Starred', value: 'starred' },
-  { label: 'All', value: 'all' },
-];
 
 export function ArticleFilterSelect() {
-  const [open, setOpen] = React.useState(false);
-  const isMobile = useIsMobile();
-  const [selectedStatus, setSelectedStatus] = React.useState<Status | null>({
-    label: 'Unread',
-    value: 'unread',
-  });
   const setUnread = useArticleFilterStore((state) => state.setToUnread);
   const setStarred = useArticleFilterStore((state) => state.setToStarred);
   const setRead = useArticleFilterStore((state) => state.setToRead);

@@ -3,7 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import { AppSidebar } from '@/components/app-sidebar';
 import { ArticleFilterSelect } from '@/components/article-filter';
@@ -111,9 +110,6 @@ function DashLayout() {
           queryClient.invalidateQueries({
             queryKey: ['get', '/feed'],
           });
-        },
-        onError: (error) => {
-          toast.error('Error adding feed', { description: error.message });
         },
       },
     );

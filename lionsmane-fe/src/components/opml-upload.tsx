@@ -20,15 +20,14 @@ export function OpmlUpload() {
     onSuccess: () => {
       toast('File uploaded, starting import...');
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
   });
 
+  // @ts-expect-error: Form data typing
   function onSubmit(data) {
     const formData = new FormData();
     formData.append('file', data.file);
     mutate({
+      // @ts-expect-error: Form data typing
       body: formData,
       credentials: 'include',
     });

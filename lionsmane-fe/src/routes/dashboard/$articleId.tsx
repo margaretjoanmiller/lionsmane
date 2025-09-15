@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';
 import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
@@ -117,7 +116,7 @@ function ArticlePage() {
               }} // we clean this on the backend
             />
           }
-          <a href={data.url}>Original article</a>
+          <a href={data.url!}>Original article</a>
         </div>
       </div>
     </div>

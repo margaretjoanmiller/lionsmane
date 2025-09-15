@@ -397,6 +397,32 @@ export class ArticleController {
       cursor,
     );
   }
+  @Get('folder/:id')
+  @ZodResponse({ type: ArticleListDto, status: 200 })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    description:
+      'The cursor for pagination. If not provided, starts from the beginning.',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    description: 'The number of articles to return. Default is 10.',
+  })
+  async getAllArticlesForFolder(
+    @Session() session: UserSession,
+    @Param('id') id: string,
+    @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
+    @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+  ) {
+    return await this.articleService.getAllArticlesForFolder(
+      session.user.id,
+      id,
+      pageSize,
+      cursor,
+    );
+  }
 
   @Post('readable/:id')
   @ApiResponse({ status: 202, description: 'Request accepted' })

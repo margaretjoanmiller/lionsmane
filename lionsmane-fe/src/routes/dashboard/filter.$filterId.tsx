@@ -4,7 +4,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { type Tag, TagInput } from 'emblor';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -116,9 +115,6 @@ function RouteComponent() {
       form.reset();
       await queryClient.invalidateQueries();
       await navigate({ to: '/dashboard/filter' });
-    },
-    onError: (error) => {
-      toast.error('Failed to update filter', { description: error.message });
     },
   });
 
@@ -294,7 +290,7 @@ function RouteComponent() {
         <FormField
           control={form.control}
           name="feeds"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Feeds</FormLabel>
               <FormControl>

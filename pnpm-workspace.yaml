@@ -2,6 +2,8 @@ packages:
   - lionsmane
   - lionsmane-fe
 
+injectWorkspacePackages: true
+
 onlyBuiltDependencies:
   - "@nestjs/core"
   - "@scarf/scarf"

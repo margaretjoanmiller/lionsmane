@@ -32,6 +32,7 @@ function FeedId() {
           credentials: 'include',
         },
         {
+          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -71,6 +72,7 @@ function FeedId() {
           credentials: 'include',
         },
         {
+          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -110,6 +112,7 @@ function FeedId() {
           credentials: 'include',
         },
         {
+          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -149,6 +152,7 @@ function FeedId() {
           credentials: 'include',
         },
         {
+          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },

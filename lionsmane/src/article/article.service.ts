@@ -1140,6 +1140,93 @@ export class ArticleService {
     );
   }
 
+  async getAllArticlesForFolder(
+    userId: string,
+    folderId: string,
+    pageSize = 10,
+    cursor: string | undefined,
+  ) {
+    let cursorDate: string | undefined;
+    let cursorId: string | undefined;
+    if (cursor) {
+      const { published, id } = this.parseCursor(cursor);
+      cursorDate = published;
+      cursorId = id;
+    } else {
+      cursorDate = undefined;
+      cursorId = undefined;
+    }
+    const artPages = await this.db
+      .select({
+        id: schema.articles.id,
+        title: schema.articles.title,
+        url: schema.articles.url,
+        authors: schema.articles.authors,
+        categories: schema.articles.categories,
+        description: schema.articles.description,
+        readableText: schema.articles.readableText,
+        keywords: schema.articles.keywords,
+        image: schema.articles.image,
+        imageAlt: schema.articles.imageAlt,
+        media: schema.articles.media,
+        published: schema.articles.published,
+        updated: schema.articles.updated,
+        feedId: schema.articles.feedId,
+        feedTitle: schema.feeds.title,
+        isRead: schema.userArticleStates.isRead ?? false,
+        isStarred: schema.userArticleStates.isStarred ?? false,
+        isBlurred: schema.userArticleStates.isBlurred ?? false,
+        isHidden: schema.userArticleStates.isHidden ?? false,
+        contentWarning: schema.userArticleStates.contentWarning ?? null,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .orderBy(desc(schema.articles.published), desc(schema.articles.id)) // ordering
+      .where(
+        and(
+          eq(schema.subscriptions.folderId, folderId),
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .limit(pageSize + 1); // the number of rows to return
+
+    const hasNextPage = artPages.length > pageSize;
+    const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
+
+    return {
+      articles: items,
+      cursor: hasNextPage
+        ? this.createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
+    };
+  }
+
   private safeParseBase64Json(cursor: string) {
     const cursorSchema = z.object({
       id: z.uuid(),

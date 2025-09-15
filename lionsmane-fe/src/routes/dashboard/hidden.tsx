@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import React from 'react';
 import { ArticleCard } from '@/components/article-card';
 import MultipleSelector, { type Option } from '@/components/multi-select';
+import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';
-import type { ArticleHidden } from '@/types/article';
 
 export const Route = createFileRoute('/dashboard/hidden')({
   component: HiddenDashboard,
@@ -29,6 +29,7 @@ function HiddenDashboard() {
         credentials: 'include',
       },
       {
+        // @ts-expect-error: cursor typing
         getNextPageParam: (lastPage) => lastPage.cursor,
         initialPageParam: null,
       },
@@ -62,6 +63,11 @@ function HiddenDashboard() {
         {visibleArticles.map((article) => (
           <ArticleCard article={article} />
         ))}
+        {hasNextPage && (
+          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+            {isFetching ? 'Loading...' : 'Load More'}
+          </Button>
+        )}
       </div>
     </>
   );
