@@ -6,8 +6,8 @@ RUN corepack enable
 FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+RUN pnpm run --filter=lionsmane-be -r build
 RUN pnpm deploy --filter=lionsmane-be --prod /prod/lionsmane-be
 
 FROM base AS lionsmane-be

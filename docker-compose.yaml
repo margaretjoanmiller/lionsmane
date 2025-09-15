@@ -45,6 +45,17 @@ services:
         condition: service_healthy
       valkey:
         condition: service_healthy
+  
+  lionsmane-fe:
+    build:
+      context: lionsmane-fe
+      target: lionsmane-fe
+    environment:
+      VITE_API_URL: http://lionsmane-be:8181
+      SITE_ADDRESS: http://localhost
+    ports:
+      - "3000:80"
+    restart: unless-stopped
 
 volumes:
   db:

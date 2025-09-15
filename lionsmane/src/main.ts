@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 import { AppModule } from './app.module';
+import { db } from './db/index';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -38,6 +40,10 @@ async function bootstrap() {
     }),
   );
 
+  // Run migrations
+  await migrate(db, { migrationsFolder: 'drizzle' });
+
   await app.listen(process.env.PORT ?? 8181);
 }
+
 bootstrap();
