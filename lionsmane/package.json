@@ -50,6 +50,7 @@
     "drizzle-orm": "^0.44.5",
     "fast-xml-parser": "^5.2.5",
     "feedsmith": "^2.0.0",
+    "helmet": "^8.1.0",
     "ioredis": "^5.7.0",
     "jsdom": "^26.1.0",
     "nestjs-zod": "^5.0.1",

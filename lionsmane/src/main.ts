@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import helmet from 'helmet';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 import { AppModule } from './app.module';
 import { db } from './db/index';
@@ -9,7 +10,9 @@ import { db } from './db/index';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // better-auth will turn it back on!
+    cors: true,
   });
+  app.use(helmet());
 
   const openApiDoc = SwaggerModule.createDocument(
     app,
