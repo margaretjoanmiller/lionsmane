@@ -54,18 +54,7 @@ const articleList = z.object({
 const hiddenArticleList = articleList.extend({
   articles: z.array(
     articleList.shape.articles.element.extend({
-      filterConditions: z
-        .array(
-          z.object({
-            keywords: z.array(z.string()).optional(),
-            titleContains: z.array(z.string()).optional(),
-            contentContains: z.array(z.string()).optional(),
-            authors: z.array(z.string()).optional(),
-            categories: z.array(z.string()).optional(),
-            feeds: z.array(z.string()).optional(),
-          }),
-        )
-        .nullable(),
+      ruleId: z.uuid(),
     }),
   ),
 });

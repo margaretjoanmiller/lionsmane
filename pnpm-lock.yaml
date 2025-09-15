@@ -379,6 +379,9 @@ importers:
       '@iconify-json/fluent':
         specifier: ^1.2.30
         version: 1.2.30
+      '@iconify-json/garden':
+        specifier: ^1.2.2
+        version: 1.2.2
       '@iconify-json/icon-park-outline':
         specifier: ^1.2.4
         version: 1.2.4
@@ -1249,6 +1252,9 @@ packages:
 
   '@iconify-json/fluent@1.2.30':
     resolution: {integrity: sha512-tR0E0As25LGV95vryo/bZbLJ3kcUiOva99MP7nB7gQV82K08zaaaSYZWcyKbLgV4BxHOfMuBgNoOvQpYqm9Oyg==}
+
+  '@iconify-json/garden@1.2.2':
+    resolution: {integrity: sha512-6nRJaa4JFYPpVoHxLJGjK4xqu+si7nxpJYt+oV1ET4Kmhxy0JZzpMB36roquGgy3wcXsfig4S9e6RdyUM5mmsg==}
 
   '@iconify-json/icon-park-outline@1.2.4':
     resolution: {integrity: sha512-NyZxXe2gD2TbTOyoRRMdtEJhr6i2KQCdDlYYoOn5oZLndQjwpIhw79hzeFhXvP38/o40D3gQ+l+IaSJgbB+0TQ==}
@@ -8075,6 +8081,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/fluent@1.2.30':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/garden@1.2.2':
     dependencies:
       '@iconify/types': 2.0.0
 

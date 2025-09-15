@@ -1,8 +1,8 @@
 export interface ArticleDetail {
   id: string;
   title: string;
-  url: string;
-  authors: string[];
+  url: string | null;
+  authors: { name: string; email: string | null }[];
   categories: string[];
   description: string | null;
   readableText: string | null;
@@ -19,4 +19,8 @@ export interface ArticleDetail {
   isBlurred: boolean | null;
   isHidden: boolean | null;
   contentWarning: string[] | null;
+}
+
+export interface ArticleHidden extends ArticleDetail {
+  ruleId: string;
 }

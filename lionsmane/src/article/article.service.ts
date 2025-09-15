@@ -595,6 +595,7 @@ export class ArticleService {
     userId: string,
     pageSize = 10,
     cursor: string | undefined,
+    ruleId: string | undefined,
   ) {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
@@ -630,7 +631,7 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
-        filterConditions: sql`json_agg(${schema.userFilters.conditions})`,
+        ruleId: schema.appliedRules.ruleId,
       })
       .from(schema.articles)
       .innerJoin(
@@ -657,13 +658,6 @@ export class ArticleService {
           eq(schema.appliedRules.action, 'hide'),
         ),
       )
-      .innerJoin(
-        schema.userFilters,
-        and(
-          eq(schema.userFilters.id, schema.appliedRules.ruleId),
-          eq(schema.userFilters.userId, userId),
-        ),
-      )
       .where(
         and(
           cursorDate && cursorId
@@ -685,6 +679,7 @@ export class ArticleService {
         schema.userArticleStates.isBlurred,
         schema.userArticleStates.isHidden,
         schema.userArticleStates.contentWarning,
+        schema.appliedRules.ruleId,
       );
 
     const articles = await query

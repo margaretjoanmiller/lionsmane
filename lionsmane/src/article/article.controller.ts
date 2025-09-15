@@ -211,6 +211,11 @@ export class ArticleController {
   @Get('hidden')
   @ZodResponse({ type: HiddenArticleListDto, status: 200 })
   @ApiQuery({
+    name: 'ruleId',
+    required: false,
+    description: 'The id of the rule to filter by. Default is all.',
+  })
+  @ApiQuery({
     name: 'cursor',
     required: false,
     description:
@@ -225,11 +230,13 @@ export class ArticleController {
     @Session() session: UserSession,
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
+    @Query('ruleId', new DefaultValuePipe(null)) ruleId?: string,
   ) {
     return await this.articleService.getHiddenArticles(
       session.user.id,
       pageSize,
       cursor,
+      ruleId,
     );
   }
 

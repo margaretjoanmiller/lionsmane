@@ -28,6 +28,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { $api } from '@/lib/fetch-client';
 import { Route as DashIndex } from '@/routes/dashboard/index';
 import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
+import GardenEyeHideStroke16 from '~icons/garden/eye-hide-stroke-16';
 import NotoV1Mushroom from '~icons/noto-v1/mushroom';
 import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
 import SolarFilterLinear from '~icons/solar/filter-linear';
@@ -61,6 +62,11 @@ const formSchema = z.object({
 
 const data = {
   navSecondary: [
+    {
+      title: 'Hidden',
+      url: '/dashboard/hidden',
+      icon: GardenEyeHideStroke16,
+    },
     {
       title: 'Filters',
       url: '/dashboard/filter',

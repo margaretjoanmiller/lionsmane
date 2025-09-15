@@ -602,6 +602,40 @@ export interface components {
                 contentWarning: string[] | null;
             }[];
         };
+        HiddenArticleListDto_Output: {
+            cursor: string | null;
+            articles: {
+                /** Format: uuid */
+                id: string;
+                title: string;
+                url: string | null;
+                authors: {
+                    name: string;
+                    email: string | null;
+                }[];
+                categories: string[];
+                description: string | null;
+                readableText: string | null;
+                keywords: string[];
+                image: string | null;
+                imageAlt: string | null;
+                media: string[];
+                /** Format: date-time */
+                published: string;
+                updated: string | null;
+                isRead: boolean | null;
+                isStarred: boolean | null;
+                isBlurred: boolean | null;
+                isHidden: boolean | null;
+                /** @default [] */
+                contentWarning: string[] | null;
+                /** Format: uuid */
+                feedId: string;
+                feedTitle: string | null;
+                /** Format: uuid */
+                ruleId: string;
+            }[];
+        };
         ArticleDetailDto_Output: {
             /** Format: uuid */
             id: string;
@@ -1333,6 +1367,8 @@ export interface operations {
                 cursor?: string;
                 /** @description The number of articles to return. Default is 10. */
                 pageSize?: number;
+                /** @description The id of the rule to filter by. Default is all. */
+                ruleId?: string;
             };
             header?: never;
             path?: never;
@@ -1345,7 +1381,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
+                    "application/json": components["schemas"]["HiddenArticleListDto_Output"];
                 };
             };
             /** @description Unauthorized */
