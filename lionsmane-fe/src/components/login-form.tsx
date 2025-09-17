@@ -79,7 +79,7 @@ export function LoginForm() {
         </form>
       </Form>
       <div className="flex flex-col gap-4">
-        <Button>
+        <Button asChild>
           <Link to="/signup">Register</Link>
         </Button>
         <Button

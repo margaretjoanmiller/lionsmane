@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ArticleCard } from '@/components/article-card';
+import { SkeletonGrid } from '@/components/skeleton-grid';
 import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';
 import {
@@ -37,7 +38,7 @@ function FeedId() {
           initialPageParam: null,
         },
       );
-    if (isLoading || !data) return 'Loading...';
+    if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
       return articles
@@ -77,7 +78,8 @@ function FeedId() {
           initialPageParam: null,
         },
       );
-    if (isLoading || !data) return 'Loading...';
+
+    if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
       return articles
@@ -117,7 +119,7 @@ function FeedId() {
           initialPageParam: null,
         },
       );
-    if (isLoading || !data) return 'Loading...';
+    if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
       return articles
@@ -157,7 +159,7 @@ function FeedId() {
           initialPageParam: null,
         },
       );
-    if (isLoading || !data) return 'Loading...';
+    if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
       return articles
