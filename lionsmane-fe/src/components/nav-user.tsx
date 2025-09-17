@@ -1,9 +1,5 @@
-import { Link } from '@tanstack/react-router';
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  LogOut,
-} from 'lucide-react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -22,17 +18,16 @@ import {
 } from '@/components/ui/sidebar';
 import { authClient } from '@/lib/auth-client';
 
-async function handleLogout() {
-  await authClient.signOut();
-}
-
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const navigate = useNavigate();
 
-  const {
-    data: session,
-  } = authClient.useSession();
+  const { data: session } = authClient.useSession();
 
+  async function handleLogout() {
+    await authClient.signOut();
+    await navigate({ to: '/login' });
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -99,8 +94,8 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut onClick={handleLogout} />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
