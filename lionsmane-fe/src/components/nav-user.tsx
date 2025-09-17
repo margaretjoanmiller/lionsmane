@@ -1,5 +1,4 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -17,6 +16,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { authClient } from '@/lib/auth-client';
+import FluentChevronUpDown16Filled from '~icons/fluent/chevron-up-down-16-filled';
+import SolarLogout2Outline from '~icons/solar/logout-2-outline';
+import SolarSettingsLinear from '~icons/solar/settings-linear';
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -53,7 +55,7 @@ export function NavUser() {
                 </span>
                 <span className="truncate text-xs">{session?.user.email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <FluentChevronUpDown16Filled className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -88,14 +90,14 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link to="/dashboard/settings">
-                  <BadgeCheck />
+                  <SolarSettingsLinear />
                   Settings
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
+              <SolarLogout2Outline />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
