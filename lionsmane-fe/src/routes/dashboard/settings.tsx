@@ -4,6 +4,8 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { PencilIcon } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import QRCode from 'react-qr-code';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { DataTable } from '@/components/data-table';
 import MultipleSelector from '@/components/multi-select';
@@ -34,12 +36,18 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
 import type { Feed } from '@/types/feed';
@@ -50,6 +58,24 @@ export const Route = createFileRoute('/dashboard/settings')({
 });
 
 function Settings() {
+  // Two factor auth
+  const user = authClient.useSession();
+  const [isEnablingTwoFactor, setIsEnablingTwoFactor] = React.useState(false);
+
+  const [tfaURI, setTfaURI] = React.useState<string | null>(null);
+  const twoFactorForm = useForm({
+    resolver: zodResolver(z.object({ password: z.string().min(15) })),
+    defaultValues: {
+      password: '',
+    },
+  });
+  const twoFactorConfirmForm = useForm({
+    resolver: zodResolver(z.object({ code: z.string().min(6).max(6) })),
+    defaultValues: {
+      code: '',
+    },
+  });
+
   // feed form
   const [feedFormOpen, setFeedFormOpen] = React.useState(false);
   const feedFormSchema = z.object({
@@ -405,8 +431,109 @@ function Settings() {
   const downloadUrl =
     import.meta.env.VITE_API_URL || 'http://localhost:8181' + '/feed/export';
 
+  const twoFactorEnabled = user?.data?.user.twoFactorEnabled;
+
+  async function onEnableTwoFactor(values: { password: string }) {
+    const { data, error } = await authClient.twoFactor.enable({
+      password: values.password,
+    });
+
+    if (error || !data) {
+      toast.error(
+        'Could not enable 2FA, please check your password and try again.',
+      );
+    }
+    const { data: uri, error: uriError } =
+      await authClient.twoFactor.getTotpUri({ password: values.password });
+    if (uriError || !uri) {
+      toast.error('Could not get TOTP URI, please try again.');
+      return;
+    }
+    setTfaURI(uri.totpURI);
+    setIsEnablingTwoFactor(true);
+
+    toast.success('Scan the QR code with your authenticator app.');
+  }
+
+  async function onConfirmTwoFactor(values: { code: string }) {
+    const { data, error } = await authClient.twoFactor.verifyTotp({
+      code: values.code, // required
+      trustDevice: true,
+    });
+    if (error || !data) {
+      toast.error('Could not verify TOTP, please try again.');
+      return;
+    }
+    toast.success('Two-Factor Authentication enabled successfully!');
+    setIsEnablingTwoFactor(false);
+    twoFactorConfirmForm.reset();
+  }
+
   return (
     <div className="flex flex-col container mx-auto py-10">
+      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+      <h2 className="text-xl font-semibold mb-4">Manage account</h2>
+      {!twoFactorEnabled && (
+        <Form {...twoFactorForm}>
+          <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
+            <FormField
+              control={twoFactorForm.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Two-Factor Authentication</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="current password"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Enable</Button>
+          </form>
+        </Form>
+      )}
+      {isEnablingTwoFactor && (
+        <div className="my-4 p-4">
+          <QRCode value={tfaURI || ''} />
+          <p className="my-2">Scan this QR code with your authenticator app.</p>
+          <Form {...twoFactorConfirmForm}>
+            <form
+              onSubmit={twoFactorConfirmForm.handleSubmit(onConfirmTwoFactor)}
+            >
+              <FormField
+                control={twoFactorConfirmForm.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>One-Time Password</FormLabel>
+                    <FormControl>
+                      <InputOTP maxLength={6} {...field}>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormDescription>
+                      Please enter the one-time password sent to your phone.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+      )}
+      <h2 className="text-xl font-semibold mb-4">Manage Feeds</h2>
       <DataTable columns={columns} data={feeds?.feeds} />
       <div className="my-6">
         <DataTable columns={folderColumns} data={folders} />
