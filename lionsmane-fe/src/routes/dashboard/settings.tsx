@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilIcon } from 'lucide-react';
@@ -27,6 +28,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -52,6 +61,8 @@ import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
+import MdiMoreHoriz from '~icons/mdi/more-horiz';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const Route = createFileRoute('/dashboard/settings')({
   component: Settings,
@@ -95,6 +106,14 @@ function Settings() {
   });
 
   const { mutate: updateFeed } = $api.useMutation('patch', '/feed/{id}');
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteFeed } = $api.useMutation('delete', '/feed/{id}', {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/feed'] });
+    },
+  });
 
   // folder form
   const [folderFormOpen, setFolderFormOpen] = React.useState(false);
@@ -182,7 +201,7 @@ function Settings() {
       },
     },
     {
-      id: 'actions',
+      id: 'edit',
       cell: ({ row }) => {
         return (
           <Dialog
@@ -308,6 +327,40 @@ function Settings() {
               </Form>
             </DialogContent>
           </Dialog>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => {
+        const feed = row.original;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MdiMoreHoriz className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  deleteFeed({
+                    params: {
+                      path: {
+                        id: feed.id,
+                      },
+                    },
+                    credentials: 'include',
+                  })
+                }
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       },
     },
@@ -498,7 +551,11 @@ function Settings() {
       )}
       {isEnablingTwoFactor && (
         <div className="my-4 p-4">
-          <QRCode value={tfaURI || ''} />
+          <Card className="card bg-white w-md">
+            <CardContent>
+              <QRCode value={tfaURI || ''} />
+            </CardContent>
+          </Card>
           <p className="my-2">Scan this QR code with your authenticator app.</p>
           <Form {...twoFactorConfirmForm}>
             <form

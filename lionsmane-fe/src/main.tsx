@@ -37,9 +37,7 @@ declare module '@tanstack/react-router' {
 }
 
 function App() {
-  const {
-    data: session,
-  } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   return <RouterProvider router={router} context={{ auth: session }} />;
 }
 
