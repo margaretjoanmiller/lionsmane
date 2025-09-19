@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { AppSidebar } from '@/components/app-sidebar';
 import { ArticleFilterSelect } from '@/components/article-filter';
@@ -45,6 +46,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
@@ -111,6 +117,10 @@ function DashLayout() {
             queryKey: ['get', '/feed'],
           });
         },
+        onError(error) {
+          form.reset();
+          toast.error('Error adding feed', { description: error.message });
+        },
       },
     );
   }
@@ -133,9 +143,14 @@ function DashLayout() {
             <div className="group fixed bottom-6 right-6 z-10">
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger>
-                  <Button>
-                    <IconParkOutlineRss />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button>
+                        <IconParkOutlineRss />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Subscribe to a new feed</TooltipContent>
+                  </Tooltip>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>

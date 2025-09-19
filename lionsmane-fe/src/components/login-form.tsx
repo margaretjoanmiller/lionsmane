@@ -82,7 +82,7 @@ export function LoginForm() {
         },
       },
     );
-    if (error) {
+    if (error || !data) {
       toast.error('Error verifying two-factor authentication code', {
         description: error.message,
       });

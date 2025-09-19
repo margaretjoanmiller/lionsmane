@@ -1,10 +1,17 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { authClient } from '@/lib/auth-client';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   component: App,
 });
 
 function App() {
+  const session = authClient.useSession();
+  const navigate = useNavigate({ from: '/' });
+
+  if (session.data !== null) {
+    navigate({ to: '/dashboard' });
+  }
   return (
     <div className="text-center">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
