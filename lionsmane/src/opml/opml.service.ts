@@ -1,19 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { XMLBuilder, XMLParser } from 'fast-xml-parser';
+import { generateOpml, parseOpml } from 'feedsmith';
 
 @Injectable()
 export class OpmlService {
-  private readonly logger = new Logger(OpmlService.name);
-
   importDynamic = new Function('modulePath', 'return import(modulePath)');
 
-  async parseOpml(xml: string) {
-    const feedSmith = await this.importDynamic('feedsmith');
-    const parse = feedSmith.parseOpml;
-    return parse(xml);
-  }
-  async getFeedsFromOpml(xml: string) {
-    const opml = await this.parseOpml(xml);
+  getFeedsFromOpml(xml: string) {
+    const opml = parseOpml(xml);
     const feeds = opml?.body?.outlines?.flatMap((outline) => {
       if (outline.outlines instanceof Array) {
         return outline.outlines.map((subOutline) => ({
@@ -29,8 +22,7 @@ export class OpmlService {
     });
     return feeds;
   }
-  async createOpml(feeds: { title: string; url: string }[]) {
-    const generateOpml = (await this.importDynamic('feedsmith')).generateOpml;
+  createOpml(feeds: { title: string; url: string }[]) {
     const xml = generateOpml({
       head: {
         title: 'My Feeds',

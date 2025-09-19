@@ -45,7 +45,7 @@ services:
         condition: service_healthy
       valkey:
         condition: service_healthy
-  
+
   lionsmane-fe:
     build:
       context: lionsmane-fe

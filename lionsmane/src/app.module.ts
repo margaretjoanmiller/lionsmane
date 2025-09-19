@@ -39,6 +39,8 @@ import { FolderModule } from './folder/folder.module';
 import { HealthModule } from './health/health.module';
 import { OpmlModule } from './opml/opml.module';
 import { RedisModule } from './redis/redis.module';
+import { ReadlaterModule } from './readlater/readlater.module';
+import { SecretsModule } from './secrets/secrets.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -103,6 +105,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     FilterModule,
     OpmlModule,
     HealthModule,
+    ReadlaterModule,
+    SecretsModule,
   ],
   controllers: [AppController],
   providers: [
