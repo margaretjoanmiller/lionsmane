@@ -55,6 +55,7 @@
     "jsdom": "^26.1.0",
     "nestjs-zod": "^5.0.1",
     "nlcst-to-string": "^4.0.0",
+    "node-vault": "^0.10.5",
     "opml": "^0.5.7",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",

@@ -1,37 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import vault from 'node-vault';
 
 @Injectable()
 export class SecretsService {
-  constructor(private config: ConfigService) {}
-
-  async encrypt(toEncrypt: string) {
-    const password = this.config.getOrThrow<string>('SECRET_KEY');
-
-    const iv = randomBytes(16);
-
-    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const cipher = createCipheriv('aes-256-ctr', key, iv);
-
-    return {
-      encrypted: Buffer.concat([cipher.update(toEncrypt), cipher.final()]),
-      iv,
-    };
+  private vaultClient: vault.client;
+  constructor(private config: ConfigService) {
+    const vaultAddress = this.config.get<string>('VAULT_ADDR');
+    const vaultToken = this.config.get<string>('VAULT_TOKEN');
+    this.vaultClient = vault({ endpoint: vaultAddress, token: vaultToken });
   }
 
-  async decrypt(toDecrypt: {
-    encrypted: Buffer<ArrayBuffer>;
-    iv: Buffer<ArrayBufferLike>;
-  }) {
-    const password = this.config.getOrThrow<string>('SECRET_KEY');
+  async readSecret(secretPath: string): Promise<string> {
+    try {
+      const roleId = process.env.ROLE_ID;
+      const secretId = process.env.SECRET_ID;
 
-    const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
-    const decipher = createDecipheriv('aes-256-ctr', key, toDecrypt.iv);
-    return Buffer.concat([
-      decipher.update(toDecrypt.encrypted),
-      decipher.final(),
-    ]).toString();
+      const result = await this.vaultClient.approleLogin({
+        role_id: roleId,
+        secret_id: secretId,
+      });
+      this.vaultClient.token = result.auth.client_token;
+      const secretData = await this.vaultClient.read(secretPath);
+      // secretpath is the path in vault where you have stored your secrets
+      return secretData.data;
+    } catch (error) {
+      console.error('Error reading secret from vault:', error);
+      throw error;
+    }
+  }
+
+  async writeSecret(secretPath: string, secretData: string): Promise<void> {
+    try {
+      const roleId = process.env.ROLE_ID;
+      const secretId = process.env.SECRET_ID;
+
+      const result = await this.vaultClient.approleLogin({
+        role_id: roleId,
+        secret_id: secretId,
+      });
+      this.vaultClient.token = result.auth.client_token;
+      await this.vaultClient.write(secretPath, secretData);
+    } catch (error) {
+      console.error('Error writing secret to vault:', error);
+      throw error;
+    }
   }
 }
