@@ -69,21 +69,16 @@ export class FetcherService {
   }
 
   async extractFeedTitle(feedUrl: string): Promise<string> {
-    try {
-      const feedXML = await this.respectfulFetch(feedUrl);
-      if (feedXML === null) {
-        throw new Error('Failed to fetch feed');
-      }
-      const feed = parseFeed(feedXML);
-      if (!feed || !feed.items) {
-        throw new Error('No items found in the feed');
-      }
-
-      return feed.title || feedUrl;
-    } catch (error) {
-      console.error('Error parsing feed for title:', error);
-      throw new Error('Failed to parse feed for title', { cause: error });
+    const feedXML = await this.respectfulFetch(feedUrl);
+    if (feedXML === null) {
+      throw new Error('Failed to fetch feed');
     }
+    const feed = parseFeed(feedXML);
+    if (!feed || !feed.items) {
+      throw new Error('No items found in the feed');
+    }
+
+    return feed.title || feedUrl;
   }
 
   async extractKeywords(textContent: string): Promise<string[]> {

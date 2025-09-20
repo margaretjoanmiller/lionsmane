@@ -12,6 +12,7 @@ import { DataTable } from '@/components/data-table';
 import MultipleSelector from '@/components/multi-select';
 import { OpmlUpload } from '@/components/opml-upload';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Command,
   CommandEmpty,
@@ -62,7 +63,6 @@ import { cn } from '@/lib/utils';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
 import MdiMoreHoriz from '~icons/mdi/more-horiz';
-import { Card, CardContent } from '@/components/ui/card';
 
 export const Route = createFileRoute('/dashboard/settings')({
   component: Settings,
@@ -84,6 +84,19 @@ function Settings() {
     resolver: zodResolver(z.object({ code: z.string().min(6).max(6) })),
     defaultValues: {
       code: '',
+    },
+  });
+  // readlater api form
+  const apiKeySchema = z.object({
+    apiKey: z.string(),
+    apiURL: z.url(),
+  });
+
+  const apiKeyForm = useForm<z.infer<typeof apiKeySchema>>({
+    resolver: zodResolver(apiKeySchema),
+    defaultValues: {
+      apiKey: '',
+      apiURL: '',
     },
   });
 
@@ -150,10 +163,6 @@ function Settings() {
       value: folder.id,
     })) || [];
 
-  if (!feeds || !folders) {
-    return null;
-  }
-
   function onSubmitFeed(values: z.infer<typeof feedFormSchema>) {
     updateFeed(
       {
@@ -170,6 +179,24 @@ function Settings() {
         },
       },
     );
+  }
+
+  const { mutate: apiKey } = $api.useMutation('post', '/readlater/configure', {
+    onSuccess: () => {
+      toast.info('Saved to readeck');
+    },
+    onError: (error) => {
+      toast.error('Error saving to readeck', { description: error.message });
+    },
+  });
+
+  function submitApiKey(values: z.infer<typeof apiKeySchema>) {
+    apiKey({
+      body: {
+        ...values,
+      },
+      credentials: 'include',
+    });
   }
 
   const columns: ColumnDef<Feed>[] = [
@@ -412,18 +439,26 @@ function Settings() {
       header: 'Actions',
       cell: ({ row }) => {
         const folder = row.original;
-        folderForm.setValue('folderId', folder.id);
-        folderForm.setValue('name', folder.name);
-        folderForm.setValue(
-          'feedIds',
-          folder.feedIds.map((feed) => ({
-            value: feed,
-            label:
-              feeds.feeds.find((f) => f.id === feed)?.title || 'Unnamed feed',
-          })),
-        );
         return (
-          <Dialog open={folderFormOpen} onOpenChange={setFolderFormOpen}>
+          <Dialog
+            open={folderFormOpen}
+            onOpenChange={(open) => {
+              setFolderFormOpen(open);
+              if (open) {
+                folderForm.setValue('folderId', folder.id);
+                folderForm.setValue('name', folder.name);
+                folderForm.setValue(
+                  'feedIds',
+                  folder.feedIds.map((feed) => ({
+                    value: feed,
+                    label:
+                      feeds.feeds.find((f) => f.id === feed)?.title ||
+                      'Unnamed feed',
+                  })),
+                );
+              }
+            }}
+          >
             <DialogTrigger>
               <Button variant="outline">
                 <PencilIcon />
@@ -522,6 +557,10 @@ function Settings() {
     twoFactorConfirmForm.reset();
   }
 
+  if (!feeds || !folders) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
@@ -606,6 +645,44 @@ function Settings() {
           <Label>Export OPML File</Label>
         </a>
       </div>
+      <h2 className="text-xl font-semibold mb-4">API Keys</h2>
+      <Form {...apiKeyForm}>
+        <form onSubmit={apiKeyForm.handleSubmit(submitApiKey)}>
+          <FormField
+            control={apiKeyForm.control}
+            name="apiKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ApiKey</FormLabel>
+                <FormControl>
+                  <Input placeholder="key" {...field} />
+                </FormControl>
+                <FormDescription>This is your readeck api key.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={apiKeyForm.control}
+            name="apiURL"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ApiURL</FormLabel>
+                <FormControl>
+                  <Input
+                    type="url"
+                    placeholder="https://readeck.org"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>This is your readeck API url.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Configure readeck</Button>
+        </form>
+      </Form>
     </div>
   );
 }

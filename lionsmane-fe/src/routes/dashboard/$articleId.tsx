@@ -1,7 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { $api } from '@/lib/fetch-client';
+import SolarBookBookmarkLineDuotone from '~icons/solar/book-bookmark-line-duotone';
 import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
 import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
@@ -41,6 +48,15 @@ function ArticlePage() {
       },
     },
   );
+
+  const { mutate: readLater } = $api.useMutation('post', '/readlater', {
+    onSuccess: () => {
+      toast.info('Saved to readeck');
+    },
+    onError(error) {
+      toast.error('Error saving to readeck', { description: error.message });
+    },
+  });
 
   return (
     <div className="bg-card flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
@@ -89,18 +105,42 @@ function ArticlePage() {
               <SolarStarLinear />
             </Button>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() =>
-              requestFullArticleText({
-                params: { path: { id: data.id } },
-                credentials: 'include',
-              })
-            }
-          >
-            <SolarGlassesLineDuotone />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  requestFullArticleText({
+                    params: { path: { id: data.id } },
+                    credentials: 'include',
+                  })
+                }
+              >
+                <SolarGlassesLineDuotone />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Request full article text</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  readLater({
+                    body: {
+                      url: data.url,
+                    },
+                    credentials: 'include',
+                  })
+                }
+              >
+                <SolarBookBookmarkLineDuotone />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Add to readeck</TooltipContent>
+          </Tooltip>
         </h1>
         <h2 className="text-center font-bold">
           {data.authors.map((author) => author.name).join(', ')}

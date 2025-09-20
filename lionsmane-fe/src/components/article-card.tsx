@@ -38,6 +38,8 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
   }
   const [dismissBlur, setDismissBlur] = React.useState(false);
 
+  const queryClient = useQueryClient();
+
   const { mutate, error } = $api.useMutation('patch', '/article/status/{id}', {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -51,7 +53,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       });
     },
   });
-  const queryClient = useQueryClient();
 
   if (error) {
     toast.error('Error marking article as read');

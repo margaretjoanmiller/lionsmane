@@ -5,7 +5,7 @@ import {
   Logger,
   PreconditionFailedException,
 } from '@nestjs/common';
-import { catchError } from 'rxjs';
+import { catchError, map } from 'rxjs';
 import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { SecretsService } from 'src/secrets/secrets.service';
 
@@ -36,7 +36,7 @@ export class ReadlaterService {
       .post(
         apiKey.apiUrl + 'api/bookmarks',
         {
-          url: articleUrl.toString(),
+          url: articleUrl,
         },
         {
           headers: {
@@ -46,6 +46,7 @@ export class ReadlaterService {
         },
       )
       .pipe(
+        map((res) => res.data),
         catchError((error: AxiosError) => {
           this.logger.error(error);
           throw Error('Error saving readlater item', { cause: error });

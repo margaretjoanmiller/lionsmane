@@ -5,12 +5,11 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { subMonths } from 'date-fns';
-import { and, count, eq, isNull, or, sql } from 'drizzle-orm';
+import { and, count, eq, isNull, or } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
