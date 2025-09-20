@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { ArticleService } from './article.service';
-import { ArticleController } from './article.controller';
 import { BullModule } from '@nestjs/bullmq';
-import { ArticleConsumer } from './article.consumer';
+import { Module } from '@nestjs/common';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
+import { ArticleConsumer } from './article.consumer';
+import { ArticleController } from './article.controller';
+import { ArticleService } from './article.service';
 
 @Module({
   imports: [
@@ -12,5 +12,6 @@ import { FetcherModule } from 'src/fetcher/fetcher.module';
   ],
   providers: [ArticleService, ArticleConsumer],
   controllers: [ArticleController],
+  exports: [ArticleService],
 })
 export class ArticleModule {}

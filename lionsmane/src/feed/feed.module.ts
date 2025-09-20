@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { FeedService } from './feed.service';
-import { FeedController } from './feed.controller';
 import { BullModule } from '@nestjs/bullmq';
-import { FeedConsumer } from './feed.consumer';
+import { Module } from '@nestjs/common';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
 import { OpmlModule } from 'src/opml/opml.module';
+import { FeedConsumer } from './feed.consumer';
+import { FeedController } from './feed.controller';
+import { FeedService } from './feed.service';
 
 @Module({
   imports: [
@@ -14,5 +14,6 @@ import { OpmlModule } from 'src/opml/opml.module';
   ],
   controllers: [FeedController],
   providers: [FeedService, FeedConsumer],
+  exports: [FeedService],
 })
 export class FeedModule {}

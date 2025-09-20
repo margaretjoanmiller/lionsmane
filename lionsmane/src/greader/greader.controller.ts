@@ -1,12 +1,21 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import { GreaderService } from './greader.service';
 
 @ApiTags('greader')
 @Controller('greader')
 export class GreaderController {
-  @Get('api/0/tag/list?output=json')
-  listFolders() {
-    return 'not implemented;';
+  constructor(private greaderService: GreaderService) {}
+
+  @Get('api/0/tag/list')
+  @ApiQuery({
+    name: 'output',
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
+  listFolders(@Session() session: UserSession) {
+    return this.greaderService.getTags(session.user.id);
   }
 
   @Post('api/0/rename-tag')
@@ -19,12 +28,22 @@ export class GreaderController {
     return 'not implemented';
   }
 
-  @Get('api/0/unread-count?output=json')
+  @Get('api/0/unread-count')
+  @ApiQuery({
+    name: 'output',
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
   unreadCount() {
     return 'not implemented';
   }
 
-  @Get('api/0/subscription/list?output=json')
+  @Get('api/0/subscription/list')
+  @ApiQuery({
+    name: 'output',
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
   subscriptionList() {
     return 'not implemened';
   }
@@ -44,7 +63,12 @@ export class GreaderController {
     return 'not implemented';
   }
 
-  @Post('api/0/subscription/edit?ac=edit')
+  @Post('api/0/subscription/edit')
+  @ApiQuery({
+    name: 'ac',
+    default: 'edit',
+    description: 'action',
+  })
   @ApiQuery({
     name: 's',
     required: true,
@@ -69,7 +93,12 @@ export class GreaderController {
     return 'not implemented';
   }
 
-  @Post('api/0/subscription/edit?ac=unsubscribe')
+  @Post('api/0/subscription/edit')
+  @ApiQuery({
+    name: 'ac',
+    default: 'unsubscribe',
+    description: 'action',
+  })
   @ApiQuery({
     name: 's',
     required: true,
@@ -79,7 +108,7 @@ export class GreaderController {
     return 'not implemented';
   }
 
-  @Get('api/0/stream/items/ids?output=json')
+  @Get('api/0/stream/items/ids')
   @ApiQuery({
     name: 's',
     required: false,
@@ -94,12 +123,17 @@ export class GreaderController {
     name: 'n',
     required: false,
     description: 'page limit',
+  })
+  @ApiQuery({
+    name: 'output',
+    default: 'json',
+    description: 'output format (json only for now)',
   })
   getItemIds() {
     return 'not implemented';
   }
 
-  @Get('api/0/stream/items/contents?output=json')
+  @Get('api/0/stream/items/contents')
   @ApiQuery({
     name: 's',
     required: false,
@@ -114,6 +148,11 @@ export class GreaderController {
     name: 'n',
     required: false,
     description: 'page limit',
+  })
+  @ApiQuery({
+    name: 'output',
+    default: 'json',
+    description: 'output format (json only for now)',
   })
   getItemContents() {
     return 'not implemented';
