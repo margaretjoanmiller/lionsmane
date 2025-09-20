@@ -1,46 +1,55 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import axios from 'axios';
+import { HttpService } from '@nestjs/axios';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  PreconditionFailedException,
+} from '@nestjs/common';
+import { catchError } from 'rxjs';
+import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { SecretsService } from 'src/secrets/secrets.service';
 
 @Injectable()
 export class ReadlaterService {
-  constructor(private secrets: SecretsService) {}
+  private readonly logger = new Logger(ReadlaterService.name);
+  constructor(
+    private secrets: SecretsService,
+    private readonly httpService: HttpService,
+  ) {}
 
   async addApiKeyAndUrl(userId: string, apiKey: string, url: URL) {
-    const secretKeyPath = `secret/data/readlater/token/${userId}`;
-    const secretURLPath = `secret/data/readlater/url/${userId}`;
-    await this.secrets.writeSecret(secretKeyPath, apiKey);
-    await this.secrets.writeSecret(secretURLPath, url.toString());
+    const secretKeyPath = `secret/data/readlater/${userId}`;
+    await this.secrets.writeSecret(secretKeyPath, {
+      apiKey,
+      apiUrl: url.toString(),
+    });
   }
 
   async addBookmark(articleUrl: URL, userId: string) {
-    const secretKeyPath = `secret/data/readlater/token/${userId}`;
-    const secretURLPath = `secret/data/readlater/url/${userId}`;
+    const secretKeyPath = `secret/data/readlater/${userId}`;
     const apiKey = await this.secrets.readSecret(secretKeyPath);
-    const apiUrl = await this.secrets.readSecret(secretURLPath);
-    if (!apiKey || !apiUrl) {
-      throw new Error('Readlater service not configured');
+    if (!apiKey) {
+      throw new PreconditionFailedException('Readlater service not configured');
     }
 
-    const res = await axios.post(
-      apiUrl + '/api/bookmarks',
-      {
-        url: articleUrl.toString(),
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+    return this.httpService
+      .post(
+        apiKey.apiUrl + 'api/bookmarks',
+        {
+          url: articleUrl.toString(),
         },
-      },
-    );
-
-    if (res.status !== 202) {
-      throw new InternalServerErrorException(
-        `Failed to add bookmark ${res.statusText}`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error);
+          throw Error('Error saving readlater item', { cause: error });
+        }),
       );
-    }
-
-    return res.data;
   }
 }

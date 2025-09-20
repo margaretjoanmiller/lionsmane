@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { SecretsService } from 'src/secrets/secrets.service';
 import { ReadlaterController } from './readlater.controller';
 import { ReadlaterService } from './readlater.service';
+import { SecretsModule } from 'src/secrets/secrets.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [SecretsService],
+  imports: [SecretsModule, HttpModule],
   providers: [ReadlaterService],
   controllers: [ReadlaterController],
 })

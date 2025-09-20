@@ -15,7 +15,15 @@ async function bootstrap() {
       credentials: true,
     },
   });
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          scriptSrc: [`'self'`, 'cdn.jsdelivr.net/npm/@scalar/api-reference '],
+        },
+      },
+    }),
+  );
 
   const openApiDoc = SwaggerModule.createDocument(
     app,
