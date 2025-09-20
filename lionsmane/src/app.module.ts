@@ -41,6 +41,7 @@ import { OpmlModule } from './opml/opml.module';
 import { RedisModule } from './redis/redis.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { SecretsModule } from './secrets/secrets.module';
+import { GreaderModule } from './greader/greader.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -107,6 +108,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     HealthModule,
     ReadlaterModule,
     SecretsModule,
+    GreaderModule,
   ],
   controllers: [AppController],
   providers: [

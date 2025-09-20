@@ -1,7 +1,7 @@
-import { betterAuth, type BetterAuthOptions } from 'better-auth';
+import { type BetterAuthOptions, betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
-import { oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { db } from './db';
 
 const authOptions = {
@@ -34,9 +34,10 @@ const authOptions = {
     oidcProvider({
       loginPage: '/login', // path to the login page
     }),
+    apiKey(),
   ],
   telemetry: { enabled: false },
-  trustedOrigins: ['http://localhost:3000', 'https://localhost:8181'],
+  trustedOrigins: ['http://localhost:3000', process.env.FE_URL!],
 } satisfies BetterAuthOptions;
 
 export const auth = betterAuth(authOptions) as ReturnType<typeof betterAuth>;

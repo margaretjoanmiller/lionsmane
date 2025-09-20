@@ -34,6 +34,7 @@ async function bootstrap() {
       .addCookieAuth()
       .addBearerAuth()
       .addOAuth2()
+      .addApiKey()
       .addGlobalResponse({
         status: 500,
         description: 'Internal server error',
