@@ -68,4 +68,84 @@ export class GreaderController {
   editFeed() {
     return 'not implemented';
   }
+
+  @Post('api/0/subscription/edit?ac=unsubscribe')
+  @ApiQuery({
+    name: 's',
+    required: true,
+    description: 'stream ID (feed/<feed ID>)',
+  })
+  deleteFeed() {
+    return 'not implemented';
+  }
+
+  @Get('api/0/stream/items/ids?output=json')
+  @ApiQuery({
+    name: 's',
+    required: false,
+    description: 'filter by stream',
+  })
+  @ApiQuery({
+    name: 'xt',
+    required: false,
+    description: 'exclude items',
+  })
+  @ApiQuery({
+    name: 'n',
+    required: false,
+    description: 'page limit',
+  })
+  getItemIds() {
+    return 'not implemented';
+  }
+
+  @Get('api/0/stream/items/contents?output=json')
+  @ApiQuery({
+    name: 's',
+    required: false,
+    description: 'filter by stream',
+  })
+  @ApiQuery({
+    name: 'xt',
+    required: false,
+    description: 'exclude items',
+  })
+  @ApiQuery({
+    name: 'n',
+    required: false,
+    description: 'page limit',
+  })
+  getItemContents() {
+    return 'not implemented';
+  }
+
+  @Post('api/0/mark-all-as-read')
+  @ApiQuery({
+    name: 's',
+    required: true,
+    description: 'filter by stream',
+  })
+  @ApiQuery({
+    name: 'ts',
+    required: false,
+    description: 'older than timestamp in nanoseconds',
+  })
+  markRead() {
+    return 'not implemented';
+  }
+
+  @Post('api/0/edit-tag')
+  @ApiQuery({
+    name: 'i',
+    required: true,
+    description: 'item ids',
+  })
+  @ApiQuery({
+    name: 'a',
+    required: true,
+    description: 'action or state to apply',
+  })
+  editItem() {
+    return 'not implemented';
+  }
 }
