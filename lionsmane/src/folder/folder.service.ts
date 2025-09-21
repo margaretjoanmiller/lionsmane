@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
@@ -87,6 +87,23 @@ export class FolderService {
       };
     });
   }
+
+  async findByName(name: string, userId: string) {
+    const folder = await this.db.query.folders.findFirst({
+      where: and(
+        eq(schema.folders.name, name),
+        eq(schema.folders.userId, userId),
+      ),
+      with: {
+        subscriptions: true,
+      },
+    });
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
+    return folder;
+  }
+
   async findOne(id: string, userId: string) {
     const folder = await this.db.query.folders.findFirst({
       where: and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),

@@ -9,12 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import {
-  AuthService,
-  Public,
-  Session,
-  type UserSession,
-} from '@thallesp/nestjs-better-auth';
+import { AuthService, Public } from '@thallesp/nestjs-better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request as ExpressRequest, Response } from 'express';
 import { auth } from 'src/auth';
@@ -29,6 +24,18 @@ export class GreaderController {
     private greaderService: GreaderService,
     private authService: AuthService<typeof auth>,
   ) {}
+
+  private async greaderKey(req: ExpressRequest) {
+    const key = req.get('Authorization')?.replace('GoogleLogin auth=', '');
+    if (!key) {
+      throw new UnauthorizedException('No API key provided');
+    }
+    return await this.authService.api.getSession({
+      headers: new Headers({
+        'x-api-key': key,
+      }),
+    });
+  }
 
   @Post('accounts/ClientLogin')
   async getToken(
@@ -67,16 +74,7 @@ export class GreaderController {
     description: 'output format (json only for now)',
   })
   async listFolders(@Request() req: ExpressRequest) {
-    const key = req.get('Authorization')?.replace('GoogleLogin auth=', '');
-    if (!key) {
-      throw new UnauthorizedException('No API key provided');
-    }
-    const session = await this.authService.api.getSession({
-      headers: new Headers({
-        'x-api-key': key,
-      }),
-    });
-
+    const session = await this.greaderKey(req);
     return this.greaderService.getTags(session.user.id);
   }
 
@@ -98,12 +96,13 @@ export class GreaderController {
   })
   @ApiResponse({ description: 'Tag renamed', status: 200 })
   async renameFolder(
-    @Session() session: UserSession,
     @Query('s') streamId: string,
     @Query('t') tagName: string,
     @Query('dest') dest: string,
+    @Request() req: ExpressRequest,
     @Res() res: Response,
   ) {
+    const session = await this.greaderKey(req);
     await this.greaderService.renameTag(
       session.user.id,
       streamId,
@@ -114,8 +113,15 @@ export class GreaderController {
   }
 
   @Post('api/0/disable-tag')
-  deleteFolder() {
-    return 'not implemented';
+  async deleteFolder(
+    @Query('s') streamId: string,
+    @Query('t') tagName: string,
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const session = await this.greaderKey(req);
+    await this.greaderService.deleteFeed(session.user.id, streamId, tagName);
+    return res.status(200).type('text').send('OK');
   }
 
   @Get('api/0/unread-count')
@@ -124,8 +130,9 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  unreadCount() {
-    return 'not implemented';
+  async unreadCount(@Request() req: ExpressRequest) {
+    const session = await this.greaderKey(req);
+    return await this.greaderService.unreadCounts(session.user.id);
   }
 
   @Get('api/0/subscription/list')
@@ -134,12 +141,14 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  subscriptionList() {
-    return 'not implemened';
+  async subscriptionList(@Request() req: ExpressRequest) {
+    const session = await this.greaderKey(req);
+    return await this.greaderService.subscriptionList(session.user.id);
   }
 
   @Get('subscriptions/export')
-  opmlExport() {
+  opmlExport(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemeneted';
   }
 
@@ -149,7 +158,8 @@ export class GreaderController {
     required: true,
     description: 'Url to subscribe to',
   })
-  quickAdd() {
+  quickAdd(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -179,7 +189,8 @@ export class GreaderController {
     required: false,
     description: 'remove from folder',
   })
-  editFeed() {
+  editFeed(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -194,7 +205,8 @@ export class GreaderController {
     required: true,
     description: 'stream ID (feed/<feed ID>)',
   })
-  deleteFeed() {
+  deleteFeed(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -219,7 +231,8 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  getItemIds() {
+  getItemIds(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -244,7 +257,8 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  getItemContents() {
+  getItemContents(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -259,7 +273,8 @@ export class GreaderController {
     required: false,
     description: 'older than timestamp in nanoseconds',
   })
-  markRead() {
+  markRead(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 
@@ -274,7 +289,8 @@ export class GreaderController {
     required: true,
     description: 'action or state to apply',
   })
-  editItem() {
+  editItem(@Request() req: ExpressRequest) {
+    const session = this.greaderKey(req);
     return 'not implemented';
   }
 }

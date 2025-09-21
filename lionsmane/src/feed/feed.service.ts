@@ -8,8 +8,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Queue } from 'bullmq';
-import { subMonths } from 'date-fns';
-import { and, count, eq, isNull, or } from 'drizzle-orm';
+import { getTime, subMonths } from 'date-fns';
+import { and, count, desc, eq, isNull, or } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -169,6 +169,43 @@ export class FeedService {
       ...feed,
       unreadCount: unreadCountMap.get(feed.id) ?? 0,
     }));
+  }
+
+  async getLatestUnreadTimestamp(id: string, userId: string) {
+    const [article] = await this.db
+      .select({
+        published: schema.articles.published,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          eq(schema.articles.feedId, id),
+          or(
+            isNull(schema.userArticleStates.isRead),
+            eq(schema.userArticleStates.isRead, false),
+          ),
+        ),
+      )
+      .orderBy(desc(schema.articles.published));
+
+    if (!article) {
+      throw new NotFoundException('No unread articles found for this feed');
+    }
+    return getTime(article.published) * 1000; //convert to microseconds;
   }
 
   async findOne(id: string, userId: string) {

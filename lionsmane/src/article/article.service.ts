@@ -3,7 +3,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import createDOMPurify, { WindowLike } from 'dompurify';
-import { and, desc, eq, gt, isNull, lt, or, sql } from 'drizzle-orm';
+import { and, desc, eq, isNull, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -595,7 +595,6 @@ export class ArticleService {
     userId: string,
     pageSize = 10,
     cursor: string | undefined,
-    ruleId: string | undefined,
   ) {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
