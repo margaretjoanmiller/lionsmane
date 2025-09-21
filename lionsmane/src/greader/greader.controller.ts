@@ -1,6 +1,7 @@
-import { Controller, Get, Post } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import type { Response } from 'express';
 import { GreaderService } from './greader.service';
 
 @ApiTags('greader')
@@ -19,8 +20,36 @@ export class GreaderController {
   }
 
   @Post('api/0/rename-tag')
-  renameFolder() {
-    return 'not implemented';
+  @ApiQuery({
+    name: 's',
+    required: false,
+    description: 'stream id',
+  })
+  @ApiQuery({
+    name: 't',
+    required: false,
+    description: 'tag name',
+  })
+  @ApiQuery({
+    name: 'dest',
+    required: true,
+    description: 'new tag name',
+  })
+  @ApiResponse({ description: 'Tag renamed', status: 200 })
+  async renameFolder(
+    @Session() session: UserSession,
+    @Query('s') streamId: string,
+    @Query('t') tagName: string,
+    @Query('dest') dest: string,
+    @Res() res: Response,
+  ) {
+    await this.greaderService.renameTag(
+      session.user.id,
+      streamId,
+      tagName,
+      dest,
+    );
+    return res.status(200).type('text').send('OK');
   }
 
   @Post('api/0/disable-tag')

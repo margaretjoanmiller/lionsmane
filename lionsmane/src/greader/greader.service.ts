@@ -44,8 +44,21 @@ export class GreaderService {
     return tags;
   }
 
-  async renameTag(userId: string, streamId: string, dest: string) {
-    const tagName = streamId.split('/').pop();
+  async renameTag(
+    userId: string,
+    streamId: string | null,
+    tag: string | null,
+    dest: string,
+  ) {
+    if (!streamId && !tag) {
+      throw new BadRequestException('Must have stream ID or tag name');
+    }
+    let tagName: string | null = null;
+    if (streamId && !tag) {
+      tagName = streamId?.split('/').pop() || null;
+    } else {
+      tagName = tag;
+    }
     if (!tagName) {
       throw new BadRequestException('Error parsing streamid');
     }
@@ -59,7 +72,8 @@ export class GreaderService {
           eq(schema.folders.userId, userId),
           eq(schema.folders.name, tagName),
         ),
-      );
+      )
+      .returning();
 
     if (!folder) {
       throw new InternalServerErrorException('Folder could not be updated');
