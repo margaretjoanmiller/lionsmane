@@ -1,13 +1,64 @@
-import { Controller, Get, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
-import type { Response } from 'express';
+import {
+  AuthService,
+  Public,
+  Session,
+  type UserSession,
+} from '@thallesp/nestjs-better-auth';
+import { fromNodeHeaders } from 'better-auth/node';
+import type { Request as ExpressRequest, Response } from 'express';
+import { auth } from 'src/auth';
+import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
 @ApiTags('greader')
+@Public()
 @Controller('greader')
 export class GreaderController {
-  constructor(private greaderService: GreaderService) {}
+  constructor(
+    private greaderService: GreaderService,
+    private authService: AuthService<typeof auth>,
+  ) {}
+
+  @Post('accounts/ClientLogin')
+  async getToken(
+    @Body() login: LoginApiDto,
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const session = await this.authService.api.signInEmail({
+      body: {
+        email: login.email,
+        password: login.password,
+      },
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const key = await this.authService.api.createApiKey({
+      body: {
+        userId: session.user.id,
+      },
+      headers: fromNodeHeaders(req.headers),
+    });
+    return res
+      .status(200)
+      .type('text')
+      .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
+  }
 
   @Get('api/0/tag/list')
   @ApiQuery({
@@ -15,7 +66,17 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  listFolders(@Session() session: UserSession) {
+  async listFolders(@Request() req: ExpressRequest) {
+    const key = req.get('Authorization')?.replace('GoogleLogin auth=', '');
+    if (!key) {
+      throw new UnauthorizedException('No API key provided');
+    }
+    const session = await this.authService.api.getSession({
+      headers: new Headers({
+        'x-api-key': key,
+      }),
+    });
+
     return this.greaderService.getTags(session.user.id);
   }
 

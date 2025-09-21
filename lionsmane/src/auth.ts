@@ -28,16 +28,16 @@ const authOptions = {
     },
   },
   plugins: [
+    apiKey(),
     passkey(),
     twoFactor(),
     openAPI(),
     oidcProvider({
       loginPage: '/login', // path to the login page
     }),
-    apiKey(),
   ],
   telemetry: { enabled: false },
   trustedOrigins: ['http://localhost:3000', process.env.FE_URL!],
-} satisfies BetterAuthOptions;
+};
 
-export const auth = betterAuth(authOptions) as ReturnType<typeof betterAuth>;
+export const auth = betterAuth(authOptions);
