@@ -144,7 +144,7 @@ export class GreaderService {
           htmlUrl: feed.url,
           categories: [
             {
-              id: `user/${userId}/label/${folder}`,
+              id: `user/${userId}/label/${folder.name}`,
             },
           ],
         };
@@ -204,7 +204,7 @@ export class GreaderService {
     streamId: string,
     pageLimit: number,
     continuation: string | undefined,
-    xt: string,
+    xt: string | undefined,
   ) {
     const baseQuery = this.db
       .select({
@@ -273,7 +273,7 @@ export class GreaderService {
             );
           return {
             id: i.id,
-            directStreamIds: [`user/${userId}/label/${folder}`],
+            directStreamIds: [`user/${userId}/label/${folder.name}`],
           };
         } else {
           return {
@@ -344,7 +344,7 @@ export class GreaderService {
             );
           return {
             id: i.id,
-            directStreamIds: [`user/${userId}/label/${folder}`],
+            directStreamIds: [`user/${userId}/label/${folder.name}`],
           };
         } else {
           return {
@@ -363,7 +363,7 @@ export class GreaderService {
             )
           : null,
       };
-    } else if (streamId.startsWith('feed/')) {
+    } else if (streamId && streamId.startsWith('feed/')) {
       let cursorDate: string | undefined;
       let cursorId: string | undefined;
       if (continuation) {
@@ -413,7 +413,69 @@ export class GreaderService {
             );
           return {
             id: i.id,
-            directStreamIds: [`user/${userId}/label/${folder}`],
+            directStreamIds: [`user/${userId}/label/${folder.name}`],
+          };
+        } else {
+          return {
+            id: i.id,
+          };
+        }
+      });
+      const returnIds = await Promise.all(returnBody);
+      return {
+        items: [],
+        itemRefs: returnIds,
+        continuation: hasNextPage
+          ? createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    } else {
+      let cursorDate: string | undefined;
+      let cursorId: string | undefined;
+      if (continuation) {
+        const { published, id } = parseCursor(continuation);
+        cursorDate = published;
+        cursorId = id;
+      } else {
+        cursorDate = undefined;
+        cursorId = undefined;
+      }
+      const query = baseQuery.where(
+        and(
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+        ),
+      );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageLimit + 1);
+
+      const hasNextPage = articles.length > pageLimit;
+      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
+      const returnBody = items.map(async (i) => {
+        if (i.folderId) {
+          const [folder] = await this.db
+            .select({ name: schema.folders.name })
+            .from(schema.folders)
+            .where(
+              and(
+                eq(schema.folders.userId, userId),
+                eq(schema.folders.id, i.folderId),
+              ),
+            );
+          return {
+            id: i.id,
+            directStreamIds: [`user/${userId}/label/${folder.name}`],
           };
         } else {
           return {

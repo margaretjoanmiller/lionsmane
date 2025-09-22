@@ -266,11 +266,11 @@ export class GreaderController {
     @Query('s') streamId: string,
     @Query('c') continuation: string | undefined,
     @Query('xt') excludeItems: string | undefined,
-    @Query('n') pageLimit: string | undefined,
+    @Query('n') pageLimit: number,
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
-    return 'not implemented';
+    return await this.greaderService.getItemIds(session.user.id, streamId, pageLimit, continuation, excludeItems);
   }
 
   @Get('api/0/stream/items/contents')
