@@ -7,6 +7,7 @@ import { and, desc, eq, isNull, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
+import { createCursor, parseCursor } from 'src/utils/paging';
 import z from 'zod';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
@@ -88,7 +89,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -157,7 +158,7 @@ export class ArticleService {
     return {
       articles: items,
       cursor: hasNextPage
-        ? this.createCursor(
+        ? createCursor(
             items[items.length - 1].published,
             items[items.length - 1].id,
           )
@@ -174,7 +175,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -245,7 +246,7 @@ export class ArticleService {
     return {
       articles: items,
       cursor: hasNextPage
-        ? this.createCursor(
+        ? createCursor(
             items[items.length - 1].published,
             items[items.length - 1].id,
           )
@@ -427,7 +428,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -501,7 +502,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -539,7 +540,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -583,7 +584,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -595,11 +596,12 @@ export class ArticleService {
     userId: string,
     pageSize = 10,
     cursor: string | undefined,
+    ruleId: string | undefined,
   ) {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -690,7 +692,7 @@ export class ArticleService {
     return {
       articles: items,
       cursor: hasNextPage
-        ? this.createCursor(
+        ? createCursor(
             items[items.length - 1].published,
             items[items.length - 1].id,
           )
@@ -730,7 +732,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -805,7 +807,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -841,7 +843,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -879,7 +881,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -941,7 +943,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -1016,7 +1018,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -1051,7 +1053,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -1087,7 +1089,7 @@ export class ArticleService {
       return {
         articles: items,
         cursor: hasNextPage
-          ? this.createCursor(
+          ? createCursor(
               items[items.length - 1].published,
               items[items.length - 1].id,
             )
@@ -1148,7 +1150,7 @@ export class ArticleService {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
-      const { published, id } = this.parseCursor(cursor);
+      const { published, id } = parseCursor(cursor);
       cursorDate = published;
       cursorId = id;
     } else {
@@ -1218,46 +1220,11 @@ export class ArticleService {
     return {
       articles: items,
       cursor: hasNextPage
-        ? this.createCursor(
+        ? createCursor(
             items[items.length - 1].published,
             items[items.length - 1].id,
           )
         : null,
     };
-  }
-
-  private safeParseBase64Json(cursor: string) {
-    const cursorSchema = z.object({
-      id: z.uuid(),
-      published: z.string(),
-    });
-    const parsedCursor = cursorSchema.safeParse(
-      JSON.parse(Buffer.from(cursor, 'base64url').toString('ascii')),
-    );
-    if (!parsedCursor.success) {
-      throw new Error('Invalid cursor format');
-    }
-    return parsedCursor.data;
-  }
-
-  private parseCursor(cursor: string): { published: string; id: string } {
-    try {
-      const decoded = this.safeParseBase64Json(cursor);
-      if (!decoded.published || !decoded.id) {
-        throw new Error('Invalid cursor format');
-      }
-      return decoded;
-    } catch (error) {
-      throw new Error('Invalid cursor provided', { cause: error });
-    }
-  }
-
-  private createCursor(published: string, id: string): string {
-    return Buffer.from(
-      JSON.stringify({
-        published: published,
-        id,
-      }),
-    ).toString('base64url');
   }
 }

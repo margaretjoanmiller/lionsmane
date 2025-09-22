@@ -5,11 +5,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
+import { createCursor, parseCursor } from 'src/utils/paging';
 
 @Injectable()
 export class GreaderService {
@@ -79,7 +80,7 @@ export class GreaderService {
     }
   }
 
-  async deleteFeed(
+  async deleteFolder(
     userId: string,
     streamId: string | null,
     tag: string | null,
@@ -160,5 +161,277 @@ export class GreaderService {
     return {
       subscriptions,
     };
+  }
+  async editFeed(
+    action: string,
+    userId: string,
+    streamId: string,
+    removeStream: string | undefined,
+    moveStream: string | undefined,
+  ) {
+    if (action === 'edit') {
+      const feedName = streamId.split('feed/').pop()!;
+      const feed = await this.feedService.findByUrl(feedName, userId);
+      if (moveStream) {
+        const folder = await this.folderService.findByName(moveStream, userId);
+        return await this.feedService.update(feed.id, userId, {
+          folderId: folder.id,
+        });
+      } else if (removeStream) {
+        return await this.feedService.update(feed.id, userId, {
+          folderId: null,
+        });
+      } else {
+        throw new BadRequestException(
+          'Must either move or remove from folder (changing titles is not supported)',
+        );
+      }
+    } else if (action === 'unsubscribe') {
+      const feedName = streamId.split('feed/').pop();
+      if (!feedName) {
+        throw new BadRequestException('Invalid stream id');
+      }
+      const feed = await this.feedService.findByUrl(feedName, userId);
+      if (!feed) {
+        throw new NotFoundException('Feed not found');
+      }
+      return await this.feedService.remove(feed.id, userId);
+    }
+  }
+
+  async getItemIds(
+    userId: string,
+    streamId: string,
+    pageLimit: number,
+    continuation: string | undefined,
+    xt: string,
+  ) {
+    const baseQuery = this.db
+      .select({
+        id: schema.articles.id,
+        published: schema.articles.published,
+        folderId: schema.subscriptions.folderId,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+    if (streamId === `user/${userId}/state/com.google/read`) {
+      let cursorDate: string | undefined;
+      let cursorId: string | undefined;
+      if (continuation) {
+        const { published, id } = parseCursor(continuation);
+        cursorDate = published;
+        cursorId = id;
+      } else {
+        cursorDate = undefined;
+        cursorId = undefined;
+      }
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .where(
+          and(
+            eq(schema.userArticleStates.isRead, true),
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageLimit + 1);
+
+      const hasNextPage = articles.length > pageLimit;
+      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
+      const returnBody = items.map(async (i) => {
+        if (i.folderId) {
+          const [folder] = await this.db
+            .select({ name: schema.folders.name })
+            .from(schema.folders)
+            .where(
+              and(
+                eq(schema.folders.userId, userId),
+                eq(schema.folders.id, i.folderId),
+              ),
+            );
+          return {
+            id: i.id,
+            directStreamIds: [`user/${userId}/label/${folder}`],
+          };
+        } else {
+          return {
+            id: i.id,
+          };
+        }
+      });
+      const returnIds = await Promise.all(returnBody);
+      return {
+        items: [],
+        itemRefs: returnIds,
+        continuation: hasNextPage
+          ? createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    } else if (streamId === `user/${userId}/state/com.google/unread`) {
+      let cursorDate: string | undefined;
+      let cursorId: string | undefined;
+      if (continuation) {
+        const { published, id } = parseCursor(continuation);
+        cursorDate = published;
+        cursorId = id;
+      } else {
+        cursorDate = undefined;
+        cursorId = undefined;
+      }
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .where(
+          and(
+            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageLimit + 1);
+
+      const hasNextPage = articles.length > pageLimit;
+      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
+      const returnBody = items.map(async (i) => {
+        if (i.folderId) {
+          const [folder] = await this.db
+            .select({ name: schema.folders.name })
+            .from(schema.folders)
+            .where(
+              and(
+                eq(schema.folders.userId, userId),
+                eq(schema.folders.id, i.folderId),
+              ),
+            );
+          return {
+            id: i.id,
+            directStreamIds: [`user/${userId}/label/${folder}`],
+          };
+        } else {
+          return {
+            id: i.id,
+          };
+        }
+      });
+      const returnIds = await Promise.all(returnBody);
+      return {
+        items: [],
+        itemRefs: returnIds,
+        continuation: hasNextPage
+          ? createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    } else if (streamId.startsWith('feed/')) {
+      let cursorDate: string | undefined;
+      let cursorId: string | undefined;
+      if (continuation) {
+        const { published, id } = parseCursor(continuation);
+        cursorDate = published;
+        cursorId = id;
+      } else {
+        cursorDate = undefined;
+        cursorId = undefined;
+      }
+      const feed = streamId.split('/').pop();
+
+      if (!feed) {
+        throw new BadRequestException('Bad stream id');
+      }
+
+      const articles = await baseQuery
+        .where(
+          and(
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+            eq(schema.articles.feedId, feed),
+          ),
+        ) // if cursor is provided, get rows after it
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageLimit + 1); // the number of rows to return
+
+      const hasNextPage = articles.length > pageLimit;
+      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
+      const returnBody = items.map(async (i) => {
+        if (i.folderId) {
+          const [folder] = await this.db
+            .select({ name: schema.folders.name })
+            .from(schema.folders)
+            .where(
+              and(
+                eq(schema.folders.userId, userId),
+                eq(schema.folders.id, i.folderId),
+              ),
+            );
+          return {
+            id: i.id,
+            directStreamIds: [`user/${userId}/label/${folder}`],
+          };
+        } else {
+          return {
+            id: i.id,
+          };
+        }
+      });
+      const returnIds = await Promise.all(returnBody);
+      return {
+        items: [],
+        itemRefs: returnIds,
+        continuation: hasNextPage
+          ? createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    }
   }
 }

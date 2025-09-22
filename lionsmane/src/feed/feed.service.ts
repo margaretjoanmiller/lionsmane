@@ -267,6 +267,33 @@ export class FeedService {
     return { ...userFeed, unreadCount: unreadCount.unreadCount };
   }
 
+  async findByUrl(url: string, userId: string) {
+    const [userFeed] = await this.db
+      .select({
+        id: schema.feeds.id,
+        title: schema.feeds.title,
+        url: schema.feeds.url,
+        authors: schema.feeds.authors,
+        categories: schema.feeds.categories,
+        copyright: schema.feeds.copyright,
+        image: schema.feeds.image,
+        updated: schema.feeds.updated,
+        description: schema.subscriptions.description,
+        folderId: schema.subscriptions.folderId,
+        subscriptionId: schema.subscriptions.id,
+      })
+      .from(schema.subscriptions)
+      .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .where(
+        and(eq(schema.feeds.url, url), eq(schema.subscriptions.userId, userId)),
+      )
+      .limit(1);
+    if (!userFeed) {
+      throw new Error('Feed not found');
+    }
+    return userFeed;
+  }
+
   async update(id: string, userId: string, updateFeedDto: UpdateFeedDto) {
     return await this.db.transaction(async (tx) => {
       const [feed] = await tx

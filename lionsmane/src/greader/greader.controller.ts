@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
+  Logger,
   Post,
   Query,
   Request,
   Res,
+  StreamableFile,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -13,6 +17,7 @@ import { AuthService, Public } from '@thallesp/nestjs-better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request as ExpressRequest, Response } from 'express';
 import { auth } from 'src/auth';
+import { FeedService } from 'src/feed/feed.service';
 import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
@@ -23,7 +28,10 @@ export class GreaderController {
   constructor(
     private greaderService: GreaderService,
     private authService: AuthService<typeof auth>,
+    private feedService: FeedService,
   ) {}
+
+  private readonly logger = new Logger(GreaderController.name);
 
   private async greaderKey(req: ExpressRequest) {
     const key = req.get('Authorization')?.replace('GoogleLogin auth=', '');
@@ -120,7 +128,7 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
-    await this.greaderService.deleteFeed(session.user.id, streamId, tagName);
+    await this.greaderService.deleteFolder(session.user.id, streamId, tagName);
     return res.status(200).type('text').send('OK');
   }
 
@@ -147,9 +155,18 @@ export class GreaderController {
   }
 
   @Get('subscriptions/export')
-  opmlExport(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemeneted';
+  @ApiResponse({ status: 200, description: 'OPML file exported' })
+  async opmlExport(@Request() req: ExpressRequest) {
+    const session = await this.greaderKey(req);
+    try {
+      const buffer = await this.feedService.buildOpml(session.user.id);
+      return new StreamableFile(buffer);
+    } catch (error) {
+      this.logger.error('Error exporting OPML', error);
+      throw new InternalServerErrorException('Error exporting OPML', {
+        cause: error,
+      });
+    }
   }
 
   @Post('api/0/subscription/quickadd')
@@ -158,14 +175,26 @@ export class GreaderController {
     required: true,
     description: 'Url to subscribe to',
   })
-  quickAdd(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
+  async quickAdd(
+    @Query('quickadd') quickadd: string,
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
+    const sub = await this.feedService.create(
+      { url: quickadd, folderId: null },
+      session.user.id,
+    );
+    return {
+      numResults: 1,
+      query: sub.url,
+      streamId: `feed/${sub.url}`,
+    };
   }
 
   @Post('api/0/subscription/edit')
   @ApiQuery({
     name: 'ac',
+    required: true,
     default: 'edit',
     description: 'action',
   })
@@ -189,25 +218,21 @@ export class GreaderController {
     required: false,
     description: 'remove from folder',
   })
-  editFeed(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
-  }
-
-  @Post('api/0/subscription/edit')
-  @ApiQuery({
-    name: 'ac',
-    default: 'unsubscribe',
-    description: 'action',
-  })
-  @ApiQuery({
-    name: 's',
-    required: true,
-    description: 'stream ID (feed/<feed ID>)',
-  })
-  deleteFeed(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
+  async editFeed(
+    @Query('ac') action: string,
+    @Query('s') streamId: string,
+    @Query('a') addFolder: string | undefined,
+    @Query('r') removeFolder: string | undefined,
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
+    return await this.greaderService.editFeed(
+      action,
+      session.user.id,
+      streamId,
+      removeFolder,
+      addFolder,
+    );
   }
 
   @Get('api/0/stream/items/ids')
@@ -217,13 +242,19 @@ export class GreaderController {
     description: 'filter by stream',
   })
   @ApiQuery({
+    name: 'c',
+    required: false,
+    description: 'continuation string (cursor for paging)',
+  })
+  @ApiQuery({
     name: 'xt',
     required: false,
     description: 'exclude items',
   })
   @ApiQuery({
     name: 'n',
-    required: false,
+    required: true,
+    default: 1000,
     description: 'page limit',
   })
   @ApiQuery({
@@ -231,8 +262,14 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  getItemIds(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
+  async getItemIds(
+    @Query('s') streamId: string,
+    @Query('c') continuation: string | undefined,
+    @Query('xt') excludeItems: string | undefined,
+    @Query('n') pageLimit: string | undefined,
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
     return 'not implemented';
   }
 
