@@ -47,7 +47,7 @@ export class GreaderController {
 
   @Get('accounts/ClientLogin')
   @ApiQuery({ name: 'Email', required: true })
-  @ApiQuery({ name: 'Password', required: true })
+  @ApiQuery({ name: 'Passwd', required: true })
   async getTokenGET(
     @Query('Email') email: string,
     @Query('Passwd') password: string,
@@ -112,7 +112,7 @@ export class GreaderController {
       .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
   }
 
-  @Get('api/0/tag/list')
+  @Get('reader/api/0/tag/list')
   @ApiQuery({
     name: 'output',
     default: 'json',
@@ -123,7 +123,7 @@ export class GreaderController {
     return this.greaderService.getTags(session.user.id);
   }
 
-  @Post('api/0/rename-tag')
+  @Post('reader/api/0/rename-tag')
   @ApiQuery({
     name: 's',
     required: false,
@@ -157,7 +157,7 @@ export class GreaderController {
     return res.status(200).type('text').send('OK');
   }
 
-  @Post('api/0/disable-tag')
+  @Post('reader/api/0/disable-tag')
   async deleteFolder(
     @Query('s') streamId: string,
     @Query('t') tagName: string,
@@ -169,7 +169,7 @@ export class GreaderController {
     return res.status(200).type('text').send('OK');
   }
 
-  @Get('api/0/unread-count')
+  @Get('reader/api/0/unread-count')
   @ApiQuery({
     name: 'output',
     default: 'json',
@@ -180,7 +180,7 @@ export class GreaderController {
     return await this.greaderService.unreadCounts(session.user.id);
   }
 
-  @Get('api/0/subscription/list')
+  @Get('reader/api/0/subscription/list')
   @ApiQuery({
     name: 'output',
     default: 'json',
@@ -206,7 +206,7 @@ export class GreaderController {
     }
   }
 
-  @Post('api/0/subscription/quickadd')
+  @Post('reader/api/0/subscription/quickadd')
   @ApiQuery({
     name: 'quickadd',
     required: true,
@@ -228,7 +228,7 @@ export class GreaderController {
     };
   }
 
-  @Post('api/0/subscription/edit')
+  @Post('reader/api/0/subscription/edit')
   @ApiQuery({
     name: 'ac',
     required: true,
@@ -272,7 +272,7 @@ export class GreaderController {
     );
   }
 
-  @Get('api/0/stream/items/ids')
+  @Get('reader/api/0/stream/items/ids')
   @ApiQuery({
     name: 's',
     required: false,
@@ -316,7 +316,7 @@ export class GreaderController {
     );
   }
 
-  @Get('api/0/stream/items/contents')
+  @Get('reader/api/0/stream/items/contents')
   @ApiQuery({
     name: 's',
     required: false,
@@ -354,7 +354,7 @@ export class GreaderController {
     );
   }
 
-  @Post('api/0/mark-all-as-read')
+  @Post('reader/api/0/mark-all-as-read')
   @ApiQuery({
     name: 's',
     required: true,
@@ -370,7 +370,7 @@ export class GreaderController {
     return 'not implemented';
   }
 
-  @Post('api/0/edit-tag')
+  @Post('reader/api/0/edit-tag')
   @ApiQuery({
     name: 'i',
     required: true,
@@ -384,5 +384,26 @@ export class GreaderController {
   editItem(@Request() req: ExpressRequest) {
     const session = this.greaderKey(req);
     return 'not implemented';
+  }
+
+  @Get('/reader/api/0/friend/list')
+  async getFriends(@Request() req: ExpressRequest) {
+    const session = await this.greaderKey(req);
+    return {
+      friends: [
+        {
+          p: '',
+          contactId: '-1',
+          flags: session.user.id,
+          stream: `user/${session.user.id}/state/com.google/broadcast`,
+          hasSharedItemsOnProfile: false,
+          profileIds: [session.user.id],
+          userIds: [session.user.id],
+          givenName: session.user.name || session.user.email || 'User',
+          displayName: session.user.name || session.user.email || 'User',
+          n: '',
+        },
+      ],
+    };
   }
 }

@@ -141,14 +141,14 @@ export class GreaderService {
   async subscriptionList(userId: string) {
     const feeds = await this.feedService.findAll(userId);
 
-    console.log(feeds);
-
     const list = feeds.map(async (feed) => {
       if (feed.folderId) {
         const folder = await this.folderService.findOne(feed.folderId, userId);
         return {
+          id: `feed/${feed.url}`,
           title: feed.title,
           url: feed.url,
+          sortId: 'B0000000',
           htmlUrl: feed.url,
           categories: [
             {
@@ -158,8 +158,10 @@ export class GreaderService {
         };
       } else {
         return {
+          id: `feed/${feed.url}`,
           title: feed.title,
           url: feed.url,
+          sortId: 'B0000000',
           htmlUrl: feed.url,
           categories: [],
         };
