@@ -3,9 +3,11 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, desc, eq, lt, or, sql } from 'drizzle-orm';
+import { getTime } from 'date-fns';
+import { and, asc, count, desc, eq, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
@@ -19,6 +21,8 @@ export class GreaderService {
     private folderService: FolderService,
     private feedService: FeedService,
   ) {}
+
+  private readonly logger = new Logger(GreaderService.name);
 
   async getTags(userId: string) {
     const folders = await this.folderService.findAll(userId);
@@ -142,6 +146,13 @@ export class GreaderService {
     const feeds = await this.feedService.findAll(userId);
 
     const list = feeds.map(async (feed) => {
+      const [firstItem] = await this.db
+        .select({ published: schema.articles.published })
+        .from(schema.articles)
+        .where(and(eq(schema.articles.feedId, feed.id)))
+        .orderBy(asc(schema.articles.published))
+        .limit(1);
+      const timestamp = getTime(firstItem.published) * 1000;
       if (feed.folderId) {
         const folder = await this.folderService.findOne(feed.folderId, userId);
         return {
@@ -150,6 +161,7 @@ export class GreaderService {
           url: feed.url,
           sortId: 'B0000000',
           htmlUrl: feed.url,
+          firstitemmsec: timestamp,
           categories: [
             {
               id: `user/-/label/${folder.name}`,
@@ -163,6 +175,7 @@ export class GreaderService {
           url: feed.url,
           sortId: 'B0000000',
           htmlUrl: feed.url,
+          firstitemmsec: timestamp,
           categories: [],
         };
       }
@@ -231,6 +244,78 @@ export class GreaderService {
         ),
       )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+    if (xt === 'user/-/state/com.google/read') {
+      let cursorDate: string | undefined;
+      let cursorId: string | undefined;
+      if (continuation) {
+        const { published, id } = parseCursor(continuation);
+        cursorDate = published;
+        cursorId = id;
+      } else {
+        cursorDate = undefined;
+        cursorId = undefined;
+      }
+      const query = baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .where(
+          and(
+            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            cursorDate && cursorId
+              ? or(
+                  lt(schema.articles.published, cursorDate),
+                  and(
+                    eq(schema.articles.published, cursorDate),
+                    lt(schema.articles.id, cursorId),
+                  ),
+                )
+              : undefined,
+          ),
+        );
+      const articles = await query
+        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .limit(pageLimit + 1);
+
+      const hasNextPage = articles.length > pageLimit;
+      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
+      const returnBody = items.map(async (i) => {
+        if (i.folderId) {
+          const [folder] = await this.db
+            .select({ name: schema.folders.name })
+            .from(schema.folders)
+            .where(
+              and(
+                eq(schema.folders.userId, userId),
+                eq(schema.folders.id, i.folderId),
+              ),
+            );
+          return {
+            id: i.id,
+            directStreamIds: [`user/-/label/${folder.name}`],
+          };
+        } else {
+          return {
+            id: i.id,
+          };
+        }
+      });
+      const returnIds = await Promise.all(returnBody);
+      return {
+        items: [],
+        itemRefs: returnIds,
+        continuation: hasNextPage
+          ? createCursor(
+              items[items.length - 1].published,
+              items[items.length - 1].id,
+            )
+          : null,
+      };
+    }
     if (streamId === 'user/-/state/com.google/read') {
       let cursorDate: string | undefined;
       let cursorId: string | undefined;
@@ -800,6 +885,67 @@ export class GreaderService {
             )
           : null,
       };
+    }
+  }
+
+  async getItemCounts(userId: string, streamId: string) {
+    const baseQuery = this.db
+      .select({
+        count: count(),
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+    if (streamId === `user/-/state/com.google/read`) {
+      const [result] = await baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .where(eq(schema.userArticleStates.isRead, true));
+      return result.count;
+    } else if (streamId === `user/-/state/com.google/unread`) {
+      const [result] = await baseQuery
+        .leftJoin(
+          schema.userArticleStates,
+          and(
+            eq(schema.userArticleStates.articleId, schema.articles.id),
+            eq(schema.userArticleStates.userId, userId),
+          ),
+        )
+        .where(
+          sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+        );
+
+      return result.count;
+    } else if (streamId && streamId.startsWith('feed/')) {
+      const feedStream = streamId.split('feed/').pop();
+
+      if (!feedStream) {
+        throw new BadRequestException('Bad stream id');
+      }
+      const feed = await this.feedService.findByUrl(feedStream, userId);
+
+      if (!feed) {
+        throw new BadRequestException('Bad stream id');
+      }
+
+      const [result] = await baseQuery.where(
+        eq(schema.articles.feedId, feed.id),
+      );
+
+      return result.count;
+    } else {
+      throw new BadRequestException('Invalid stream ID');
     }
   }
 }

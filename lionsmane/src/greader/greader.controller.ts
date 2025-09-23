@@ -354,6 +354,24 @@ export class GreaderController {
     );
   }
 
+  @Get('reader/api/0/stream/items/count')
+  @ApiQuery({
+    name: 's',
+    required: false,
+    description: 'filter by stream',
+  })
+  async getItemCount(
+    @Query('s') streamId: string,
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const session = await this.greaderKey(req);
+    const count = await this.greaderService.getItemCounts(
+      session.user.id,
+      streamId,
+    );
+    return res.status(200).type('text').send(count.toString());
+  }
   @Post('reader/api/0/mark-all-as-read')
   @ApiQuery({
     name: 's',
