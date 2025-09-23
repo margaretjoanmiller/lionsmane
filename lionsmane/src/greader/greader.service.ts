@@ -6,7 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { getTime } from 'date-fns';
+import { getTime, getUnixTime } from 'date-fns';
 import { and, asc, count, desc, eq, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
@@ -469,11 +469,13 @@ export class GreaderService {
         cursorDate = undefined;
         cursorId = undefined;
       }
-      const feed = streamId.split('/').pop();
+      const feedStream = streamId.split('/').pop();
 
-      if (!feed) {
+      if (!feedStream) {
         throw new BadRequestException('Bad stream id');
       }
+
+      const feed = await this.feedService.findByUrl(feedStream, userId);
 
       const articles = await baseQuery
         .where(
@@ -487,7 +489,7 @@ export class GreaderService {
                   ),
                 )
               : undefined,
-            eq(schema.articles.feedId, feed),
+            eq(schema.articles.feedId, feed.id),
           ),
         ) // if cursor is provided, get rows after it
         .orderBy(desc(schema.articles.published), desc(schema.articles.id))
@@ -597,12 +599,15 @@ export class GreaderService {
     streamId: string,
     pageLimit: number,
     continuation: string | undefined,
-    xt: string | undefined,
   ) {
+    this.logger.log(`Fetching contents for streamId: ${streamId}`);
     const baseQuery = this.db
       .select({
         id: schema.articles.id,
-        content: schema.articles.fullArticleText,
+        authors: schema.articles.authors,
+        title: schema.articles.title,
+        description: schema.articles.description,
+        content: schema.articles.readableText,
         published: schema.articles.published,
         folderId: schema.subscriptions.folderId,
       })
@@ -667,17 +672,58 @@ export class GreaderService {
             );
           return {
             id: i.id,
+            author: i.authors[0].name,
+            title: i.title,
+            published: getUnixTime(i.published),
+            origin: {
+              streamId,
+              title: '',
+              htmlUrl: '',
+            },
+            crawlTimeMsec: getTime(i.published).toString(),
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
           return {
             id: i.id,
+            author: i.authors[0].name,
+            title: i.title,
+            published: getUnixTime(i.published),
+            origin: {
+              streamId,
+              title: '',
+              htmlUrl: '',
+            },
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            crawlTimeMsec: getTime(i.published).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
           };
         }
       });
       const returnAbles = await Promise.all(returnBody);
       return {
-        item: returnAbles,
+        id: streamId,
+        title: 'All Read',
+        self: {
+          href: `/reader/api/0/stream/contents/${streamId}`,
+        },
+        items: returnAbles,
         continuation: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -737,16 +783,57 @@ export class GreaderService {
             );
           return {
             id: i.id,
+            author: i.authors[0].name,
+            title: i.title,
+            origin: {
+              streamId,
+              title: '',
+              htmlUrl: '',
+            },
+            published: getTime(i.published) * 1000,
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            crawlTimeMsec: getTime(i.published).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
           return {
             id: i.id,
+            author: i.authors[0].name,
+            title: i.title,
+            published: getTime(i.published) * 1000,
+            origin: {
+              streamId,
+              title: '',
+              htmlUrl: '',
+            },
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            crawlTimeMsec: getTime(i.published).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
           };
         }
       });
       const returnAbles = await Promise.all(returnBody);
       return {
+        id: 'user/-/state/com.google/unread',
+        title: 'All Unread',
+        self: {
+          href: `/reader/api/0/stream/contents/${streamId}`,
+        },
         items: returnAbles,
         continuation: hasNextPage
           ? createCursor(
@@ -755,7 +842,7 @@ export class GreaderService {
             )
           : null,
       };
-    } else if (streamId && streamId.startsWith('feed/')) {
+    } else if (typeof streamId === 'string' && streamId.startsWith('feed/')) {
       let cursorDate: string | undefined;
       let cursorId: string | undefined;
       if (continuation) {
@@ -766,10 +853,16 @@ export class GreaderService {
         cursorDate = undefined;
         cursorId = undefined;
       }
-      const feed = streamId.split('/').pop();
+      const feedStream = streamId.split('feed/').pop();
 
-      if (!feed) {
+      if (!feedStream) {
         throw new BadRequestException('Bad stream id');
+      }
+
+      const feed = await this.feedService.findByUrl(feedStream, userId);
+      if (!feed) {
+        this.logger.error(`Feed not found for streamId: ${streamId}`);
+        throw new NotFoundException('Feed not found');
       }
 
       const articles = await baseQuery
@@ -784,7 +877,7 @@ export class GreaderService {
                   ),
                 )
               : undefined,
-            eq(schema.articles.feedId, feed),
+            eq(schema.articles.feedId, feed.id),
           ),
         ) // if cursor is provided, get rows after it
         .orderBy(desc(schema.articles.published), desc(schema.articles.id))
@@ -805,17 +898,64 @@ export class GreaderService {
             );
           return {
             id: i.id,
+            author: i.authors[0]?.name,
+            title: i.title,
+            published: getUnixTime(i.published),
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            crawlTimeMsec: getTime(i.published).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            origin: {
+              streamId,
+              title: feed.title,
+              htmlUrl: feed.url,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
           return {
             id: i.id,
+            author: i.authors[0].name,
+            title: i.title,
+            published: getUnixTime(i.published),
+            origin: {
+              streamId,
+              title: feed.title,
+              htmlUrl: feed.url,
+            },
+            timestampUsec: (getTime(i.published) * 1000).toString(),
+            crawlTimeMsec: getTime(i.published).toString(),
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
+            summary: {
+              direction: 'ltr',
+              content: i.description || '',
+            },
           };
         }
       });
       const returnAbles = await Promise.all(returnBody);
       return {
-        item: returnAbles,
+        direction: 'ltr',
+        self: {
+          href: `/reader/api/0/stream/contents/${streamId}`,
+        },
+        title: feed.title,
+        id: streamId,
+        items: returnAbles,
+        origin: {
+          streamId,
+          title: feed.title,
+          htmlUrl: feed.url,
+        },
         continuation: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -824,67 +964,7 @@ export class GreaderService {
           : null,
       };
     } else {
-      let cursorDate: string | undefined;
-      let cursorId: string | undefined;
-      if (continuation) {
-        const { published, id } = parseCursor(continuation);
-        cursorDate = published;
-        cursorId = id;
-      } else {
-        cursorDate = undefined;
-        cursorId = undefined;
-      }
-      const query = baseQuery.where(
-        and(
-          cursorDate && cursorId
-            ? or(
-                lt(schema.articles.published, cursorDate),
-                and(
-                  eq(schema.articles.published, cursorDate),
-                  lt(schema.articles.id, cursorId),
-                ),
-              )
-            : undefined,
-        ),
-      );
-      const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
-        .limit(pageLimit + 1);
-
-      const hasNextPage = articles.length > pageLimit;
-      const items = hasNextPage ? articles.slice(0, pageLimit) : articles;
-      const returnBody = items.map(async (i) => {
-        if (i.folderId) {
-          const [folder] = await this.db
-            .select({ name: schema.folders.name })
-            .from(schema.folders)
-            .where(
-              and(
-                eq(schema.folders.userId, userId),
-                eq(schema.folders.id, i.folderId),
-              ),
-            );
-          return {
-            id: i.id,
-            directStreamIds: [`user/-/label/${folder.name}`],
-          };
-        } else {
-          return {
-            id: i.id,
-          };
-        }
-      });
-      const returnIds = await Promise.all(returnBody);
-      return {
-        items: [],
-        itemRefs: returnIds,
-        continuation: hasNextPage
-          ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
-            )
-          : null,
-      };
+      throw new BadRequestException('Invalid stream ID');
     }
   }
 

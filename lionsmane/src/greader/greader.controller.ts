@@ -5,6 +5,7 @@ import {
   Get,
   InternalServerErrorException,
   Logger,
+  Param,
   Post,
   Query,
   Request,
@@ -16,8 +17,10 @@ import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService, Public } from '@thallesp/nestjs-better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request as ExpressRequest, Response } from 'express';
+import { ZodResponse } from 'nestjs-zod';
 import { auth } from 'src/auth';
 import { FeedService } from 'src/feed/feed.service';
+import { ItemListDto } from './dto/items.dto';
 import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
@@ -316,44 +319,6 @@ export class GreaderController {
     );
   }
 
-  @Get('reader/api/0/stream/items/contents')
-  @ApiQuery({
-    name: 's',
-    required: false,
-    description: 'filter by stream',
-  })
-  @ApiQuery({
-    name: 'xt',
-    required: false,
-    description: 'exclude items',
-  })
-  @ApiQuery({
-    name: 'n',
-    required: false,
-    description: 'page limit',
-  })
-  @ApiQuery({
-    name: 'output',
-    default: 'json',
-    description: 'output format (json only for now)',
-  })
-  async getItemContents(
-    @Query('s') streamId: string,
-    @Query('c') continuation: string | undefined,
-    @Query('xt') excludeItems: string | undefined,
-    @Query('n') pageLimit: number,
-    @Request() req: ExpressRequest,
-  ) {
-    const session = await this.greaderKey(req);
-    return await this.greaderService.getItemContents(
-      session.user.id,
-      streamId,
-      pageLimit,
-      continuation,
-      excludeItems,
-    );
-  }
-
   @Get('reader/api/0/stream/items/count')
   @ApiQuery({
     name: 's',
@@ -423,5 +388,39 @@ export class GreaderController {
         },
       ],
     };
+  }
+
+  @Get('reader/api/0/stream/contents/*streamId')
+  @ApiQuery({
+    name: 'n',
+    required: false,
+    default: 20,
+    description: 'page limit',
+  })
+  @ApiQuery({
+    name: 'c',
+    required: false,
+    description: 'continuation string (cursor for paging)',
+  })
+  @ApiQuery({
+    name: 'output',
+    required: false,
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
+  @ZodResponse({ type: ItemListDto, description: 'List of items', status: 200 })
+  async getItemContents(
+    @Param('streamId') streamId: string[],
+    @Query('c') continuation: string | undefined,
+    @Query('n') pageLimit: number,
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
+    return await this.greaderService.getItemContents(
+      session.user.id,
+      streamId.join('/'),
+      pageLimit,
+      continuation,
+    );
   }
 }
