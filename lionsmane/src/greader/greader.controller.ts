@@ -69,6 +69,8 @@ export class GreaderController {
     const key = await this.authService.api.createApiKey({
       body: {
         userId: session.user.id,
+        rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+        rateLimitMax: 200, // 200 requests per day
       },
       headers: fromNodeHeaders(req.headers),
     });
@@ -99,6 +101,8 @@ export class GreaderController {
     const key = await this.authService.api.createApiKey({
       body: {
         userId: session.user.id,
+        rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+        rateLimitMax: 200, // 200 requests per day
       },
       headers: fromNodeHeaders(req.headers),
     });
