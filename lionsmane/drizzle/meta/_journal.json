@@ -29,6 +29,13 @@
       "when": 1758403475098,
       "tag": "0003_bumpy_catseye",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1758667026486,
+      "tag": "0004_fancy_electro",
+      "breakpoints": true
     }
   ]
 }

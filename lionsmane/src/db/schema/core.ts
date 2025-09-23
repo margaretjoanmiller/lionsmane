@@ -130,6 +130,7 @@ export const articles = pgTable(
     index('articles_feed_idx').on(table.feedId),
     index('articles_published_idx').on(table.published),
     index('articles_search_idx').using('pgroonga', table.readableText),
+    unique('articles_feed_id_url_unique').on(table.feedId, table.url),
   ],
 );
 

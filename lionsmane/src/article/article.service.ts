@@ -8,7 +8,6 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { createCursor, parseCursor } from 'src/utils/paging';
-import z from 'zod';
 import { schema } from '../db/schema';
 import { NewArticle } from './article';
 
@@ -39,7 +38,13 @@ export class ArticleService {
 
   async newArticle(newArt: NewArticle) {
     try {
-      return await this.db.insert(schema.articles).values(newArt).returning();
+      return await this.db
+        .insert(schema.articles)
+        .values(newArt)
+        .onConflictDoNothing({
+          target: [schema.articles.feedId, schema.articles.url],
+        })
+        .returning();
     } catch (error) {
       console.error('Error inserting article:', error);
       throw Error('Could not insert article', { cause: error });
