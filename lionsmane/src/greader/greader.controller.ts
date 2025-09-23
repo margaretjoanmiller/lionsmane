@@ -45,16 +45,49 @@ export class GreaderController {
     });
   }
 
+  @Get('accounts/ClientLogin')
+  @ApiQuery({ name: 'Email', required: true })
+  @ApiQuery({ name: 'Password', required: true })
+  async getTokenGET(
+    @Query('Email') email: string,
+    @Query('Passwd') password: string,
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const session = await this.authService.api.signInEmail({
+      body: {
+        email: email,
+        password: password,
+      },
+      headers: fromNodeHeaders(req.headers),
+    });
+
+    if (!session) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const key = await this.authService.api.createApiKey({
+      body: {
+        userId: session.user.id,
+      },
+      headers: fromNodeHeaders(req.headers),
+    });
+    return res
+      .status(200)
+      .type('text')
+      .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
+  }
+
   @Post('accounts/ClientLogin')
-  async getToken(
+  async getTokenPost(
     @Body() login: LoginApiDto,
     @Request() req: ExpressRequest,
     @Res() res: Response,
   ) {
     const session = await this.authService.api.signInEmail({
       body: {
-        email: login.email,
-        password: login.password,
+        email: login.Email,
+        password: login.Passwd,
       },
       headers: fromNodeHeaders(req.headers),
     });
@@ -149,7 +182,7 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  async subscriptionList(@Request() req: ExpressRequest) {
+  async subscriptionListOld(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
     return await this.greaderService.subscriptionList(session.user.id);
   }
@@ -270,7 +303,13 @@ export class GreaderController {
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
-    return await this.greaderService.getItemIds(session.user.id, streamId, pageLimit, continuation, excludeItems);
+    return await this.greaderService.getItemIds(
+      session.user.id,
+      streamId,
+      pageLimit,
+      continuation,
+      excludeItems,
+    );
   }
 
   @Get('api/0/stream/items/contents')
@@ -294,9 +333,21 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
-  getItemContents(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
+  async getItemContents(
+    @Query('s') streamId: string,
+    @Query('c') continuation: string | undefined,
+    @Query('xt') excludeItems: string | undefined,
+    @Query('n') pageLimit: number,
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
+    return await this.greaderService.getItemContents(
+      session.user.id,
+      streamId,
+      pageLimit,
+      continuation,
+      excludeItems,
+    );
   }
 
   @Post('api/0/mark-all-as-read')
