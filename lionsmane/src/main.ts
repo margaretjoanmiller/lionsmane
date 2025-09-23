@@ -1,3 +1,4 @@
+import { ConsoleLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
@@ -14,6 +15,9 @@ async function bootstrap() {
       origin: process.env.CORS_ORIGIN?.split(',') || '*',
       credentials: true,
     },
+    logger: new ConsoleLogger({
+      json: process.env.NODE_ENV === 'production',
+    }),
   });
   app.use(
     helmet({
