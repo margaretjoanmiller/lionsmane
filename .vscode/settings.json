@@ -27,5 +27,8 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "ms-ossdata.vscode-pgsql"
   }
 }

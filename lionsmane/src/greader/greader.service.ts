@@ -7,8 +7,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { getTime, getUnixTime } from 'date-fns';
-import { and, asc, count, desc, eq, lt, or, sql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, lt, or, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -20,6 +21,7 @@ export class GreaderService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private folderService: FolderService,
     private feedService: FeedService,
+    private articleService: ArticleService,
   ) {}
 
   private readonly logger = new Logger(GreaderService.name);
@@ -185,6 +187,134 @@ export class GreaderService {
       subscriptions,
     };
   }
+
+  async editTag(
+    userId: string,
+    itemId: string,
+    add: string | undefined,
+    remove: string | undefined,
+  ) {
+    if (add === 'user/-/state/com.google/read') {
+      const feed = await this.articleService.updateArticleStatus(
+        itemId,
+        'read',
+        userId,
+      );
+      if (!feed) {
+        throw new NotFoundException('Article not found');
+      }
+    } else if (
+      remove === 'user/-/state/com.google/read' ||
+      add === 'user/-/state/com.google/unread'
+    ) {
+      const feed = await this.articleService.updateArticleStatus(
+        itemId,
+        'unread',
+        userId,
+      );
+      if (!feed) {
+        throw new NotFoundException('Article not found');
+      }
+    } else if (add === 'user/-/state/com.google/starred') {
+      const feed = await this.articleService.updateArticleStatus(
+        itemId,
+        'starred',
+        userId,
+      );
+      if (!feed) {
+        throw new NotFoundException('Article not found');
+      }
+    } else {
+      throw new BadRequestException('Unsupported tag operation');
+    }
+  }
+
+  async markAllRead(
+    userId: string,
+    streamId: string,
+    timestamp: number | undefined,
+  ) {
+    if (streamId.startsWith('user/-/label')) {
+      const tagName = streamId.split('user/-/label/').pop();
+      if (!tagName) {
+        throw new BadRequestException('Invalid stream id');
+      }
+      const folder = await this.folderService.findByName(tagName, userId);
+      try {
+        const query = this.db
+          .select({ id: schema.articles.id })
+          .from(schema.articles);
+        await this.db
+          .update(schema.userArticleStates)
+          .set({
+            isRead: true,
+          })
+          .from(schema.subscriptions)
+          .innerJoin(
+            schema.subscriptions,
+            eq(schema.subscriptions.userId, userId),
+          )
+          .where(eq(schema.subscriptions.folderId, folder.id));
+      } catch (error) {
+        this.logger.error(error);
+        throw new InternalServerErrorException('Failed to mark all as read', {
+          cause: error,
+        });
+      }
+    } else if (streamId.startsWith('feed/')) {
+      const feedName = streamId.split('feed/').pop();
+      if (!feedName) {
+        throw new BadRequestException('Invalid stream id');
+      }
+      const feed = await this.feedService.findByUrl(feedName, userId);
+      if (!feed) {
+        throw new NotFoundException('Feed not found');
+      }
+      try {
+        // Get all articles for this feed that the user has subscribed to
+        const articles = await this.db
+          .select({ id: schema.articles.id })
+          .from(schema.articles)
+          .innerJoin(
+            schema.subscriptions,
+            and(
+              eq(schema.articles.feedId, schema.subscriptions.feedId),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .where(eq(schema.articles.feedId, feed.id));
+
+        if (articles.length > 0) {
+          // Prepare values for batch upsert
+          const values = articles.map((article) => ({
+            userId,
+            articleId: article.id,
+            isRead: true,
+          }));
+
+          // Use upsert to handle both existing and non-existing state records
+          await this.db
+            .insert(schema.userArticleStates)
+            .values(values)
+            .onConflictDoUpdate({
+              target: [
+                schema.userArticleStates.userId,
+                schema.userArticleStates.articleId,
+              ],
+              set: {
+                isRead: true,
+              },
+            });
+        }
+      } catch (error) {
+        this.logger.error(error);
+        throw new InternalServerErrorException('Failed to mark all as read', {
+          cause: error,
+        });
+      }
+    }
+  }
+
   async editFeed(
     action: string,
     userId: string,
@@ -600,7 +730,6 @@ export class GreaderService {
     pageLimit: number,
     continuation: string | undefined,
   ) {
-    this.logger.log(`Fetching contents for streamId: ${streamId}`);
     const baseQuery = this.db
       .select({
         id: schema.articles.id,

@@ -1,6 +1,17 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
+export const editTag = z.object({
+  i: z.string(), // item id
+  a: z.string().optional(), // add tag
+  r: z.string().optional(), // remove tag
+});
+
+export const markRead = z.object({
+  s: z.string(), // stream id
+  ts: z.number().optional(), // timestamp
+});
+
 export const itemList = z.object({
   direction: z.string().default('ltr'),
   id: z.string(),
@@ -44,3 +55,5 @@ export const itemList = z.object({
 });
 
 export class ItemListDto extends createZodDto(itemList) {}
+export class EditTagDto extends createZodDto(editTag) {}
+export class MarkReadDto extends createZodDto(markRead) {}

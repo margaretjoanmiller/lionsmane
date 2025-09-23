@@ -20,7 +20,7 @@ import type { Request as ExpressRequest, Response } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import { auth } from 'src/auth';
 import { FeedService } from 'src/feed/feed.service';
-import { ItemListDto } from './dto/items.dto';
+import { EditTagDto, ItemListDto, MarkReadDto } from './dto/items.dto';
 import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
@@ -337,36 +337,32 @@ export class GreaderController {
     );
     return res.status(200).type('text').send(count.toString());
   }
+
   @Post('reader/api/0/mark-all-as-read')
-  @ApiQuery({
-    name: 's',
-    required: true,
-    description: 'filter by stream',
-  })
-  @ApiQuery({
-    name: 'ts',
-    required: false,
-    description: 'older than timestamp in nanoseconds',
-  })
-  markRead(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
+  async markRead(
+    @Request() req: ExpressRequest,
+    @Body() body: MarkReadDto,
+    @Res() res: Response,
+  ) {
+    const session = await this.greaderKey(req);
+    await this.greaderService.markAllRead(session.user.id, body.s, body.ts);
+    return res.status(200).type('text').send('OK');
   }
 
   @Post('reader/api/0/edit-tag')
-  @ApiQuery({
-    name: 'i',
-    required: true,
-    description: 'item ids',
-  })
-  @ApiQuery({
-    name: 'a',
-    required: true,
-    description: 'action or state to apply',
-  })
-  editItem(@Request() req: ExpressRequest) {
-    const session = this.greaderKey(req);
-    return 'not implemented';
+  async editItem(
+    @Request() req: ExpressRequest,
+    @Body() editTag: EditTagDto,
+    @Res() res: Response,
+  ) {
+    const session = await this.greaderKey(req);
+    await this.greaderService.editTag(
+      session.user.id,
+      editTag.i,
+      editTag.a,
+      editTag.r,
+    );
+    return res.status(200).type('text').send('OK');
   }
 
   @Get('/reader/api/0/friend/list')
