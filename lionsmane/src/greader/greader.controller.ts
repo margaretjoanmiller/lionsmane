@@ -142,6 +142,9 @@ export class GreaderController {
   })
   async listFolders(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return this.greaderService.getTags(session.user.id);
   }
 
@@ -170,6 +173,9 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     await this.greaderService.renameTag(
       session.user.id,
       streamId,
@@ -187,6 +193,9 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     await this.greaderService.deleteFolder(session.user.id, streamId, tagName);
     return res.status(200).type('text').send('OK');
   }
@@ -199,6 +208,9 @@ export class GreaderController {
   })
   async unreadCount(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return await this.greaderService.unreadCounts(session.user.id);
   }
 
@@ -211,6 +223,9 @@ export class GreaderController {
   @ZodResponse({ type: SubscriptionListDto, status: 200 })
   async subscriptionListOld(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return await this.greaderService.subscriptionList(session.user.id);
   }
 
@@ -218,6 +233,9 @@ export class GreaderController {
   @ApiResponse({ status: 200, description: 'OPML file exported' })
   async opmlExport(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     try {
       const buffer = await this.feedService.buildOpml(session.user.id);
       return new StreamableFile(buffer);
@@ -240,6 +258,9 @@ export class GreaderController {
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     const sub = await this.feedService.create(
       { url: quickadd, folderId: null },
       session.user.id,
@@ -286,6 +307,9 @@ export class GreaderController {
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return await this.greaderService.editFeed(
       action,
       session.user.id,
@@ -330,6 +354,9 @@ export class GreaderController {
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return await this.greaderService.getItemIds(
       session.user.id,
       streamId,
@@ -351,6 +378,9 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     const count = await this.greaderService.getItemCounts(
       session.user.id,
       streamId,
@@ -365,6 +395,9 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     await this.greaderService.markAllRead(session.user.id, body.s, body.ts);
     return res.status(200).type('text').send('OK');
   }
@@ -383,6 +416,9 @@ export class GreaderController {
   })
   async getItemsById(@Request() req: ExpressRequest, @Body() body) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     const contentType = req.get('content-type')?.split(';')[0];
     let itemIds: string[];
 
@@ -427,6 +463,9 @@ export class GreaderController {
   ) {
     const session = await this.greaderKey(req);
 
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     const ids = Array.isArray(itemIds) ? itemIds : itemIds ? [itemIds] : [];
     if (ids.length === 0) {
       throw new BadRequestException('At least one item ID must be provided');
@@ -442,6 +481,9 @@ export class GreaderController {
     @Res() res: Response,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     await this.greaderService.editTag(
       session.user.id,
       editTag.i,
@@ -454,6 +496,9 @@ export class GreaderController {
   @Get('/reader/api/0/friend/list')
   async getFriends(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return {
       friends: [
         {
@@ -498,6 +543,9 @@ export class GreaderController {
     @Request() req: ExpressRequest,
   ) {
     const session = await this.greaderKey(req);
+    if (!session) {
+      throw new UnauthorizedException('Not authenticated');
+    }
     return await this.greaderService.getItemContents(
       session.user.id,
       streamId.join('/'),
