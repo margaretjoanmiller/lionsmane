@@ -28,14 +28,14 @@ export class SecretsService {
         return await this.vaultClient.addPolicy({
           name: SecretsService.policyName,
           rules:
-            '{"path": { "secret/data/readlater/*": { "policy": "write" } } }',
+            '{"path": { "secret/data/readlater/*": { "policy": ["create", "read", "update", "delete"] } } }',
         });
       }
     } catch {
       return await this.vaultClient.addPolicy({
         name: SecretsService.policyName,
         rules:
-          '{"path": { "secret/data/readlater/*": { "policy": "write" } } }',
+          '{"path": { "secret/data/readlater/*": { "policy": ["create", "read", "update", "delete"] } } }',
       });
     }
   }
