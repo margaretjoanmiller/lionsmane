@@ -43,11 +43,11 @@ export class SecretsService {
         description: 'Approle auth',
       });
     }
+    await this.upsertPolicy();
     try {
       await this.vaultClient.getApproleRole({
         role_name: SecretsService.roleName,
       });
-      await this.upsertPolicy();
     } catch {
       await this.vaultClient.addApproleRole({
         role_name: SecretsService.roleName,
