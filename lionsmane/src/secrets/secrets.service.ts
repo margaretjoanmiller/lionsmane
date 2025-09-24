@@ -49,6 +49,7 @@ export class SecretsService {
         description: 'Approle auth',
       });
     }
+    this.logger.log('Enabling approle...');
     await this.upsertPolicy();
     try {
       await this.vaultClient.getApproleRole({
@@ -77,12 +78,15 @@ export class SecretsService {
         role_id: roleId,
         secret_id: secretId,
       });
+      if (result.role_id === undefined || result.secret_id) {
+        throw new Error('Error getting role credentials');
+      }
       this.vaultClient.token = result.auth.client_token;
       const secretData = await this.vaultClient.read(secretPath);
       // secretpath is the path in vault where you have stored your secrets
       return secretData.data.data;
     } catch (error) {
-      console.error('Error reading secret from vault:', error);
+      this.logger.error('Error reading secret from vault:', error);
       throw error;
     }
   }
