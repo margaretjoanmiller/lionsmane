@@ -54,6 +54,7 @@ services:
       - VAULT_ADDR=http://vault:8200
       - MY_VAULT_TOKEN=${MY_VAULT_TOKEN:-test}
     volumes:
+      - ./lion-policy.hcl:/openbao/policies/lion-policy.hcl
       - ./vault-root-token:/openbao/file/vault-root-token
       - ./vault-init.sh:/usr/local/bin/vault-init.sh
       - vault-data:/openbao/file/
@@ -67,7 +68,7 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       VAULT_ADDR: http://vault:8200
-      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_TOKEN: ${MY_VAULT_TOKEN}
       REDIS_HOST: valkey
       NODE_ENV: production
       CORS_ORIGIN: "https://lionsmane.wanderingwires.net"
