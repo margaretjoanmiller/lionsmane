@@ -883,7 +883,7 @@ export class GreaderService {
             )
           : null,
       };
-    } else if (streamId === `user/-/state/com.google/unread`) {
+    } else if (streamId === `user/-/state/com.google/starred`) {
       let cursorDate: string | undefined;
       let cursorId: string | undefined;
       if (continuation) {
@@ -904,7 +904,7 @@ export class GreaderService {
         )
         .where(
           and(
-            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            eq(schema.userArticleStates.isStarred, true),
             cursorDate && cursorId
               ? or(
                   lt(schema.articles.published, cursorDate),
@@ -1179,5 +1179,53 @@ export class GreaderService {
     } else {
       throw new BadRequestException('Invalid stream ID');
     }
+  }
+
+  async getItemsById(userId: string, itemIds: string[]) {
+    const articles = await this.db
+      .select({
+        id: schema.articles.id,
+        authors: schema.articles.authors,
+        title: schema.articles.title,
+        description: schema.articles.description,
+        content: schema.articles.readableText,
+        published: schema.articles.published,
+        folderId: schema.subscriptions.folderId,
+        feedUrl: schema.feeds.url,
+        feedTitle: schema.feeds.title,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .where(inArray(schema.articles.id, itemIds));
+
+    const returnBody = articles.map((i) => ({
+      id: i.id,
+      title: i.title,
+      published: getUnixTime(i.published),
+      crawlTimeMsec: getTime(i.published).toString(),
+      timestampUsec: (getTime(i.published) * 1000).toString(),
+      content: {
+        direction: 'ltr',
+        content: i.content,
+      },
+      origin: {
+        streamId: `feed/${i.feedUrl}`,
+        htmlUrl: i.feedUrl.split('/feed')[0],
+        title: i.feedTitle,
+      },
+      summary: {
+        direction: 'ltr',
+        content: i.description || '',
+      },
+    }));
+
+    return { items: returnBody };
   }
 }

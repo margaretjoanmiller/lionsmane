@@ -20,7 +20,16 @@ import type { Request as ExpressRequest, Response } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import { auth } from 'src/auth';
 import { FeedService } from 'src/feed/feed.service';
-import { EditTagDto, ItemListDto, MarkReadDto } from './dto/items.dto';
+import { SubscriptionListDto } from './dto/feeds.dto';
+import {
+  EditTagDto,
+  formItemsSchema,
+  IdItemDto,
+  ItemListDto,
+  ItemListForIdDto,
+  idItem,
+  MarkReadDto,
+} from './dto/items.dto';
 import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
@@ -115,6 +124,15 @@ export class GreaderController {
       .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
   }
 
+  @Get('reader/api/0/token')
+  postToken(@Request() req: ExpressRequest, @Res() res: Response) {
+    const rawToken = req.headers.authorization;
+    return res
+      .status(200)
+      .type('text')
+      .send(rawToken?.split('GoogleLogin auth=').pop());
+  }
+
   @Get('reader/api/0/tag/list')
   @ApiQuery({
     name: 'output',
@@ -189,6 +207,7 @@ export class GreaderController {
     default: 'json',
     description: 'output format (json only for now)',
   })
+  @ZodResponse({ type: SubscriptionListDto, status: 200 })
   async subscriptionListOld(@Request() req: ExpressRequest) {
     const session = await this.greaderKey(req);
     return await this.greaderService.subscriptionList(session.user.id);
@@ -347,6 +366,72 @@ export class GreaderController {
     const session = await this.greaderKey(req);
     await this.greaderService.markAllRead(session.user.id, body.s, body.ts);
     return res.status(200).type('text').send('OK');
+  }
+
+  @Post('reader/api/0/stream/items/contents')
+  @ApiQuery({
+    name: 'output',
+    required: false,
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
+  @ZodResponse({
+    type: ItemListForIdDto,
+    description: 'List of items',
+    status: 200,
+  })
+  async getItemsById(@Request() req: ExpressRequest, @Body() body) {
+    const session = await this.greaderKey(req);
+    const contentType = req.get('content-type')?.split(';')[0];
+    let itemIds: string[];
+
+    if (contentType === 'application/x-www-form-urlencoded') {
+      const parsed = formItemsSchema.safeParse(body);
+      if (!parsed.success) {
+        throw new BadRequestException('Invalid form data structure');
+      }
+      itemIds = parsed.data.i;
+    } else {
+      const parsed = idItem.safeParse ? idItem.safeParse(body) : null;
+      if (!parsed?.success) {
+        throw new BadRequestException('Invalid JSON structure');
+      }
+      itemIds = body.map((i) => i.i);
+    }
+
+    return await this.greaderService.getItemsById(session.user.id, itemIds);
+  }
+  @Get('reader/api/0/stream/items/contents')
+  @ApiQuery({
+    name: 'i',
+    required: true,
+    description: 'Item IDs to fetch',
+    type: [String],
+    example: ['item1', 'item2', 'item3'],
+  })
+  @ApiQuery({
+    name: 'output',
+    required: false,
+    default: 'json',
+    description: 'output format (json only for now)',
+  })
+  @ZodResponse({
+    type: ItemListForIdDto,
+    description: 'List of items',
+    status: 200,
+  })
+  async getItemsByIdGet(
+    @Query('i') itemIds: string | string[],
+    @Request() req: ExpressRequest,
+  ) {
+    const session = await this.greaderKey(req);
+
+    const ids = Array.isArray(itemIds) ? itemIds : itemIds ? [itemIds] : [];
+    if (ids.length === 0) {
+      throw new BadRequestException('At least one item ID must be provided');
+    }
+
+    return await this.greaderService.getItemsById(session.user.id, ids);
   }
 
   @Post('reader/api/0/edit-tag')

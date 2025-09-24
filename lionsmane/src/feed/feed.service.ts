@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -375,6 +376,9 @@ export class FeedService {
 
   async importOpml(userId: string, opml: string) {
     const feeds = await this.opmlService.getFeedsFromOpml(opml);
+    if (!feeds) {
+      throw new BadRequestException('No feeds could be parsed from this opml');
+    }
     await Promise.all(
       feeds.map(async (feed) => {
         await this.feedQueue.add('import', { url: feed.url, userId });
