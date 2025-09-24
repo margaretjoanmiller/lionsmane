@@ -17,29 +17,6 @@ export class SecretsService {
   static roleName = 'lionsmanesecretservice';
   static policyName = 'lionsmanesecretpolicy';
 
-  async upsertPolicy() {
-    try {
-      const policyExists = await this.vaultClient.getPolicy({
-        name: SecretsService.policyName,
-      });
-      if (policyExists) {
-        return policyExists;
-      } else {
-        return await this.vaultClient.addPolicy({
-          name: SecretsService.policyName,
-          rules:
-            '{"path": { "secret/data/readlater/*": { "policy": ["create", "read", "update", "delete"] } } }',
-        });
-      }
-    } catch {
-      return await this.vaultClient.addPolicy({
-        name: SecretsService.policyName,
-        rules:
-          '{"path": { "secret/data/readlater/*": { "policy": ["create", "read", "update", "delete"] } } }',
-      });
-    }
-  }
-
   async getRoleAndSecretId() {
     const auths = await this.vaultClient.auths();
     if (!Object.hasOwn(auths, 'approle/')) {
@@ -55,7 +32,6 @@ export class SecretsService {
         throw new Error('Error enabling approle', { cause: error });
       }
     }
-    await this.upsertPolicy();
     try {
       await this.vaultClient.getApproleRole({
         role_name: SecretsService.roleName,

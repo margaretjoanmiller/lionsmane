@@ -37,6 +37,7 @@ services:
     ports:
       - 8200:8200
     volumes:
+      - ./lion-policy.hcl:/openbao/policies/lion-policy.hcl
       - ./config.hcl:/openbao/config/config.hcl
       - vault-data:/openbao/file/
     environment:

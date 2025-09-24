@@ -31,4 +31,8 @@ else
    create_token
 fi
 
+log_in
+bao secrets enable -path=secret kv-v2
+bao write lionsmanesecretpolicy /openbao/policies/lion-policy.hcl
+
 bao status > /openbao/file/status
