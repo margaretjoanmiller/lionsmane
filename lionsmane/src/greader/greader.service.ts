@@ -839,11 +839,11 @@ export class GreaderService {
             timestampUsec: (getTime(i.published) * 1000).toString(),
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
@@ -862,11 +862,11 @@ export class GreaderService {
             crawlTimeMsec: getTime(i.published).toString(),
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
           };
         }
@@ -951,11 +951,11 @@ export class GreaderService {
             crawlTimeMsec: getTime(i.published).toString(),
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
@@ -974,11 +974,11 @@ export class GreaderService {
             crawlTimeMsec: getTime(i.published).toString(),
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
           };
         }
@@ -1067,18 +1067,18 @@ export class GreaderService {
             },
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
           return {
             id: i.id,
-            author: i.authors[0].name,
+            author: i.authors[0]?.name,
             title: i.title,
             published: getUnixTime(i.published),
             origin: {
@@ -1090,11 +1090,11 @@ export class GreaderService {
             crawlTimeMsec: getTime(i.published).toString(),
             content: {
               direction: 'ltr',
-              content: i.content,
+              content: i.content || '',
             },
             summary: {
               direction: 'ltr',
-              content: i.plainContent,
+              content: i.plainContent || '',
             },
           };
         }
@@ -1220,7 +1220,7 @@ export class GreaderService {
       timestampUsec: (getTime(i.published) * 1000).toString(),
       content: {
         direction: 'ltr',
-        content: i.content,
+        content: i.content || '',
       },
       origin: {
         streamId: `feed/${i.feedUrl}`,
@@ -1229,7 +1229,7 @@ export class GreaderService {
       },
       summary: {
         direction: 'ltr',
-        content: i.plainContent,
+        content: i.plainContent || '',
       },
     }));
 

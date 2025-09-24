@@ -36,12 +36,12 @@ import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
 import { FilterModule } from './filter/filter.module';
 import { FolderModule } from './folder/folder.module';
+import { GreaderModule } from './greader/greader.module';
 import { HealthModule } from './health/health.module';
 import { OpmlModule } from './opml/opml.module';
-import { RedisModule } from './redis/redis.module';
 import { ReadlaterModule } from './readlater/readlater.module';
+import { RedisModule } from './redis/redis.module';
 import { SecretsModule } from './secrets/secrets.module';
-import { GreaderModule } from './greader/greader.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -86,9 +86,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: async () => {
+      useFactory: () => {
         return {
           stores: [createKeyv('redis://localhost:6379')],
+          ttl: 5000,
         };
       },
     }),

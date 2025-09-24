@@ -1,3 +1,4 @@
+import { CacheTTL } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   Body,
@@ -24,7 +25,6 @@ import { SubscriptionListDto } from './dto/feeds.dto';
 import {
   EditTagDto,
   formItemsSchema,
-  IdItemDto,
   ItemListDto,
   ItemListForIdDto,
   idItem,
@@ -33,6 +33,7 @@ import {
 import { LoginApiDto } from './dto/login.dto';
 import { GreaderService } from './greader.service';
 
+@CacheTTL(5000)
 @ApiTags('greader')
 @Public()
 @Controller('greader')

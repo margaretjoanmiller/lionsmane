@@ -41,6 +41,7 @@ export const item = z.object({
     .nullable()
     .default([]),
   summary: z.object({ direction: z.string(), content: z.string() }),
+  content: z.object({ direction: z.string(), content: z.string() }),
   author: z.string().optional().default(''),
   likingUsers: z.array(z.unknown()).nullable().default([]),
   comments: z.array(z.string()).nullable().default([]),
