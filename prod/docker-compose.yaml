@@ -31,20 +31,48 @@ services:
     volumes:
       - valkey:/data
   vault:
-    image: openbao/openbao:2.4
-    volumes:
-      - /openbao/config:/openbao/config
-      - /openbao/file:/openbao/file
+    image: openbao/openbao
+    container_name: vault
+    hostname: vault
     ports:
-      - "8200:8200"
+      - 8200:8200
+    volumes:
+      - ./vault-policy.hcl:/openbao/policy/vault-policy.hcl
+      - ./config.hcl:/openbao/config/config.hcl
+      - vault-data:/openbao/file/
+    environment:
+      - VAULT_ADDR=http://localhost:8200
+    cap_add:
+      - IPC_LOCK
+    command: server
+    restart: always
+
+  vault-init:
+    image: openbao/openbao
+    container_name: vault-init
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - MY_VAULT_TOKEN=${MY_VAULT_TOKEN:-test}
+    volumes:
+      - ./vault-root-token:/openbao/file/vault-root-token
+      - ./vault-init.sh:/usr/local/bin/vault-init.sh
+      - vault-data:/openbao/file/
+    command: /usr/local/bin/vault-init.sh
+    depends_on:
+      - vault
   lionsmane-be:
     build:
-      context: .
+      context: ../.
       target: lionsmane-be
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: ${VAULT_TOKEN}
+      ROLE_ID: ${ROLE_ID}
+      SECRET_ID: ${SECRET_ID}
       REDIS_HOST: valkey
       NODE_ENV: production
+      CORS_ORIGIN: "https://lionsmane.wanderingwires.net"
     ports:
       - "8181:8181"
     depends_on:
@@ -53,17 +81,7 @@ services:
       valkey:
         condition: service_healthy
 
-  lionsmane-fe:
-    build:
-      context: lionsmane-fe
-      target: lionsmane-fe
-    environment:
-      VITE_API_URL: http://lionsmane-be:8181
-      SITE_ADDRESS: http://localhost
-    ports:
-      - "3000:80"
-    restart: unless-stopped
-
 volumes:
   db:
   valkey:
+  vault-data:

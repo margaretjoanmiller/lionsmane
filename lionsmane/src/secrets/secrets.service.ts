@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import vault from 'node-vault';
 
@@ -11,13 +11,62 @@ export class SecretsService {
     this.vaultClient = vault({ endpoint: vaultAddress, token: vaultToken });
   }
 
+  private readonly logger = new Logger(SecretsService.name);
+
+  static mountPoint = 'approle';
+  static roleName = 'lionsmanesecretservice';
+  static policyName = 'lionsmanesecretpolicy';
+
+  async upsertPolicy() {
+    try {
+      const policyExists = await this.vaultClient.getPolicy({
+        name: SecretsService.policyName,
+      });
+      if (policyExists) {
+        return policyExists;
+      }
+    } catch {
+      return await this.vaultClient.addPolicy({
+        name: SecretsService.policyName,
+        rules:
+          '{"path": { "secret/data/readlater/*": { "policy": "write" } } }',
+      });
+    }
+  }
+
+  async getRoleAndSecretId() {
+    const auths = await this.vaultClient.auths();
+    if (!Object.hasOwn(auths, 'approle/')) {
+      await this.vaultClient.enableAuth({
+        mount_point: SecretsService.mountPoint,
+        type: 'approle',
+        description: 'Approle auth',
+      });
+    }
+    try {
+      await this.vaultClient.getApproleRole({
+        role_name: SecretsService.roleName,
+      });
+      await this.upsertPolicy();
+    } catch {
+      await this.vaultClient.addApproleRole({
+        role_name: SecretsService.roleName,
+        policies: `default, ${SecretsService.policyName}`,
+      });
+    }
+    const roleId = await this.vaultClient.getApproleRoleId({
+      role_name: SecretsService.roleName,
+    });
+    const secretId = await this.vaultClient.getApproleRoleSecret({
+      role_name: SecretsService.roleName,
+    });
+    return { roleId: roleId.data.role_id, secretId: secretId.data.secret_id };
+  }
   async readSecret(
     secretPath: string,
   ): Promise<{ apiKey: string; apiUrl: string }> {
     try {
-      const roleId = this.config.getOrThrow<string>('ROLE_ID');
-      const secretId = this.config.getOrThrow<string>('SECRET_ID');
-
+      const { roleId, secretId } = await this.getRoleAndSecretId();
       const result = await this.vaultClient.approleLogin({
         role_id: roleId,
         secret_id: secretId,
@@ -36,9 +85,7 @@ export class SecretsService {
     secretPath: string,
     secretData: { apiUrl: string; apiKey: string },
   ): Promise<void> {
-    const roleId = this.config.getOrThrow<string>('ROLE_ID');
-    const secretId = this.config.getOrThrow<string>('SECRET_ID');
-
+    const { roleId, secretId } = await this.getRoleAndSecretId();
     const result = await this.vaultClient.approleLogin({
       role_id: roleId,
       secret_id: secretId,
