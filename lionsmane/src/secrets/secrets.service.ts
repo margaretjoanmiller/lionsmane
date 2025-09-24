@@ -24,6 +24,12 @@ export class SecretsService {
       });
       if (policyExists) {
         return policyExists;
+      } else {
+        return await this.vaultClient.addPolicy({
+          name: SecretsService.policyName,
+          rules:
+            '{"path": { "secret/data/readlater/*": { "policy": "write" } } }',
+        });
       }
     } catch {
       return await this.vaultClient.addPolicy({

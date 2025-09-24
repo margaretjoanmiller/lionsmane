@@ -68,8 +68,6 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       VAULT_ADDR: http://vault:8200
       VAULT_TOKEN: ${VAULT_TOKEN}
-      ROLE_ID: ${ROLE_ID}
-      SECRET_ID: ${SECRET_ID}
       REDIS_HOST: valkey
       NODE_ENV: production
       CORS_ORIGIN: "https://lionsmane.wanderingwires.net"
