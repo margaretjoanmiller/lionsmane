@@ -161,6 +161,7 @@ export class GreaderService {
           id: `feed/${feed.url}`,
           title: feed.title,
           url: feed.url,
+          iconUrl: '',
           sortId: 'B0000000',
           htmlUrl: feed.url,
           firstitemmsec: timestamp,
@@ -175,6 +176,7 @@ export class GreaderService {
           id: `feed/${feed.url}`,
           title: feed.title,
           url: feed.url,
+          iconUrl: '',
           sortId: 'B0000000',
           htmlUrl: feed.url,
           firstitemmsec: timestamp,
@@ -448,7 +450,7 @@ export class GreaderService {
               ),
             );
           return {
-            id: i.id,
+            id: `tag:google.com,2005:reader/item/${Buffer.from(i.id).toString('hex')}`,
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
@@ -520,7 +522,7 @@ export class GreaderService {
               ),
             );
           return {
-            id: i.id,
+            id: `tag:google.com,2005:reader/item/${Buffer.from(i.id).toString('hex')}`,
             directStreamIds: [`user/-/label/${folder.name}`],
           };
         } else {
@@ -759,7 +761,8 @@ export class GreaderService {
         authors: schema.articles.authors,
         title: schema.articles.title,
         description: schema.articles.description,
-        content: schema.articles.readableText,
+        plainContent: schema.articles.readableText,
+        content: schema.articles.readableHtml,
         published: schema.articles.published,
         folderId: schema.subscriptions.folderId,
       })
@@ -840,7 +843,7 @@ export class GreaderService {
             },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
@@ -863,7 +866,7 @@ export class GreaderService {
             },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
           };
         }
@@ -871,6 +874,7 @@ export class GreaderService {
       const returnAbles = await Promise.all(returnBody);
       return {
         id: streamId,
+        updated: getUnixTime(new Date()),
         title: 'All Read',
         self: {
           href: `/reader/api/0/stream/contents/${streamId}`,
@@ -951,7 +955,7 @@ export class GreaderService {
             },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
@@ -974,7 +978,7 @@ export class GreaderService {
             },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
           };
         }
@@ -982,6 +986,7 @@ export class GreaderService {
       const returnAbles = await Promise.all(returnBody);
       return {
         id: 'user/-/state/com.google/unread',
+        updated: getUnixTime(new Date()),
         title: 'All Unread',
         self: {
           href: `/reader/api/0/stream/contents/${streamId}`,
@@ -1055,18 +1060,18 @@ export class GreaderService {
             published: getUnixTime(i.published),
             timestampUsec: (getTime(i.published) * 1000).toString(),
             crawlTimeMsec: getTime(i.published).toString(),
-            content: {
-              direction: 'ltr',
-              content: i.content,
-            },
             origin: {
               streamId,
               title: feed.title,
               htmlUrl: feed.url,
             },
+            content: {
+              direction: 'ltr',
+              content: i.content,
+            },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
             directStreamIds: [`user/-/label/${folder.name}`],
           };
@@ -1089,7 +1094,7 @@ export class GreaderService {
             },
             summary: {
               direction: 'ltr',
-              content: i.description || '',
+              content: i.plainContent,
             },
           };
         }
@@ -1102,6 +1107,7 @@ export class GreaderService {
         },
         title: feed.title,
         id: streamId,
+        updated: getUnixTime(new Date()),
         items: returnAbles,
         origin: {
           streamId,
@@ -1188,7 +1194,8 @@ export class GreaderService {
         authors: schema.articles.authors,
         title: schema.articles.title,
         description: schema.articles.description,
-        content: schema.articles.readableText,
+        content: schema.articles.readableHtml,
+        plainContent: schema.articles.readableText,
         published: schema.articles.published,
         folderId: schema.subscriptions.folderId,
         feedUrl: schema.feeds.url,
@@ -1222,7 +1229,7 @@ export class GreaderService {
       },
       summary: {
         direction: 'ltr',
-        content: i.description || '',
+        content: i.plainContent,
       },
     }));
 

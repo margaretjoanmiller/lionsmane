@@ -55,6 +55,7 @@ export const item = z.object({
 export const itemList = z.object({
   direction: z.string().default('ltr'),
   id: z.string(),
+  updated: z.number(),
   title: z.string(),
   description: z.string().nullable().default(''),
   self: z.object({ href: z.string() }).nullable(),
