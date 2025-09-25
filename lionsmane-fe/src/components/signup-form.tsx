@@ -16,12 +16,18 @@ import {
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
 
-const formSchema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.email(),
-  password: z.string().min(8),
-  image: z.url().optional(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(2).max(100),
+    email: z.email(),
+    password: z.string().min(8),
+    confirm: z.string().min(8),
+    image: z.url().optional(),
+  })
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords don't match",
+    path: ['confirm'],
+  });
 
 export function SignupForm() {
   const navigate = useNavigate({ from: '/signup' });
@@ -109,6 +115,20 @@ export function SignupForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="thatsheavyman" {...field} />
+              </FormControl>
+              <FormDescription>This is your password.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirm"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>confirm</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="thatsheavyman" {...field} />
               </FormControl>

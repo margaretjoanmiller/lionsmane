@@ -100,7 +100,11 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel>email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="shadcn" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="doc.brown@mit.edu"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
                   This is your account email address.
@@ -116,7 +120,11 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel>password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="shadcn" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="supersecretpassword"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>This is your password.</FormDescription>
                 <FormMessage />
