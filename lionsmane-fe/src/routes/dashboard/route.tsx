@@ -9,6 +9,7 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { ArticleFilterSelect } from '@/components/article-filter';
 import { ModeToggle } from '@/components/mode-toggle';
 import { SearchBar } from '@/components/search-bar';
+import { Spinner } from '@/components/spinner';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -100,7 +101,7 @@ function DashLayout() {
     },
   });
 
-  const { mutate } = $api.useMutation('post', '/feed');
+  const { mutate, isPending } = $api.useMutation('post', '/feed');
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Handle form submission here
@@ -257,7 +258,12 @@ function DashLayout() {
                           </FormItem>
                         )}
                       />
-                      <Button type="submit">Submit</Button>
+                      <div className="flex flex-row">
+                        <Button type="submit" disabled={isPending}>
+                          Submit
+                        </Button>
+                        {isPending && <Spinner className="mx-1" />}
+                      </div>
                     </form>
                   </Form>
                 </DialogContent>

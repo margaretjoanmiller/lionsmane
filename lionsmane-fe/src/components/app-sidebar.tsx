@@ -34,6 +34,7 @@ import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
 import SolarFilterLinear from '~icons/solar/filter-linear';
 import MultipleSelector from './multi-select';
 import { SearchBar } from './search-bar';
+import { Spinner } from './spinner';
 import { Button } from './ui/button';
 import {
   Collapsible,
@@ -97,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       label: feed.title || feed.url,
     })) || [];
 
-  const { mutate } = $api.useMutation('post', '/folder');
+  const { mutate, isPending } = $api.useMutation('post', '/folder');
 
   const queryClient = useQueryClient();
 
@@ -281,7 +282,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Add Folder</Button>
+                <div className="flex flex-row">
+                  <Button type="submit" disabled={isPending}>
+                    Add Folder
+                  </Button>
+                  {isPending && <Spinner className="mx-1" />}
+                </div>
               </form>
             </Form>
           </DialogContent>

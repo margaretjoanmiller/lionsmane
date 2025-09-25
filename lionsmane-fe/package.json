@@ -74,6 +74,7 @@
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/noto-v1": "^1.2.5",
     "@iconify-json/solar": "^1.2.4",
+    "@iconify-json/tabler": "^1.2.23",
     "@playwright/test": "^1.55.1",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
