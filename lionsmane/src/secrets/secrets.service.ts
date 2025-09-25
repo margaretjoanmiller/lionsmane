@@ -17,6 +17,29 @@ export class SecretsService {
   static roleName = 'lionsmanesecretservice';
   static policyName = 'lionsmanesecretpolicy';
 
+  async upsertPolicy() {
+    try {
+      const policyExists = await this.vaultClient.getPolicy({
+        name: SecretsService.policyName,
+      });
+      if (policyExists) {
+        return policyExists;
+      } else {
+        return await this.vaultClient.addPolicy({
+          name: SecretsService.policyName,
+          rules:
+            '{"path": { "secret/data/readlater/*": { "capabilities": ["create", "read", "update", "delete"] } } }',
+        });
+      }
+    } catch {
+      return await this.vaultClient.addPolicy({
+        name: SecretsService.policyName,
+        rules:
+          '{"path": { "secret/data/readlater/*": { "capabilities": ["create", "read", "update", "delete"] } } }',
+      });
+    }
+  }
+
   async getRoleAndSecretId() {
     const auths = await this.vaultClient.auths();
     if (!Object.hasOwn(auths, 'approle/')) {
@@ -32,6 +55,7 @@ export class SecretsService {
         throw new Error('Error enabling approle', { cause: error });
       }
     }
+    await this.upsertPolicy();
     try {
       await this.vaultClient.getApproleRole({
         role_name: SecretsService.roleName,
@@ -58,13 +82,13 @@ export class SecretsService {
       if (approle === undefined) {
         throw new Error('Error getting role credentials');
       }
+      if (approle.roleId === undefined || approle.secretId === undefined) {
+        throw new Error('Error getting role credentials');
+      }
       const result = await this.vaultClient.approleLogin({
         role_id: approle.roleId,
         secret_id: approle.secretId,
       });
-      if (result.role_id === undefined || result.secret_id) {
-        throw new Error('Error getting role credentials');
-      }
       this.vaultClient.token = result.auth.client_token;
       const secretData = await this.vaultClient.read(secretPath);
       // secretpath is the path in vault where you have stored your secrets
