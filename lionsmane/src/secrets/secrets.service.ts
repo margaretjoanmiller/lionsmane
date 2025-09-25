@@ -5,10 +5,12 @@ import vault from 'node-vault';
 @Injectable()
 export class SecretsService {
   private vaultClient: vault.client;
+  private clientToken: string | null;
   constructor(private config: ConfigService) {
     const vaultAddress = this.config.getOrThrow<string>('VAULT_ADDR');
     const vaultToken = this.config.getOrThrow<string>('VAULT_TOKEN');
     this.vaultClient = vault({ endpoint: vaultAddress, token: vaultToken });
+    this.clientToken = null;
   }
 
   private readonly logger = new Logger(SecretsService.name);
@@ -17,6 +19,26 @@ export class SecretsService {
   static roleName = 'lionsmanesecretservice';
   static policyName = 'lionsmanesecretpolicy';
 
+  private async ensureAuthenticated(): Promise<void> {
+    if (this.clientToken) {
+      this.vaultClient.token = this.clientToken;
+      return;
+    }
+
+    // Set the token to the bootstrap token for setup operations
+    this.vaultClient.token = this.config.getOrThrow<string>('VAULT_TOKEN');
+
+    const approle = await this.getRoleAndSecretId();
+
+    const result = await this.vaultClient.approleLogin({
+      role_id: approle.roleId,
+      secret_id: approle.secretIdResp.data.secret_id,
+    });
+
+    this.clientToken = result.auth.client_token;
+    // Set the token to the new client token for data operations
+    if (this.clientToken) this.vaultClient.token = this.clientToken;
+  }
   async upsertPolicy() {
     try {
       const policyExists = await this.vaultClient.getPolicy({
@@ -72,40 +94,22 @@ export class SecretsService {
     const secretId = await this.vaultClient.getApproleRoleSecret({
       role_name: SecretsService.roleName,
     });
-    return { roleId: roleId.data.role_id, secretId: secretId.data.secret_id };
+    return { roleId: roleId.data.role_id, secretIdResp: secretId };
   }
   async readSecret(
     secretPath: string,
   ): Promise<{ apiKey: string; apiUrl: string }> {
     try {
-      const approle = await this.getRoleAndSecretId();
-      if (approle === undefined) {
-        throw new Error('Error getting role credentials');
-      }
-      if (approle.roleId === undefined || approle.secretId === undefined) {
-        throw new Error('Error getting role credentials');
-      }
-      const result = await this.vaultClient.approleLogin({
-        role_id: approle.roleId,
-        secret_id: approle.secretId,
-      });
-      this.vaultClient.token = result.auth.client_token;
-      try {
-        const secretData = await this.vaultClient.read(secretPath);
-        // secretpath is the path in vault where you have stored your secrets
-        return secretData.data.data;
-      } catch {
-        this.logger.log('Renewing token...');
-        await this.vaultClient.tokenRenew({
-          token: this.vaultClient.token,
-        });
-        const secretData = await this.vaultClient.read(secretPath);
-        // secretpath is the path in vault where you have stored your secrets
-        return secretData.data.data;
-      }
-    } catch (error) {
-      this.logger.error('Error reading secret from vault:', error);
-      throw error;
+      await this.ensureAuthenticated();
+      const secretData = await this.vaultClient.read(secretPath);
+      // secretpath is the path in vault where you have stored your secrets
+      return secretData.data.data;
+    } catch {
+      this.clientToken = null;
+      await this.ensureAuthenticated();
+      const secretData = await this.vaultClient.read(secretPath);
+      // secretpath is the path in vault where you have stored your secrets
+      return secretData.data.data;
     }
   }
 
@@ -113,15 +117,14 @@ export class SecretsService {
     secretPath: string,
     secretData: { apiUrl: string; apiKey: string },
   ): Promise<void> {
-    const approle = await this.getRoleAndSecretId();
-    if (approle === undefined) {
-      throw new Error('Error getting role credentials');
+    try {
+      await this.ensureAuthenticated();
+      await this.vaultClient.write(secretPath, { data: secretData });
+    } catch {
+      // assume token has expired
+      this.clientToken = null;
+      await this.ensureAuthenticated();
+      await this.vaultClient.write(secretPath, { data: secretData });
     }
-    const result = await this.vaultClient.approleLogin({
-      role_id: approle.roleId,
-      secret_id: approle.secretId,
-    });
-    this.vaultClient.token = result.auth.client_token;
-    await this.vaultClient.write(secretPath, { data: secretData });
   }
 }
