@@ -1431,6 +1431,503 @@
         },
         "tags": ["readlater"]
       }
+    },
+    "/greader/accounts/ClientLogin": {
+      "get": {
+        "operationId": "GreaderController_getTokenGET",
+        "parameters": [
+          {
+            "name": "Email",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "Passwd",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      },
+      "post": {
+        "operationId": "GreaderController_getTokenPost",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginApiDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/token": {
+      "get": {
+        "operationId": "GreaderController_postToken",
+        "parameters": [],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/tag/list": {
+      "get": {
+        "operationId": "GreaderController_listFolders",
+        "parameters": [
+          {
+            "name": "output",
+            "required": true,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/rename-tag": {
+      "post": {
+        "operationId": "GreaderController_renameFolder",
+        "parameters": [
+          {
+            "name": "s",
+            "required": false,
+            "in": "query",
+            "description": "stream id",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "t",
+            "required": false,
+            "in": "query",
+            "description": "tag name",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "dest",
+            "required": true,
+            "in": "query",
+            "description": "new tag name",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Tag renamed" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/disable-tag": {
+      "post": {
+        "operationId": "GreaderController_deleteFolder",
+        "parameters": [
+          {
+            "name": "s",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "t",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/unread-count": {
+      "get": {
+        "operationId": "GreaderController_unreadCount",
+        "parameters": [
+          {
+            "name": "output",
+            "required": true,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/subscription/list": {
+      "get": {
+        "operationId": "GreaderController_subscriptionListOld",
+        "parameters": [
+          {
+            "name": "output",
+            "required": true,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionListDto_Output"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/subscriptions/export": {
+      "get": {
+        "operationId": "GreaderController_opmlExport",
+        "parameters": [],
+        "responses": {
+          "200": { "description": "OPML file exported" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/subscription/quickadd": {
+      "post": {
+        "operationId": "GreaderController_quickAdd",
+        "parameters": [
+          {
+            "name": "quickadd",
+            "required": true,
+            "in": "query",
+            "description": "Url to subscribe to",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/subscription/edit": {
+      "post": {
+        "operationId": "GreaderController_editFeed",
+        "parameters": [
+          {
+            "name": "ac",
+            "required": true,
+            "in": "query",
+            "description": "action",
+            "schema": { "default": "edit", "type": "string" }
+          },
+          {
+            "name": "s",
+            "required": true,
+            "in": "query",
+            "description": "stream ID (feed/<feed ID>)",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "r",
+            "required": false,
+            "in": "query",
+            "description": "remove from folder",
+            "schema": {}
+          },
+          {
+            "name": "a",
+            "required": false,
+            "in": "query",
+            "description": "move to folder",
+            "schema": {}
+          },
+          {
+            "name": "t",
+            "required": false,
+            "in": "query",
+            "description": "title",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/stream/items/ids": {
+      "get": {
+        "operationId": "GreaderController_getItemIds",
+        "parameters": [
+          {
+            "name": "s",
+            "required": false,
+            "in": "query",
+            "description": "filter by stream",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "n",
+            "required": true,
+            "in": "query",
+            "description": "page limit",
+            "schema": { "default": 1000, "type": "number" }
+          },
+          {
+            "name": "output",
+            "required": true,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          },
+          {
+            "name": "xt",
+            "required": false,
+            "in": "query",
+            "description": "exclude items",
+            "schema": {}
+          },
+          {
+            "name": "c",
+            "required": false,
+            "in": "query",
+            "description": "continuation string (cursor for paging)",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/stream/items/count": {
+      "get": {
+        "operationId": "GreaderController_getItemCount",
+        "parameters": [
+          {
+            "name": "s",
+            "required": false,
+            "in": "query",
+            "description": "filter by stream",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/mark-all-as-read": {
+      "post": {
+        "operationId": "GreaderController_markRead",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MarkReadDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/stream/items/contents": {
+      "post": {
+        "operationId": "GreaderController_getItemsById",
+        "parameters": [
+          {
+            "name": "output",
+            "required": false,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemListForIdDto_Output"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      },
+      "get": {
+        "operationId": "GreaderController_getItemsByIdGet",
+        "parameters": [
+          {
+            "name": "output",
+            "required": false,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          },
+          {
+            "name": "i",
+            "required": true,
+            "in": "query",
+            "description": "Item IDs to fetch",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" },
+              "examples": [["item1", "item2", "item3"]]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemListForIdDto_Output"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/edit-tag": {
+      "post": {
+        "operationId": "GreaderController_editItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EditTagDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/friend/list": {
+      "get": {
+        "operationId": "GreaderController_getFriends",
+        "parameters": [],
+        "responses": {
+          "200": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
+    },
+    "/greader/reader/api/0/stream/contents/{streamId}": {
+      "get": {
+        "operationId": "GreaderController_getItemContents",
+        "parameters": [
+          {
+            "name": "streamId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "n",
+            "required": false,
+            "in": "query",
+            "description": "page limit",
+            "schema": { "default": 20, "type": "number" }
+          },
+          {
+            "name": "output",
+            "required": false,
+            "in": "query",
+            "description": "output format (json only for now)",
+            "schema": { "default": "json" }
+          },
+          {
+            "name": "c",
+            "required": false,
+            "in": "query",
+            "description": "continuation string (cursor for paging)",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of items",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ItemListDto_Output" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "tags": ["greader"]
+      }
     }
   },
   "info": {
@@ -1445,7 +1942,8 @@
     "securitySchemes": {
       "cookie": { "type": "apiKey", "in": "cookie", "name": "connect.sid" },
       "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" },
-      "oauth2": { "type": "oauth2", "flows": {} }
+      "oauth2": { "type": "oauth2", "flows": {} },
+      "api_key": { "type": "apiKey", "in": "header", "name": "api_key" }
     },
     "schemas": {
       "SubscribeFeedDto": {
@@ -1852,14 +2350,23 @@
           "description": {
             "type": "string",
             "minLength": 2,
-            "maxLength": 1000
+            "maxLength": 1000,
+            "x-nestjs_zod-has-null": true
           },
           "folderId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              { "type": "null" }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true
           }
-        }
+        },
+        "required": ["folderId"]
       },
       "SubscriptionOutDto_Output": {
         "type": "object",
@@ -2966,6 +3473,419 @@
         "type": "object",
         "properties": { "url": { "type": "string", "format": "uri" } },
         "required": ["url"]
+      },
+      "LoginApiDto": {
+        "type": "object",
+        "properties": {
+          "Email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "Passwd": { "type": "string" }
+        },
+        "required": ["Email", "Passwd"]
+      },
+      "SubscriptionListDto_Output": {
+        "type": "object",
+        "properties": {
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "title": { "type": "string" },
+                    "url": { "type": "string" },
+                    "sortId": { "type": "string" },
+                    "htmlUrl": { "type": "string" },
+                    "firstitemmsec": { "type": "number" },
+                    "categories": { "type": "array", "items": {} }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url",
+                    "sortId",
+                    "htmlUrl",
+                    "firstitemmsec",
+                    "categories"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "title": { "type": "string" },
+                    "url": { "type": "string" },
+                    "sortId": { "type": "string" },
+                    "htmlUrl": { "type": "string" },
+                    "firstitemmsec": { "type": "number" },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": { "id": { "type": "string" } },
+                        "required": ["id"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url",
+                    "sortId",
+                    "htmlUrl",
+                    "firstitemmsec",
+                    "categories"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "x-nestjs_zod-parent-additional-properties": false
+          }
+        },
+        "required": ["subscriptions"]
+      },
+      "MarkReadDto": {
+        "type": "object",
+        "properties": { "s": { "type": "string" }, "ts": { "type": "number" } },
+        "required": ["s"]
+      },
+      "ItemListForIdDto_Output": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "object",
+              "properties": {
+                "crawlTimeMsec": { "type": "string" },
+                "timestampUsec": { "type": "string" },
+                "id": { "type": "string" },
+                "categories": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": { "type": "string" } },
+                    { "type": "null" }
+                  ]
+                },
+                "title": { "type": "string" },
+                "published": { "type": "number" },
+                "updated": {
+                  "default": null,
+                  "anyOf": [{ "type": "number" }, { "type": "null" }]
+                },
+                "canonical": {
+                  "default": [],
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": { "href": { "type": "string" } },
+                        "required": ["href"],
+                        "additionalProperties": false
+                      }
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "alternate": {
+                  "default": [],
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "href": { "type": "string" },
+                          "type": { "type": "string" }
+                        },
+                        "required": ["href", "type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "summary": {
+                  "type": "object",
+                  "properties": {
+                    "direction": { "type": "string" },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["direction", "content"],
+                  "additionalProperties": false
+                },
+                "content": {
+                  "type": "object",
+                  "properties": {
+                    "direction": { "type": "string" },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["direction", "content"],
+                  "additionalProperties": false
+                },
+                "author": { "default": "", "type": "string" },
+                "likingUsers": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": {} },
+                    { "type": "null" }
+                  ]
+                },
+                "comments": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": { "type": "string" } },
+                    { "type": "null" }
+                  ]
+                },
+                "commentsNum": {
+                  "default": -1,
+                  "anyOf": [{ "type": "number" }, { "type": "null" }]
+                },
+                "origin": {
+                  "type": "object",
+                  "properties": {
+                    "streamId": { "type": "string" },
+                    "title": { "type": "string" },
+                    "htmlUrl": { "type": "string" }
+                  },
+                  "required": ["streamId", "title", "htmlUrl"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "crawlTimeMsec",
+                "timestampUsec",
+                "id",
+                "categories",
+                "title",
+                "published",
+                "updated",
+                "canonical",
+                "alternate",
+                "summary",
+                "content",
+                "author",
+                "likingUsers",
+                "comments",
+                "commentsNum",
+                "origin"
+              ],
+              "additionalProperties": false
+            },
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          }
+        },
+        "required": ["items"]
+      },
+      "EditTagDto": {
+        "type": "object",
+        "properties": {
+          "i": { "type": "string" },
+          "a": { "type": "string" },
+          "r": { "type": "string" }
+        },
+        "required": ["i"]
+      },
+      "ItemListDto_Output": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "default": "ltr",
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "id": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "updated": {
+            "type": "number",
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "title": {
+            "type": "string",
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "description": {
+            "default": "",
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "self": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": { "href": { "type": "string" } },
+                "required": ["href"],
+                "additionalProperties": false
+              },
+              { "type": "null" }
+            ],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "items": {
+            "type": "array",
+            "default": [],
+            "items": {
+              "type": "object",
+              "properties": {
+                "crawlTimeMsec": { "type": "string" },
+                "timestampUsec": { "type": "string" },
+                "id": { "type": "string" },
+                "categories": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": { "type": "string" } },
+                    { "type": "null" }
+                  ]
+                },
+                "title": { "type": "string" },
+                "published": { "type": "number" },
+                "updated": {
+                  "default": null,
+                  "anyOf": [{ "type": "number" }, { "type": "null" }]
+                },
+                "canonical": {
+                  "default": [],
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": { "href": { "type": "string" } },
+                        "required": ["href"],
+                        "additionalProperties": false
+                      }
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "alternate": {
+                  "default": [],
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "href": { "type": "string" },
+                          "type": { "type": "string" }
+                        },
+                        "required": ["href", "type"],
+                        "additionalProperties": false
+                      }
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "summary": {
+                  "type": "object",
+                  "properties": {
+                    "direction": { "type": "string" },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["direction", "content"],
+                  "additionalProperties": false
+                },
+                "content": {
+                  "type": "object",
+                  "properties": {
+                    "direction": { "type": "string" },
+                    "content": { "type": "string" }
+                  },
+                  "required": ["direction", "content"],
+                  "additionalProperties": false
+                },
+                "author": { "default": "", "type": "string" },
+                "likingUsers": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": {} },
+                    { "type": "null" }
+                  ]
+                },
+                "comments": {
+                  "default": [],
+                  "anyOf": [
+                    { "type": "array", "items": { "type": "string" } },
+                    { "type": "null" }
+                  ]
+                },
+                "commentsNum": {
+                  "default": -1,
+                  "anyOf": [{ "type": "number" }, { "type": "null" }]
+                },
+                "origin": {
+                  "type": "object",
+                  "properties": {
+                    "streamId": { "type": "string" },
+                    "title": { "type": "string" },
+                    "htmlUrl": { "type": "string" }
+                  },
+                  "required": ["streamId", "title", "htmlUrl"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "crawlTimeMsec",
+                "timestampUsec",
+                "id",
+                "categories",
+                "title",
+                "published",
+                "updated",
+                "canonical",
+                "alternate",
+                "summary",
+                "content",
+                "author",
+                "likingUsers",
+                "comments",
+                "commentsNum",
+                "origin"
+              ],
+              "additionalProperties": false
+            },
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          },
+          "continuation": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "x-nestjs_zod-has-null": true,
+            "x-nestjs_zod-empty-type": true,
+            "x-nestjs_zod-parent-additional-properties": false
+          }
+        },
+        "required": [
+          "direction",
+          "id",
+          "updated",
+          "title",
+          "description",
+          "self",
+          "items",
+          "continuation"
+        ]
       }
     }
   }
