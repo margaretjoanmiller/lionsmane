@@ -14,7 +14,7 @@ Project goals:
 
 - [x] !!Only fetch articles from after last sync datetime
 - [x] Delete feeds (and articles) no user is subscribed to
-
+- [ ] Clear feeds that nobody subscribes to anymore
 
 ## Contact
 Is lionsmane sending requests to your website too often or in a way you don't want? Please let us know!
