@@ -73,7 +73,7 @@ function Settings() {
   // Two factor auth
   const user = authClient.useSession();
   const setReadeckkey = usePrefStore((state) => state.setToTrue);
-  const unsetReadeckkey = usePrefStore((state) => state.setToTrue);
+  const unsetReadeckkey = usePrefStore((state) => state.setToFalse);
   if (user.data?.user.hasReadeckKey === true) {
     setReadeckkey();
   } else {

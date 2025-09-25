@@ -23,8 +23,11 @@ function ArticlePage() {
   const { data: session } = authClient.useSession();
   const hasReadeckKey = usePrefStore((state) => state.hasReadeckKey);
   const setReadeckkey = usePrefStore((state) => state.setToTrue);
+  const unsetReadeckkey = usePrefStore((state) => state.setToFalse);
   if (session?.user.hasReadeckKey === true) {
     setReadeckkey();
+  } else {
+    unsetReadeckkey();
   }
 
   const articleId = Route.useParams().articleId;
