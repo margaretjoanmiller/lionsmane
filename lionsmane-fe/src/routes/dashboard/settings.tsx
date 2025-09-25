@@ -60,6 +60,7 @@ import {
 import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
+import { usePrefStore } from '@/stores/userPref.store';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
 import MdiMoreHoriz from '~icons/mdi/more-horiz';
@@ -71,6 +72,13 @@ export const Route = createFileRoute('/dashboard/settings')({
 function Settings() {
   // Two factor auth
   const user = authClient.useSession();
+  const setReadeckkey = usePrefStore((state) => state.setToTrue);
+  const unsetReadeckkey = usePrefStore((state) => state.setToTrue);
+  if (user.data?.user.hasReadeckKey === true) {
+    setReadeckkey();
+  } else {
+    unsetReadeckkey();
+  }
   const [isEnablingTwoFactor, setIsEnablingTwoFactor] = React.useState(false);
 
   const [tfaURI, setTfaURI] = React.useState<string | null>(null);
@@ -106,7 +114,7 @@ function Settings() {
     feedId: z.uuid(),
     url: z.url(),
     description: z.string().optional(),
-    folderId: z.string().optional(),
+    folderId: z.string().nullable(),
   });
   const feedForm = useForm<z.infer<typeof feedFormSchema>>({
     resolver: zodResolver(feedFormSchema),
@@ -174,7 +182,6 @@ function Settings() {
       },
       {
         onSuccess: () => {
-          // setFormOpen(false);
           feedForm.reset();
         },
       },
@@ -183,7 +190,8 @@ function Settings() {
 
   const { mutate: apiKey } = $api.useMutation('post', '/readlater/configure', {
     onSuccess: () => {
-      toast.info('Saved to readeck');
+      toast.info('Saved your readeck API settings');
+      setReadeckkey();
     },
     onError: (error) => {
       toast.error('Error saving to readeck', { description: error.message });
@@ -452,7 +460,7 @@ function Settings() {
                   folder.feedIds.map((feed) => ({
                     value: feed,
                     label:
-                      feeds.feeds.find((f) => f.id === feed)?.title ||
+                      feeds?.feeds.find((f) => f.id === feed)?.title ||
                       'Unnamed feed',
                   })),
                 );

@@ -1,28 +1,47 @@
 import { HttpService } from '@nestjs/axios';
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
   PreconditionFailedException,
 } from '@nestjs/common';
-import { catchError, map } from 'rxjs';
 import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
+import { eq } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { catchError, map } from 'rxjs';
+import { schema } from 'src/db/schema';
 import { SecretsService } from 'src/secrets/secrets.service';
 
 @Injectable()
 export class ReadlaterService {
   private readonly logger = new Logger(ReadlaterService.name);
   constructor(
+    @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private secrets: SecretsService,
     private readonly httpService: HttpService,
   ) {}
 
   async addApiKeyAndUrl(userId: string, apiKey: string, url: URL) {
     const secretKeyPath = `secret/data/readlater/${userId}`;
-    await this.secrets.writeSecret(secretKeyPath, {
-      apiKey,
-      apiUrl: url.toString(),
-    });
+    try {
+      await this.secrets.writeSecret(secretKeyPath, {
+        apiKey,
+        apiUrl: url.toString(),
+      });
+      await this.db
+        .update(schema.user)
+        .set({
+          hasReadeckKey: true,
+        })
+        .where(eq(schema.user.id, userId));
+    } catch (error) {
+      this.logger.error('Error saving readeck API key', error);
+      throw new InternalServerErrorException(
+        'Error saving the readeck API key',
+        { cause: error },
+      );
+    }
   }
 
   async addBookmark(articleUrl: URL, userId: string) {

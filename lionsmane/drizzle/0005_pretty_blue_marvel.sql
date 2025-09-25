@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "has_readeck_key" boolean DEFAULT false;

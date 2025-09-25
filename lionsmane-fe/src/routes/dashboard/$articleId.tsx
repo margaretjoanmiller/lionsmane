@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
+import { usePrefStore } from '@/stores/userPref.store';
 import SolarBookBookmarkLineDuotone from '~icons/solar/book-bookmark-line-duotone';
 import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
 import SolarStarBold from '~icons/solar/star-bold';
@@ -18,6 +20,13 @@ export const Route = createFileRoute('/dashboard/$articleId')({
 });
 
 function ArticlePage() {
+  const { data: session } = authClient.useSession();
+  const hasReadeckKey = usePrefStore((state) => state.hasReadeckKey);
+  const setReadeckkey = usePrefStore((state) => state.setToTrue);
+  if (session?.user.hasReadeckKey === true) {
+    setReadeckkey();
+  }
+
   const articleId = Route.useParams().articleId;
   const queryClient = useQueryClient();
   const { data } = $api.useSuspenseQuery('get', '/article/{id}', {
@@ -122,25 +131,27 @@ function ArticlePage() {
             </TooltipTrigger>
             <TooltipContent>Request full article text</TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  readLater({
-                    body: {
-                      url: data.url,
-                    },
-                    credentials: 'include',
-                  })
-                }
-              >
-                <SolarBookBookmarkLineDuotone />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Add to readeck</TooltipContent>
-          </Tooltip>
+          {hasReadeckKey && (
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    readLater({
+                      body: {
+                        url: data.url,
+                      },
+                      credentials: 'include',
+                    })
+                  }
+                >
+                  <SolarBookBookmarkLineDuotone />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add to readeck</TooltipContent>
+            </Tooltip>
+          )}
         </h1>
         <h2 className="text-center font-bold">
           {data.authors.map((author) => author.name).join(', ')}

@@ -4,7 +4,7 @@ import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
 import { db } from './db';
 
-const authOptions = {
+export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
@@ -27,6 +27,14 @@ const authOptions = {
       maxAge: 10 * 60, // Cache duration in seconds
     },
   },
+  user: {
+    additionalFields: {
+      hasReadeckKey: {
+        type: 'boolean',
+        defaultValue: false,
+      },
+    },
+  },
   plugins: [
     apiKey(),
     passkey(),
@@ -40,6 +48,4 @@ const authOptions = {
   trustedOrigins: ['http://localhost:3000', process.env.FE_URL!].filter(
     Boolean,
   ),
-};
-
-export const auth = betterAuth(authOptions);
+});
