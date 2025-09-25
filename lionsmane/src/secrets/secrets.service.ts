@@ -90,9 +90,19 @@ export class SecretsService {
         secret_id: approle.secretId,
       });
       this.vaultClient.token = result.auth.client_token;
-      const secretData = await this.vaultClient.read(secretPath);
-      // secretpath is the path in vault where you have stored your secrets
-      return secretData.data.data;
+      try {
+        const secretData = await this.vaultClient.read(secretPath);
+        // secretpath is the path in vault where you have stored your secrets
+        return secretData.data.data;
+      } catch {
+        this.logger.log('Renewing token...');
+        await this.vaultClient.tokenRenew({
+          token: this.vaultClient.token,
+        });
+        const secretData = await this.vaultClient.read(secretPath);
+        // secretpath is the path in vault where you have stored your secrets
+        return secretData.data.data;
+      }
     } catch (error) {
       this.logger.error('Error reading secret from vault:', error);
       throw error;
