@@ -19,6 +19,7 @@ import {
   BaseExceptionFilter,
 } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import {
   ZodSerializationException,
@@ -32,6 +33,7 @@ import { auth } from './auth';
 import { CronModule } from './cron/cron.module';
 import * as authSchema from './db/schema/auth';
 import * as coreSchema from './db/schema/core';
+import { EmailModule } from './email/email.module';
 import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
 import { FilterModule } from './filter/filter.module';
@@ -42,7 +44,6 @@ import { OpmlModule } from './opml/opml.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { RedisModule } from './redis/redis.module';
 import { SecretsModule } from './secrets/secrets.module';
-import { EmailModule } from './email/email.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -94,6 +95,23 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         };
       },
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -130,6 +148,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
