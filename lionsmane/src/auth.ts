@@ -37,7 +37,9 @@ const authOptions = {
     }),
   ],
   telemetry: { enabled: false },
-  trustedOrigins: ['http://localhost:3000', process.env.FE_URL!],
+  trustedOrigins: ['http://localhost:3000', process.env.FE_URL!].filter(
+    Boolean,
+  ),
 };
 
 export const auth = betterAuth(authOptions);

@@ -22,6 +22,10 @@ create_token () {
    bao token create -id $MY_VAULT_TOKEN
 }
 
+enable_approle () {
+   bao secrets enable -path=secret kv-v2
+}
+
 if [ -s /openbao/file/keys ]; then
    unseal
 else
@@ -29,10 +33,7 @@ else
    unseal
    log_in
    create_token
+   enable_approle
 fi
-
-log_in
-bao secrets enable -path=secret kv-v2
-bao write lionsmanesecretpolicy /openbao/policies/lion-policy.hcl
 
 bao status > /openbao/file/status

@@ -517,7 +517,8 @@ function Settings() {
   ];
 
   const downloadUrl =
-    import.meta.env.VITE_API_URL || 'http://localhost:8181' + '/feed/export';
+    import.meta.env.VITE_API_URL + '/feed/export' ||
+    'http://localhost:8181' + '/feed/export';
 
   const twoFactorEnabled = user?.data?.user.twoFactorEnabled;
 
