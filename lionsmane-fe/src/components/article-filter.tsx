@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/select';
 import { useArticleFilterStore } from '@/stores/articleFilter.store';
 
-
 export function ArticleFilterSelect() {
   const setUnread = useArticleFilterStore((state) => state.setToUnread);
   const setStarred = useArticleFilterStore((state) => state.setToStarred);

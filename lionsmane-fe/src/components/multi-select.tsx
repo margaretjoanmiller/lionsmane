@@ -2,7 +2,7 @@
 // https://github.com/hsuanyi-chou/shadcn-ui-expansions
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { X, ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, X } from 'lucide-react';
 import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
 
