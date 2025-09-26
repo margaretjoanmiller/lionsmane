@@ -22,7 +22,7 @@ export const auth = betterAuth({
     requireEmailVerification: process.env.NODE_ENV === 'production',
   },
   emailVerification: {
-    sendOnSignUp: true,
+    sendOnSignUp: process.env.NODE_ENV === 'production',
   },
   socialProviders: {
     discord: {
