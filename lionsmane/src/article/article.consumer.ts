@@ -1,8 +1,8 @@
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
-import { ArticleService } from './article.service';
-import { FetcherService } from 'src/fetcher/fetcher.service';
 import { Job, Queue } from 'bullmq';
+import { FetcherService } from 'src/fetcher/fetcher.service';
 import { NewArticle } from './article';
+import { ArticleService } from './article.service';
 
 @Processor('article')
 export class ArticleConsumer extends WorkerHost {
@@ -18,12 +18,17 @@ export class ArticleConsumer extends WorkerHost {
     if (job.name === 'new-article' && 'feedId' in job.data) {
       const data = job.data;
 
-      const { textContent, htmlContent } = this.articleService.cleanRaw(data);
+      const { textContent, htmlContent, cleanDescription } =
+        this.articleService.cleanRaw(data);
 
-      const keywords = await this.fetcherService.extractKeywords(textContent);
+      let keywords: string[] = [];
+      if (textContent) {
+        keywords = await this.fetcherService.extractKeywords(textContent);
+      }
 
       const article = await this.articleService.newArticle({
         ...data,
+        description: cleanDescription,
         readableText: textContent,
         readableHtml: htmlContent,
         keywords,

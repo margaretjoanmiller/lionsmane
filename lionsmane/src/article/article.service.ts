@@ -22,14 +22,16 @@ export class ArticleService {
   cleanRaw(newArt: NewArticle) {
     const window = new JSDOM('').window;
     const purify = createDOMPurify(window as WindowLike);
-    const clean = purify.sanitize(newArt.rawContent || '');
-    const cleanDoc = new JSDOM(clean);
+    const cleanContent = purify.sanitize(newArt.rawContent || '');
+    const cleanDescription = purify.sanitize(newArt.description || '');
+    const cleanDoc = new JSDOM(cleanContent);
     const readableRaw = new Readability(cleanDoc.window.document).parse();
     const readableText = readableRaw?.textContent;
     const readableHtml = readableRaw?.content;
     return {
-      textContent: readableText,
-      htmlContent: readableHtml,
+      textContent: readableText || null,
+      htmlContent: readableHtml || null,
+      cleanDescription,
     };
   }
 
