@@ -3,6 +3,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
 import { db } from './db';
+import { sendAuthEmail } from './utils/email-auth';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -10,6 +11,18 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendAuthEmail(
+        user.email,
+        'Reset password',
+        `Click the link to reset your password: ${url}`,
+      );
+    },
+    // only require email verification in prod
+    requireEmailVerification: process.env.NODE_ENV === 'production',
+  },
+  emailVerification: {
+    sendOnSignUp: true,
   },
   socialProviders: {
     discord: {
@@ -48,4 +61,11 @@ export const auth = betterAuth({
   trustedOrigins: ['http://localhost:3000', process.env.FE_URL!].filter(
     Boolean,
   ),
+  sendVerificationEmail: async ({ user, url }) => {
+    await sendAuthEmail(
+      user.email,
+      'Verify email',
+      `Click the link to verify your email: ${url}`,
+    );
+  },
 });
