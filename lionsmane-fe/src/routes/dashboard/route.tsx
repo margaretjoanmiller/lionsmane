@@ -10,6 +10,7 @@ import { ArticleFilterSelect } from '@/components/article-filter';
 import { ModeToggle } from '@/components/mode-toggle';
 import { SearchBar } from '@/components/search-bar';
 import { Spinner } from '@/components/spinner';
+import { LoadingButton } from '@/components/spinner-button';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -259,10 +260,9 @@ function DashLayout() {
                         )}
                       />
                       <div className="flex flex-row">
-                        <Button type="submit" disabled={isPending}>
+                        <LoadingButton loading={isPending} type="submit">
                           Submit
-                        </Button>
-                        {isPending && <Spinner className="mx-1" />}
+                        </LoadingButton>
                       </div>
                     </form>
                   </Form>

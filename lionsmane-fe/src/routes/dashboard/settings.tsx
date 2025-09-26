@@ -132,7 +132,7 @@ function Settings() {
 
   const { mutate: deleteFeed } = $api.useMutation('delete', '/feed/{id}', {
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/feed'] });
+      await queryClient.invalidateQueries();
     },
   });
 

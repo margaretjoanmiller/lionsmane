@@ -6,6 +6,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import MultipleSelector from '@/components/multi-select';
+import { LoadingButton } from '@/components/spinner-button';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -38,7 +39,7 @@ function NewFilter() {
 
   const navigate = useNavigate({ from: Route.id });
   const queryClient = useQueryClient();
-  const { mutate } = $api.useMutation('post', '/filter', {
+  const { mutate, isPending } = $api.useMutation('post', '/filter', {
     onSuccess: async () => {
       form.reset();
       await queryClient.invalidateQueries();
@@ -306,7 +307,9 @@ function NewFilter() {
             )}
           />
         )}
-        <Button type="submit">Submit</Button>
+        <LoadingButton loading={isPending} type="submit">
+          Submit
+        </LoadingButton>
       </form>
     </Form>
   );

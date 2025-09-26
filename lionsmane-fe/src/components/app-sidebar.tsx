@@ -34,7 +34,7 @@ import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
 import SolarFilterLinear from '~icons/solar/filter-linear';
 import MultipleSelector from './multi-select';
 import { SearchBar } from './search-bar';
-import { Spinner } from './spinner';
+import { LoadingButton } from './spinner-button';
 import { Button } from './ui/button';
 import {
   Collapsible,
@@ -279,10 +279,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   )}
                 />
                 <div className="flex flex-row">
-                  <Button type="submit" disabled={isPending}>
+                  <LoadingButton loading={isPending} type="submit">
                     Add Folder
-                  </Button>
-                  {isPending && <Spinner className="mx-1" />}
+                  </LoadingButton>
                 </div>
               </form>
             </Form>
