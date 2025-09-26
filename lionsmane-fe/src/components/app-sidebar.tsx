@@ -179,13 +179,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuSub>
                       <SidebarMenuSubItem className="flex flex-row">
                         <Link
-                          className="flex"
+                          className="truncate max-w-40"
                           to="/dashboard/feed/$feedId"
                           params={{ feedId: feed.id }}
                         >
-                          {feed.name.length > 70
-                            ? feed.name.slice(0, 70) + '...'
-                            : feed.name}
+                          {feed.name}
                         </Link>
                         <SidebarMenuBadge className="flex">
                           {feed.unreadCount}
@@ -214,11 +212,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Link
                   to="/dashboard/feed/$feedId"
                   params={{ feedId: feed.id }}
-                  className="flex w-full"
+                  className="truncate max-w-50"
                 >
-                  {feed.name.length > 70
-                    ? feed.name.slice(0, 70) + '...'
-                    : feed.name}
+                  {feed.name}
                 </Link>
               </SidebarMenuButton>
               <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>
