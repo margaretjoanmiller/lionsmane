@@ -121,7 +121,7 @@ function Settings() {
     defaultValues: {
       feedId: '',
       url: '',
-      description: '',
+      description: undefined,
       folderId: undefined,
     },
   });
@@ -182,7 +182,13 @@ function Settings() {
       },
       {
         onSuccess: () => {
+          toast.success('Successfully edited subscription');
           feedForm.reset();
+        },
+        onError: (error) => {
+          toast.error('Error editing subscription', {
+            description: error.message,
+          });
         },
       },
     );
