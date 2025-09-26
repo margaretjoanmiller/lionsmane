@@ -133,7 +133,9 @@ function NewFilter() {
                   placeholder="Keyword1, Keyword2, Keyword3"
                 />
               </FormControl>
-              <FormDescription>These are your keywords.</FormDescription>
+              <FormDescription>
+                contains keywords (generated with NLP from article)
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -157,7 +159,7 @@ function NewFilter() {
                   placeholder="Title1, Title2, Title3"
                 />
               </FormControl>
-              <FormDescription>This is your feed description.</FormDescription>
+              <FormDescription>title contains</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -185,7 +187,7 @@ function NewFilter() {
                   placeholder="Content1, Content2, Content3"
                 />
               </FormControl>
-              <FormDescription>This is your feed content.</FormDescription>
+              <FormDescription>content contains</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -209,7 +211,7 @@ function NewFilter() {
                   placeholder="Author1, Author2, Author3"
                 />
               </FormControl>
-              <FormDescription>This is your feed authors.</FormDescription>
+              <FormDescription>contains authors</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -233,7 +235,9 @@ function NewFilter() {
                   placeholder="Category1, Category2, Category3"
                 />
               </FormControl>
-              <FormDescription>This is your feed categories.</FormDescription>
+              <FormDescription>
+                contains categories (manually written by feed author)
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -259,7 +263,7 @@ function NewFilter() {
                   }
                 />
               </FormControl>
-              <FormDescription>These are your filtered feeds.</FormDescription>
+              <FormDescription>entire feed to filter</FormDescription>
               <FormMessage />
             </FormItem>
           )}
