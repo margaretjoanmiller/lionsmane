@@ -48,7 +48,7 @@ export class FeedService {
           .values({
             title: title ?? newSubscription.url,
             url: url,
-            updated: subMonths(new Date(), 3),
+            updated: subMonths(new Date(), 6),
           })
           .returning();
         if (!newFeed) {

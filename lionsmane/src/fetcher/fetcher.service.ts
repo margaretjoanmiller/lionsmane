@@ -153,8 +153,11 @@ export class FetcherService {
 
       const feedProcess = feed.items
         .filter((i) => {
+          if (!i.published) {
+            return true;
+          }
           return isAfter(
-            i.published!,
+            i.published,
             feedfromDb[0]?.updated || subWeeks(new Date(), 6),
           );
         })
@@ -165,6 +168,10 @@ export class FetcherService {
             );
             throw new Error('Item is missing required fields');
           }
+          if (!item.published && !item.updated) {
+            throw new Error('Item is missing required fields');
+          }
+
           return {
             name: 'new-article',
             data: {
@@ -180,7 +187,7 @@ export class FetcherService {
               image: item.image ? item.image.url : '',
               imageAlt: item.image ? item.image.title : '',
               media: item.media.map((media) => media.url) || [],
-              published: item.published,
+              published: item.published || item.updated,
               updated: item.updated,
               feedId: feedId,
             },
