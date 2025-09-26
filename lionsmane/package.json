@@ -22,7 +22,6 @@
   "dependencies": {
     "@bull-board/api": "^6.13.0",
     "@bull-board/express": "^6.13.0",
-    "@bull-board/nestjs": "^6.13.0",
     "@keyv/redis": "^5.1.2",
     "@knaadh/nestjs-drizzle-pg": "^1.2.0",
     "@mozilla/readability": "^0.6.0",

@@ -153,16 +153,27 @@ export class FetcherService {
 
       const feedProcess = feed.items
         .filter((i) => {
-          if (!i.published) {
-            return true;
+          if (!i.published && i.updated) {
+            return isAfter(
+              i.updated,
+              feedfromDb[0]?.updated || subWeeks(new Date(), 6),
+            );
+          }
+          if (!i.published && !i.updated) {
+            throw new Error('Item is missing required fields');
           }
           return isAfter(
-            i.published,
+            i.published!,
             feedfromDb[0]?.updated || subWeeks(new Date(), 6),
           );
         })
         .map((item) => {
-          if (!item.url && !item.content && !item.published) {
+          if (
+            !item.url &&
+            !item.content &&
+            !item.description &&
+            !item.published
+          ) {
             this.logger.error(
               `Item is missing required fields: ${JSON.stringify(item)}`,
             );
@@ -183,7 +194,7 @@ export class FetcherService {
               })),
               categories: item.categories.map((i) => i.term) || [],
               description: item.description || '',
-              rawContent: item.content || '',
+              rawContent: item.content || item.description || 'no content',
               image: item.image ? item.image.url : '',
               imageAlt: item.image ? item.image.title : '',
               media: item.media.map((media) => media.url) || [],

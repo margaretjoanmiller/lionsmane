@@ -27,9 +27,6 @@ export class ArticleService {
     const readableRaw = new Readability(cleanDoc.window.document).parse();
     const readableText = readableRaw?.textContent;
     const readableHtml = readableRaw?.content;
-    if (!readableHtml || !readableText) {
-      throw new Error('Failed to extract article text');
-    }
     return {
       textContent: readableText,
       htmlContent: readableHtml,

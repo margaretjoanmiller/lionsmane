@@ -166,6 +166,7 @@ function ArticlePage() {
                 __html:
                   data.fullArticleHtml ||
                   data.readableHtml ||
+                  data.description ||
                   '<p>error loading</p>',
               }} // we clean this on the backend
             />
