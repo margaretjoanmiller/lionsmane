@@ -89,7 +89,9 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     });
   }
 
-  const truncatedText = article.readableText?.slice(0, 150) + '...';
+  const truncatedText = article.readableText
+    ? article.readableText.slice(0, 150) + '...'
+    : 'no article text';
 
   const card = (
     <>
@@ -138,6 +140,12 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           <img
             src={article.image}
             alt={article.imageAlt || article.title}
+            className="rounded-md"
+          />
+        ) : article.media[0] ? (
+          <img
+            src={article.media[0]}
+            alt="Article did not provide alt text"
             className="rounded-md"
           />
         ) : (

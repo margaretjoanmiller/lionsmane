@@ -1,5 +1,6 @@
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
+import * as cheerio from 'cheerio';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { NewArticle } from './article';
 import { ArticleService } from './article.service';
@@ -26,8 +27,25 @@ export class ArticleConsumer extends WorkerHost {
         keywords = await this.fetcherService.extractKeywords(textContent);
       }
 
+      const $ = cheerio.load(cleanDescription);
+
+      const $image = $('img');
+      const href = $image.attr('src');
+      const altText = $image.attr('alt');
+
+      const media: string[] = [];
+
+      let image = data.image;
+      if (href && image?.length === 0) image = href;
+      else if (href) media.push(href);
+      let alt = data.imageAlt;
+      if (altText && alt?.length === 0) alt = altText;
+
       const article = await this.articleService.newArticle({
         ...data,
+        image,
+        imageAlt: alt,
+        media,
         description: cleanDescription,
         readableText: textContent,
         readableHtml: htmlContent,
