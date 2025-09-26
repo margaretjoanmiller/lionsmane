@@ -6,11 +6,13 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 import { getTime, subMonths } from 'date-fns';
-import { and, count, desc, eq, isNull, or } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -26,6 +28,7 @@ export class FeedService {
     private fetcher: FetcherService,
     private opmlService: OpmlService,
   ) {}
+  private readonly logger = new Logger(FeedService.name);
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const url = newSubscription.url.endsWith('/')
@@ -407,5 +410,23 @@ export class FeedService {
       },
     });
     return s;
+  }
+
+  @Cron('5 * * * * *')
+  async removeOrphanFeeds() {
+    const result = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .leftJoin(
+        schema.subscriptions,
+        eq(schema.feeds.id, schema.subscriptions.feedId),
+      )
+      .where(isNull(schema.subscriptions.id));
+    const idArray = result.map((i) => i.id);
+    if (idArray.length > 0)
+      this.logger.log(`Deleting orphan feeds with IDs: ${idArray}`);
+    return this.db
+      .delete(schema.feeds)
+      .where(inArray(schema.feeds.id, idArray));
   }
 }
