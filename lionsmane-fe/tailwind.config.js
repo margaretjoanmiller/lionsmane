@@ -16,7 +16,7 @@ module.exports = {
             '--tw-prose-quotes': 'var(--primary)',
             '--tw-prose-quote-borders': 'var(--color-pink-300)',
             '--tw-prose-captions': 'var(--color-pink-700)',
-            '--tw-prose-code': 'var(--code-background)',
+            '--tw-prose-code': 'var(--code-foreground)',
             '--tw-prose-pre-code': 'var(--color-pink-100)',
             '--tw-prose-pre-bg': 'var(--code-background)',
             '--tw-prose-th-borders': 'var(--color-pink-300)',

@@ -22,6 +22,7 @@ code {
 
 :root {
   --code-background: oklch(0.7472 0.02 286.0164);
+  --code-foreground: oklch(42.165% 0.03641 284.723);
   --background: oklch(0.9816 0.0017 247.839);
   --foreground: oklch(0.1649 0.0352 281.8285);
   --card: oklch(1 0 0);
@@ -84,6 +85,7 @@ code {
 
 .dark {
   --code-background: oklch(0.3525 0.0611 281.1423);
+  --code-foreground: oklch(74.033% 0.00802 260.847);
   --background: oklch(0.1649 0.0352 281.8285);
   --foreground: oklch(0.9513 0.0074 260.7315);
   --card: oklch(0.2542 0.0611 281.1423);
