@@ -5,11 +5,17 @@ packages:
 injectWorkspacePackages: true
 
 onlyBuiltDependencies:
-  - "@nestjs/core"
-  - "@scarf/scarf"
-  - "@swc/core"
-  - "@tailwindcss/oxide"
+  - '@nestjs/core'
+  - '@scarf/scarf'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
+  - core-js
   - esbuild
+  - keccak
   - msgpackr-extract
   - msw
+  - scrypt
+  - secp256k1
+  - sha3
   - unrs-resolver
+  - websocket
