@@ -89,10 +89,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     });
   }
 
-  const truncatedText = article.readableText
-    ? article.readableText.slice(0, 150) + '...'
-    : 'no article text';
-
   const card = (
     <>
       <CardHeader>
@@ -136,20 +132,18 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {article.image ? (
-          <img
-            src={article.image}
-            alt={article.imageAlt || article.title}
-            className="rounded-md"
-          />
-        ) : article.media[0] ? (
-          <img
-            src={article.media[0]}
-            alt="Article did not provide alt text"
-            className="rounded-md"
-          />
+        {article.image || article.media[0] ? (
+          <div className="aspect-video overflow-hidden rounded-md">
+            <img
+              src={article.image || article.media[0]}
+              alt={article.imageAlt || article.title}
+              className="h-full w-full object-cover"
+            />
+          </div>
         ) : (
-          <div className="text-sm text-muted-foreground">{truncatedText}</div>
+          <div className="text-sm text-muted-foreground line-clamp-5">
+            {article.readableText}
+          </div>
         )}
       </CardContent>
     </>
@@ -157,7 +151,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   if (article.isBlurred && !dismissBlur) {
     return (
-      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+      <Card
+        className="group relative shadow-2xl h-full flex flex-col"
+        onMouseMove={handleMouseMove}
+      >
         <motion.div
           className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
           style={{
@@ -191,7 +188,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     );
   } else if (article.isBlurred && dismissBlur) {
     return (
-      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+      <Card
+        className="group relative shadow-2xl h-full flex flex-col"
+        onMouseMove={handleMouseMove}
+      >
         <motion.div
           className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
           style={{
@@ -216,7 +216,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     );
   } else {
     return (
-      <Card className="group relative shadow-2xl" onMouseMove={handleMouseMove}>
+      <Card
+        className="group relative shadow-2xl h-full flex flex-col"
+        onMouseMove={handleMouseMove}
+      >
         <motion.div
           className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
           style={{
