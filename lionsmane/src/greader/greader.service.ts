@@ -295,48 +295,7 @@ export class GreaderService {
       if (!feed) {
         throw new NotFoundException('Feed not found');
       }
-      try {
-        // Get all articles for this feed that the user has subscribed to
-        const articles = await this.db
-          .select({ id: schema.articles.id })
-          .from(schema.articles)
-          .innerJoin(
-            schema.subscriptions,
-            and(
-              eq(schema.articles.feedId, schema.subscriptions.feedId),
-              eq(schema.subscriptions.userId, userId),
-            ),
-          )
-          .where(eq(schema.articles.feedId, feed.id));
-
-        if (articles.length > 0) {
-          // Prepare values for batch upsert
-          const values = articles.map((article) => ({
-            userId,
-            articleId: article.id,
-            isRead: true,
-          }));
-
-          // Use upsert to handle both existing and non-existing state records
-          await this.db
-            .insert(schema.userArticleStates)
-            .values(values)
-            .onConflictDoUpdate({
-              target: [
-                schema.userArticleStates.userId,
-                schema.userArticleStates.articleId,
-              ],
-              set: {
-                isRead: true,
-              },
-            });
-        }
-      } catch (error) {
-        this.logger.error(error);
-        throw new InternalServerErrorException('Failed to mark all as read', {
-          cause: error,
-        });
-      }
+      await this.feedService.markAllRead(userId, feed.id);
     }
   }
 

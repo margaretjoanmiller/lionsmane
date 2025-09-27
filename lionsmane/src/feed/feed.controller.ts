@@ -103,6 +103,11 @@ export class FeedController {
     }
   }
 
+  @Post('mark-all-read/:id')
+  async markAllRead(@Param('id') id: string, @Session() session: UserSession) {
+    return await this.feedService.markAllRead(session.user.id, id);
+  }
+
   @Get(':id')
   @ZodResponse({ type: FeedOutDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {

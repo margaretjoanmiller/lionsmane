@@ -127,6 +127,30 @@
         "tags": ["feeds"]
       }
     },
+    "/feed/mark-all-read/{id}": {
+      "post": {
+        "operationId": "FeedController_markAllRead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal server error" }
+        },
+        "security": [
+          { "oauth2": ["openid", "profile", "email"] },
+          { "bearer": [] },
+          { "cookie": [] }
+        ],
+        "tags": ["feeds"]
+      }
+    },
     "/feed/{id}": {
       "get": {
         "operationId": "FeedController_findOne",
@@ -2349,7 +2373,7 @@
         "properties": {
           "description": {
             "type": "string",
-            "minLength": 2,
+            "minLength": 0,
             "maxLength": 1000,
             "x-nestjs_zod-has-null": true
           },
