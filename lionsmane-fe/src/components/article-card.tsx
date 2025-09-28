@@ -128,7 +128,9 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           </div>
         </CardTitle>
         <CardDescription>
-          {format(new Date(article.published), 'MMM d, yyyy HH:mm')}
+          <time dateTime={article.published}>
+            {format(new Date(article.published), 'MMM d, yyyy HH:mm')}
+          </time>
         </CardDescription>
       </CardHeader>
       <CardContent>

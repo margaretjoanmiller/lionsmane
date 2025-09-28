@@ -121,6 +121,7 @@ function DashLayout() {
         },
         onError(error) {
           form.reset();
+          // @ts-expect-error: error with error types in openapi-typescript
           toast.error('Error adding feed', { description: error.message });
         },
       },
