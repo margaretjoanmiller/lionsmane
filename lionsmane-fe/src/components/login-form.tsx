@@ -92,7 +92,10 @@ export function LoginForm() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 flex flex-col"
+        >
           <FormField
             control={form.control}
             name="email"
@@ -134,6 +137,8 @@ export function LoginForm() {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
+      <hr className="h-px my-8" />
+
       {isTfa && (
         <Form {...twoFactorConfirmForm}>
           <form

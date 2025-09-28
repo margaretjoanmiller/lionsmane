@@ -91,112 +91,114 @@ function ArticlePage() {
       : data.feedTitle;
 
   return (
-    <div className="bg-card flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
+    <article className="bg-card flex flex-col gap-6 rounded-xl border py-6 shadow-sm">
       <div className="m-6">
-        <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-          {data.title}
-          {data.isRead ? (
-            <Button
-              className="ml-2"
-              variant="ghost"
-              size="sm"
-              onClick={markUnread}
-              asChild
-            >
-              <Badge variant="outline">Read</Badge>
-            </Button>
-          ) : (
-            <Button className="ml-2" onClick={markRead} size="sm" asChild>
-              <Badge>Unread</Badge>
-            </Button>
-          )}
-          {data.isStarred && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                mutate({
-                  params: {
-                    path: {
-                      id: data.id,
-                    },
-                    query: {
-                      status: 'unstarred',
-                    },
-                  },
-                  credentials: 'include',
-                })
-              }
-            >
-              <SolarStarBold />
-            </Button>
-          )}
-          {!data.isStarred && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                mutate({
-                  params: {
-                    path: {
-                      id: data.id,
-                    },
-                    query: {
-                      status: 'starred',
-                    },
-                  },
-                  credentials: 'include',
-                })
-              }
-            >
-              <SolarStarLinear />
-            </Button>
-          )}
-          <Tooltip>
-            <TooltipTrigger>
+        <header>
+          <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+            {data.title}
+            {data.isRead ? (
+              <Button
+                className="ml-2"
+                variant="ghost"
+                size="sm"
+                onClick={markUnread}
+                asChild
+              >
+                <Badge variant="outline">Read</Badge>
+              </Button>
+            ) : (
+              <Button className="ml-2" onClick={markRead} size="sm" asChild>
+                <Badge>Unread</Badge>
+              </Button>
+            )}
+            {data.isStarred && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() =>
-                  requestFullArticleText({
-                    params: { path: { id: data.id } },
+                  mutate({
+                    params: {
+                      path: {
+                        id: data.id,
+                      },
+                      query: {
+                        status: 'unstarred',
+                      },
+                    },
                     credentials: 'include',
                   })
                 }
               >
-                <SolarGlassesLineDuotone />
+                <SolarStarBold />
               </Button>
-            </TooltipTrigger>
-            <TooltipContent>Request full article text</TooltipContent>
-          </Tooltip>
-          {hasReadeckKey && (
+            )}
+            {!data.isStarred && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  mutate({
+                    params: {
+                      path: {
+                        id: data.id,
+                      },
+                      query: {
+                        status: 'starred',
+                      },
+                    },
+                    credentials: 'include',
+                  })
+                }
+              >
+                <SolarStarLinear />
+              </Button>
+            )}
             <Tooltip>
               <TooltipTrigger>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() =>
-                    readLater({
-                      body: {
-                        url: data.url,
-                      },
+                    requestFullArticleText({
+                      params: { path: { id: data.id } },
                       credentials: 'include',
                     })
                   }
                 >
-                  <SolarBookBookmarkLineDuotone />
+                  <SolarGlassesLineDuotone />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Add to readeck</TooltipContent>
+              <TooltipContent>Request full article text</TooltipContent>
             </Tooltip>
-          )}
-        </h1>
-        <h2 className="text-center font-bold">
-          {data.authors.map((author) => author.name).join(', ')}
-          <Badge className="ml-2" variant="outline">
-            {articleFeed}
-          </Badge>
-        </h2>
+            {hasReadeckKey && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      readLater({
+                        body: {
+                          url: data.url,
+                        },
+                        credentials: 'include',
+                      })
+                    }
+                  >
+                    <SolarBookBookmarkLineDuotone />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Add to readeck</TooltipContent>
+              </Tooltip>
+            )}
+          </h1>
+          <h2 className="text-center font-bold">
+            {data.authors.map((author) => author.name).join(', ')}
+            <Badge className="ml-2" variant="outline">
+              {articleFeed}
+            </Badge>
+          </h2>
+        </header>
         <div className="prose prose-lg prose-pink">
           {
             <div
@@ -212,6 +214,6 @@ function ArticlePage() {
           <a href={data.url!}>Original article</a>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
