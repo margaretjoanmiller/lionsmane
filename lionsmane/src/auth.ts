@@ -58,8 +58,8 @@ export const auth = betterAuth({
     }),
   ],
   telemetry: { enabled: false },
-  trustedOrigins: ['http://localhost:3000', process.env.FE_URL!].filter(
-    Boolean,
+  trustedOrigins: ['http://localhost:3000'].concat(
+    process.env.CORS_ORIGIN?.split(',') || [],
   ),
   sendVerificationEmail: async ({ user, url }) => {
     await sendAuthEmail(
