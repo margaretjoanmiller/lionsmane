@@ -3,6 +3,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import { Queue } from 'bullmq';
+import * as cheerio from 'cheerio';
 import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
@@ -120,9 +121,16 @@ export class FetcherService {
       if (!readableHtml || !readableText) {
         throw new Error('Failed to extract article text');
       }
+
+      const $ = cheerio.load(readableHtml);
+      const firstImageAlt = $('img').first().attr('alt');
+      $('img')
+        .first()
+        .wrap(`<figure><figcaption>${firstImageAlt}</figcaption></figure>`);
+
       return {
         textContent: readableText,
-        htmlContent: readableHtml,
+        htmlContent: $.html(),
       };
     } catch (error) {
       console.error('Error fetching URL:', error);

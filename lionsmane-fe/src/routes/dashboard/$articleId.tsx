@@ -211,7 +211,9 @@ function ArticlePage() {
               }} // we clean this on the backend
             />
           }
-          <a href={data.url!}>Original article</a>
+          <footer>
+            <a href={data.url!}>Original article</a>
+          </footer>
         </div>
       </div>
     </article>
