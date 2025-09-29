@@ -11,6 +11,12 @@ import { z } from 'zod';
 import { DataTable } from '@/components/data-table';
 import MultipleSelector from '@/components/multi-select';
 import { OpmlUpload } from '@/components/opml-upload';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -33,7 +39,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -579,125 +584,148 @@ function Settings() {
   return (
     <div className="flex flex-col container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
-      <h2 className="text-xl font-semibold mb-4">Manage account</h2>
-      {!twoFactorEnabled && (
-        <Form {...twoFactorForm}>
-          <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
-            <FormField
-              control={twoFactorForm.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Two-Factor Authentication</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="current password"
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Enable</Button>
-          </form>
-        </Form>
-      )}
-      {isEnablingTwoFactor && (
-        <div className="my-4 p-4">
-          <Card className="card bg-white w-md">
-            <CardContent>
-              <QRCode value={tfaURI || ''} />
-            </CardContent>
-          </Card>
-          <p className="my-2">Scan this QR code with your authenticator app.</p>
-          <Form {...twoFactorConfirmForm}>
-            <form
-              onSubmit={twoFactorConfirmForm.handleSubmit(onConfirmTwoFactor)}
-            >
-              <FormField
-                control={twoFactorConfirmForm.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>One-Time Password</FormLabel>
-                    <FormControl>
-                      <InputOTP maxLength={6} {...field}>
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} />
-                          <InputOTPSlot index={1} />
-                          <InputOTPSlot index={2} />
-                          <InputOTPSlot index={3} />
-                          <InputOTPSlot index={4} />
-                          <InputOTPSlot index={5} />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </FormControl>
-                    <FormDescription>
-                      Please enter the one-time password sent to your phone.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </div>
-      )}
-      <h2 className="text-xl font-semibold mb-4">Manage Feeds</h2>
-      <DataTable columns={columns} data={feeds?.feeds} />
-      <div className="my-6">
-        <DataTable columns={folderColumns} data={folders} />
-      </div>
-      <div className="my-6">
-        <Label>Import OPML File</Label>
-        <OpmlUpload />
-        <a
-          className="no-underline hover:underline decoration-pink-400 my-2"
-          href={downloadUrl}
-          download="feeds.opml"
-        >
-          <Label>Export OPML File</Label>
-        </a>
-      </div>
-      <h2 className="text-xl font-semibold mb-4">API Keys</h2>
-      <Form {...apiKeyForm}>
-        <form onSubmit={apiKeyForm.handleSubmit(submitApiKey)}>
-          <FormField
-            control={apiKeyForm.control}
-            name="apiKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ApiKey</FormLabel>
-                <FormControl>
-                  <Input placeholder="key" {...field} />
-                </FormControl>
-                <FormDescription>This is your readeck api key.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={apiKeyForm.control}
-            name="apiURL"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ApiURL</FormLabel>
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder="https://readeck.org"
-                    {...field}
+      <Accordion type="multiple">
+        <AccordionItem value="mange account">
+          <AccordionTrigger>Manage account</AccordionTrigger>
+          <AccordionContent>
+            {!twoFactorEnabled && (
+              <Form {...twoFactorForm}>
+                <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
+                  <FormField
+                    control={twoFactorForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Two-Factor Authentication</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="current password"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-                <FormDescription>This is your readeck API url.</FormDescription>
-                <FormMessage />
-              </FormItem>
+                  <Button type="submit">Enable</Button>
+                </form>
+              </Form>
             )}
-          />
-          <Button type="submit">Configure readeck</Button>
-        </form>
-      </Form>
+            {isEnablingTwoFactor && (
+              <div className="my-4 p-4">
+                <Card className="card bg-white w-md">
+                  <CardContent>
+                    <QRCode value={tfaURI || ''} />
+                  </CardContent>
+                </Card>
+                <p className="my-2">
+                  Scan this QR code with your authenticator app.
+                </p>
+                <Form {...twoFactorConfirmForm}>
+                  <form
+                    onSubmit={twoFactorConfirmForm.handleSubmit(
+                      onConfirmTwoFactor,
+                    )}
+                  >
+                    <FormField
+                      control={twoFactorConfirmForm.control}
+                      name="code"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>One-Time Password</FormLabel>
+                          <FormControl>
+                            <InputOTP maxLength={6} {...field}>
+                              <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                                <InputOTPSlot index={1} />
+                                <InputOTPSlot index={2} />
+                                <InputOTPSlot index={3} />
+                                <InputOTPSlot index={4} />
+                                <InputOTPSlot index={5} />
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </FormControl>
+                          <FormDescription>
+                            Please enter the one-time password sent to your
+                            phone.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="manage feeds">
+          <AccordionTrigger>Manage Feeds</AccordionTrigger>
+          <AccordionContent>
+            <DataTable columns={columns} data={feeds?.feeds} />
+            <div className="my-6">
+              <DataTable columns={folderColumns} data={folders} />
+            </div>
+            <div className="my-6">
+              <Label>Import OPML File</Label>
+              <OpmlUpload />
+              <a
+                className="no-underline hover:underline decoration-pink-400 my-2"
+                href={downloadUrl}
+                download="feeds.opml"
+              >
+                <Label>Export OPML File</Label>
+              </a>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="api keys">
+          <AccordionTrigger>API Keys</AccordionTrigger>
+          <AccordionContent>
+            <Form {...apiKeyForm}>
+              <form onSubmit={apiKeyForm.handleSubmit(submitApiKey)}>
+                <FormField
+                  control={apiKeyForm.control}
+                  name="apiKey"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ApiKey</FormLabel>
+                      <FormControl>
+                        <Input placeholder="key" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This is your readeck api key.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={apiKeyForm.control}
+                  name="apiURL"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ApiURL</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder="https://readeck.org"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This is your readeck API url.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">Configure readeck</Button>
+              </form>
+            </Form>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }
