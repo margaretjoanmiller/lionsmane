@@ -25,56 +25,51 @@ export const Route = createFileRoute('/dashboard/feed/$feedId')({
   component: FeedId,
 });
 
+function AlertMarkRead({ feedId }: { feedId: string }) {
+  const queryClient = useQueryClient();
+  const { mutate } = $api.useMutation('post', '/feed/mark-all-read/{id}', {
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      toast.success('Marked all articles from feed as read');
+    },
+  });
+
+  function markAllAsRead() {
+    mutate({
+      params: {
+        path: {
+          id: feedId,
+        },
+      },
+      credentials: 'include',
+    });
+  }
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="secondary">Mark all read</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will mark all articles in this feed as read.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={markAllAsRead}>
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 function FeedId() {
   const feedId = Route.useParams().feedId;
   const filter = useArticleFilterStore((state) => state.filter);
-  const queryClient = useQueryClient();
-
-  function AlertMarkRead() {
-    const { mutate } = $api.useMutation('post', '/feed/mark-all-read/{id}', {
-      onSuccess: () => {
-        toast.success('Marked all articles from feed as read');
-        queryClient.invalidateQueries({
-          queryKey: ['get', '/articles/feed/{id}'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['get', '/feeds'],
-        });
-      },
-    });
-
-    function markAllAsRead() {
-      mutate({
-        params: {
-          path: {
-            id: feedId,
-          },
-        },
-        credentials: 'include',
-      });
-    }
-    return (
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="secondary">Mark all read</Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will mark all articles in this feed as read.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={markAllAsRead}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  }
 
   if (filter === ArticleFilter.Unread) {
     const { data, isLoading, isFetching, hasNextPage, fetchNextPage } =
@@ -110,7 +105,7 @@ function FeedId() {
     return (
       <>
         <div className="flex gap-4 mb-6">
-          <AlertMarkRead />
+          <AlertMarkRead feedId={feedId} />
         </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {articles}
@@ -154,7 +149,7 @@ function FeedId() {
     return (
       <>
         <div className="flex gap-4 mb-6">
-          <AlertMarkRead />
+          <AlertMarkRead feedId={feedId} />
         </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {articles}
@@ -197,7 +192,7 @@ function FeedId() {
     return (
       <>
         <div className="flex gap-4 mb-6">
-          <AlertMarkRead />
+          <AlertMarkRead feedId={feedId} />
         </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {articles}
@@ -240,7 +235,7 @@ function FeedId() {
     return (
       <>
         <div className="flex gap-4 mb-6">
-          <AlertMarkRead />
+          <AlertMarkRead feedId={feedId} />
         </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {articles}
