@@ -3,8 +3,11 @@
   "extends": "//",
   "linter": {
     "rules": {
-      "a11y": "warn"
+      "a11y": "warn",
+      "correctness": {
+        "noNestedComponentDefinitions": "error"
+      }
     },
-    "includes": ["!node_modules/**", "!dist/**"]
+    "includes": ["!node_modules/**", "!dist/**", "!**/routeTree.gen.ts"]
   }
 }

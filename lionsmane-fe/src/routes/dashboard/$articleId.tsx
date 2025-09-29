@@ -211,8 +211,15 @@ function ArticlePage() {
               }} // we clean this on the backend
             />
           }
-          <footer>
+          <footer className="flex-col">
             <a href={data.url!}>Original article</a>
+            <div className="grid-flow-row">
+              {data.categories.map((c) => (
+                <Badge variant="outline" className="m-1">
+                  {c}
+                </Badge>
+              ))}
+            </div>
           </footer>
         </div>
       </div>
