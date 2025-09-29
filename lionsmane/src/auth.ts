@@ -18,8 +18,8 @@ export const auth = betterAuth({
         `Click the link to reset your password: ${url}`,
       );
     },
-    // only require email verification in prod
-    requireEmailVerification: process.env.NODE_ENV === 'production',
+    // only require email verification when SMTP host is set
+    requireEmailVerification: process.env.SMTP_HOST !== 'undefined',
   },
   emailVerification: {
     sendOnSignUp: process.env.NODE_ENV === 'production',
