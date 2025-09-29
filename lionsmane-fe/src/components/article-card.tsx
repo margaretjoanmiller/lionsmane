@@ -139,13 +139,18 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       </CardHeader>
       <CardContent>
         {article.image || article.media[0] ? (
-          <div className="aspect-video overflow-hidden rounded-md">
-            <img
-              src={article.image || article.media[0]}
-              alt={article.imageAlt || article.title}
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <>
+            <div className="aspect-video overflow-hidden rounded-md">
+              <img
+                src={article.image || article.media[0]}
+                alt={article.imageAlt || article.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="text-sm text-muted-foreground mt-1 line-clamp-3">
+              {article.readableText}
+            </div>
+          </>
         ) : (
           <div className="text-sm text-muted-foreground line-clamp-5">
             {article.readableText}
@@ -212,7 +217,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         />
         {card}
         <Button
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+          className="max-w-1/3 -my-3 place-self-center"
           variant="ghost"
           onClick={() => setDismissBlur(false)}
         >
