@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import FluentSearch20Filled from '~icons/fluent/search-20-filled';
@@ -9,6 +10,8 @@ import { Form, FormField } from './ui/form';
 import { Input } from './ui/input';
 
 export function SearchBar() {
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
   const schema = z.object({
     query: z.string().min(2).max(256),
     page: z.number().min(1).max(100).default(1),
@@ -22,6 +25,7 @@ export function SearchBar() {
   const navigate = useNavigate();
 
   const onSubmit = (data: z.infer<typeof schema>) => {
+    setIsOpen(false);
     navigate({
       to: '/dashboard/search',
       search: {
@@ -33,7 +37,7 @@ export function SearchBar() {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="flex items-center align-center">
           <FluentSearch20Filled /> Search
