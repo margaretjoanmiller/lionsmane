@@ -4,7 +4,9 @@ import {
   HealthCheckService,
   HttpHealthIndicator,
 } from '@nestjs/terminus';
+import { Public } from '@thallesp/nestjs-better-auth';
 
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

@@ -78,6 +78,11 @@ services:
       SMTP_PASS: ${SMTP_PASS}
     ports:
       - "8181:8181"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8181/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     depends_on:
       db:
         condition: service_healthy
