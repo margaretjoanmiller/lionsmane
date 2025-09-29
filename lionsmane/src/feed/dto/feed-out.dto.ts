@@ -1,5 +1,5 @@
-import { createZodDto } from "nestjs-zod";
-import { z } from "zod";
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 export const feedOutDto = z.object({
   id: z.uuid(),
@@ -14,7 +14,7 @@ export const feedOutDto = z.object({
     .preprocess((arg: Date | string | undefined) => {
       // If the input is a string, try to parse it into a Date object.
       // This handles the '2025-09-01 21:54:33' format.
-      if (typeof arg === "string") {
+      if (typeof arg === 'string') {
         return new Date(arg).toISOString();
       } else if (arg instanceof Date) {
         return arg.toISOString();
@@ -38,12 +38,12 @@ const hiddenFeedList = feedListOutDto.extend({
           ruleId: z.uuid(),
           ruleName: z.string().nullable(),
           conditionType: z.enum([
-            "keywords",
-            "authors",
-            "titleContains",
-            "contentContains",
-            "feeds",
-            "categories",
+            'keywords',
+            'authors',
+            'titleContains',
+            'contentContains',
+            'feeds',
+            'categories',
           ]),
           conditionValue: z.string(), // The specific value that matched
           appliedAt: z.iso.datetime(),

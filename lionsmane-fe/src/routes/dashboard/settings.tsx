@@ -586,77 +586,78 @@ function Settings() {
       <h1 className="text-2xl font-bold mb-4">Settings</h1>
       <Accordion type="multiple">
         <AccordionItem value="mange account">
-        <AccordionTrigger>Manage account</AccordionTrigger>
-        <AccordionContent>
-          {!twoFactorEnabled && (
-            <Form {...twoFactorForm}>
-              <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
-                <FormField
-                  control={twoFactorForm.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Two-Factor Authentication</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="password"
-                          placeholder="current password"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit">Enable</Button>
-              </form>
-            </Form>
-          )}
-          {isEnablingTwoFactor && (
-            <div className="my-4 p-4">
-              <Card className="card bg-white w-md">
-                <CardContent>
-                  <QRCode value={tfaURI || ''} />
-                </CardContent>
-              </Card>
-              <p className="my-2">
-                Scan this QR code with your authenticator app.
-              </p>
-              <Form {...twoFactorConfirmForm}>
-                <form
-                  onSubmit={twoFactorConfirmForm.handleSubmit(
-                    onConfirmTwoFactor,
-                  )}
-                >
+          <AccordionTrigger>Manage account</AccordionTrigger>
+          <AccordionContent>
+            {!twoFactorEnabled && (
+              <Form {...twoFactorForm}>
+                <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
                   <FormField
-                    control={twoFactorConfirmForm.control}
-                    name="code"
+                    control={twoFactorForm.control}
+                    name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>One-Time Password</FormLabel>
+                        <FormLabel>Two-Factor Authentication</FormLabel>
                         <FormControl>
-                          <InputOTP maxLength={6} {...field}>
-                            <InputOTPGroup>
-                              <InputOTPSlot index={0} />
-                              <InputOTPSlot index={1} />
-                              <InputOTPSlot index={2} />
-                              <InputOTPSlot index={3} />
-                              <InputOTPSlot index={4} />
-                              <InputOTPSlot index={5} />
-                            </InputOTPGroup>
-                          </InputOTP>
+                          <Input
+                            {...field}
+                            type="password"
+                            placeholder="current password"
+                          />
                         </FormControl>
-                        <FormDescription>
-                          Please enter the one-time password sent to your phone.
-                        </FormDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
+                  <Button type="submit">Enable</Button>
                 </form>
               </Form>
-            </div>
-          )}
-        </AccordionContent>
+            )}
+            {isEnablingTwoFactor && (
+              <div className="my-4 p-4">
+                <Card className="card bg-white w-md">
+                  <CardContent>
+                    <QRCode value={tfaURI || ''} />
+                  </CardContent>
+                </Card>
+                <p className="my-2">
+                  Scan this QR code with your authenticator app.
+                </p>
+                <Form {...twoFactorConfirmForm}>
+                  <form
+                    onSubmit={twoFactorConfirmForm.handleSubmit(
+                      onConfirmTwoFactor,
+                    )}
+                  >
+                    <FormField
+                      control={twoFactorConfirmForm.control}
+                      name="code"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>One-Time Password</FormLabel>
+                          <FormControl>
+                            <InputOTP maxLength={6} {...field}>
+                              <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                                <InputOTPSlot index={1} />
+                                <InputOTPSlot index={2} />
+                                <InputOTPSlot index={3} />
+                                <InputOTPSlot index={4} />
+                                <InputOTPSlot index={5} />
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </FormControl>
+                          <FormDescription>
+                            Please enter the one-time password sent to your
+                            phone.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+            )}
+          </AccordionContent>
         </AccordionItem>
         <AccordionItem value="manage feeds">
           <AccordionTrigger>Manage Feeds</AccordionTrigger>
