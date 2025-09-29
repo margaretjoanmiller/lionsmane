@@ -72,6 +72,10 @@ services:
       REDIS_HOST: valkey
       NODE_ENV: production
       CORS_ORIGIN: "https://lionsmane.wanderingwires.net"
+      FROM_ADDR: ${FROM_ADDR}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
     ports:
       - "8181:8181"
     depends_on:
