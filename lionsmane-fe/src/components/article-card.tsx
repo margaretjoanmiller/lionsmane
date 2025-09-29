@@ -113,18 +113,22 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
             {article.title}
           </Link>
           <div className="justify">
-            <ReadBadge read={article.isRead || false} />
-            <Badge variant="outline">{articleFeed}</Badge>
-            {!article.isStarred && (
-              <Button variant="ghost" size="icon" onClick={markStarred}>
-                <SolarStarLinear />
-              </Button>
-            )}
-            {article.isStarred && (
-              <Button variant="ghost" size="icon" onClick={markUnstarred}>
-                <SolarStarBold />
-              </Button>
-            )}
+            <div className="flex items-center">
+              <ReadBadge read={article.isRead || false} />
+              <Badge className="ml-1" variant="outline">
+                {articleFeed}
+              </Badge>
+              {!article.isStarred && (
+                <Button variant="ghost" size="icon" onClick={markStarred}>
+                  <SolarStarLinear />
+                </Button>
+              )}
+              {article.isStarred && (
+                <Button variant="ghost" size="icon" onClick={markUnstarred}>
+                  <SolarStarBold />
+                </Button>
+              )}
+            </div>
           </div>
         </CardTitle>
         <CardDescription>
