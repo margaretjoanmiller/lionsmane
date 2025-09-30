@@ -42,6 +42,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
@@ -77,24 +84,39 @@ export const Route = createFileRoute('/dashboard')({
   },
 });
 
-const formSchema = z.object({
+const discoverSchema = z.object({
+  url: z.url(),
+});
+
+const createFeedForm = z.object({
   url: z.url(),
   description: z.string(),
   folderId: z.string().nullable(),
 });
 function DashLayout() {
   const isMobile = useIsMobile();
-  const [open, setOpen] = React.useState(false);
+  const [step1open, setStep1Open] = React.useState(false);
+  const [step2open, setStep2Open] = React.useState(false);
+  const [feeds, setFeeds] = React.useState<{ feeds: string[] }>({ feeds: [] });
+
+  const step1Form = useForm<z.infer<typeof discoverSchema>>({
+    resolver: zodResolver(discoverSchema),
+    defaultValues: {
+      url: '',
+    },
+  });
+
   const queryClient = useQueryClient();
   const { data: folders } = $api.useQuery('get', '/folder', {
     credentials: 'include',
   });
+
   const folderSelect = folders?.map((folder) => ({
     value: folder.id,
     label: folder.name,
   }));
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const step2Form = useForm<z.infer<typeof createFeedForm>>({
+    resolver: zodResolver(createFeedForm),
     defaultValues: {
       url: '',
       description: '',
@@ -102,16 +124,39 @@ function DashLayout() {
     },
   });
 
+  const { mutate: discover, isPending: discoverPending } = $api.useMutation(
+    'post',
+    '/feed/discover',
+  );
+
+  function onDiscoverFeed(values: z.infer<typeof discoverSchema>) {
+    discover(
+      {
+        body: values,
+        credentials: 'include',
+      },
+      {
+        onSuccess: (data) => {
+          setStep1Open(false);
+          step1Form.reset;
+          setFeeds(data);
+
+          setStep2Open(true);
+        },
+      },
+    );
+  }
+
   const { mutate, isPending } = $api.useMutation('post', '/feed');
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onCreateFeed(values: z.infer<typeof createFeedForm>) {
     // Handle form submission here
     mutate(
       { body: values, credentials: 'include' },
       {
         onSuccess: () => {
-          setOpen(false);
-          form.reset();
+          setStep2Open(false);
+          step2Form.reset();
           queryClient.invalidateQueries({
             queryKey: ['get', '/folder/feeds'],
           });
@@ -120,7 +165,7 @@ function DashLayout() {
           });
         },
         onError(error) {
-          form.reset();
+          step2Form.reset();
           // @ts-expect-error: error with error types in openapi-typescript
           toast.error('Error adding feed', { description: error.message });
         },
@@ -144,7 +189,7 @@ function DashLayout() {
               <ModeToggle />
             </div>
             <div className="group fixed bottom-6 right-6 z-10">
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={step1open} onOpenChange={setStep1Open}>
                 <DialogTrigger>
                   <Tooltip>
                     <TooltipTrigger>
@@ -157,25 +202,68 @@ function DashLayout() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Add Feed</DialogTitle>
+                    <DialogTitle>Discover feeds from URL</DialogTitle>
                   </DialogHeader>
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="m-8"
-                    >
+                  <Form {...step1Form}>
+                    <form className="space-y-8" onSubmit={step1Form.handleSubmit(onDiscoverFeed)}>
                       <FormField
-                        control={form.control}
+                        control={step1Form.control}
                         name="url"
                         render={({ field }) => (
-                          <FormItem className="my-6">
+                          <FormItem>
                             <FormLabel>URL</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="https://coolfeed.com/feed"
+                                placeholder="https://coolfeed.com"
+                                type="url"
                                 {...field}
                               />
                             </FormControl>
+                            <FormDescription>
+                              This is the URL you would like to find feeds on.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <LoadingButton type="submit" loading={discoverPending}>
+                        Find
+                      </LoadingButton>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+              <Dialog open={step2open} onOpenChange={setStep2Open}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Feed</DialogTitle>
+                  </DialogHeader>
+                  <Form {...step2Form}>
+                    <form
+                      onSubmit={step2Form.handleSubmit(onCreateFeed)}
+                      className="space-y-8"
+                    >
+                      <FormField
+                        control={step2Form.control}
+                        name="url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>URL</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="select feed discovered from URL" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {feeds.feeds.map((f) => (
+                                  <SelectItem value={f}>{f}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <FormDescription>
                               This is your feed URL.
                             </FormDescription>
@@ -184,10 +272,10 @@ function DashLayout() {
                         )}
                       />
                       <FormField
-                        control={form.control}
+                        control={step2Form.control}
                         name="description"
                         render={({ field }) => (
-                          <FormItem className="my-6">
+                          <FormItem>
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                               <Input placeholder="Cool feed" {...field} />
@@ -200,10 +288,10 @@ function DashLayout() {
                         )}
                       />
                       <FormField
-                        control={form.control}
+                        control={step2Form.control}
                         name="folderId"
                         render={({ field }) => (
-                          <FormItem className="flex flex-col my-6">
+                          <FormItem className="flex flex-col">
                             <FormLabel>Folder</FormLabel>
                             <Popover>
                               <PopoverTrigger asChild>
@@ -241,7 +329,7 @@ function DashLayout() {
                                           value={folder.label}
                                           key={folder.value}
                                           onSelect={() => {
-                                            form.setValue(
+                                            step2Form.setValue(
                                               'folderId',
                                               folder.value,
                                             );
@@ -260,11 +348,9 @@ function DashLayout() {
                           </FormItem>
                         )}
                       />
-                      <div className="flex flex-row">
-                        <LoadingButton loading={isPending} type="submit">
-                          Submit
-                        </LoadingButton>
-                      </div>
+                      <LoadingButton loading={isPending} type="submit">
+                        Submit
+                      </LoadingButton>
                     </form>
                   </Form>
                 </DialogContent>

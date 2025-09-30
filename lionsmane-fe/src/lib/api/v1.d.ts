@@ -52,6 +52,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/feed/discover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["FeedController_discover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/feed/import": {
         parameters: {
             query?: never;
@@ -839,6 +855,13 @@ export interface components {
                 unreadCount: number | null;
             }[];
         };
+        DiscoverDto: {
+            /** Format: uri */
+            url: string;
+        };
+        DiscoveredFeedsDto_Output: {
+            feeds: string[];
+        };
         FileDto: {
             /**
              * Format: binary
@@ -1385,6 +1408,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NewSubscriptionDto_Output"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FeedController_discover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiscoverDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiscoveredFeedsDto_Output"];
                 };
             };
             /** @description Unauthorized */
