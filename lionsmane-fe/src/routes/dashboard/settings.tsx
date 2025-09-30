@@ -816,7 +816,10 @@ function Settings() {
           <AccordionTrigger>Greader API Keys</AccordionTrigger>
           <AccordionContent>
             <Form {...apiKeyForm}>
-              <form onSubmit={apiKeyForm.handleSubmit(submitApiKey)}>
+              <form
+                onSubmit={apiKeyForm.handleSubmit(submitApiKey)}
+                className="space-y-4"
+              >
                 <FormField
                   control={apiKeyForm.control}
                   name="apiKey"
@@ -838,7 +841,7 @@ function Settings() {
                   name="apiURL"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ApiURL</FormLabel>
+                      <FormLabel>Readeck instance</FormLabel>
                       <FormControl>
                         <Input
                           type="url"
