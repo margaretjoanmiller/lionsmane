@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
 const FolderOutSchema = z.object({
   id: z.uuid(),
@@ -16,6 +16,7 @@ const folderWithFeedsOutSchema = z.object({
     z.object({
       id: z.uuid(),
       url: z.url(),
+      favicon: z.url().nullable(),
       title: z.string().min(1).max(255).nullable(),
       authors: z.array(z.string().max(255)).nullable(),
       categories: z.array(z.string().max(255)).nullable(),

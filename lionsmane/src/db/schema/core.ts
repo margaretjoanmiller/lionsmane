@@ -22,6 +22,7 @@ export const feeds = pgTable('feeds', {
     .$defaultFn(() => v7()),
   title: text().notNull(),
   url: varchar({ length: 256 }).notNull().unique(),
+  favicon: varchar({ length: 256 }),
   authors: varchar({ length: 256 }).array(),
   categories: varchar({ length: 256 }).array(),
   copyright: varchar({ length: 50 }),

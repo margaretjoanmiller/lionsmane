@@ -1,4 +1,5 @@
 import { Readability } from '@mozilla/readability';
+import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { parseFeed } from '@rowanmanning/feed-parser';
@@ -14,6 +15,7 @@ import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
+import { catchError, firstValueFrom } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
 
@@ -23,6 +25,7 @@ export class FetcherService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
+    private httpService: HttpService,
   ) {}
   private readonly logger = new Logger(FetcherService.name);
 
@@ -252,5 +255,29 @@ export class FetcherService {
       console.error('Error parsing feed:', error);
       throw new Error('Failed to parse feed');
     }
+  }
+
+  async getFavicon(url: URL) {
+    const tryFavi = `https://${url.host}/favicon.ico`;
+
+    let favicon: string | null;
+    const { data } = await firstValueFrom(
+      this.httpService.get(tryFavi).pipe(
+        catchError((error, caught) => {
+          this.logger.warn(
+            `No favicon found for ${url}, setting to null`,
+            error,
+          );
+          favicon = null;
+          return caught;
+        }),
+      ),
+    );
+    if (data) {
+      favicon = tryFavi;
+    } else {
+      favicon = null;
+    }
+    return favicon;
   }
 }

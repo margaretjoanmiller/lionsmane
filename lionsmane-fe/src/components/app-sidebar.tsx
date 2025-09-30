@@ -131,6 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         id: feed.id,
         name: feed.title || feed.url,
         unreadCount: feed.unreadCount,
+        favicon: feed.favicon,
       })) || [];
 
   const folderFeeds =
@@ -142,6 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: feed.title || feed.url,
         unreadCount:
           feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
+        favicon: feed.favicon,
       })),
     })) || [];
 
@@ -183,7 +185,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           to="/dashboard/feed/$feedId"
                           params={{ feedId: feed.id }}
                         >
-                          {feed.name}
+                          {feed.favicon && (
+                            <img
+                              src={feed.favicon}
+                              alt={`${feed.name} favicon`}
+                              className="max-w-[16px] max-h-[16px]"
+                            />
+                          )}
+                          <span className="truncate">{feed.name}</span>
                         </Link>
                         <SidebarMenuBadge className="flex">
                           {feed.unreadCount}
@@ -212,9 +221,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Link
                   to="/dashboard/feed/$feedId"
                   params={{ feedId: feed.id }}
-                  className="truncate max-w-50"
+                  className="max-w-50 flex flex-row"
                 >
-                  {feed.name}
+                  {feed.favicon && (
+                    <img
+                      src={feed.favicon}
+                      alt={`${feed.name} favicon`}
+                      className="max-w-[16px] max-h-[16px] mr-2"
+                    />
+                  )}
+                  <span className="truncate">{feed.name}</span>
                 </Link>
               </SidebarMenuButton>
               <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>

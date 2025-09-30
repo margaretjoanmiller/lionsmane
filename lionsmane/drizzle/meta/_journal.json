@@ -43,6 +43,13 @@
       "when": 1758780150066,
       "tag": "0005_pretty_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1759230713718,
+      "tag": "0006_dry_speed_demon",
+      "breakpoints": true
     }
   ]
 }

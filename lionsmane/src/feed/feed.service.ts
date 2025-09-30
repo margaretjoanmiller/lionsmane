@@ -41,6 +41,7 @@ export class FeedService {
         .where(eq(schema.feeds.url, url));
 
       const title = await this.fetcher.extractFeedTitle(url);
+      const favicon = await this.fetcher.getFavicon(new URL(url));
 
       if (!feed) {
         const [newFeed] = await tx
@@ -49,6 +50,7 @@ export class FeedService {
             title: title ?? newSubscription.url,
             url: url,
             updated: subMonths(new Date(), 6),
+            favicon,
           })
           .returning();
         if (!newFeed) {
@@ -152,6 +154,7 @@ export class FeedService {
         id: schema.feeds.id,
         title: schema.feeds.title,
         url: schema.feeds.url,
+        favicon: schema.feeds.favicon,
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
         copyright: schema.feeds.copyright,
@@ -250,6 +253,7 @@ export class FeedService {
         id: schema.feeds.id,
         title: schema.feeds.title,
         url: schema.feeds.url,
+        favicon: schema.feeds.favicon,
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
         copyright: schema.feeds.copyright,
