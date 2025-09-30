@@ -45,6 +45,7 @@ export function SignupForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { data, error } = await authClient.signUp.email({
       ...values,
+      hasReadeckKey: false,
     });
     if (error) {
       toast.error('Error signing up', { description: error.message });
