@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PencilIcon } from 'lucide-react';
@@ -68,6 +68,7 @@ import { cn } from '@/lib/utils';
 import { usePrefStore } from '@/stores/userPref.store';
 import type { Feed } from '@/types/feed';
 import type { Folder } from '@/types/folder';
+import IconParkOutlineDelete from '~icons/icon-park-outline/delete';
 import MdiMoreHoriz from '~icons/mdi/more-horiz';
 
 export const Route = createFileRoute('/dashboard/settings')({
@@ -87,18 +88,69 @@ function Settings() {
   const [isEnablingTwoFactor, setIsEnablingTwoFactor] = React.useState(false);
 
   const [tfaURI, setTfaURI] = React.useState<string | null>(null);
-  const twoFactorForm = useForm({
-    resolver: zodResolver(z.object({ password: z.string().min(15) })),
+  const twoFactorFormSchema = z.object({
+    password: z.string().min(15),
+  });
+  const twoFactorForm = useForm<z.infer<typeof twoFactorFormSchema>>({
+    resolver: zodResolver(twoFactorFormSchema),
     defaultValues: {
       password: '',
     },
   });
-  const twoFactorConfirmForm = useForm({
-    resolver: zodResolver(z.object({ code: z.string().min(6).max(6) })),
+  const twoFactorConfirmFomSchema = z.object({
+    code: z.string().min(6).max(6),
+  });
+  const twoFactorConfirmForm = useForm<
+    z.infer<typeof twoFactorConfirmFomSchema>
+  >({
+    resolver: zodResolver(twoFactorConfirmFomSchema),
     defaultValues: {
       code: '',
     },
   });
+  const twoFactorEnabled = user?.data?.user.twoFactorEnabled;
+
+  async function onEnableTwoFactor(
+    values: z.infer<typeof twoFactorFormSchema>,
+  ) {
+    const { data, error } = await authClient.twoFactor.enable({
+      password: values.password,
+    });
+
+    if (error || !data) {
+      toast.error(
+        'Could not enable 2FA, please check your password and try again.',
+      );
+    }
+    const { data: uri, error: uriError } =
+      await authClient.twoFactor.getTotpUri({ password: values.password });
+    if (uriError || !uri) {
+      toast.error('Could not get TOTP URI, please try again.');
+      return;
+    }
+    setTfaURI(uri.totpURI);
+    setIsEnablingTwoFactor(true);
+
+    toast.success('Scan the QR code with your authenticator app.');
+  }
+
+  async function onConfirmTwoFactor(
+    values: z.infer<typeof twoFactorConfirmFomSchema>,
+  ) {
+    const { data, error } = await authClient.twoFactor.verifyTotp({
+      code: values.code, // required
+      trustDevice: true,
+    });
+    if (error || !data) {
+      toast.error('Could not verify TOTP, please try again.');
+      return;
+    }
+    toast.success('Two-Factor Authentication enabled successfully!');
+    setIsEnablingTwoFactor(false);
+    twoFactorConfirmForm.reset();
+  }
+
+  // app passwords
 
   const appFormSchema = z.object({ name: z.string().min(3) });
   const appPasswordForm = useForm<z.infer<typeof appFormSchema>>({
@@ -112,6 +164,7 @@ function Settings() {
     const { data, error } = await authClient.apiKey.create({
       name: values.name,
       expiresIn: null,
+      prefix: 'app-password',
     });
     if (!data || error) {
       toast.error('Error creating app password', {
@@ -119,6 +172,9 @@ function Settings() {
       });
       return;
     }
+    queryClient.invalidateQueries({
+      queryKey: ['app-passwords'],
+    });
     toast('New app password (this will only be shown once!)', {
       action: (
         <Button onClick={() => navigator.clipboard.writeText(data.key)}>
@@ -126,6 +182,34 @@ function Settings() {
         </Button>
       ),
     });
+  }
+
+  const { data: appPasswords } = useQuery({
+    queryKey: ['app-passwords'],
+    queryFn: async () => {
+      const { data, error } = await authClient.apiKey.list();
+      if (!data || error) {
+        throw error;
+      }
+      return data.filter((k) => k.prefix === 'app-password');
+    },
+  });
+
+  async function onDeleteAppPassword(keyId: string) {
+    const { data, error } = await authClient.apiKey.delete({
+      keyId,
+    });
+
+    if (!data || error) {
+      toast.error('Error deleting app password', {
+        description: error.message,
+      });
+    } else {
+      queryClient.invalidateQueries({
+        queryKey: ['app-passwords'],
+      });
+      toast.success('Deleted app password');
+    }
   }
 
   // readlater api form
@@ -221,6 +305,7 @@ function Settings() {
         },
         onError: (error) => {
           toast.error('Error editing subscription', {
+            // @ts-expect-error: Error in openapi-typescript error types
             description: error.message,
           });
         },
@@ -234,6 +319,7 @@ function Settings() {
       setReadeckkey();
     },
     onError: (error) => {
+      // @ts-expect-error: Error in openapi-typescript error types
       toast.error('Error saving to readeck', { description: error.message });
     },
   });
@@ -564,47 +650,32 @@ function Settings() {
     },
   ];
 
+  interface AppPassword {
+    id: string;
+    name: string | null;
+    createdAt: Date;
+  }
+  const appPasswordColumns: ColumnDef<AppPassword>[] = [
+    { accessorKey: 'id', header: 'ID' },
+    { accessorKey: 'name', header: 'Name' },
+    { accessorKey: 'createdAt', header: 'Created At' },
+    {
+      id: 'delete',
+      cell: ({ row }) => {
+        const key = row.original;
+        return (
+          <Button onClick={async () => await onDeleteAppPassword(key.id)}>
+            <IconParkOutlineDelete />
+            Delete
+          </Button>
+        );
+      },
+    },
+  ];
+
   const downloadUrl =
     import.meta.env.VITE_API_URL + '/feed/export' ||
     'http://localhost:8181' + '/feed/export';
-
-  const twoFactorEnabled = user?.data?.user.twoFactorEnabled;
-
-  async function onEnableTwoFactor(values: { password: string }) {
-    const { data, error } = await authClient.twoFactor.enable({
-      password: values.password,
-    });
-
-    if (error || !data) {
-      toast.error(
-        'Could not enable 2FA, please check your password and try again.',
-      );
-    }
-    const { data: uri, error: uriError } =
-      await authClient.twoFactor.getTotpUri({ password: values.password });
-    if (uriError || !uri) {
-      toast.error('Could not get TOTP URI, please try again.');
-      return;
-    }
-    setTfaURI(uri.totpURI);
-    setIsEnablingTwoFactor(true);
-
-    toast.success('Scan the QR code with your authenticator app.');
-  }
-
-  async function onConfirmTwoFactor(values: { code: string }) {
-    const { data, error } = await authClient.twoFactor.verifyTotp({
-      code: values.code, // required
-      trustDevice: true,
-    });
-    if (error || !data) {
-      toast.error('Could not verify TOTP, please try again.');
-      return;
-    }
-    toast.success('Two-Factor Authentication enabled successfully!');
-    setIsEnablingTwoFactor(false);
-    twoFactorConfirmForm.reset();
-  }
 
   if (!feeds || !folders) {
     return null;
@@ -688,12 +759,11 @@ function Settings() {
               </div>
             )}
             {user?.data?.user.twoFactorEnabled && (
-              <div className="flex-col">
-                <h3>App passwords</h3>
+              <div className="flex-col space-y-8">
+                <h3 className="my-4">App passwords</h3>
                 <Form {...appPasswordForm}>
                   <form
                     onSubmit={appPasswordForm.handleSubmit(onAddAppPassword)}
-                    className="space-y-8"
                   >
                     <FormField
                       control={appPasswordForm.control}
@@ -714,6 +784,10 @@ function Settings() {
                     <Button type="submit">Create</Button>
                   </form>
                 </Form>
+                <DataTable
+                  columns={appPasswordColumns}
+                  data={appPasswords || []}
+                />
               </div>
             )}
           </AccordionContent>
@@ -739,7 +813,7 @@ function Settings() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="api keys">
-          <AccordionTrigger>API Keys</AccordionTrigger>
+          <AccordionTrigger>Greader API Keys</AccordionTrigger>
           <AccordionContent>
             <Form {...apiKeyForm}>
               <form onSubmit={apiKeyForm.handleSubmit(submitApiKey)}>
