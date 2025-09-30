@@ -15,7 +15,7 @@ import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
-import { catchError, firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
 
@@ -268,8 +268,7 @@ export class FetcherService {
             `No favicon found for ${url}, setting to null`,
             error,
           );
-          favicon = null;
-          return caught;
+          return of({ data: null });
         }),
       ),
     );
