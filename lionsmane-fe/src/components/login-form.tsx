@@ -137,12 +137,11 @@ export function LoginForm() {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
-      <hr className="h-px my-8" />
-
       {isTfa && (
         <Form {...twoFactorConfirmForm}>
           <form
             onSubmit={twoFactorConfirmForm.handleSubmit(onConfirmTwoFactor)}
+            className="space-y-4 mt-8"
           >
             <FormField
               control={twoFactorConfirmForm.control}
@@ -173,6 +172,7 @@ export function LoginForm() {
           </form>
         </Form>
       )}
+      <hr className="h-px my-8" />
       <div className="flex flex-col gap-4">
         <Button asChild>
           <Link to="/signup">Register</Link>

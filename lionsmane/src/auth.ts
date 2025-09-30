@@ -1,4 +1,4 @@
-import { type BetterAuthOptions, betterAuth } from 'better-auth';
+import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { passkey } from 'better-auth/plugins/passkey';
@@ -18,8 +18,9 @@ export const auth = betterAuth({
         `Click the link to reset your password: ${url}`,
       );
     },
-    // only require email verification when SMTP host is set
-    requireEmailVerification: process.env.SMTP_HOST !== 'undefined',
+    requireEmailVerification: process.env.SMTP_HOST
+      ? process.env.SMTP_HOST.length > 0
+      : false,
   },
   emailVerification: {
     sendOnSignUp: process.env.NODE_ENV === 'production',
