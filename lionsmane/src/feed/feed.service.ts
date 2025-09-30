@@ -48,42 +48,39 @@ export class FeedService {
       this.httpService.get(url.toString()).pipe(
         catchError((error) => {
           this.logger.error('Error fetching feed URL', error);
-          throw new InternalServerErrorException('Error fetching feed', {
-            cause: error,
-          });
+          return of({ data: null });
         }),
       ),
     );
-    // get from meta tag
-    const $ = cheerio.load(data);
-    const $link = $('link');
+    if (data) {
+      // get from meta tag
+      const $ = cheerio.load(data);
+      const $link = $('link');
 
-    const allFeeds: URL[] = [];
-    $link.each((index, element) => {
-      const type = $(element).attr('type');
-      if (type === 'application/rss+xml' || type === 'application/atom+xml') {
-        const href = $(element).attr('href');
-        if (!href) {
-          return;
-        }
-        try {
-          const feedUrl = new URL(href);
-          allFeeds.push(feedUrl);
-        } catch {
+      const allFeeds: URL[] = [];
+      $link.each((index, element) => {
+        const type = $(element).attr('type');
+        if (type === 'application/rss+xml' || type === 'application/atom+xml') {
+          const href = $(element).attr('href');
+          if (!href) {
+            return;
+          }
           try {
-            const mergeUrl = new URL(`https://${url.hostname}${href}`);
-            allFeeds.push(mergeUrl);
-          } catch (error) {
-            this.logger.error('Error in finding url', error);
-            throw new InternalServerErrorException('Error in finding url', {
-              cause: error,
-            });
+            const feedUrl = new URL(href);
+            allFeeds.push(feedUrl);
+          } catch {
+            try {
+              const mergeUrl = new URL(`https://${url.hostname}${href}`);
+              allFeeds.push(mergeUrl);
+            } catch (error) {
+              this.logger.error('Error in finding url', error);
+              return;
+            }
           }
         }
-      }
-    });
-    if (allFeeds.length > 0) return allFeeds;
-    else {
+      });
+      if (allFeeds.length > 0) return allFeeds;
+    } else {
       // test common feed endpoints
 
       const commonEndpoints = [
@@ -120,6 +117,7 @@ export class FeedService {
         throw new BadRequestException('This url does not contain any feeds');
       }
     }
+    throw new BadRequestException('This URL does not contain any feeds');
   }
 
   async discover(url: string) {
