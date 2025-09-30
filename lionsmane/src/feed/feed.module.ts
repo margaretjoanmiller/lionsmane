@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
@@ -11,6 +12,7 @@ import { FeedService } from './feed.service';
     BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
     FetcherModule,
     OpmlModule,
+    HttpModule,
   ],
   controllers: [FeedController],
   providers: [FeedService, FeedConsumer],

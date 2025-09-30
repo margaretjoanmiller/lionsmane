@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream';
+import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
@@ -11,12 +12,15 @@ import {
 } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
+import * as cheerio from 'cheerio';
 import { getTime, subMonths } from 'date-fns';
 import { and, count, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { OpmlService } from 'src/opml/opml.service';
+import { ur } from 'zod/v4/locales';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 
@@ -27,8 +31,111 @@ export class FeedService {
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
     private opmlService: OpmlService,
+    private httpService: HttpService,
   ) {}
   private readonly logger = new Logger(FeedService.name);
+
+  private async findFeed(url: URL): Promise<URL[]> {
+    if (url.pathname === '/feed' || url.pathname.endsWith('.xml')) {
+      const urlString = url.toString();
+      const cleanUrl = urlString.endsWith('/')
+        ? urlString.slice(0, -1)
+        : urlString;
+      return [new URL(cleanUrl)];
+    }
+    // get html body
+    const { data } = await firstValueFrom(
+      this.httpService.get(url.toString()).pipe(
+        catchError((error) => {
+          this.logger.error('Error fetching feed URL', error);
+          throw new InternalServerErrorException('Error fetching feed', {
+            cause: error,
+          });
+        }),
+      ),
+    );
+    // get from meta tag
+    const $ = cheerio.load(data);
+    const $link = $('link');
+
+    const allFeeds: URL[] = [];
+    $link.each((index, element) => {
+      const type = $(element).attr('type');
+      if (type === 'application/rss+xml' || type === 'application/atom+xml') {
+        const href = $(element).attr('href');
+        if (!href) {
+          return;
+        }
+        try {
+          const feedUrl = new URL(href);
+          allFeeds.push(feedUrl);
+        } catch {
+          try {
+            const mergeUrl = new URL(`https://${url.hostname}${href}`);
+            allFeeds.push(mergeUrl);
+          } catch (error) {
+            this.logger.error('Error in finding url', error);
+            throw new InternalServerErrorException('Error in finding url', {
+              cause: error,
+            });
+          }
+        }
+      }
+    });
+    if (allFeeds.length > 0) return allFeeds;
+    else {
+      // test common feed endpoints
+
+      const commonEndpoints = [
+        `https://${url.host}/feed`,
+        `https://${url.host}/feed.xml`,
+        `https://${url.host}/feed.atom`,
+        `https://${url.host}/index.rss`,
+        `https://${url.host}/index.xml`,
+        `https://${url.host}/rss`,
+        `https://${url.host}/rss/feed.xml`,
+        `https://${url.host}/atom.xml`,
+      ];
+
+      const allFeeds: URL[] = [];
+      for (const endpoint of commonEndpoints) {
+        const { status } = await firstValueFrom(
+          this.httpService.get(endpoint).pipe(
+            catchError((error) => {
+              this.logger.debug(
+                'Error on this endpoint, trying another',
+                error,
+              );
+              return of({ status: error.status });
+            }),
+          ),
+        );
+        if (status === 200) {
+          allFeeds.push(new URL(endpoint));
+        }
+      }
+      if (allFeeds.length > 0) {
+        return allFeeds;
+      } else {
+        throw new BadRequestException('This url does not contain any feeds');
+      }
+    }
+  }
+
+  async discover(url: string) {
+    try {
+      const urlToSearch = new URL(url);
+      const feeds = (await this.findFeed(urlToSearch)).map((f) => f.toString());
+      return {
+        feeds,
+      };
+    } catch (error) {
+      this.logger.error('Invalid URL or URL contains no feeds', error);
+      throw new BadRequestException('Invalid URL or URL contains no feeds', {
+        cause: error,
+      });
+    }
+  }
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const url = newSubscription.url.endsWith('/')

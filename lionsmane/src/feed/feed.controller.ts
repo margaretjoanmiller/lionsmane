@@ -28,7 +28,11 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
-import { NewSubscriptionDto } from './dto/new-subscription.dto';
+import {
+  DiscoverDto,
+  DiscoveredFeedsDto,
+  NewSubscriptionDto,
+} from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
@@ -57,6 +61,12 @@ export class FeedController {
   @ZodResponse({ type: FeedListOutDto, status: 200 })
   async findAll(@Session() session: UserSession) {
     return { feeds: await this.feedService.findAll(session.user.id) };
+  }
+
+  @Post('discover')
+  @ZodResponse({ type: DiscoveredFeedsDto, status: 200 })
+  async discover(@Body() url: DiscoverDto, @Session() session: UserSession) {
+    return await this.feedService.discover(url.url);
   }
 
   @Post('import')
