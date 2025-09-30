@@ -1,4 +1,5 @@
 import {
+  apiKeyClient,
   inferAdditionalFields,
   passkeyClient,
   twoFactorClient,
@@ -9,6 +10,7 @@ export const authClient = createAuthClient({
   plugins: [
     twoFactorClient(),
     passkeyClient(),
+    apiKeyClient(),
     inferAdditionalFields({
       user: {
         hasReadeckKey: {

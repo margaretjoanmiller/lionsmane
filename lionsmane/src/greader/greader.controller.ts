@@ -67,30 +67,51 @@ export class GreaderController {
     @Request() req: ExpressRequest,
     @Res() res: Response,
   ) {
-    const session = await this.authService.api.signInEmail({
-      body: {
-        email: email,
-        password: password,
-      },
-      headers: fromNodeHeaders(req.headers),
-    });
+    try {
+      const session = await this.authService.api.signInEmail({
+        body: {
+          email: email,
+          password: password,
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      const key = await this.authService.api.createApiKey({
+        body: {
+          userId: session.user.id,
+          rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+          rateLimitMax: 200, // 200 requests per day
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      return res
+        .status(200)
+        .type('text')
+        .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
+    } catch {
+      // user might have used an app password
+      const appPassSession = await auth.api.getSession({
+        headers: new Headers({
+          'x-api-key': password,
+        }),
+      });
 
-    if (!session) {
-      throw new UnauthorizedException('Invalid email or password');
+      if (!appPassSession) {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+
+      const key = await this.authService.api.createApiKey({
+        body: {
+          userId: appPassSession.user.id,
+          rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+          rateLimitMax: 200, // 200 requests per day
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      return res
+        .status(200)
+        .type('text')
+        .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
     }
-
-    const key = await this.authService.api.createApiKey({
-      body: {
-        userId: session.user.id,
-        rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
-        rateLimitMax: 200, // 200 requests per day
-      },
-      headers: fromNodeHeaders(req.headers),
-    });
-    return res
-      .status(200)
-      .type('text')
-      .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
   }
 
   @Post('accounts/ClientLogin')
@@ -99,30 +120,51 @@ export class GreaderController {
     @Request() req: ExpressRequest,
     @Res() res: Response,
   ) {
-    const session = await this.authService.api.signInEmail({
-      body: {
-        email: login.Email,
-        password: login.Passwd,
-      },
-      headers: fromNodeHeaders(req.headers),
-    });
+    try {
+      const session = await this.authService.api.signInEmail({
+        body: {
+          email: login.Email,
+          password: login.Passwd,
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      const key = await this.authService.api.createApiKey({
+        body: {
+          userId: session.user.id,
+          rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+          rateLimitMax: 200, // 200 requests per day
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      return res
+        .status(200)
+        .type('text')
+        .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
+    } catch {
+      // user might have used an app password
+      const appPassSession = await auth.api.getSession({
+        headers: new Headers({
+          'x-api-key': login.Passwd,
+        }),
+      });
 
-    if (!session) {
-      throw new UnauthorizedException('Invalid email or password');
+      if (!appPassSession) {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+
+      const key = await this.authService.api.createApiKey({
+        body: {
+          userId: appPassSession.user.id,
+          rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
+          rateLimitMax: 200, // 200 requests per day
+        },
+        headers: fromNodeHeaders(req.headers),
+      });
+      return res
+        .status(200)
+        .type('text')
+        .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
     }
-
-    const key = await this.authService.api.createApiKey({
-      body: {
-        userId: session.user.id,
-        rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
-        rateLimitMax: 200, // 200 requests per day
-      },
-      headers: fromNodeHeaders(req.headers),
-    });
-    return res
-      .status(200)
-      .type('text')
-      .send(`SID=none\nLSID=none\nAuth=${key.key}\n`);
   }
 
   @Get('reader/api/0/token')

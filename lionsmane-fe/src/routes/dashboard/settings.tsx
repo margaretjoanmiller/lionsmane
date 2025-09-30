@@ -99,6 +99,35 @@ function Settings() {
       code: '',
     },
   });
+
+  const appFormSchema = z.object({ name: z.string().min(3) });
+  const appPasswordForm = useForm<z.infer<typeof appFormSchema>>({
+    resolver: zodResolver(appFormSchema),
+    defaultValues: {
+      name: '',
+    },
+  });
+
+  async function onAddAppPassword(values: z.infer<typeof appFormSchema>) {
+    const { data, error } = await authClient.apiKey.create({
+      name: values.name,
+      expiresIn: null,
+    });
+    if (!data || error) {
+      toast.error('Error creating app password', {
+        description: error.message,
+      });
+      return;
+    }
+    toast('New app password (this will only be shown once!)', {
+      action: (
+        <Button onClick={() => navigator.clipboard.writeText(data.key)}>
+          Copy to clipboard
+        </Button>
+      ),
+    });
+  }
+
   // readlater api form
   const apiKeySchema = z.object({
     apiKey: z.string(),
@@ -653,6 +682,36 @@ function Settings() {
                         </FormItem>
                       )}
                     />
+                    <Button type="submit">Confirm</Button>
+                  </form>
+                </Form>
+              </div>
+            )}
+            {user?.data?.user.twoFactorEnabled && (
+              <div className="flex-col">
+                <h3>App passwords</h3>
+                <Form {...appPasswordForm}>
+                  <form
+                    onSubmit={appPasswordForm.handleSubmit(onAddAppPassword)}
+                    className="space-y-8"
+                  >
+                    <FormField
+                      control={appPasswordForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="cool app" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            The name of the service or application this app
+                            password is for.
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit">Create</Button>
                   </form>
                 </Form>
               </div>
