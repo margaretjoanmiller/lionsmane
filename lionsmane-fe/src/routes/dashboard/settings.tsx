@@ -813,7 +813,7 @@ function Settings() {
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="api keys">
-          <AccordionTrigger>Greader API Keys</AccordionTrigger>
+          <AccordionTrigger>External Service API Keys</AccordionTrigger>
           <AccordionContent>
             <Form {...apiKeyForm}>
               <form
