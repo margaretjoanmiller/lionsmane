@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { subscriptionOutDto } from './subscription-out.dto';
 
 export const discoverDto = z.object({
-  url: z.url(),
+  url: z.string().min(3),
 });
 
 export const discoveredFeedsDto = z.object({

@@ -85,7 +85,7 @@ export const Route = createFileRoute('/dashboard')({
 });
 
 const discoverSchema = z.object({
-  url: z.url(),
+  url: z.string().min(3),
 });
 
 const createFeedForm = z.object({
@@ -142,6 +142,12 @@ function DashLayout() {
           setFeeds(data);
 
           setStep2Open(true);
+        },
+        onError: (error) => {
+          toast.error('Could not find a feed for this url.', {
+            // @ts-expect-error: Error in openapi-typescript error types
+            description: error.message,
+          });
         },
       },
     );
@@ -205,7 +211,10 @@ function DashLayout() {
                     <DialogTitle>Discover feeds from URL</DialogTitle>
                   </DialogHeader>
                   <Form {...step1Form}>
-                    <form className="space-y-8" onSubmit={step1Form.handleSubmit(onDiscoverFeed)}>
+                    <form
+                      className="space-y-8"
+                      onSubmit={step1Form.handleSubmit(onDiscoverFeed)}
+                    >
                       <FormField
                         control={step1Form.control}
                         name="url"
@@ -215,7 +224,6 @@ function DashLayout() {
                             <FormControl>
                               <Input
                                 placeholder="https://coolfeed.com"
-                                type="url"
                                 {...field}
                               />
                             </FormControl>

@@ -122,7 +122,14 @@ export class FeedService {
 
   async discover(url: string) {
     try {
-      const urlToSearch = new URL(url);
+      let urlToSearch: URL;
+      if (URL.canParse(url)) {
+        urlToSearch = new URL(url);
+      } else if (URL.canParse(`https://${url}`)) {
+        urlToSearch = new URL(`https://${url}`);
+      } else {
+        throw new BadRequestException('Invalid URL');
+      }
       const feeds = (await this.findFeed(urlToSearch)).map((f) => f.toString());
       return {
         feeds,
