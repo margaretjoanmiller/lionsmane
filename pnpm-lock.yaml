@@ -256,9 +256,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.63.0(react@19.1.1))
-      '@iconify-json/stash':
-        specifier: ^1.2.4
-        version: 1.2.4
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.1.9(@types/react@19.1.14))(@types/react@19.1.14)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -423,6 +420,9 @@ importers:
         specifier: ^1.2.5
         version: 1.2.5
       '@iconify-json/solar':
+        specifier: ^1.2.4
+        version: 1.2.4
+      '@iconify-json/stash':
         specifier: ^1.2.4
         version: 1.2.4
       '@iconify-json/tabler':

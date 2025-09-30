@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import MultipleSelector from '@/components/multi-select';
 import { LoadingButton } from '@/components/spinner-button';
-import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -279,7 +278,7 @@ function NewFilter() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="blur">Blur</SelectItem>
-                <SelectItem value="warn">Warn</SelectItem>
+                <SelectItem value="markRead">Mark Read</SelectItem>
                 <SelectItem value="hide">Hide</SelectItem>
               </SelectContent>
             </Select>
