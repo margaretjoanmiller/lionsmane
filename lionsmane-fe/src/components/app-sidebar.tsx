@@ -1,19 +1,19 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
-import React, { type ReactNode } from "react";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import { ChevronRight } from 'lucide-react';
+import React, { type ReactNode } from 'react';
 import {
   Collection,
   type TreeItemContentRenderProps,
   useDragAndDrop,
-} from "react-aria-components";
-import { useForm } from "react-hook-form";
-import { useTreeData } from "react-stately";
-import { toast } from "sonner";
-import { z } from "zod";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+} from 'react-aria-components';
+import { useForm } from 'react-hook-form';
+import { useTreeData } from 'react-stately';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { NavSecondary } from '@/components/nav-secondary';
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
@@ -25,44 +25,44 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { $api } from "@/lib/fetch-client";
-import { Route as DashIndex } from "@/routes/dashboard/index";
-import FluentChevronRight12Filled from "~icons/fluent/chevron-right-12-filled";
-import GardenEyeHideStroke16 from "~icons/garden/eye-hide-stroke-16";
-import NotoV1Mushroom from "~icons/noto-v1/mushroom";
-import SolarAddFolderOutline from "~icons/solar/add-folder-outline";
-import SolarFilterLinear from "~icons/solar/filter-linear";
-import MultipleSelector from "./multi-select";
-import { SearchBar } from "./search-bar";
-import { LoadingButton } from "./spinner-button";
-import { Button } from "./ui/button";
+} from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { $api } from '@/lib/fetch-client';
+import { Route as DashIndex } from '@/routes/dashboard/index';
+import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
+import GardenEyeHideStroke16 from '~icons/garden/eye-hide-stroke-16';
+import NotoV1Mushroom from '~icons/noto-v1/mushroom';
+import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
+import SolarFilterLinear from '~icons/solar/filter-linear';
+import MultipleSelector from './multi-select';
+import { SearchBar } from './search-bar';
+import { LoadingButton } from './spinner-button';
+import { Button } from './ui/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "./ui/collapsible";
+} from './ui/collapsible';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
-import { Input } from "./ui/input";
+} from './ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { Input } from './ui/input';
 import {
   Tree,
   TreeItem,
   TreeItemContent,
   TreeItemExpandButton,
-} from "./ui/tree";
+} from './ui/tree';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -110,13 +110,13 @@ interface FeedTreeData {
 const data = {
   navSecondary: [
     {
-      title: "Hidden",
-      url: "/dashboard/hidden",
+      title: 'Hidden',
+      url: '/dashboard/hidden',
       icon: GardenEyeHideStroke16,
     },
     {
-      title: "Filters",
-      url: "/dashboard/filter",
+      title: 'Filters',
+      url: '/dashboard/filter',
       icon: SolarFilterLinear,
     },
   ],
@@ -128,23 +128,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      name: '',
       feedIds: [],
     },
   });
-  const { data: folders } = $api.useQuery("get", "/folder/feeds", {
-    credentials: "include",
+  const { data: folders } = $api.useSuspenseQuery('get', '/folder/feeds', {
+    credentials: 'include',
   });
-  const { data: feeds } = $api.useQuery("get", "/feed", {
-    credentials: "include",
-  });
+  const { data: feeds, isLoading: feedsLoading } = $api.useSuspenseQuery(
+    'get',
+    '/feed',
+    {
+      credentials: 'include',
+    },
+  );
   const feedSelect =
     feeds?.feeds.map((feed) => ({
       value: feed.id,
       label: feed.title || feed.url,
     })) || [];
 
-  const { mutate, isPending } = $api.useMutation("post", "/folder");
+  const { mutate, isPending } = $api.useMutation('post', '/folder');
 
   const queryClient = useQueryClient();
 
@@ -154,16 +158,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       feedIds: values.feedIds.map((feed) => feed.value),
     };
     mutate(
-      { body: bodyToSend, credentials: "include" },
+      { body: bodyToSend, credentials: 'include' },
       {
         onSuccess: async () => {
-          toast.success("Folder added");
+          toast.success('Folder added');
           setFormOpen(false);
           await queryClient.invalidateQueries();
           form.reset();
         },
         onError: (error) => {
-          toast.error("Error adding folder", {
+          toast.error('Error adding folder', {
             description: error,
           });
         },
@@ -200,26 +204,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       })),
     })) || [];
 
-  const { mutate: editFeed } = $api.useMutation("patch", "/feed/{id}");
+  const { mutate: editFeed } = $api.useMutation('patch', '/feed/{id}');
 
   const initialItems: FeedTreeData[] = [...folderFeeds, ...orphanedFeeds];
-  const tree = useTreeData({
-    initialItems,
+  const tree = useTreeData<FeedTreeData>({
+    initialItems: initialItems,
     getKey: (item) => item.id,
     getChildren: (item) => item.children || [],
   });
+
+  const hasData = folders && feeds;
 
   const { dragAndDropHooks } = useDragAndDrop({
     getItems: (keys) =>
       [...keys].map((key) => {
         const item = tree.getItem(key)?.value;
         return {
-          "text/plain": item?.name || "",
-          "application/json": JSON.stringify(item),
+          'text/plain': item?.name || '',
+          'application/json': JSON.stringify(item),
         };
       }),
     onMove(e) {
-      if (e.target.dropPosition === "on") {
+      if (e.target.dropPosition === 'on') {
         // Move items to become children of the target
         const targetNode = tree.getItem(e.target.key);
         if (targetNode) {
@@ -234,22 +240,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }
     },
     async onItemDrop(e) {
-      const data = e.items.filter((i) => i.kind === "text")[0];
-      const parsed = JSON.parse(await data.getText("application/json"));
-      if (e.dropOperation === "move") {
-        if (parsed.type === "feed") {
-          editFeed({
-            params: {
-              path: {
-                id: parsed.id,
-              },
+      const data = e.items.filter((i) => i.kind === 'text')[0];
+      const parsed = JSON.parse(await data.getText('application/json'));
+      const target = tree.getItem(e.target.key)?.value;
+      if (e.dropOperation === 'move') {
+        editFeed({
+          params: {
+            path: {
+              id: parsed.id,
             },
-            credentials: "include",
-            body: {
-              folderId: parsed.folderId,
-            },
-          });
-        }
+          },
+          credentials: 'include',
+          body: {
+            folderId: target?.id || null,
+          },
+        });
       }
     },
   });
@@ -274,26 +279,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <Tree
-            aria-label="Feeds and Folders"
-            selectionMode="single"
-            items={tree.items}
-            dragAndDropHooks={dragAndDropHooks}
-          >
-            {function renderItem(item) {
-              return (
-                <TreeItem textValue={item.value.name}>
-                  <TreeItemContent>
-                    {item.value.name}
-                    {item.children?.length ? <TreeItemExpandButton /> : null}
-                  </TreeItemContent>
-                  <Collection items={item.children || []}>
-                    {renderItem}
-                  </Collection>
-                </TreeItem>
-              );
-            }}
-          </Tree>
+          {hasData ? (
+            <Tree
+              aria-label="Feeds and Folders"
+              selectionMode="single"
+              items={tree.items}
+              selectedKeys={tree.selectedKeys}
+              dragAndDropHooks={dragAndDropHooks}
+            >
+              {function renderItem(item) {
+                return (
+                  <TreeItem textValue={item.value.name}>
+                    <TreeItemContent>
+                      {item.value.name}
+                      {item.children?.length ? <TreeItemExpandButton /> : null}
+                    </TreeItemContent>
+                    <Collection items={item.children || []}>
+                      {renderItem}
+                    </Collection>
+                  </TreeItem>
+                );
+              }}
+            </Tree>
+          ) : (
+            <div className="flex items-center justify-center">
+              <p>No data available</p>
+            </div>
+          )}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
