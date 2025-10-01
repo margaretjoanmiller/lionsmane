@@ -1,37 +1,37 @@
-import { Readability } from '@mozilla/readability';
-import { HttpService } from '@nestjs/axios';
-import { InjectQueue } from '@nestjs/bullmq';
+import { Readability } from "@mozilla/readability";
+import { HttpService } from "@nestjs/axios";
+import { InjectQueue } from "@nestjs/bullmq";
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { parseFeed } from '@rowanmanning/feed-parser';
-import { Queue } from 'bullmq';
-import * as cheerio from 'cheerio';
-import { isAfter, subWeeks } from 'date-fns';
-import createDOMPurify, { type WindowLike } from 'dompurify';
-import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { JSDOM } from 'jsdom';
-import { toString as treeToString } from 'nlcst-to-string';
-import { retext } from 'retext';
-import retextKeywords from 'retext-keywords';
-import retextPos from 'retext-pos';
-import robotsParser from 'robots-parser';
-import { catchError, firstValueFrom, of } from 'rxjs';
-import { schema } from 'src/db/schema';
-import { RedisService } from 'src/redis/redis.service';
+} from "@nestjs/common";
+import { parseFeed } from "@rowanmanning/feed-parser";
+import { Queue } from "bullmq";
+import * as cheerio from "cheerio";
+import { isAfter, subWeeks } from "date-fns";
+import createDOMPurify, { type WindowLike } from "dompurify";
+import { eq } from "drizzle-orm";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { JSDOM } from "jsdom";
+import { toString as treeToString } from "nlcst-to-string";
+import { retext } from "retext";
+import retextKeywords from "retext-keywords";
+import retextPos from "retext-pos";
+import robotsParser from "robots-parser";
+import { catchError, firstValueFrom, of } from "rxjs";
+import { schema } from "src/db/schema";
+import { RedisService } from "src/redis/redis.service";
 
 @Injectable()
 export class FetcherService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
-    @InjectQueue('article') private articleQueue: Queue,
+    @Inject("DB") private db: NodePgDatabase<typeof schema>,
+    @InjectQueue("article") private articleQueue: Queue,
     private redisService: RedisService,
     private httpService: HttpService,
-  ) { }
+  ) {}
   private readonly logger = new Logger(FetcherService.name);
 
   async robots(url: string) {
@@ -40,16 +40,14 @@ export class FetcherService {
     const { data, status, statusText } = await firstValueFrom(
       this.httpService.get(robotsUrl, {
         headers: {
-          'User-Agent':
-            'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+          "User-Agent":
+            "Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)",
         },
       }),
     );
 
     if (status !== 200) {
-      throw new InternalServerErrorException(
-        `Error getting robots.txt: ${statusText}`,
-      );
+      throw new Error(`Error getting robots.txt: ${statusText}`);
     }
 
     const robotsTxt = await data;
@@ -62,7 +60,7 @@ export class FetcherService {
       if (
         !robots.isAllowed(
           url,
-          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+          "Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)",
         )
       ) {
         console.warn(`Fetching ${url} is disallowed by robots.txt`);
@@ -71,8 +69,8 @@ export class FetcherService {
         const { data, status, statusText } = await firstValueFrom(
           this.httpService.get(url, {
             headers: {
-              'User-Agent':
-                'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+              "User-Agent":
+                "Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)",
             },
           }),
         );
@@ -82,20 +80,31 @@ export class FetcherService {
         }
         return await data;
       }
-    } catch (error) {
-      console.error('Error in respectfulFetch:', error);
-      throw new Error('Failed to perform respectful fetch', { cause: error });
+    } catch {
+      const { data, status, statusText } = await firstValueFrom(
+        this.httpService.get(url, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)",
+          },
+        }),
+      );
+
+      if (status !== 200) {
+        throw new Error(`Failed to fetch URL: ${statusText}`);
+      }
+      return await data;
     }
   }
 
   async extractFeedTitle(feedUrl: string): Promise<string> {
     const feedXML = await this.respectfulFetch(feedUrl);
     if (feedXML === null) {
-      throw new Error('Failed to fetch feed');
+      throw new Error("Failed to fetch feed");
     }
     const feed = parseFeed(feedXML);
     if (!feed || !feed.items) {
-      throw new Error('No items found in the feed');
+      throw new Error("No items found in the feed");
     }
 
     return feed.title || feedUrl;
@@ -128,9 +137,9 @@ export class FetcherService {
     try {
       const text = await this.respectfulFetch(url);
       if (text === null) {
-        throw new Error('Failed to fetch URL content');
+        throw new Error("Failed to fetch URL content");
       }
-      const window = new JSDOM('').window;
+      const window = new JSDOM("").window;
       const purify = createDOMPurify(window as WindowLike);
       const clean = purify.sanitize(text);
       const cleanDoc = new JSDOM(clean);
@@ -138,12 +147,12 @@ export class FetcherService {
       const readableText = readableRaw?.textContent;
       const readableHtml = readableRaw?.content;
       if (!readableHtml || !readableText) {
-        throw new Error('Failed to extract article text');
+        throw new Error("Failed to extract article text");
       }
 
       const $ = cheerio.load(readableHtml);
-      const firstImageAlt = $('img').first().attr('alt');
-      $('img')
+      const firstImageAlt = $("img").first().attr("alt");
+      $("img")
         .first()
         .wrap(`<figure><figcaption>${firstImageAlt}</figcaption></figure>`);
 
@@ -152,8 +161,8 @@ export class FetcherService {
         htmlContent: $.html(),
       };
     } catch (error) {
-      console.error('Error fetching URL:', error);
-      throw new Error('Failed to fetch URL');
+      console.error("Error fetching URL:", error);
+      throw new Error("Failed to fetch URL");
     }
   }
 
@@ -163,11 +172,11 @@ export class FetcherService {
     try {
       const feedXML = await this.respectfulFetch(feedUrl);
       if (feedXML === null) {
-        throw new Error('Failed to fetch feed');
+        throw new Error("Failed to fetch feed");
       }
       const feed = parseFeed(feedXML);
       if (!feed || !feed.items) {
-        throw new Error('No items found in the feed');
+        throw new Error("No items found in the feed");
       }
       const feedfromDb = await this.db
         .select()
@@ -175,7 +184,7 @@ export class FetcherService {
         .where(eq(schema.feeds.id, feedId));
 
       if (!feedfromDb || !feedfromDb[0]?.updated) {
-        throw new Error('Malformed feed in database');
+        throw new Error("Malformed feed in database");
       }
 
       const feedProcess = feed.items
@@ -187,7 +196,7 @@ export class FetcherService {
             );
           }
           if (!i.published && !i.updated) {
-            throw new Error('Item is missing required fields');
+            throw new Error("Item is missing required fields");
           }
           return isAfter(
             i.published!,
@@ -204,14 +213,14 @@ export class FetcherService {
             this.logger.error(
               `Item is missing required fields: ${JSON.stringify(item)}`,
             );
-            throw new Error('Item is missing required fields');
+            throw new Error("Item is missing required fields");
           }
           if (!item.published && !item.updated) {
-            throw new Error('Item is missing required fields');
+            throw new Error("Item is missing required fields");
           }
 
           return {
-            name: 'new-article',
+            name: "new-article",
             data: {
               title: item.title,
               url: item.url,
@@ -220,10 +229,10 @@ export class FetcherService {
                 email: author.email,
               })),
               categories: item.categories.map((i) => i.term) || [],
-              description: item.description || '',
-              rawContent: item.content || item.description || 'no content',
-              image: item.image ? item.image.url : '',
-              imageAlt: item.image ? item.image.title : '',
+              description: item.description || "",
+              rawContent: item.content || item.description || "no content",
+              image: item.image ? item.image.url : "",
+              imageAlt: item.image ? item.image.title : "",
               media: item.media.map((media) => media.url) || [],
               published: item.published || item.updated,
               updated: item.updated,
@@ -235,7 +244,7 @@ export class FetcherService {
           };
         });
       if (feedProcess.length === 0) {
-        this.logger.log('No new articles to process');
+        this.logger.log("No new articles to process");
         return [];
       } else {
         this.logger.log(`Processing ${feedProcess.length} new articles`);
@@ -268,8 +277,8 @@ export class FetcherService {
         .where(eq(schema.feeds.id, feedId));
       return jobs;
     } catch (error) {
-      console.error('Error parsing feed:', error);
-      throw new Error('Failed to parse feed');
+      console.error("Error parsing feed:", error);
+      throw new Error("Failed to parse feed");
     }
   }
 
