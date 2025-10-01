@@ -232,7 +232,7 @@ function Settings() {
     feedId: z.uuid(),
     url: z.url(),
     description: z.string().optional(),
-    folderId: z.string().nullable(),
+    folderId: z.uuid().nullable(),
   });
   const feedForm = useForm<z.infer<typeof feedFormSchema>>({
     resolver: zodResolver(feedFormSchema),
@@ -240,7 +240,7 @@ function Settings() {
       feedId: '',
       url: '',
       description: undefined,
-      folderId: undefined,
+      folderId: null,
     },
   });
 
@@ -473,6 +473,15 @@ function Settings() {
                                       {folder.label}
                                     </CommandItem>
                                   ))}
+                                  <CommandItem
+                                    value="No folder"
+                                    key={null}
+                                    onSelect={() => {
+                                      feedForm.setValue('folderId', null);
+                                    }}
+                                  >
+                                    No folder
+                                  </CommandItem>
                                 </CommandGroup>
                               </CommandList>
                             </Command>

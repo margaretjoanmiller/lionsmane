@@ -466,6 +466,7 @@ export class FeedService {
           .update(schema.subscriptions)
           .set({
             description: updateFeedDto.description,
+            folderId: null,
           })
           .where(
             and(
