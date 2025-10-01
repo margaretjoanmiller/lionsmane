@@ -1,12 +1,19 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { NavSecondary } from '@/components/nav-secondary';
-import { NavUser } from '@/components/nav-user';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import React, { type ReactNode } from "react";
+import {
+  Collection,
+  type TreeItemContentRenderProps,
+  useDragAndDrop,
+} from "react-aria-components";
+import { useForm } from "react-hook-form";
+import { useTreeData } from "react-stately";
+import { toast } from "sonner";
+import { z } from "zod";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -18,38 +25,44 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { $api } from '@/lib/fetch-client';
-import { Route as DashIndex } from '@/routes/dashboard/index';
-import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
-import GardenEyeHideStroke16 from '~icons/garden/eye-hide-stroke-16';
-import NotoV1Mushroom from '~icons/noto-v1/mushroom';
-import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
-import SolarFilterLinear from '~icons/solar/filter-linear';
-import MultipleSelector from './multi-select';
-import { SearchBar } from './search-bar';
-import { LoadingButton } from './spinner-button';
-import { Button } from './ui/button';
+} from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { $api } from "@/lib/fetch-client";
+import { Route as DashIndex } from "@/routes/dashboard/index";
+import FluentChevronRight12Filled from "~icons/fluent/chevron-right-12-filled";
+import GardenEyeHideStroke16 from "~icons/garden/eye-hide-stroke-16";
+import NotoV1Mushroom from "~icons/noto-v1/mushroom";
+import SolarAddFolderOutline from "~icons/solar/add-folder-outline";
+import SolarFilterLinear from "~icons/solar/filter-linear";
+import MultipleSelector from "./multi-select";
+import { SearchBar } from "./search-bar";
+import { LoadingButton } from "./spinner-button";
+import { Button } from "./ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './ui/collapsible';
+} from "./ui/collapsible";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
-import { Input } from './ui/input';
+} from "./ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
+import { Input } from "./ui/input";
+import {
+  Tree,
+  TreeItem,
+  TreeItemContent,
+  TreeItemExpandButton,
+} from "./ui/tree";
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -61,16 +74,49 @@ const formSchema = z.object({
   ),
 });
 
+// Tree data interfaces
+interface FeedTreeData {
+  id: string;
+  name: string;
+  unreadCount: number | null;
+  favicon: string | null;
+  folderId: string | null;
+  children?: Array<FeedTreeData>;
+}
+
+// const feedSchema = z.object({
+//   id: z.uuid(),
+//   name: z.string(),
+//   type: z.literal(["feed"]),
+//   unreadCount: z.number().nullable(),
+//   favicon: z.url().nullable(),
+//   folderId: z.uuid().nullable(),
+//   get children(): z.ZodNullable<z.ZodArray<typeof feedSchema>> {
+//     return z.nullable(z.array(feedSchema));
+//   },
+// });
+// const feedTreeData = z.union([
+//   z.object({
+//     id: z.uuid(),
+//     name: z.string(),
+//     type: z.literal(["folder"]),
+//     children: z.array(feedSchema),
+//   }),
+//   feedSchema,
+// ]);
+
+// type FeedTreeData = z.infer<typeof feedTreeData>;
+
 const data = {
   navSecondary: [
     {
-      title: 'Hidden',
-      url: '/dashboard/hidden',
+      title: "Hidden",
+      url: "/dashboard/hidden",
       icon: GardenEyeHideStroke16,
     },
     {
-      title: 'Filters',
-      url: '/dashboard/filter',
+      title: "Filters",
+      url: "/dashboard/filter",
       icon: SolarFilterLinear,
     },
   ],
@@ -82,15 +128,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      name: "",
       feedIds: [],
     },
   });
-  const { data: folders } = $api.useQuery('get', '/folder/feeds', {
-    credentials: 'include',
+  const { data: folders } = $api.useQuery("get", "/folder/feeds", {
+    credentials: "include",
   });
-  const { data: feeds } = $api.useQuery('get', '/feed', {
-    credentials: 'include',
+  const { data: feeds } = $api.useQuery("get", "/feed", {
+    credentials: "include",
   });
   const feedSelect =
     feeds?.feeds.map((feed) => ({
@@ -98,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       label: feed.title || feed.url,
     })) || [];
 
-  const { mutate, isPending } = $api.useMutation('post', '/folder');
+  const { mutate, isPending } = $api.useMutation("post", "/folder");
 
   const queryClient = useQueryClient();
 
@@ -108,16 +154,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       feedIds: values.feedIds.map((feed) => feed.value),
     };
     mutate(
-      { body: bodyToSend, credentials: 'include' },
+      { body: bodyToSend, credentials: "include" },
       {
         onSuccess: async () => {
-          toast.success('Folder added');
+          toast.success("Folder added");
           setFormOpen(false);
           await queryClient.invalidateQueries();
           form.reset();
         },
         onError: (error) => {
-          toast.error('Error adding folder', {
+          toast.error("Error adding folder", {
             description: error,
           });
         },
@@ -132,20 +178,81 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         name: feed.title || feed.url,
         unreadCount: feed.unreadCount,
         favicon: feed.favicon,
+        folderId: null,
+        children: [],
       })) || [];
 
   const folderFeeds =
     folders?.map((folder) => ({
       id: folder.id,
       name: folder.name,
-      feeds: folder.feeds.map((feed) => ({
+      favicon: null,
+      folderId: folder.id,
+      unreadCount: null,
+      children: folder.feeds.map((feed) => ({
         id: feed.id,
         name: feed.title || feed.url,
         unreadCount:
           feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
         favicon: feed.favicon,
+        folderId: folder.id,
+        children: [],
       })),
     })) || [];
+
+  const { mutate: editFeed } = $api.useMutation("patch", "/feed/{id}");
+
+  const initialItems: FeedTreeData[] = [...folderFeeds, ...orphanedFeeds];
+  const tree = useTreeData({
+    initialItems,
+    getKey: (item) => item.id,
+    getChildren: (item) => item.children || [],
+  });
+
+  const { dragAndDropHooks } = useDragAndDrop({
+    getItems: (keys) =>
+      [...keys].map((key) => {
+        const item = tree.getItem(key)?.value;
+        return {
+          "text/plain": item?.name || "",
+          "application/json": JSON.stringify(item),
+        };
+      }),
+    onMove(e) {
+      if (e.target.dropPosition === "on") {
+        // Move items to become children of the target
+        const targetNode = tree.getItem(e.target.key);
+        if (targetNode) {
+          const targetIndex = targetNode.children
+            ? targetNode.children.length
+            : 0;
+          const keyArray = Array.from(e.keys);
+          for (let i = 0; i < keyArray.length; i++) {
+            tree.move(keyArray[i], e.target.key, targetIndex + i);
+          }
+        }
+      }
+    },
+    async onItemDrop(e) {
+      const data = e.items.filter((i) => i.kind === "text")[0];
+      const parsed = JSON.parse(await data.getText("application/json"));
+      if (e.dropOperation === "move") {
+        if (parsed.type === "feed") {
+          editFeed({
+            params: {
+              path: {
+                id: parsed.id,
+              },
+            },
+            credentials: "include",
+            body: {
+              folderId: parsed.folderId,
+            },
+          });
+        }
+      }
+    },
+  });
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -167,75 +274,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {folderFeeds?.map((item) => (
-            <Collapsible defaultOpen className="group/collapsible">
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    {item.name}
-                    <FluentChevronRight12Filled className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  {item.feeds.map((feed) => (
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem className="flex flex-row">
-                        <Link
-                          className="truncate max-w-40"
-                          to="/dashboard/feed/$feedId"
-                          params={{ feedId: feed.id }}
-                        >
-                          {feed.favicon && (
-                            <img
-                              src={feed.favicon}
-                              alt={`${feed.name} favicon`}
-                              className="max-w-[16px] max-h-[16px]"
-                            />
-                          )}
-                          <span className="truncate">{feed.name}</span>
-                        </Link>
-                        <SidebarMenuBadge className="flex">
-                          {feed.unreadCount}
-                        </SidebarMenuBadge>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  ))}
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem className="flex flex-row">
-                      <Link
-                        className="flex text-muted-foreground"
-                        to="/dashboard/folder/$folderId"
-                        params={{ folderId: item.id }}
-                      >
-                        all
-                      </Link>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-          ))}
-          {orphanedFeeds.map((feed) => (
-            <SidebarMenuItem key={feed.id}>
-              <SidebarMenuButton>
-                <Link
-                  to="/dashboard/feed/$feedId"
-                  params={{ feedId: feed.id }}
-                  className="max-w-50 flex flex-row"
-                >
-                  {feed.favicon && (
-                    <img
-                      src={feed.favicon}
-                      alt={`${feed.name} favicon`}
-                      className="max-w-[16px] max-h-[16px] mr-2"
-                    />
-                  )}
-                  <span className="truncate">{feed.name}</span>
-                </Link>
-              </SidebarMenuButton>
-              <SidebarMenuBadge>{feed.unreadCount}</SidebarMenuBadge>
-            </SidebarMenuItem>
-          ))}
+          <Tree
+            aria-label="Feeds and Folders"
+            selectionMode="single"
+            items={tree.items}
+            dragAndDropHooks={dragAndDropHooks}
+          >
+            {function renderItem(item) {
+              return (
+                <TreeItem textValue={item.value.name}>
+                  <TreeItemContent>
+                    {item.value.name}
+                    {item.children?.length ? <TreeItemExpandButton /> : null}
+                  </TreeItemContent>
+                  <Collection items={item.children || []}>
+                    {renderItem}
+                  </Collection>
+                </TreeItem>
+              );
+            }}
+          </Tree>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
