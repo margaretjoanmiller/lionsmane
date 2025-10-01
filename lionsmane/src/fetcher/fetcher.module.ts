@@ -9,9 +9,12 @@ import { FetcherService } from './fetcher.service';
   imports: [
     BullModule.registerQueue({ name: 'article' }),
     RedisModule,
-    HttpModule,
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
   ],
   providers: [FetcherService, RedisService],
   exports: [FetcherService],
 })
-export class FetcherModule {}
+export class FetcherModule { }

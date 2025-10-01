@@ -1,7 +1,12 @@
 import { Readability } from '@mozilla/readability';
 import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { parseFeed } from '@rowanmanning/feed-parser';
 import { Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
@@ -26,19 +31,28 @@ export class FetcherService {
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
     private httpService: HttpService,
-  ) {}
+  ) { }
   private readonly logger = new Logger(FetcherService.name);
 
   async robots(url: string) {
     const urlObj = new URL(url);
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-    const robotsResponse = await fetch(robotsUrl, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-      },
-    });
-    const robotsTxt = await robotsResponse.text();
+    const { data, status, statusText } = await firstValueFrom(
+      this.httpService.get(robotsUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+        },
+      }),
+    );
+
+    if (status !== 200) {
+      throw new InternalServerErrorException(
+        `Error getting robots.txt: ${statusText}`,
+      );
+    }
+
+    const robotsTxt = await data;
     return robotsParser(robotsUrl, robotsTxt);
   }
 
@@ -54,17 +68,19 @@ export class FetcherService {
         console.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
       } else {
-        const response = await fetch(url, {
-          headers: {
-            'User-Agent':
-              'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-          },
-        });
+        const { data, status, statusText } = await firstValueFrom(
+          this.httpService.get(url, {
+            headers: {
+              'User-Agent':
+                'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+            },
+          }),
+        );
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch URL: ${response.statusText}`);
+        if (status !== 200) {
+          throw new Error(`Failed to fetch URL: ${statusText}`);
         }
-        return await response.text();
+        return await data;
       }
     } catch (error) {
       console.error('Error in respectfulFetch:', error);
