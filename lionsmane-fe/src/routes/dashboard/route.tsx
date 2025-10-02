@@ -9,7 +9,6 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { ArticleFilterSelect } from '@/components/article-filter';
 import { ModeToggle } from '@/components/mode-toggle';
 import { SearchBar } from '@/components/search-bar';
-import { Spinner } from '@/components/spinner';
 import { LoadingButton } from '@/components/spinner-button';
 import { Button } from '@/components/ui/button';
 import {
@@ -189,22 +188,13 @@ function DashLayout() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <div className="right-5 absolute flex items-center gap-2">
-              {!isMobile && <SearchBar />}
-              <ArticleFilterSelect />
-              <ModeToggle />
-            </div>
-            <div className="group fixed bottom-6 right-6 z-10">
+            <div className="">
               <Dialog open={step1open} onOpenChange={setStep1Open}>
                 <DialogTrigger>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Button>
-                        <IconParkOutlineRss />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Subscribe to a new feed</TooltipContent>
-                  </Tooltip>
+                  <Button>
+                    <IconParkOutlineRss />
+                    New subscription
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -363,6 +353,11 @@ function DashLayout() {
                   </Form>
                 </DialogContent>
               </Dialog>
+            </div>
+            <div className="right-5 absolute flex items-center gap-2">
+              {!isMobile && <SearchBar />}
+              <ArticleFilterSelect />
+              <ModeToggle />
             </div>
           </div>
         </header>

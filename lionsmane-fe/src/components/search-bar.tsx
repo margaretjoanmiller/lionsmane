@@ -3,11 +3,17 @@ import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { FieldGroup } from '@/components/ui/field';
+import {
+  SearchField,
+  SearchFieldClear,
+  SearchFieldInput,
+} from '@/components/ui/searchfield';
 import FluentSearch20Filled from '~icons/fluent/search-20-filled';
+import IconoirCancel from '~icons/iconoir/cancel';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Form, FormField } from './ui/form';
-import { Input } from './ui/input';
 
 export function SearchBar() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -53,12 +59,18 @@ export function SearchBar() {
               control={form.control}
               name="query"
               render={({ field }) => (
-                <Input
-                  {...field}
-                  type="search"
-                  placeholder="Search articles..."
-                  className="w-full"
-                />
+                <SearchField className="max-w-[200px]">
+                  <FieldGroup>
+                    <FluentSearch20Filled
+                      aria-hidden
+                      className="size-4 text-muted-foreground"
+                    />
+                    <SearchFieldInput placeholder="Search..." {...field} />
+                    <SearchFieldClear>
+                      <IconoirCancel aria-hidden className="size-4" />
+                    </SearchFieldClear>
+                  </FieldGroup>
+                </SearchField>
               )}
             />
             <Button type="submit" className="ml-2">
