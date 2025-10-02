@@ -1,5 +1,4 @@
 'use client';
-import { ChevronRight } from 'lucide-react';
 import React from 'react';
 import {
   Tree as AriaTree,
@@ -11,8 +10,9 @@ import {
   type TreeProps,
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
-import { Checkbox } from '@/components/ui/aria-checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import { composeTailwindRenderProps, focusRing } from '@/lib/component-utils';
+import FluentChevronRight16Filled from '~icons/fluent/chevron-right-16-filled';
 
 const itemStyles = tv({
   extend: focusRing,
@@ -89,7 +89,7 @@ export function TreeItemContent({ children, ...props }: TreeItemContentProps) {
           <div className="shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]" />
           {hasChildItems ? (
             <Button slot="chevron" className={expandButton({ isDisabled })}>
-              <ChevronRight
+              <FluentChevronRight16Filled
                 aria-hidden
                 className={chevron({ isExpanded, isDisabled })}
               />

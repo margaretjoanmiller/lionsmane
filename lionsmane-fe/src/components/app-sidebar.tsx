@@ -1,13 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { ChevronRight } from 'lucide-react';
-import React, { type ReactNode } from 'react';
-import {
-  Collection,
-  type TreeItemContentRenderProps,
-  useDragAndDrop,
-} from 'react-aria-components';
+import React from 'react';
+import { Collection, useDragAndDrop } from 'react-aria-components';
 import { useForm } from 'react-hook-form';
 import { useTreeData } from 'react-stately';
 import { toast } from 'sonner';
@@ -20,11 +15,8 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import {
   Tooltip,
@@ -34,7 +26,6 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { $api } from '@/lib/fetch-client';
 import { Route as DashIndex } from '@/routes/dashboard/index';
-import FluentChevronRight12Filled from '~icons/fluent/chevron-right-12-filled';
 import GardenEyeHideStroke16 from '~icons/garden/eye-hide-stroke-16';
 import NotoV1Mushroom from '~icons/noto-v1/mushroom';
 import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
@@ -43,11 +34,6 @@ import MultipleSelector from './multi-select';
 import { SearchBar } from './search-bar';
 import { LoadingButton } from './spinner-button';
 import { Button } from './ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './ui/collapsible';
 import {
   Dialog,
   DialogContent,
@@ -81,31 +67,9 @@ interface FeedTreeData {
   unreadCount: number | null;
   favicon: string | null;
   folderId: string | null;
+  type: 'feed' | 'folder';
   children?: Array<FeedTreeData>;
 }
-
-// const feedSchema = z.object({
-//   id: z.uuid(),
-//   name: z.string(),
-//   type: z.literal(["feed"]),
-//   unreadCount: z.number().nullable(),
-//   favicon: z.url().nullable(),
-//   folderId: z.uuid().nullable(),
-//   get children(): z.ZodNullable<z.ZodArray<typeof feedSchema>> {
-//     return z.nullable(z.array(feedSchema));
-//   },
-// });
-// const feedTreeData = z.union([
-//   z.object({
-//     id: z.uuid(),
-//     name: z.string(),
-//     type: z.literal(["folder"]),
-//     children: z.array(feedSchema),
-//   }),
-//   feedSchema,
-// ]);
-
-// type FeedTreeData = z.infer<typeof feedTreeData>;
 
 const data = {
   navSecondary: [
@@ -124,6 +88,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isMobile = useIsMobile();
+
   const [formOpen, setFormOpen] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -135,13 +100,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: folders } = $api.useSuspenseQuery('get', '/folder/feeds', {
     credentials: 'include',
   });
-  const { data: feeds, isLoading: feedsLoading } = $api.useSuspenseQuery(
-    'get',
-    '/feed',
-    {
-      credentials: 'include',
-    },
-  );
+  const { data: feeds } = $api.useSuspenseQuery('get', '/feed', {
+    credentials: 'include',
+  });
   const feedSelect =
     feeds?.feeds.map((feed) => ({
       value: feed.id,
@@ -184,6 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         favicon: feed.favicon,
         folderId: null,
         children: [],
+        type: 'feed' as const,
       })) || [];
 
   const folderFeeds =
@@ -193,6 +155,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       favicon: null,
       folderId: folder.id,
       unreadCount: null,
+      type: 'folder' as const,
       children: folder.feeds.map((feed) => ({
         id: feed.id,
         name: feed.title || feed.url,
@@ -200,11 +163,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
         favicon: feed.favicon,
         folderId: folder.id,
+        type: 'feed' as const,
         children: [],
       })),
     })) || [];
 
-  const { mutate: editFeed } = $api.useMutation('patch', '/feed/{id}');
+  const { mutate: editFeed } = $api.useMutation('patch', '/feed/{id}', {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/folder/feed'],
+      });
+    },
+    onError(e) {
+      //@ts-expect-error: Error in openapi-typescript's typing of errors
+      toast.error('Failed to edit feed', { description: e.message });
+    },
+  });
 
   const initialItems: FeedTreeData[] = [...folderFeeds, ...orphanedFeeds];
   const tree = useTreeData<FeedTreeData>({
@@ -225,10 +200,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         };
       }),
     onMove(e) {
-      if (e.target.dropPosition === 'on') {
+      if (e.target.dropPosition === 'before') {
+        tree.moveBefore(e.target.key, e.keys);
+        const key = Array.from(e.keys)[0];
+        const data = tree.getItem(key)?.value;
+        if (data && data.folderId) {
+          editFeed({
+            params: {
+              path: { id: data.id },
+            },
+            credentials: 'include',
+            body: {
+              folderId: null,
+            },
+          });
+        }
+      } else if (e.target.dropPosition === 'after') {
+        tree.moveAfter(e.target.key, e.keys);
+        const key = Array.from(e.keys)[0];
+        const data = tree.getItem(key)?.value;
+        if (data && data.folderId) {
+          editFeed({
+            params: {
+              path: { id: data.id },
+            },
+            credentials: 'include',
+            body: {
+              folderId: null,
+            },
+          });
+        }
+      } else if (e.target.dropPosition === 'on') {
         // Move items to become children of the target
         const targetNode = tree.getItem(e.target.key);
-        if (targetNode) {
+        const targetData = targetNode?.value;
+        if (targetNode && targetData?.type === 'folder') {
           const targetIndex = targetNode.children
             ? targetNode.children.length
             : 0;
@@ -243,7 +249,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const data = e.items.filter((i) => i.kind === 'text')[0];
       const parsed = JSON.parse(await data.getText('application/json'));
       const target = tree.getItem(e.target.key)?.value;
-      if (e.dropOperation === 'move') {
+      if (e.dropOperation === 'move' && target?.type === 'folder') {
         editFeed({
           params: {
             path: {
@@ -291,7 +297,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 return (
                   <TreeItem textValue={item.value.name}>
                     <TreeItemContent>
-                      {item.value.name}
+                      <Link
+                        to="/dashboard/feed/$feedId"
+                        className="flex flex-row items-center max-w-40"
+                        params={{ feedId: item.value.id }}
+                      >
+                        {item.value.favicon && (
+                          <img
+                            src={item.value.favicon}
+                            alt={`${item.value.name} favicon`}
+                            className="max-w-[16px] max-h-[16px]"
+                          />
+                        )}
+                        <span className="truncate">{item.value.name}</span>
+                        <small className="ml-3">{item.value.unreadCount}</small>
+                      </Link>
                       {item.children?.length ? <TreeItemExpandButton /> : null}
                     </TreeItemContent>
                     <Collection items={item.children || []}>
