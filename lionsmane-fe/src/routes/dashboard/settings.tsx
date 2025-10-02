@@ -62,6 +62,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import UpdateUser from '@/components/update-user';
 import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
 import { cn } from '@/lib/utils';
@@ -697,9 +698,13 @@ function Settings() {
         <AccordionItem value="mange account">
           <AccordionTrigger>Manage account</AccordionTrigger>
           <AccordionContent>
+            <UpdateUser />
             {!twoFactorEnabled && (
               <Form {...twoFactorForm}>
-                <form onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}>
+                <form
+                  onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}
+                  className="space-y-8 my-8"
+                >
                   <FormField
                     control={twoFactorForm.control}
                     name="password"
