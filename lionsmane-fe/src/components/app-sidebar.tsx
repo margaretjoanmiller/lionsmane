@@ -82,14 +82,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       feedIds: [],
     },
   });
-  const { data: folders, isLoading: foldersLoading } = $api.useQuery(
+  const { data: folders, isFetching: foldersLoading } = $api.useQuery(
     'get',
     '/folder/feeds',
     {
       credentials: 'include',
     },
   );
-  const { data: feeds, isLoading: feedsLoading } = $api.useQuery(
+  const { data: feeds, isFetching: feedsLoading } = $api.useQuery(
     'get',
     '/feed',
     {
@@ -148,6 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       favicon: null,
       folderId: folder.id,
       type: 'folder' as const,
+      unreadCount: null,
       children: folder.feeds.map((feed) => ({
         id: feed.id,
         name: feed.title || feed.url,
