@@ -23,6 +23,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Tree,
+  TreeItem,
+  TreeItemContent,
+  TreeItemExpandButton,
+} from '@/components/ui/tree';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { $api } from '@/lib/fetch-client';
 import { Route as DashIndex } from '@/routes/dashboard/index';
@@ -43,12 +49,6 @@ import {
 } from './ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
-import {
-  Tree,
-  TreeItem,
-  TreeItemContent,
-  TreeItemExpandButton,
-} from './ui/tree';
 
 const formSchema = z.object({
   name: z.string().min(1).max(255),
@@ -306,7 +306,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <img
                             src={item.value.favicon}
                             alt={`${item.value.name} favicon`}
-                            className="max-w-[16px] max-h-[16px]"
+                            className="max-w-[16px] max-h-[16px] mr-2"
                           />
                         )}
                         <span className="truncate">{item.value.name}</span>
