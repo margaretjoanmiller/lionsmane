@@ -9,3 +9,13 @@ export type Feed = {
   image: string | null;
   updated: string | null;
 };
+
+export interface FeedTreeData {
+  id: string;
+  name: string;
+  unreadCount: number | null;
+  favicon: string | null;
+  folderId: string | null;
+  type: 'feed' | 'folder';
+  children?: Array<FeedTreeData>;
+}
