@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GreaderController } from './greader.controller';
+import { MinifluxController } from './miniflux.controller';
 
-describe('GreaderController', () => {
-  let controller: GreaderController;
+describe('MinifluxController', () => {
+  let controller: MinifluxController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [GreaderController],
+      controllers: [MinifluxController],
     }).compile();
 
-    controller = module.get<GreaderController>(GreaderController);
+    controller = module.get<MinifluxController>(MinifluxController);
   });
 
   it('should be defined', () => {

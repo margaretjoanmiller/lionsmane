@@ -38,12 +38,12 @@ import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
 import { FilterModule } from './filter/filter.module';
 import { FolderModule } from './folder/folder.module';
-import { GreaderModule } from './greader/greader.module';
 import { HealthModule } from './health/health.module';
 import { OpmlModule } from './opml/opml.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { RedisModule } from './redis/redis.module';
 import { SecretsModule } from './secrets/secrets.module';
+import { MinifluxModule } from './miniflux/miniflux.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -128,8 +128,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     HealthModule,
     ReadlaterModule,
     SecretsModule,
-    GreaderModule,
     EmailModule,
+    MinifluxModule,
   ],
   controllers: [AppController],
   providers: [
@@ -155,4 +155,4 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
