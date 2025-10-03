@@ -6,7 +6,7 @@ const articleSearch = z.object({
   articles: z.array(
     z.object({
       id: z.uuid(),
-      title: z.string(),
+      title: z.string().nullable(),
       url: z.url().nullable(),
       authors: z.array(
         z.object({ name: z.string(), email: z.email().nullable() }),

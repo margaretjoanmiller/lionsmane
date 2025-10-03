@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const articleDetail = z.object({
   id: z.uuid(),
-  title: z.string(),
+  title: z.string().nullable(),
   url: z.url().nullable(),
   authors: z.array(z.object({ name: z.string(), email: z.email().nullable() })),
   categories: z.array(z.string()),

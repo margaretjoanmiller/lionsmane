@@ -12,7 +12,15 @@ import { FeedService } from './feed.service';
     BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
     FetcherModule,
     OpmlModule,
-    HttpModule,
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+        Accept: '*/*',
+      },
+    }),
   ],
   controllers: [FeedController],
   providers: [FeedService, FeedConsumer],
