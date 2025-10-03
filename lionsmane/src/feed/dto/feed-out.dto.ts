@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const feedOutDto = z.object({
   id: z.uuid(),
   url: z.url(),
-  site_url: z.string().url().nullable(),
+  site_url: z.url().nullable(),
   etag_header: z.string().nullable(),
   last_modified_header: z.string().nullable(),
   favicon: z.url().nullable(),

@@ -6,5 +6,6 @@ export class FileDto {
     required: true,
     format: 'binary',
   })
+  // biome-ignore lint/suspicious/noExplicitAny: file
   file: any;
 }

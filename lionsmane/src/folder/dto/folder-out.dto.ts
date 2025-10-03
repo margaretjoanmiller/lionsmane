@@ -16,6 +16,9 @@ const folderWithFeedsOutSchema = z.object({
     z.object({
       id: z.uuid(),
       url: z.url(),
+      site_url: z.url().nullable(),
+      etag_header: z.string().nullable(),
+      last_modified_header: z.string().nullable(),
       favicon: z.url().nullable(),
       title: z.string().min(1).max(255).nullable(),
       authors: z.array(z.string().max(255)).nullable(),

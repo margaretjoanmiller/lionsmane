@@ -29,9 +29,9 @@ export const feeds = pgTable(
     minifluxId: serial().unique(),
     title: text().notNull(),
     url: varchar({ length: 256 }).notNull().unique(),
-    siteUrl: varchar({ length: 256 }).notNull(),
-    etag: varchar({ length: 256 }),
-    lastModified: varchar({ length: 256 }),
+    site_url: varchar({ length: 256 }).notNull(),
+    etag_header: varchar({ length: 256 }),
+    last_modified_header: varchar({ length: 256 }),
     parsingErrorMessage: varchar({ length: 256 }),
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
@@ -90,6 +90,7 @@ export const folders = pgTable(
   'folders',
   {
     id: uuid()
+      .notNull()
       .unique()
       .$defaultFn(() => v7()),
     minifluxId: serial().unique().notNull(),
