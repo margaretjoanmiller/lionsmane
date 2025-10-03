@@ -1,41 +1,86 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
+  Logger,
   Param,
+  ParseFilePipeBuilder,
   Post,
   Put,
   Query,
+  StreamableFile,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import { FileDto } from 'src/feed/dto/file.dto';
+import { DiscoverDto } from 'src/feed/dto/new-subscription.dto';
+import { FeedService } from 'src/feed/feed.service';
+import { MinifluxService } from './miniflux.service';
 @Controller('miniflux')
 export class MinifluxController {
+  constructor(
+    private readonly minifluxService: MinifluxService,
+    private readonly feedService: FeedService,
+  ) {}
+
+  private readonly logger = new Logger(MinifluxController.name);
+
   @Post('discover')
   discoverSubscriptions(@Body() discoverDto: DiscoverDto) {
     // return this.minifluxService.discover(discoverDto);
     return { message: 'Endpoint not implemented', data: discoverDto };
   }
 
-  @Put('flush-history')
-  @HttpCode(HttpStatus.ACCEPTED)
-  flushHistory() {
-    // return this.minifluxService.flushHistory();
-    return { message: 'Endpoint not implemented' };
-  }
-
   @Get('export')
-  exportOpml() {
-    // return this.minifluxService.exportOpml();
-    return { message: 'Endpoint not implemented' };
+  @ApiResponse({ status: 200, description: 'OPML file exported' })
+  async export(@Session() session: UserSession): Promise<StreamableFile> {
+    try {
+      const buffer = await this.feedService.buildOpml(session.user.id);
+      return new StreamableFile(buffer);
+    } catch (error) {
+      this.logger.error('Error exporting OPML', error);
+      throw new InternalServerErrorException('Error exporting OPML', {
+        cause: error,
+      });
+    }
   }
 
   @Post('import')
-  @HttpCode(HttpStatus.CREATED)
-  importOpml(@Body() opmlData: string) {
-    // return this.minifluxService.importOpml(opmlData);
-    return { message: 'Endpoint not implemented' };
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'OPML file to import',
+    required: true,
+    type: FileDto,
+  })
+  @ApiResponse({ status: 201, description: 'Feed imported' })
+  @ApiResponse({ status: 400, description: 'Invalid OPML file' })
+  async import(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: 5120 }) // 5KB
+        .build({ fileIsRequired: true }),
+    )
+    file: Express.Multer.File,
+    @Session() session: UserSession,
+  ) {
+    try {
+      return await this.feedService.importOpml(
+        session.user.id,
+        file.buffer.toString(),
+      );
+    } catch (error) {
+      this.logger.error('Error importing OPML', error);
+      throw new BadRequestException('Error importing OPML', { cause: error });
+    }
   }
 
   @Get('version')
@@ -229,46 +274,10 @@ export class MinifluxController {
     return;
   }
 
-
   @Get('me')
   getCurrentUser() {
     // return this.minifluxService.getCurrentUser();
     return { message: 'Endpoint not implemented' };
-  }
-
-  @Get('users')
-  getUsers() {
-    // return this.minifluxService.getUsers();
-    return { message: 'Endpoint not implemented' };
-  }
-
-  @Get('users/:userId')
-  getUser(@Param('userId') userId: string) {
-    // return this.minifluxService.getUser(userId);
-    return { message: 'Endpoint not implemented', userId };
-  }
-
-  @Post('users')
-  @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto) {
-    // return this.minifluxService.createUser(createUserDto);
-    return { message: 'Endpoint not implemented', data: createUserDto };
-  }
-
-  @Put('users/:userId')
-  updateUser(
-    @Param('userId') userId: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    // return this.minifluxService.updateUser(userId, updateUserDto);
-    return { message: 'Endpoint not implemented', userId, data: updateUserDto };
-  }
-
-  @Delete('users/:userId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('userId') userId: number) {
-    // this.minifluxService.deleteUser(userId);
-    return;
   }
 
   @Put('users/:userId/mark-all-as-read')

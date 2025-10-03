@@ -16,6 +16,7 @@ import * as cheerio from 'cheerio';
 import { getTime, subMonths } from 'date-fns';
 import { and, count, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { parseFeed } from 'feedsmith';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -45,14 +46,12 @@ export class FeedService {
     }
     // get html body
     const { data } = await firstValueFrom(
-      this.httpService
-        .get(url.toString())
-        .pipe(
-          catchError((error) => {
-            this.logger.error('Error fetching feed URL', error);
-            return of({ data: null });
-          }),
-        ),
+      this.httpService.get(url.toString()).pipe(
+        catchError((error) => {
+          this.logger.error('Error fetching feed URL', error);
+          return of({ data: null });
+        }),
+      ),
     );
     if (data) {
       // get from meta tag
@@ -136,7 +135,22 @@ export class FeedService {
       } else {
         throw new BadRequestException('Invalid URL');
       }
-      const feeds = (await this.findFeed(urlToSearch)).map((f) => f.toString());
+      const feedsRaw = (await this.findFeed(urlToSearch)).map((f) =>
+        f.toString(),
+      );
+
+      const feeds = await Promise.all(
+        feedsRaw.map(async (f) => {
+          const data = await this.fetcher.respectfulFetch(f);
+          const { format, feed } = parseFeed(data);
+          return {
+            format,
+            url: f,
+            title: feed.title,
+          };
+        }),
+      );
+
       return {
         feeds,
       };
@@ -159,7 +173,19 @@ export class FeedService {
         .where(eq(schema.feeds.url, url));
 
       const title = await this.fetcher.extractFeedTitle(url);
-      const favicon = await this.fetcher.getFavicon(new URL(url));
+      const urlObj = new URL(url);
+
+      const response = await this.fetcher.respectfulFetch(url);
+
+      const { feed: parsedFeed, format } = parseFeed(response);
+
+      let favicon: string | null = null;
+      if (format === 'atom') {
+        if (!parsedFeed.icon) favicon = await this.fetcher.getFavicon(urlObj);
+        else favicon = parsedFeed.icon;
+      } else {
+        favicon = await this.fetcher.getFavicon(urlObj);
+      }
 
       if (!feed) {
         const [newFeed] = await tx
@@ -167,14 +193,20 @@ export class FeedService {
           .values({
             title: title ?? newSubscription.url,
             url: url,
+            siteUrl: urlObj.origin,
             updated: subMonths(new Date(), 6),
             favicon,
+            etag: response?.headers['etag'] || null,
+            lastModified: response?.headers['last-modified'] || null,
           })
           .returning();
         if (!newFeed) {
           throw new Error('Failed to create feed');
         }
         feed = newFeed;
+      }
+      if (!feed.id) {
+        throw new Error('Failed to find or create feed');
       }
       const [subscription] = await tx
         .select()

@@ -49,7 +49,7 @@ export class FetcherService {
     return robotsParser(robotsUrl, robotsTxt);
   }
 
-  async respectfulFetch(url: string): Promise<string | null> {
+  async respectfulFetch(url: string) {
     try {
       const robots = await this.robots(url);
       if (
@@ -61,24 +61,34 @@ export class FetcherService {
         console.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
       } else {
-        const { data, status, statusText } = await firstValueFrom(
+        const { data, status, statusText, headers } = await firstValueFrom(
           this.httpService.get(url),
         );
 
         if (status !== 200) {
           throw new Error(`Failed to fetch URL: ${statusText}`);
         }
-        return await data;
+        return {
+          data,
+          status,
+          statusText,
+          headers,
+        };
       }
     } catch {
-      const { data, status, statusText } = await firstValueFrom(
+      const { data, status, statusText, headers } = await firstValueFrom(
         this.httpService.get(url),
       );
 
       if (status !== 200) {
         throw new Error(`Failed to fetch URL: ${statusText}`);
       }
-      return await data;
+      return {
+        data,
+        status,
+        statusText,
+        headers,
+      };
     }
   }
 
@@ -122,7 +132,7 @@ export class FetcherService {
       }
       const window = new JSDOM('').window;
       const purify = createDOMPurify(window as WindowLike);
-      const clean = purify.sanitize(text);
+      const clean = purify.sanitize(text.data);
       const cleanDoc = new JSDOM(clean);
       const readableRaw = new Readability(cleanDoc.window.document).parse();
       const readableText = readableRaw?.textContent;
@@ -155,7 +165,7 @@ export class FetcherService {
       if (feedXML === null) {
         throw new Error('Failed to fetch feed');
       }
-      const { feed, format } = parseFeed(feedXML);
+      const { feed, format } = parseFeed(feedXML.data);
       if (format === 'rss') {
         if (!feed || !feed.items) {
           throw new Error('No items found in the feed');

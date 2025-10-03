@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   index,
+  integer,
   jsonb,
   pgEnum,
   pgTable,
@@ -21,11 +22,19 @@ export const feeds = pgTable(
   'feeds',
   {
     id: uuid()
+      .notNull()
       .unique()
       .$defaultFn(() => v7()),
     minifluxId: serial().unique(),
     title: text().notNull(),
     url: varchar({ length: 256 }).notNull().unique(),
+    siteUrl: varchar({ length: 256 }).notNull(),
+    etag: varchar({ length: 256 }),
+    lastModified: varchar({ length: 256 }),
+    parsingErrorMessage: varchar({ length: 256 }),
+    parsingErrorCount: integer().notNull().default(0),
+    userAgent: varchar({ length: 256 }),
+    crawler: boolean().notNull().default(false),
     favicon: varchar({ length: 256 }),
     authors: varchar({ length: 256 }).array(),
     categories: varchar({ length: 256 }).array(),
@@ -45,6 +54,7 @@ export const subscriptions = pgTable(
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
+    userMinifluxId: serial().notNull(),
     feedId: uuid()
       .notNull()
       .references(() => feeds.id, { onDelete: 'cascade' }),
@@ -55,7 +65,11 @@ export const subscriptions = pgTable(
     unique('subscriptions_userId_feedId_unique').on(table.userId, table.feedId), // Prevent duplicate subscriptions
     index('user_feeds_feed_idx').on(table.feedId),
     index('user_feeds_folder_idx').on(table.folderId),
-    index('user_feeds_user_feed_idx').on(table.userId, table.feedId),
+    index('user_feeds_user_feed_idx').on(
+      table.userId,
+      table.userMinifluxId,
+      table.feedId,
+    ),
   ],
 );
 
@@ -110,6 +124,7 @@ export const articles = pgTable(
   'articles',
   {
     id: uuid()
+      .notNull()
       .unique()
       .$defaultFn(() => v7()),
     minifluxId: serial().unique().notNull(),
@@ -121,6 +136,8 @@ export const articles = pgTable(
       .default([] as { name: string; email: string }[]),
     categories: varchar({ length: 256 }).array().notNull().default([]),
     description: text(),
+    commentsUrl: text(),
+    hash: varchar({ length: 64 }),
     rawContent: text(),
     readableHtml: text(),
     readableText: text(),
