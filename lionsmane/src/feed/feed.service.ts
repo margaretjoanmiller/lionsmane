@@ -45,12 +45,16 @@ export class FeedService {
     }
     // get html body
     const { data } = await firstValueFrom(
-      this.httpService.get(url.toString()).pipe(
-        catchError((error) => {
-          this.logger.error('Error fetching feed URL', error);
-          return of({ data: null });
-        }),
-      ),
+      this.httpService
+        .get(url.toString(), {
+          responseType: 'text',
+        })
+        .pipe(
+          catchError((error) => {
+            this.logger.error('Error fetching feed URL', error);
+            return of({ data: null });
+          }),
+        ),
     );
     if (data) {
       // get from meta tag
@@ -97,15 +101,19 @@ export class FeedService {
       const allFeeds: URL[] = [];
       for (const endpoint of commonEndpoints) {
         const { status } = await firstValueFrom(
-          this.httpService.get(endpoint).pipe(
-            catchError((error) => {
-              this.logger.debug(
-                'Error on this endpoint, trying another',
-                error,
-              );
-              return of({ status: error.status });
-            }),
-          ),
+          this.httpService
+            .get(endpoint, {
+              responseType: 'text',
+            })
+            .pipe(
+              catchError((error) => {
+                this.logger.debug(
+                  'Error on this endpoint, trying another',
+                  error,
+                );
+                return of({ status: error.status });
+              }),
+            ),
         );
         if (status === 200) {
           allFeeds.push(new URL(endpoint));

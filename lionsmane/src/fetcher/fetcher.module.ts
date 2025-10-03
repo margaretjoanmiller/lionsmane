@@ -12,9 +12,14 @@ import { FetcherService } from './fetcher.service';
     HttpModule.register({
       timeout: 5000,
       maxRedirects: 5,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+        Accept: '*/*',
+      },
     }),
   ],
   providers: [FetcherService, RedisService],
   exports: [FetcherService],
 })
-export class FetcherModule { }
+export class FetcherModule {}

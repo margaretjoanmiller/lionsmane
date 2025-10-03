@@ -38,12 +38,7 @@ export class FetcherService {
     const urlObj = new URL(url);
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
     const { data, status, statusText } = await firstValueFrom(
-      this.httpService.get(robotsUrl, {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        },
-      }),
+      this.httpService.get(robotsUrl),
     );
 
     if (status !== 200) {
@@ -67,12 +62,7 @@ export class FetcherService {
         return null;
       } else {
         const { data, status, statusText } = await firstValueFrom(
-          this.httpService.get(url, {
-            headers: {
-              'User-Agent':
-                'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-            },
-          }),
+          this.httpService.get(url),
         );
 
         if (status !== 200) {
@@ -82,12 +72,7 @@ export class FetcherService {
       }
     } catch {
       const { data, status, statusText } = await firstValueFrom(
-        this.httpService.get(url, {
-          headers: {
-            'User-Agent':
-              'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-          },
-        }),
+        this.httpService.get(url),
       );
 
       if (status !== 200) {
@@ -222,7 +207,8 @@ export class FetcherService {
                 title: item.title,
                 url: item.link,
                 authors: item.authors,
-                categories: item.categories?.map((i) => i.name),
+                categories:
+                  item.categories?.map((i) => i.name).filter(Boolean) || [],
                 description: item.description || '',
                 rawContent:
                   item.content?.encoded || item.description || 'no content',
@@ -318,7 +304,8 @@ export class FetcherService {
                   name: author.name,
                   email: author.email,
                 })),
-                categories: item.categories?.map((i) => i.label) || [],
+                categories:
+                  item.categories?.map((i) => i.term).filter(Boolean) || [],
                 description: item.summary || '',
                 rawContent: item.content || item.summary || 'no content',
                 image: item.media ? item.media[0].url : '',
@@ -384,15 +371,19 @@ export class FetcherService {
 
     let favicon: string | null;
     const { data } = await firstValueFrom(
-      this.httpService.get(tryFavi).pipe(
-        catchError((error) => {
-          this.logger.warn(
-            `No favicon found for ${url}, setting to null`,
-            error,
-          );
-          return of({ data: null });
-        }),
-      ),
+      this.httpService
+        .get(tryFavi, {
+          responseType: 'text',
+        })
+        .pipe(
+          catchError((error) => {
+            this.logger.warn(
+              `No favicon found for ${url}, setting to null`,
+              error,
+            );
+            return of({ data: null });
+          }),
+        ),
     );
     if (data) {
       favicon = tryFavi;
