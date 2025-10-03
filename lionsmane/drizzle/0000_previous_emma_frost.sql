@@ -1,5 +1,4 @@
-CREATE EXTENSION pgroonga;
-
+CREATE EXTENSION IF NOT EXISTS pgroonga;
 CREATE TYPE "public"."user_filter_actions" AS ENUM('blur', 'markRead', 'hide');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
@@ -15,6 +14,30 @@ CREATE TABLE "account" (
 	"password" text,
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "apikey" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text,
+	"start" text,
+	"prefix" text,
+	"key" text NOT NULL,
+	"user_id" text NOT NULL,
+	"refill_interval" integer,
+	"refill_amount" integer,
+	"last_refill_at" timestamp,
+	"enabled" boolean DEFAULT true,
+	"rate_limit_enabled" boolean DEFAULT true,
+	"rate_limit_time_window" integer DEFAULT 86400000,
+	"rate_limit_max" integer DEFAULT 10,
+	"request_count" integer DEFAULT 0,
+	"remaining" integer,
+	"last_request" timestamp,
+	"expires_at" timestamp,
+	"created_at" timestamp NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	"permissions" text,
+	"metadata" text
 );
 --> statement-breakpoint
 CREATE TABLE "oauth_access_token" (
@@ -100,6 +123,7 @@ CREATE TABLE "user" (
 	"created_at" timestamp NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"two_factor_enabled" boolean,
+	"has_readeck_key" boolean DEFAULT false,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -125,9 +149,10 @@ CREATE TABLE "applied_rules" (
 );
 --> statement-breakpoint
 CREATE TABLE "articles" (
-	"id" uuid PRIMARY KEY NOT NULL,
-	"title" text NOT NULL,
-	"url" text NOT NULL,
+	"id" uuid,
+	"minifluxId" serial NOT NULL,
+	"title" text DEFAULT 'No title',
+	"url" text,
 	"authors" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"categories" varchar(256)[] DEFAULT '{}' NOT NULL,
 	"description" text,
@@ -137,29 +162,43 @@ CREATE TABLE "articles" (
 	"fullArticleHtml" text,
 	"fullArticleText" text,
 	"keywords" varchar(256)[] DEFAULT '{}' NOT NULL,
-	"image" varchar(256),
-	"media" varchar(256)[] DEFAULT '{}' NOT NULL,
+	"image" varchar(512),
+	"imageAlt" varchar(512),
+	"media" varchar(512)[] DEFAULT '{}' NOT NULL,
 	"published" timestamp with time zone NOT NULL,
 	"updated" timestamp with time zone,
-	"feedId" uuid NOT NULL
+	"feedId" uuid NOT NULL,
+	CONSTRAINT "articles_id_minifluxId_pk" PRIMARY KEY("id","minifluxId"),
+	CONSTRAINT "articles_id_unique" UNIQUE("id"),
+	CONSTRAINT "articles_minifluxId_unique" UNIQUE("minifluxId"),
+	CONSTRAINT "articles_feed_id_url_unique" UNIQUE("feedId","url")
 );
 --> statement-breakpoint
 CREATE TABLE "feeds" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid,
+	"minifluxId" serial NOT NULL,
 	"title" text NOT NULL,
 	"url" varchar(256) NOT NULL,
+	"favicon" varchar(256),
 	"authors" varchar(256)[],
 	"categories" varchar(256)[],
 	"copyright" varchar(50),
 	"image" varchar(256),
 	"updated" timestamp,
+	CONSTRAINT "feeds_id_minifluxId_pk" PRIMARY KEY("id","minifluxId"),
+	CONSTRAINT "feeds_id_unique" UNIQUE("id"),
+	CONSTRAINT "feeds_minifluxId_unique" UNIQUE("minifluxId"),
 	CONSTRAINT "feeds_url_unique" UNIQUE("url")
 );
 --> statement-breakpoint
 CREATE TABLE "folders" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid,
+	"minifluxId" serial NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"userId" text NOT NULL,
+	CONSTRAINT "folders_id_minifluxId_pk" PRIMARY KEY("id","minifluxId"),
+	CONSTRAINT "folders_id_unique" UNIQUE("id"),
+	CONSTRAINT "folders_minifluxId_unique" UNIQUE("minifluxId"),
 	CONSTRAINT "folders_name_userId_unique" UNIQUE("name","userId")
 );
 --> statement-breakpoint
@@ -193,6 +232,7 @@ CREATE TABLE "user_filters" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "apikey" ADD CONSTRAINT "apikey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "passkey" ADD CONSTRAINT "passkey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

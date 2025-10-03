@@ -6,6 +6,7 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
+  serial,
   text,
   timestamp,
   unique,
@@ -16,19 +17,24 @@ import { Conditions } from 'src/filter/filter';
 import { v7 } from 'uuid';
 import { user } from './auth';
 
-export const feeds = pgTable('feeds', {
-  id: uuid()
-    .primaryKey()
-    .$defaultFn(() => v7()),
-  title: text().notNull(),
-  url: varchar({ length: 256 }).notNull().unique(),
-  favicon: varchar({ length: 256 }),
-  authors: varchar({ length: 256 }).array(),
-  categories: varchar({ length: 256 }).array(),
-  copyright: varchar({ length: 50 }),
-  image: varchar({ length: 256 }),
-  updated: timestamp(),
-});
+export const feeds = pgTable(
+  'feeds',
+  {
+    id: uuid()
+      .unique()
+      .$defaultFn(() => v7()),
+    minifluxId: serial().unique(),
+    title: text().notNull(),
+    url: varchar({ length: 256 }).notNull().unique(),
+    favicon: varchar({ length: 256 }),
+    authors: varchar({ length: 256 }).array(),
+    categories: varchar({ length: 256 }).array(),
+    copyright: varchar({ length: 50 }),
+    image: varchar({ length: 256 }),
+    updated: timestamp(),
+  },
+  (table) => [primaryKey({ columns: [table.id, table.minifluxId] })],
+);
 
 export const subscriptions = pgTable(
   'subscriptions',
@@ -57,14 +63,16 @@ export const folders = pgTable(
   'folders',
   {
     id: uuid()
-      .primaryKey()
+      .unique()
       .$defaultFn(() => v7()),
+    minifluxId: serial().unique().notNull(),
     name: varchar({ length: 100 }).notNull(),
     userId: text()
       .references(() => user.id)
       .notNull(),
   },
   (table) => [
+    primaryKey({ columns: [table.id, table.minifluxId] }),
     unique('folders_name_userId_unique').on(table.name, table.userId),
     index('folders_user_idx').on(table.userId),
   ],
@@ -102,8 +110,9 @@ export const articles = pgTable(
   'articles',
   {
     id: uuid()
-      .primaryKey()
+      .unique()
       .$defaultFn(() => v7()),
+    minifluxId: serial().unique().notNull(),
     title: text().default('No title'),
     url: text(),
     authors: jsonb()
@@ -128,6 +137,7 @@ export const articles = pgTable(
       .notNull(),
   },
   (table) => [
+    primaryKey({ columns: [table.id, table.minifluxId] }),
     index('articles_feed_idx').on(table.feedId),
     index('articles_published_idx').on(table.published),
     index('articles_search_idx').using('pgroonga', table.readableText),

@@ -1,1 +1,0 @@
-ALTER TABLE "feeds" ADD COLUMN "favicon" varchar(256);
