@@ -532,55 +532,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/greader/accounts/ClientLogin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getTokenGET"];
-        put?: never;
-        post: operations["GreaderController_getTokenPost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/token": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_postToken"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/tag/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_listFolders"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/rename-tag": {
+    "/miniflux/v1/discover": {
         parameters: {
             query?: never;
             header?: never;
@@ -589,14 +541,30 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["GreaderController_renameFolder"];
+        post: operations["MinifluxController_discoverSubscriptions"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/greader/reader/api/0/disable-tag": {
+    "/miniflux/v1/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_export"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/import": {
         parameters: {
             query?: never;
             header?: never;
@@ -605,21 +573,21 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["GreaderController_deleteFolder"];
+        post: operations["MinifluxController_import"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/greader/reader/api/0/unread-count": {
+    "/miniflux/v1/version": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["GreaderController_unreadCount"];
+        get: operations["MinifluxController_getVersion"];
         put?: never;
         post?: never;
         delete?: never;
@@ -628,14 +596,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/greader/reader/api/0/subscription/list": {
+    "/miniflux/v1/feeds": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["GreaderController_subscriptionListOld"];
+        get: operations["MinifluxController_getFeeds"];
+        put?: never;
+        post: operations["MinifluxController_createFeed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/feeds/counters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getFeedCounters"];
         put?: never;
         post?: never;
         delete?: never;
@@ -644,14 +628,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/greader/subscriptions/export": {
+    "/miniflux/v1/feeds/{feedId}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["GreaderController_opmlExport"];
+        get: operations["MinifluxController_getFeed"];
+        put: operations["MinifluxController_updateFeed"];
+        post?: never;
+        delete: operations["MinifluxController_removeFeed"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/feeds/{feedId}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_refreshFeed"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/feeds/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_refreshAllFeeds"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/feeds/{feedId}/icon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getFeedIcon"];
         put?: never;
         post?: never;
         delete?: never;
@@ -660,7 +692,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/greader/reader/api/0/subscription/quickadd": {
+    "/miniflux/v1/feeds/{feedId}/mark-all-as-read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_markFeedAsRead"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getEntries"];
+        put: operations["MinifluxController_updateEntries"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/entries/{entryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getEntry"];
+        put: operations["MinifluxController_updateEntry"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/entries/{entryId}/save": {
         parameters: {
             query?: never;
             header?: never;
@@ -669,14 +749,190 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["GreaderController_quickAdd"];
+        post: operations["MinifluxController_saveEntry"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/greader/reader/api/0/subscription/edit": {
+    "/miniflux/v1/entries/{entryId}/bookmark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_toggleBookmark"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/entries/{entryId}/fetch-content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_fetchOriginalArticle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getCategories"];
+        put?: never;
+        post: operations["MinifluxController_createCategory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/categories/{categoryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_updateCategory"];
+        post?: never;
+        delete: operations["MinifluxController_deleteCategory"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/categories/{categoryId}/feeds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getCategoryFeeds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/categories/{categoryId}/mark-all-as-read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_markCategoryAsRead"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/categories/{categoryId}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_refreshCategoryFeeds"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/users/{userId}/mark-all-as-read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["MinifluxController_markUserEntriesAsRead"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/icons/{iconId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getIcon"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/api-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MinifluxController_getApiKeys"];
+        put?: never;
+        post: operations["MinifluxController_createApiKey"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/miniflux/v1/api-keys/{apiKeyId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -685,120 +941,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["GreaderController_editFeed"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/stream/items/ids": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getItemIds"];
-        put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/stream/items/count": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getItemCount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/mark-all-as-read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["GreaderController_markRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/stream/items/contents": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getItemsByIdGet"];
-        put?: never;
-        post: operations["GreaderController_getItemsById"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/edit-tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["GreaderController_editItem"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/friend/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getFriends"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/greader/reader/api/0/stream/contents/{streamId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GreaderController_getItemContents"];
-        put?: never;
-        post?: never;
-        delete?: never;
+        delete: operations["MinifluxController_deleteApiKey"];
         options?: never;
         head?: never;
         patch?: never;
@@ -836,27 +980,40 @@ export interface components {
             updated: string | null;
         };
         FeedListOutDto_Output: {
-            feeds: {
-                /** Format: uuid */
-                id: string;
-                /** Format: uri */
-                url: string;
-                favicon: string | null;
+            root?: {
+                id: number;
+                user_id: number;
                 title: string;
-                description: string | null;
-                authors: string[] | null;
-                categories: string[] | null;
-                copyright: string | null;
-                image: string | null;
-                updated: string | null;
-                /** Format: uuid */
-                subscriptionId: string;
-                folderId: string | null;
-                unreadCount: number | null;
+                site_url: string;
+                feed_url: string;
+                checked_at: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsing_error_message: string | null;
+                parsing_error_count: number | null;
+                scraper_rules: string | null;
+                rewrite_rules: string | null;
+                crawler: boolean;
+                blocklist_rules: string | null;
+                keeplist_rules: string | null;
+                user_agent: string | null;
+                username: string | null;
+                password: string | null;
+                disabled: boolean;
+                ignore_http_cache: boolean;
+                fetch_via_proxy: boolean;
+                category: {
+                    id: number;
+                    user_id: number;
+                    title: string;
+                };
+                icon: {
+                    feed_id: number;
+                    icon_id: number;
+                } | null;
             }[];
         };
         DiscoverDto: {
-            /** Format: uri */
             url: string;
         };
         DiscoveredFeedsDto_Output: {
@@ -905,7 +1062,7 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string;
+                title: string | null;
                 url: string | null;
                 authors: {
                     name: string;
@@ -947,7 +1104,7 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string;
+                title: string | null;
                 url: string | null;
                 authors: {
                     name: string;
@@ -983,7 +1140,7 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string;
+                title: string | null;
                 url: string | null;
                 authors: {
                     name: string;
@@ -1015,7 +1172,7 @@ export interface components {
         ArticleDetailDto_Output: {
             /** Format: uuid */
             id: string;
-            title: string;
+            title: string | null;
             url: string | null;
             authors: {
                 name: string;
@@ -1151,139 +1308,13 @@ export interface components {
             /** Format: uri */
             url: string;
         };
-        LoginApiDto: {
-            /** Format: email */
-            Email: string;
-            Passwd: string;
-        };
-        SubscriptionListDto_Output: {
-            subscriptions: ({
-                id: string;
-                title: string;
+        DiscoverOutDto_Output: {
+            root?: ({
+                format: string;
+                title: string | null;
+                /** Format: uri */
                 url: string;
-                sortId: string;
-                htmlUrl: string;
-                firstitemmsec: number;
-                categories: unknown[];
-            } | {
-                id: string;
-                title: string;
-                url: string;
-                sortId: string;
-                htmlUrl: string;
-                firstitemmsec: number;
-                categories: {
-                    id: string;
-                }[];
-            })[];
-        };
-        MarkReadDto: {
-            s: string;
-            ts?: number;
-        };
-        ItemListForIdDto_Output: {
-            /** @default [] */
-            items: {
-                crawlTimeMsec: string;
-                timestampUsec: string;
-                id: string;
-                /** @default [] */
-                categories: string[] | null;
-                title: string;
-                published: number;
-                /** @default null */
-                updated: number | null;
-                /** @default [] */
-                canonical: {
-                    href: string;
-                }[] | null;
-                /** @default [] */
-                alternate: {
-                    href: string;
-                    type: string;
-                }[] | null;
-                summary: {
-                    direction: string;
-                    content: string;
-                };
-                content: {
-                    direction: string;
-                    content: string;
-                };
-                /** @default  */
-                author: string;
-                /** @default [] */
-                likingUsers: unknown[] | null;
-                /** @default [] */
-                comments: string[] | null;
-                /** @default -1 */
-                commentsNum: number | null;
-                origin: {
-                    streamId: string;
-                    title: string;
-                    htmlUrl: string;
-                };
-            }[];
-        };
-        EditTagDto: {
-            i: string;
-            a?: string;
-            r?: string;
-        };
-        ItemListDto_Output: {
-            /** @default ltr */
-            direction: string;
-            id: string;
-            updated: number;
-            title: string;
-            /** @default  */
-            description: string | null;
-            self: {
-                href: string;
-            } | null;
-            /** @default [] */
-            items: {
-                crawlTimeMsec: string;
-                timestampUsec: string;
-                id: string;
-                /** @default [] */
-                categories: string[] | null;
-                title: string;
-                published: number;
-                /** @default null */
-                updated: number | null;
-                /** @default [] */
-                canonical: {
-                    href: string;
-                }[] | null;
-                /** @default [] */
-                alternate: {
-                    href: string;
-                    type: string;
-                }[] | null;
-                summary: {
-                    direction: string;
-                    content: string;
-                };
-                content: {
-                    direction: string;
-                    content: string;
-                };
-                /** @default  */
-                author: string;
-                /** @default [] */
-                likingUsers: unknown[] | null;
-                /** @default [] */
-                comments: string[] | null;
-                /** @default -1 */
-                commentsNum: number | null;
-                origin: {
-                    streamId: string;
-                    title: string;
-                    htmlUrl: string;
-                };
-            }[];
-            continuation: string | null;
+            } | null)[];
         };
     };
     responses: never;
@@ -2929,41 +2960,7 @@ export interface operations {
             };
         };
     };
-    GreaderController_getTokenGET: {
-        parameters: {
-            query: {
-                Email: string;
-                Passwd: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_getTokenPost: {
+    MinifluxController_discoverSubscriptions: {
         parameters: {
             query?: never;
             header?: never;
@@ -2972,222 +2969,16 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginApiDto"];
+                "application/json": components["schemas"]["DiscoverDto"];
             };
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_postToken: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_listFolders: {
-        parameters: {
-            query: {
-                /** @description output format (json only for now) */
-                output: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_renameFolder: {
-        parameters: {
-            query: {
-                /** @description stream id */
-                s?: string;
-                /** @description tag name */
-                t?: string;
-                /** @description new tag name */
-                dest: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Tag renamed */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_deleteFolder: {
-        parameters: {
-            query: {
-                s: string;
-                t: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_unreadCount: {
-        parameters: {
-            query: {
-                /** @description output format (json only for now) */
-                output: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_subscriptionListOld: {
-        parameters: {
-            query: {
-                /** @description output format (json only for now) */
-                output: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SubscriptionListDto_Output"];
+                    "application/json": components["schemas"]["DiscoverOutDto_Output"];
                 };
             };
             /** @description Unauthorized */
@@ -3206,7 +2997,7 @@ export interface operations {
             };
         };
     };
-    GreaderController_opmlExport: {
+    MinifluxController_export: {
         parameters: {
             query?: never;
             header?: never;
@@ -3238,172 +3029,29 @@ export interface operations {
             };
         };
     };
-    GreaderController_quickAdd: {
-        parameters: {
-            query: {
-                /** @description Url to subscribe to */
-                quickadd: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_editFeed: {
-        parameters: {
-            query: {
-                /** @description action */
-                ac: string;
-                /** @description stream ID (feed/<feed ID>) */
-                s: string;
-                /** @description remove from folder */
-                r?: unknown;
-                /** @description move to folder */
-                a?: unknown;
-                /** @description title */
-                t?: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_getItemIds: {
-        parameters: {
-            query: {
-                /** @description filter by stream */
-                s?: string;
-                /** @description page limit */
-                n: number;
-                /** @description output format (json only for now) */
-                output: unknown;
-                /** @description exclude items */
-                xt?: unknown;
-                /** @description continuation string (cursor for paging) */
-                c?: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_getItemCount: {
-        parameters: {
-            query?: {
-                /** @description filter by stream */
-                s?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_markRead: {
+    MinifluxController_import: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        /** @description OPML file to import */
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MarkReadDto"];
+                "multipart/form-data": components["schemas"]["FileDto"];
             };
         };
         responses: {
+            /** @description Feed imported */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid OPML file */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3425,27 +3073,52 @@ export interface operations {
             };
         };
     };
-    GreaderController_getItemsByIdGet: {
+    MinifluxController_getVersion: {
         parameters: {
-            query: {
-                /** @description output format (json only for now) */
-                output?: unknown;
-                /** @description Item IDs to fetch */
-                i: string[];
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description List of items */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ItemListForIdDto_Output"];
+                    "application/json": components["schemas"]["FeedListOutDto_Output"];
                 };
             };
             /** @description Unauthorized */
@@ -3464,55 +3137,14 @@ export interface operations {
             };
         };
     };
-    GreaderController_getItemsById: {
-        parameters: {
-            query?: {
-                /** @description output format (json only for now) */
-                output?: unknown;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of items */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ItemListForIdDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GreaderController_editItem: {
+    MinifluxController_createFeed: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EditTagDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -3536,7 +3168,7 @@ export interface operations {
             };
         };
     };
-    GreaderController_getFriends: {
+    MinifluxController_getFeedCounters: {
         parameters: {
             query?: never;
             header?: never;
@@ -3567,32 +3199,868 @@ export interface operations {
             };
         };
     };
-    GreaderController_getItemContents: {
+    MinifluxController_getFeed: {
         parameters: {
-            query?: {
-                /** @description page limit */
-                n?: number;
-                /** @description output format (json only for now) */
-                output?: unknown;
-                /** @description continuation string (cursor for paging) */
-                c?: unknown;
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_updateFeed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_removeFeed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_refreshFeed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_refreshAllFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getFeedIcon: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_markFeedAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getEntries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_updateEntries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_updateEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_saveEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_toggleBookmark: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                entryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_fetchOriginalArticle: {
+        parameters: {
+            query: {
+                update_content: boolean;
             };
             header?: never;
             path: {
-                streamId: string[];
+                entryId: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description List of items */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["ItemListDto_Output"];
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getCategories: {
+        parameters: {
+            query: {
+                counts: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_createCategory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_updateCategory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_deleteCategory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getCategoryFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_markCategoryAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_refreshCategoryFeeds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                categoryId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getCurrentUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_markUserEntriesAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getIcon: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                iconId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_getApiKeys: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_createApiKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxController_deleteApiKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                apiKeyId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Unauthorized */
             401: {

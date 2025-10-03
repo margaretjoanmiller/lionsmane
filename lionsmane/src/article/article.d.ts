@@ -4,6 +4,7 @@ export interface NewArticle {
   authors: { name: string; email: string }[];
   categories: string[];
   description: string | null;
+  commentsUrl: string | null;
   rawContent: string | null;
   readableHtml: string | null;
   readableText: string | null;

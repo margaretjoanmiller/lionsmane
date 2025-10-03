@@ -18,25 +18,41 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCookieAuth,
+  ApiOAuth2,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import { ZodResponse } from 'nestjs-zod';
 import { FileDto } from 'src/feed/dto/file.dto';
-import { DiscoverDto } from 'src/feed/dto/new-subscription.dto';
 import { FeedService } from 'src/feed/feed.service';
+import { DiscoverDto } from 'src/zod/discover.dto';
+import { DiscoverOutDto } from '../zod/discover.dto';
+import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
 import { MinifluxService } from './miniflux.service';
-@Controller('miniflux')
-export class MinifluxController {
+
+@ApiTags('miniflux')
+@ApiCookieAuth()
+@ApiBearerAuth()
+@ApiOAuth2(['openid', 'profile', 'email'])
+@Controller('miniflux/v1')
+export class MinifluxV1Controller {
   constructor(
     private readonly minifluxService: MinifluxService,
     private readonly feedService: FeedService,
   ) {}
 
-  private readonly logger = new Logger(MinifluxController.name);
+  private readonly logger = new Logger(MinifluxV1Controller.name);
 
   @Post('discover')
+  @ZodResponse({ type: DiscoverOutDto, status: 200 })
   discoverSubscriptions(@Body() discoverDto: DiscoverDto) {
-    // return this.minifluxService.discover(discoverDto);
-    return { message: 'Endpoint not implemented', data: discoverDto };
+    return this.minifluxService.discoverFeeds(discoverDto);
   }
 
   @Get('export')
@@ -98,9 +114,9 @@ export class MinifluxController {
   }
 
   @Get('feeds')
-  getFeeds() {
-    // return this.minifluxService.getFeeds();
-    return { message: 'Endpoint not implemented' };
+  @ZodResponse({ type: FeedListOutDto, status: 200 })
+  getFeeds(@Session() session: UserSession) {
+    return this.minifluxService.getFeeds(session.user.id);
   }
 
   @Get('feeds/counters')

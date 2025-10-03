@@ -1,4 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS pgroonga;
+
 CREATE TYPE "public"."user_filter_actions" AS ENUM('blur', 'markRead', 'hide');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
@@ -149,13 +150,15 @@ CREATE TABLE "applied_rules" (
 );
 --> statement-breakpoint
 CREATE TABLE "articles" (
-	"id" uuid,
+	"id" uuid NOT NULL,
 	"minifluxId" serial NOT NULL,
 	"title" text DEFAULT 'No title',
 	"url" text,
 	"authors" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"categories" varchar(256)[] DEFAULT '{}' NOT NULL,
 	"description" text,
+	"commentsUrl" text,
+	"hash" varchar(64),
 	"rawContent" text,
 	"readableHtml" text,
 	"readableText" text,
@@ -175,10 +178,17 @@ CREATE TABLE "articles" (
 );
 --> statement-breakpoint
 CREATE TABLE "feeds" (
-	"id" uuid,
+	"id" uuid NOT NULL,
 	"minifluxId" serial NOT NULL,
 	"title" text NOT NULL,
 	"url" varchar(256) NOT NULL,
+	"siteUrl" varchar(256) NOT NULL,
+	"etag" varchar(256),
+	"lastModified" varchar(256),
+	"parsingErrorMessage" varchar(256),
+	"parsingErrorCount" integer DEFAULT 0 NOT NULL,
+	"userAgent" varchar(256),
+	"crawler" boolean DEFAULT false NOT NULL,
 	"favicon" varchar(256),
 	"authors" varchar(256)[],
 	"categories" varchar(256)[],
@@ -205,6 +215,7 @@ CREATE TABLE "folders" (
 CREATE TABLE "subscriptions" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
+	"userMinifluxId" serial NOT NULL,
 	"feedId" uuid NOT NULL,
 	"description" text,
 	"folderId" uuid,
@@ -256,7 +267,7 @@ CREATE INDEX "articles_search_idx" ON "articles" USING pgroonga ("readableText")
 CREATE INDEX "folders_user_idx" ON "folders" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "user_feeds_feed_idx" ON "subscriptions" USING btree ("feedId");--> statement-breakpoint
 CREATE INDEX "user_feeds_folder_idx" ON "subscriptions" USING btree ("folderId");--> statement-breakpoint
-CREATE INDEX "user_feeds_user_feed_idx" ON "subscriptions" USING btree ("userId","feedId");--> statement-breakpoint
+CREATE INDEX "user_feeds_user_feed_idx" ON "subscriptions" USING btree ("userId","userMinifluxId","feedId");--> statement-breakpoint
 CREATE INDEX "user_article_states_user_idx" ON "user_article_states" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "user_article_states_article_idx" ON "user_article_states" USING btree ("articleId");--> statement-breakpoint
 CREATE INDEX "user_article_states_user_read_idx" ON "user_article_states" USING btree ("userId","isRead");--> statement-breakpoint

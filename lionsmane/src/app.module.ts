@@ -21,6 +21,7 @@ import {
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
+import { upstashCache } from 'drizzle-orm/cache/upstash';
 import {
   ZodSerializationException,
   ZodSerializerInterceptor,
@@ -39,11 +40,11 @@ import { FetcherModule } from './fetcher/fetcher.module';
 import { FilterModule } from './filter/filter.module';
 import { FolderModule } from './folder/folder.module';
 import { HealthModule } from './health/health.module';
+import { MinifluxModule } from './miniflux/miniflux.module';
 import { OpmlModule } from './opml/opml.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { RedisModule } from './redis/redis.module';
 import { SecretsModule } from './secrets/secrets.module';
-import { MinifluxModule } from './miniflux/miniflux.module';
 
 @Catch(HttpException)
 class HttpExceptionFilter extends BaseExceptionFilter {
@@ -84,7 +85,10 @@ class HttpExceptionFilter extends BaseExceptionFilter {
           connectionString: process.env.DATABASE_URL!,
         },
       },
-      config: { schema: { ...authSchema, ...coreSchema } },
+      config: {
+        schema: { ...authSchema, ...coreSchema },
+        cache: upstashCache({ global: true, url: '', token: '' }),
+      },
     }),
     CacheModule.registerAsync({
       isGlobal: true,
@@ -155,4 +159,4 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -14,6 +14,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { p } from 'node_modules/better-auth/dist/shared/better-auth.BbWr-Wga.cjs';
 import { Conditions } from 'src/filter/filter';
 import { v7 } from 'uuid';
 import { user } from './auth';
@@ -35,15 +36,27 @@ export const feeds = pgTable(
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
     crawler: boolean().notNull().default(false),
-    favicon: varchar({ length: 256 }),
     authors: varchar({ length: 256 }).array(),
     categories: varchar({ length: 256 }).array(),
     copyright: varchar({ length: 50 }),
     image: varchar({ length: 256 }),
-    updated: timestamp(),
+    updated: timestamp().notNull(),
+    icon: integer().references(() => icons.id),
   },
   (table) => [primaryKey({ columns: [table.id, table.minifluxId] })],
 );
+
+export const icons = pgTable('icons', {
+  id: serial().primaryKey(),
+  url: varchar({ length: 256 }).notNull().unique(),
+  width: integer(),
+  height: integer(),
+  type: varchar({ length: 256 }),
+});
+
+export const iconRelations = relations(icons, ({ many }) => ({
+  feeds: many(feeds),
+}));
 
 export const subscriptions = pgTable(
   'subscriptions',
@@ -107,9 +120,13 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   }),
 }));
 
-export const feedRelations = relations(feeds, ({ many }) => ({
+export const feedRelations = relations(feeds, ({ many, one }) => ({
   articles: many(articles),
   subscriptions: many(subscriptions),
+  icon: one(icons, {
+    fields: [feeds.icon],
+    references: [icons.id],
+  }),
 }));
 
 export const folderRelations = relations(folders, ({ many, one }) => ({

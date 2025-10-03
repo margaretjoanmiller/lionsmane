@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { FeedModule } from 'src/feed/feed.module';
-import { MinifluxController } from './miniflux.controller';
 import { MinifluxService } from './miniflux.service';
+import { MinifluxV1Controller } from './miniflux.v1.controller';
 
 @Module({
   imports: [FeedModule],
-  controllers: [MinifluxController],
+  controllers: [MinifluxV1Controller],
   providers: [MinifluxService],
 })
 export class MinifluxModule {}

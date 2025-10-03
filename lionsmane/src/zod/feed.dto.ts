@@ -33,8 +33,10 @@ export const feedOutDto = z.object({
     user_id: z.number(),
     title: z.string(),
   }),
-  icon: z.object({ feed_id: z.number(), icon_id: z.number() }),
+  icon: z.object({ feed_id: z.number(), icon_id: z.number() }).nullable(),
 });
+export const feedListDto = z.array(feedOutDto);
 
 export class CreateFeedDto extends createZodDto(createFeedDto) {}
 export class FeedOutDto extends createZodDto(feedOutDto) {}
+export class FeedListOutDto extends createZodDto(feedListDto) {}

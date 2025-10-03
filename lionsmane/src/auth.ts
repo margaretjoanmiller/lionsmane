@@ -47,6 +47,10 @@ export const auth = betterAuth({
         type: 'boolean',
         defaultValue: false,
       },
+      minifluxId: {
+        type: 'number',
+        defaultValue: 0,
+      },
     },
   },
   plugins: [

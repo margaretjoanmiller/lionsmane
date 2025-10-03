@@ -97,9 +97,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   );
   const feedSelect =
-    feeds?.feeds.map((feed) => ({
+    feeds?.root?.map((feed) => ({
       value: feed.id,
-      label: feed.title || feed.url,
+      label: feed.title || feed.feed_url,
     })) || [];
 
   const { mutate, isPending } = $api.useMutation('post', '/folder');

@@ -4,6 +4,9 @@ import { z } from 'zod';
 export const feedOutDto = z.object({
   id: z.uuid(),
   url: z.url(),
+  site_url: z.string().url().nullable(),
+  etag_header: z.string().nullable(),
+  last_modified_header: z.string().nullable(),
   favicon: z.url().nullable(),
   title: z.string().min(1).max(255),
   description: z.string().max(1024).nullable(),
@@ -54,6 +57,6 @@ const hiddenFeedList = feedListOutDto.extend({
   ),
 });
 
-export class FeedOutDto extends createZodDto(feedOutDto) {}
-export class FeedListOutDto extends createZodDto(feedListOutDto) {}
+export class FeedOutInternalDto extends createZodDto(feedOutDto) {}
+export class FeedListOutInternalDto extends createZodDto(feedListOutDto) {}
 export class HiddenFeedListDto extends createZodDto(hiddenFeedList) {}

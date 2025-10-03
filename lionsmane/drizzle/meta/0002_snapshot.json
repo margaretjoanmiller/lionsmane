@@ -1,6 +1,6 @@
 {
-  "id": "5a2e481a-2270-43d8-b96b-f1076a4bfd21",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "3b9c56a6-29fc-4103-bdf6-fab583ed7d2c",
+  "prevId": "13d4cbe7-6377-4c42-8f58-b53d74386278",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -740,6 +740,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "minifluxId": {
+          "name": "minifluxId",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -794,6 +800,13 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "user_minifluxId_unique": {
+          "name": "user_minifluxId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "minifluxId"
+          ]
+        },
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
@@ -1324,12 +1337,6 @@
           "notNull": true,
           "default": false
         },
-        "favicon": {
-          "name": "favicon",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "authors": {
           "name": "authors",
           "type": "varchar(256)[]",
@@ -1358,11 +1365,31 @@
           "name": "updated",
           "type": "timestamp",
           "primaryKey": false,
+          "notNull": true
+        },
+        "icon": {
+          "name": "icon",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "feeds_icon_icons_id_fk": {
+          "name": "feeds_icon_icons_id_fk",
+          "tableFrom": "feeds",
+          "tableTo": "icons",
+          "columnsFrom": [
+            "icon"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "feeds_id_minifluxId_pk": {
           "name": "feeds_id_minifluxId_pk",
@@ -1490,6 +1517,57 @@
           "columns": [
             "name",
             "userId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.icons": {
+      "name": "icons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "width": {
+          "name": "width",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "name": "height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "icons_url_unique": {
+          "name": "icons_url_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "url"
           ]
         }
       },

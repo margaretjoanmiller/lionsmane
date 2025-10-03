@@ -98,19 +98,15 @@ export class FeedService {
       const allFeeds: URL[] = [];
       for (const endpoint of commonEndpoints) {
         const { status } = await firstValueFrom(
-          this.httpService
-            .get(endpoint, {
-              responseType: 'text',
-            })
-            .pipe(
-              catchError((error) => {
-                this.logger.debug(
-                  'Error on this endpoint, trying another',
-                  error,
-                );
-                return of({ status: error.status });
-              }),
-            ),
+          this.httpService.get(endpoint).pipe(
+            catchError((error) => {
+              this.logger.debug(
+                'Error on this endpoint, trying another',
+                error,
+              );
+              return of({ status: error.status });
+            }),
+          ),
         );
         if (status === 200) {
           allFeeds.push(new URL(endpoint));
@@ -140,20 +136,24 @@ export class FeedService {
       );
 
       const feeds = await Promise.all(
-        feedsRaw.map(async (f) => {
-          const data = await this.fetcher.respectfulFetch(f);
-          const { format, feed } = parseFeed(data);
-          return {
-            format,
-            url: f,
-            title: feed.title,
-          };
-        }),
+        feedsRaw
+          .map(async (f) => {
+            const data = await this.fetcher.respectfulFetch(f);
+            try {
+              const { format, feed } = parseFeed(data?.data);
+              return {
+                format,
+                url: f,
+                title: feed.title || null,
+              };
+            } catch {
+              return null;
+            }
+          })
+          .filter(Boolean),
       );
 
-      return {
-        feeds,
-      };
+      return feeds;
     } catch (error) {
       this.logger.error('Invalid URL or URL contains no feeds', error);
       throw new BadRequestException('Invalid URL or URL contains no feeds', {
@@ -188,14 +188,22 @@ export class FeedService {
       }
 
       if (!feed) {
+        let icon: number | null = null;
+        if (favicon) {
+          const [iconInserted] = await tx
+            .update(schema.icons)
+            .set({ url: favicon })
+            .returning();
+          icon = iconInserted.id;
+        }
         const [newFeed] = await tx
           .insert(schema.feeds)
           .values({
             title: title ?? newSubscription.url,
             url: url,
             siteUrl: urlObj.origin,
+            icon,
             updated: subMonths(new Date(), 6),
-            favicon,
             etag: response?.headers['etag'] || null,
             lastModified: response?.headers['last-modified'] || null,
           })
@@ -304,7 +312,14 @@ export class FeedService {
         id: schema.feeds.id,
         title: schema.feeds.title,
         url: schema.feeds.url,
-        favicon: schema.feeds.favicon,
+        site_url: schema.feeds.siteUrl,
+        etag_header: schema.feeds.etag,
+        last_modified_header: schema.feeds.lastModified,
+        parsing_error_count: schema.feeds.parsingErrorCount,
+        parsing_error_message: schema.feeds.parsingErrorMessage,
+        crawler: schema.feeds.crawler,
+        user_agent: schema.feeds.userAgent,
+        favicon: schema.icons.url,
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
         copyright: schema.feeds.copyright,
@@ -320,6 +335,7 @@ export class FeedService {
         schema.folders,
         eq(schema.folders.id, schema.subscriptions.folderId),
       )
+      .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
       .where(eq(schema.subscriptions.userId, userId))
       .orderBy(schema.feeds.url);
     return feeds.map((feed) => ({
@@ -403,9 +419,16 @@ export class FeedService {
         id: schema.feeds.id,
         title: schema.feeds.title,
         url: schema.feeds.url,
-        favicon: schema.feeds.favicon,
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
+        favicon: schema.icons.url,
+        site_url: schema.feeds.siteUrl,
+        etag_header: schema.feeds.etag,
+        last_modified_header: schema.feeds.lastModified,
+        parsing_error_count: schema.feeds.parsingErrorCount,
+        parsing_error_message: schema.feeds.parsingErrorMessage,
+        crawler: schema.feeds.crawler,
+        user_agent: schema.feeds.userAgent,
         copyright: schema.feeds.copyright,
         image: schema.feeds.image,
         updated: schema.feeds.updated,
@@ -415,6 +438,7 @@ export class FeedService {
       })
       .from(schema.subscriptions)
       .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
       .where(
         and(eq(schema.feeds.id, id), eq(schema.subscriptions.userId, userId)),
       )
@@ -533,7 +557,7 @@ export class FeedService {
   }
 
   async importOpml(userId: string, opml: string) {
-    const feeds = await this.opmlService.getFeedsFromOpml(opml);
+    const feeds = this.opmlService.getFeedsFromOpml(opml);
     if (!feeds) {
       throw new BadRequestException('No feeds could be parsed from this opml');
     }
@@ -557,7 +581,7 @@ export class FeedService {
       title: s.title,
       url: s.url,
     }));
-    const opml = await this.opmlService.createOpml(subs);
+    const opml = this.opmlService.createOpml(subs);
     const s = new Readable({
       read() {
         this.push(opml);

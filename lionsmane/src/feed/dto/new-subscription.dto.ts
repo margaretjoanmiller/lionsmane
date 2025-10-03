@@ -3,14 +3,6 @@ import { z } from 'zod';
 
 import { subscriptionOutDto } from './subscription-out.dto';
 
-export const discoverDto = z.object({
-  url: z.string().min(3),
-});
-
-export const discoveredFeedsDto = z.object({
-  feeds: z.array(z.url()),
-});
-
 export const newSubscriptionDto = z.object({
   subscription: subscriptionOutDto,
   id: z.uuid(),
@@ -36,5 +28,3 @@ export const newSubscriptionDto = z.object({
 });
 
 export class NewSubscriptionDto extends createZodDto(newSubscriptionDto) {}
-export class DiscoverDto extends createZodDto(discoverDto) {}
-export class DiscoveredFeedsDto extends createZodDto(discoveredFeedsDto) {}

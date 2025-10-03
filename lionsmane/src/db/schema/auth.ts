@@ -3,6 +3,7 @@ import {
   boolean,
   integer,
   pgTable,
+  serial,
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
@@ -10,6 +11,7 @@ import { folders, subscriptions, userFilters } from './core';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
+  minifluxId: serial().unique(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified')

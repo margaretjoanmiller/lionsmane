@@ -26,13 +26,11 @@ import {
 } from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
-import { FeedListOutDto, FeedOutDto } from './dto/feed-out.dto';
+import { DiscoverDto, DiscoverOutDto } from '../zod/discover.dto';
+import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
+import { FeedListOutInternalDto, FeedOutInternalDto } from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
-import {
-  DiscoverDto,
-  DiscoveredFeedsDto,
-  NewSubscriptionDto,
-} from './dto/new-subscription.dto';
+import { NewSubscriptionDto } from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
@@ -58,13 +56,13 @@ export class FeedController {
   }
 
   @Get()
-  @ZodResponse({ type: FeedListOutDto, status: 200 })
+  @ZodResponse({ type: FeedListOutInternalDto, status: 200 })
   async findAll(@Session() session: UserSession) {
     return { feeds: await this.feedService.findAll(session.user.id) };
   }
 
   @Post('discover')
-  @ZodResponse({ type: DiscoveredFeedsDto, status: 200 })
+  @ZodResponse({ type: DiscoverOutDto, status: 200 })
   async discover(@Body() url: DiscoverDto, @Session() session: UserSession) {
     return await this.feedService.discover(url.url);
   }
@@ -119,7 +117,7 @@ export class FeedController {
   }
 
   @Get(':id')
-  @ZodResponse({ type: FeedOutDto, status: 200 })
+  @ZodResponse({ type: FeedOutInternalDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {
     return this.feedService.findOne(id, session.user.id);
   }
