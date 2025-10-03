@@ -205,14 +205,18 @@ export class FetcherService {
               name: 'new-article',
               data: {
                 title: item.title,
-                url: item.link,
+                url: item.link ? item.source?.url : '',
                 authors: item.authors,
                 categories:
                   item.categories?.map((i) => i.name).filter(Boolean) || [],
                 description: item.description || '',
                 rawContent:
                   item.content?.encoded || item.description || 'no content',
-                image: item.media?.contents ? item.media.contents[0].url : '',
+                image: item.media?.thumbnails
+                  ? item.media.thumbnails[0].url
+                  : item.media?.contents
+                    ? item.media.contents[0].url
+                    : '',
                 imageAlt: item.media?.contents
                   ? item.media.contents[0].texts
                     ? item.media.contents[0].texts[0].value
@@ -308,7 +312,11 @@ export class FetcherService {
                   item.categories?.map((i) => i.term).filter(Boolean) || [],
                 description: item.summary || '',
                 rawContent: item.content || item.summary || 'no content',
-                image: item.media ? item.media[0].url : '',
+                image: item.media
+                  ? item.media.thumbnails
+                    ? item.media.thumbnails[0].url
+                    : item.media[0].url
+                  : '',
                 imageAlt: item.media
                   ? item.media[0].texts
                     ? item.media[0].texts[0].value

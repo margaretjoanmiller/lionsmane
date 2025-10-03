@@ -46,9 +46,7 @@ export class FeedService {
     // get html body
     const { data } = await firstValueFrom(
       this.httpService
-        .get(url.toString(), {
-          responseType: 'text',
-        })
+        .get(url.toString())
         .pipe(
           catchError((error) => {
             this.logger.error('Error fetching feed URL', error);

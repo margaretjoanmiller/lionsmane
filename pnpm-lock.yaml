@@ -66,9 +66,6 @@ importers:
       '@nestjs/throttler':
         specifier: ^6.4.0
         version: 6.4.0(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(reflect-metadata@0.2.2)
-      '@rowanmanning/feed-parser':
-        specifier: ^2.1.1
-        version: 2.1.1
       '@scalar/nestjs-api-reference':
         specifier: ^0.5.14
         version: 0.5.14
@@ -3774,10 +3771,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rowanmanning/feed-parser@2.1.1':
-    resolution: {integrity: sha512-OFxb37OaQ8ki1VQt/FtrDw74nY2epU9He0QOCzkfc/FxbeulCJo7SbZNiDw2ruwnISuO7PhDsZ69DdWzCVEIsA==}
-    engines: {node: 20.x || 22.x || 24.x}
-
   '@scalar/nestjs-api-reference@0.5.14':
     resolution: {integrity: sha512-SYWChX6ntmhRorDjN4mwQ72ZKazET7OiIKp5LnbUUZiN3GzVzhiFl5PHZthSH2W6UWjds3JQlW0Xgt7vyQzf9w==}
     engines: {node: '>=20'}
@@ -6418,9 +6411,6 @@ packages:
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
-
-  html-entities@2.6.0:
-    resolution: {integrity: sha512-kig+rMn/QOVRvr7c86gQ8lWXq+Hkv6CbAH1hLu+RG338StTpE8Z0b44SDVaqVu7HGKf27frdmUYEs9hTUX/cLQ==}
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
@@ -13458,11 +13448,6 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.52.2':
     optional: true
 
-  '@rowanmanning/feed-parser@2.1.1':
-    dependencies:
-      fast-xml-parser: 5.2.5
-      html-entities: 2.6.0
-
   '@scalar/nestjs-api-reference@0.5.14':
     dependencies:
       '@scalar/types': 0.2.13
@@ -16366,8 +16351,6 @@ snapshots:
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
-
-  html-entities@2.6.0: {}
 
   html-escaper@2.0.2: {}
 

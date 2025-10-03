@@ -110,7 +110,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
               })
             }
           >
-            {article.title}
+            {article.title || 'No title'}
           </Link>
           <div className="justify">
             <div className="flex items-center">

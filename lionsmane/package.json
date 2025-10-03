@@ -37,7 +37,6 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.4.0",
-    "@rowanmanning/feed-parser": "^2.1.1",
     "@scalar/nestjs-api-reference": "^0.5.14",
     "@thallesp/nestjs-better-auth": "^1.0.3",
     "@types/jsdom": "^21.1.7",
@@ -105,19 +104,13 @@
     "vitest-mock-extended": "^3.1.0"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
+    "moduleFileExtensions": ["js", "json", "ts"],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
+    "collectCoverageFrom": ["**/*.(t|j)s"],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
