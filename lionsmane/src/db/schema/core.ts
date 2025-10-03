@@ -104,7 +104,7 @@ export const articles = pgTable(
     id: uuid()
       .primaryKey()
       .$defaultFn(() => v7()),
-    title: text().notNull(),
+    title: text().default('No title'),
     url: text(),
     authors: jsonb()
       .$type<{ name: string; email: string }[]>()

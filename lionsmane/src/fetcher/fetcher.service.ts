@@ -313,12 +313,12 @@ export class FetcherService {
               name: 'new-article',
               data: {
                 title: item.title,
-                url: item.links ? item.links[0] : '',
+                url: item.links ? item.links[0].href : '',
                 authors: item.authors?.map((author) => ({
                   name: author.name,
                   email: author.email,
                 })),
-                categories: item.categories?.map((i) => i.term) || [],
+                categories: item.categories?.map((i) => i.label) || [],
                 description: item.summary || '',
                 rawContent: item.content || item.summary || 'no content',
                 image: item.media ? item.media[0].url : '',
