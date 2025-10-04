@@ -16,7 +16,7 @@ export class ArticleConsumer extends WorkerHost {
     super();
   }
 
-  async process(job: Job<NewArticleDate | { id: string; userId: string }>) {
+  async process(job: Job<NewArticle | { id: string; userId: string }>) {
     if (job.name === 'new-article' && 'feedId' in job.data) {
       const data = job.data;
 
@@ -44,7 +44,7 @@ export class ArticleConsumer extends WorkerHost {
 
       const article = await this.articleService.newArticle({
         ...data,
-        published: data.published.toISOString(),
+        published: parseDate(data.published).toISOString(),
         image,
         imageAlt: alt,
         media,

@@ -45,13 +45,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 
 const formSchema = z.object({
-  name: z.string().min(1).max(255),
   feedIds: z.array(
     z.object({
-      value: z.uuid(),
       label: z.string().min(1).max(255),
+      value: z.uuid(),
     }),
   ),
+  name: z.string().min(1).max(255),
 });
 
 // Tree data interfaces
@@ -59,14 +59,14 @@ const formSchema = z.object({
 const data = {
   navSecondary: [
     {
+      icon: GardenEyeHideStroke16,
       title: 'Hidden',
       url: '/dashboard/hidden',
-      icon: GardenEyeHideStroke16,
     },
     {
+      icon: SolarFilterLinear,
       title: 'Filters',
       url: '/dashboard/filter',
-      icon: SolarFilterLinear,
     },
   ],
 };
@@ -76,11 +76,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const [formOpen, setFormOpen] = React.useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
       feedIds: [],
+      name: '',
     },
+    resolver: zodResolver(formSchema),
   });
   const { data: folders, isFetching: foldersLoading } = $api.useQuery(
     'get',
@@ -97,9 +97,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   );
   const feedSelect =
-    feeds?.root?.map((feed) => ({
-      value: feed.id,
+    feeds?.map((feed) => ({
       label: feed.title || feed.feed_url,
+      value: feed.id,
     })) || [];
 
   const { mutate, isPending } = $api.useMutation('post', '/folder');
@@ -108,57 +108,57 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const bodyToSend = {
-      name: values.name,
       feedIds: values.feedIds.map((feed) => feed.value),
+      name: values.name,
     };
     mutate(
       { body: bodyToSend, credentials: 'include' },
       {
+        onError: (error) => {
+          toast.error('Error adding folder', {
+            description: error,
+          });
+        },
         onSuccess: async () => {
           toast.success('Folder added');
           setFormOpen(false);
           await queryClient.invalidateQueries();
           form.reset();
         },
-        onError: (error) => {
-          toast.error('Error adding folder', {
-            description: error,
-          });
-        },
       },
     );
   }
   const orphanedFeeds =
-    feeds?.feeds
-      .filter((feed) => feed.folderId == null)
+    feeds
+      ?.filter((feed) => feed.folderId == null)
       .map((feed) => ({
-        id: feed.id,
-        name: feed.title || feed.url,
-        unreadCount: feed.unreadCount,
+        children: [],
         favicon: feed.favicon,
         folderId: null,
-        children: [],
+        id: feed.id,
+        name: feed.title || feed.url,
         type: 'feed' as const,
+        unreadCount: feed.unreadCount,
       })) || [];
 
   const folderFeeds =
     folders?.map((folder) => ({
-      id: folder.id,
-      name: folder.name,
-      favicon: null,
-      folderId: folder.id,
-      type: 'folder' as const,
-      unreadCount: null,
       children: folder.feeds.map((feed) => ({
-        id: feed.id,
-        name: feed.title || feed.url,
-        unreadCount:
-          feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
+        children: [],
         favicon: feed.favicon,
         folderId: folder.id,
+        id: feed.id,
+        name: feed.title || feed.url,
         type: 'feed' as const,
-        children: [],
+        unreadCount:
+          feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
       })),
+      favicon: null,
+      folderId: folder.id,
+      id: folder.id,
+      name: folder.name,
+      type: 'folder' as const,
+      unreadCount: null,
     })) || [];
 
   const initialItems: FeedTreeData[] = [...folderFeeds, ...orphanedFeeds];
@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton asChild size="lg">
               <Link to={DashIndex.to}>
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <NotoV1Mushroom className="size-4" />
@@ -198,7 +198,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SearchBar />
           </div>
         )}
-        <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <Dialog onOpenChange={setFormOpen} open={formOpen}>
           <DialogTrigger>
             <Tooltip>
               <TooltipTrigger>
@@ -214,7 +214,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <DialogTitle>Add Folder</DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="m-8">
+              <form className="m-8" onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
                   name="name"
@@ -237,12 +237,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <MultipleSelector
                           {...field}
                           defaultOptions={feedSelect}
-                          placeholder="Select feeds you want to add to your folder..."
                           emptyIndicator={
                             <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                               no results found.
                             </p>
                           }
+                          placeholder="Select feeds you want to add to your folder..."
                         />
                       </FormControl>
                     </FormItem>
@@ -258,7 +258,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </DialogContent>
         </Dialog>
 
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary className="mt-auto" items={data.navSecondary} />
         <NavUser />
       </SidebarFooter>
     </Sidebar>

@@ -19,7 +19,7 @@ export class ArticleService {
     private fetcher: FetcherService,
   ) {}
 
-  cleanRaw(newArt: NewArticleDate) {
+  cleanRaw(newArt: NewArticle) {
     const window = new JSDOM('').window;
     const purify = createDOMPurify(window as WindowLike);
     const cleanContent = purify.sanitize(newArt.rawContent || '');

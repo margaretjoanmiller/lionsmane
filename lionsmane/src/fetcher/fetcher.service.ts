@@ -234,7 +234,7 @@ export class FetcherService {
                     : ''
                   : '',
                 media: item.media?.contents?.map((media) => media.url) || [],
-                published: parseDate(item.pubDate),
+                published: item.pubDate,
                 feedId: feedId,
               },
               opts: {
@@ -331,17 +331,13 @@ export class FetcherService {
                       : ''
                   : '',
                 imageAlt: item.media
-                  ? item.media[0].texts
-                    ? item.media[0].texts[0].value
+                  ? item.media.contents
+                    ? item.media.contents[0].title
                     : ''
                   : '',
                 media: item.media?.contents?.map((media) => media.url) || [],
-                published: item.published
-                  ? parseDate(item.published)
-                  : item.updated
-                    ? parseDate(item.updated)
-                    : null,
-                updated: item.updated ? parseDate(item.updated) : null,
+                published: item.published ? item.published : item.updated,
+                updated: item.updated,
                 feedId: feedId,
               },
               opts: {

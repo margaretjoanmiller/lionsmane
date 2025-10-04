@@ -31,6 +31,9 @@ importers:
       '@bull-board/express':
         specifier: ^6.13.0
         version: 6.13.0
+      '@bull-board/nestjs':
+        specifier: ^6.13.0
+        version: 6.13.0(@bull-board/api@6.13.0(@bull-board/ui@6.13.0))(@nestjs/bull-shared@11.0.3(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6))(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@keyv/redis':
         specifier: ^5.1.2
         version: 5.1.2(keyv@5.5.2)
@@ -1054,6 +1057,16 @@ packages:
 
   '@bull-board/express@6.13.0':
     resolution: {integrity: sha512-PAbzD3dplV2NtN8ETs00bp++pBOD+cVb1BEYltXrjyViA2WluDBVKdlh/2wM+sHbYO2TAMNg8bUtKxGNCmxG7w==}
+
+  '@bull-board/nestjs@6.13.0':
+    resolution: {integrity: sha512-GSRhbpUe1PVR77vrpDay7yIvaqkq20+12JRnAAwbNXG+8lfFd/iX1Jxh3IRTbZ6YvXtYkaADjIc/11c2ypVo0w==}
+    peerDependencies:
+      '@bull-board/api': ^6.13.0
+      '@nestjs/bull-shared': ^10.0.0 || ^11.0.0
+      '@nestjs/common': ^9.0.0 || ^10.0.0 || ^11.0.0
+      '@nestjs/core': ^9.0.0 || ^10.0.0 || ^11.0.0
+      reflect-metadata: ^0.1.13 || ^0.2.0
+      rxjs: ^7.8.1
 
   '@bull-board/ui@6.13.0':
     resolution: {integrity: sha512-63I6b3nZnKWI5ok6mw/Tk2rIObuzMTY/tLGyO51p0GW4rAImdXxrK6mT7j4SgEuP2B+tt/8L1jU7sLu8MMcCNw==}
@@ -10308,6 +10321,15 @@ snapshots:
       express: 5.1.0
     transitivePeerDependencies:
       - supports-color
+
+  '@bull-board/nestjs@6.13.0(@bull-board/api@6.13.0(@bull-board/ui@6.13.0))(@nestjs/bull-shared@11.0.3(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6))(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@bull-board/api': 6.13.0(@bull-board/ui@6.13.0)
+      '@nestjs/bull-shared': 11.0.3(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
+      '@nestjs/common': 11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
 
   '@bull-board/ui@6.13.0':
     dependencies:
