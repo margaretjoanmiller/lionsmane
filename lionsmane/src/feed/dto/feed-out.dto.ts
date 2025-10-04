@@ -3,10 +3,11 @@ import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
 export const feedOutDtoWithCounts = feedOutDto.extend({
+  id: z.uuid(),
   unreadCount: z.number().min(0).nullable(),
 });
 
-const feedListOutDto = z.object({ feeds: z.array(feedOutDto) });
+const feedListOutDto = z.object({ feeds: z.array(feedOutDtoWithCounts) });
 
 const hiddenFeedList = feedListOutDto.extend({
   articles: z.array(

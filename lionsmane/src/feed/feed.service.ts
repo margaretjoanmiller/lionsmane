@@ -315,7 +315,8 @@ export class FeedService {
       .select({
         id: schema.feeds.id,
         title: schema.feeds.title,
-        url: schema.feeds.url,
+        user_id: schema.subscriptions.userMinifluxId,
+        feed_url: schema.feeds.url,
         site_url: schema.feeds.site_url,
         etag_header: schema.feeds.etag_header,
         last_modified_header: schema.feeds.last_modified_header,
@@ -323,15 +324,23 @@ export class FeedService {
         parsing_error_message: schema.feeds.parsingErrorMessage,
         crawler: schema.feeds.crawler,
         user_agent: schema.feeds.userAgent,
-        favicon: schema.icons.url,
+        icon: {
+          feed_id: schema.feeds.minifluxId,
+          icon_id: schema.icons.id,
+        },
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
         copyright: schema.feeds.copyright,
         image: schema.feeds.image,
-        updated: schema.feeds.updated,
+        checked_at: schema.feeds.updated,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
+        category: {
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.folders.name,
+        },
       })
       .from(schema.subscriptions)
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.subscriptions.feedId))
@@ -342,8 +351,19 @@ export class FeedService {
       .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
       .where(eq(schema.subscriptions.userId, userId))
       .orderBy(schema.feeds.url);
+
     return feeds.map((feed) => ({
       ...feed,
+      checked_at: feed.checked_at.toISOString(),
+      scraper_rules: null,
+      rewrite_rules: null,
+      blocklist_rules: null,
+      keeplist_rules: null,
+      username: null,
+      password: null,
+      disabled: false,
+      ignore_http_cache: false,
+      fetch_via_proxy: false,
       unreadCount: unreadCountMap.get(feed.id) ?? 0,
     }));
   }
@@ -421,12 +441,13 @@ export class FeedService {
     const [userFeed] = await this.db
       .select({
         id: schema.feeds.id,
+        user_id: schema.subscriptions.userMinifluxId,
         title: schema.feeds.title,
-        url: schema.feeds.url,
+        feed_url: schema.feeds.url,
+        site_url: schema.feeds.site_url,
         authors: schema.feeds.authors,
         categories: schema.feeds.categories,
         favicon: schema.icons.url,
-        site_url: schema.feeds.site_url,
         etag_header: schema.feeds.etag_header,
         last_modified_header: schema.feeds.last_modified_header,
         parsing_error_count: schema.feeds.parsingErrorCount,
@@ -435,10 +456,19 @@ export class FeedService {
         user_agent: schema.feeds.userAgent,
         copyright: schema.feeds.copyright,
         image: schema.feeds.image,
-        updated: schema.feeds.updated,
+        checked_at: schema.feeds.updated,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
+        icon: {
+          feed_id: schema.feeds.minifluxId,
+          icon_id: schema.icons.id,
+        },
+        category: {
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.folders.name,
+        },
       })
       .from(schema.subscriptions)
       .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
@@ -450,7 +480,20 @@ export class FeedService {
     if (!userFeed) {
       throw new Error('Feed not found');
     }
-    return { ...userFeed, unreadCount: unreadCount.unreadCount };
+    return {
+      ...userFeed,
+      checked_at: userFeed.checked_at.toISOString(),
+      scraper_rules: null,
+      rewrite_rules: null,
+      blocklist_rules: null,
+      keeplist_rules: null,
+      username: null,
+      password: null,
+      disabled: false,
+      ignore_http_cache: false,
+      fetch_via_proxy: false,
+      unreadCount: unreadCount.unreadCount,
+    };
   }
 
   async findByUrl(url: string, userId: string) {
@@ -467,9 +510,23 @@ export class FeedService {
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
+        icon: {
+          feed_id: schema.feeds.minifluxId,
+          icon_id: schema.icons.id,
+        },
+        category: {
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.folders.name,
+        },
       })
       .from(schema.subscriptions)
       .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
+      .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
       .where(
         and(eq(schema.feeds.url, url), eq(schema.subscriptions.userId, userId)),
       )

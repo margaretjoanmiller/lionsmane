@@ -29,11 +29,11 @@ export const feedOutDto = z.object({
   ignore_http_cache: z.boolean(),
   fetch_via_proxy: z.boolean(),
   category: z.object({
-    id: z.number(),
+    id: z.number().nullable(),
     user_id: z.number(),
-    title: z.string(),
+    title: z.string().nullable(),
   }),
-  icon: z.object({ feed_id: z.number(), icon_id: z.number() }).nullable(),
+  icon: z.object({ feed_id: z.number(), icon_id: z.number().nullable() }),
 });
 
 export const feedOutDtoArray = z.array(feedOutDto);

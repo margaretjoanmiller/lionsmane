@@ -26,7 +26,7 @@ export const feeds = pgTable(
       .notNull()
       .unique()
       .$defaultFn(() => v7()),
-    minifluxId: serial().unique(),
+    minifluxId: serial().primaryKey(),
     title: text().notNull(),
     url: varchar({ length: 256 }).notNull().unique(),
     site_url: varchar({ length: 256 }).notNull(),
@@ -43,7 +43,10 @@ export const feeds = pgTable(
     updated: timestamp().notNull(),
     icon: integer().references(() => icons.id),
   },
-  (table) => [primaryKey({ columns: [table.id, table.minifluxId] })],
+  (table) => [
+    primaryKey({ columns: [table.id, table.minifluxId] }),
+    index('feeds_url_idx').on(table.url),
+  ],
 );
 
 export const icons = pgTable('icons', {

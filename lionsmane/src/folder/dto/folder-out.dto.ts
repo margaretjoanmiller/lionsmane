@@ -1,4 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
+import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
 const FolderOutSchema = z.object({
@@ -13,31 +14,8 @@ const folderWithFeedsOutSchema = z.object({
   name: z.string().min(1).max(255),
   userId: z.string(),
   feeds: z.array(
-    z.object({
+    feedOutDto.omit({ category: true }).extend({
       id: z.uuid(),
-      url: z.url(),
-      site_url: z.url().nullable(),
-      etag_header: z.string().nullable(),
-      last_modified_header: z.string().nullable(),
-      favicon: z.url().nullable(),
-      title: z.string().min(1).max(255).nullable(),
-      authors: z.array(z.string().max(255)).nullable(),
-      categories: z.array(z.string().max(255)).nullable(),
-      copyright: z.string().max(255).nullable(),
-      image: z.url().nullable(),
-      updated: z
-        .preprocess((arg: Date | string | undefined) => {
-          // If the input is a string, try to parse it into a Date object.
-          // This handles the '2025-09-01 21:54:33' format.
-          if (typeof arg === 'string') {
-            return new Date(arg).toISOString();
-          } else if (arg instanceof Date) {
-            return arg.toISOString();
-          } else {
-            return null;
-          }
-        }, z.iso.datetime())
-        .nullable(), // Then, validate that the result is a valid ISO datetime string.
     }),
   ),
 });

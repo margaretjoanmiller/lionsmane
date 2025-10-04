@@ -46,8 +46,6 @@ import { FeedService } from './feed.service';
 export class FeedController {
   constructor(private readonly feedService: FeedService) {}
 
-  private readonly logger = new Logger(FeedController.name);
-
   @Post()
   @ZodResponse({ type: NewSubscriptionDto, status: 201 })
   async create(

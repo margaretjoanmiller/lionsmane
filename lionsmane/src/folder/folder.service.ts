@@ -73,7 +73,11 @@ export class FolderService {
       with: {
         subscriptions: {
           with: {
-            feed: true,
+            feed: {
+              with: {
+                icon: true,
+              },
+            },
           },
         },
       },
@@ -83,7 +87,30 @@ export class FolderService {
         id: f.id,
         name: f.name,
         userId: f.userId,
-        feeds: f.subscriptions.map((sub) => sub.feed) || [],
+        feeds:
+          f.subscriptions.map((sub) => ({
+            ...sub.feed,
+            feed_url: sub.feed.url,
+            user_agent: '',
+            user_id: f.subscriptions.find((s) => s.feedId === sub.feedId)
+              ?.userMinifluxId!,
+            scraper_rules: null,
+            rewrite_rules: null,
+            blocklist_rules: null,
+            keeplist_rules: null,
+            username: null,
+            password: null,
+            disabled: false,
+            ignore_http_cache: false,
+            fetch_via_proxy: false,
+            parsing_error_count: sub.feed.parsingErrorCount,
+            parsing_error_message: sub.feed.parsingErrorMessage,
+            checked_at: sub.feed.updated.toISOString(),
+            icon: {
+              icon_id: sub.feed.icon?.id || null,
+              feed_id: sub.feed.minifluxId,
+            },
+          })) || [],
       };
     });
   }
