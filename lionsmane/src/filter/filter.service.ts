@@ -155,7 +155,7 @@ export class FilterService {
         if (
           filter.conditions.titleContains &&
           filter.conditions.titleContains.some((title) =>
-            article.title.includes(title),
+            article.title?.includes(title),
           )
         )
           return {

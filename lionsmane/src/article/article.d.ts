@@ -1,5 +1,5 @@
 export interface NewArticle {
-  title: string;
+  title: string | null;
   url: string | null;
   authors: { name: string; email: string }[];
   categories: string[];
