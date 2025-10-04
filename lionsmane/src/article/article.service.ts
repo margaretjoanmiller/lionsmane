@@ -9,7 +9,7 @@ import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { schema } from '../db/schema';
-import { NewArticle } from './article';
+import { NewArticle } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {

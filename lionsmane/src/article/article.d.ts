@@ -1,21 +1,4 @@
-export interface NewArticle {
-  title: string | null;
-  url: string | null;
-  authors: { name: string; email: string }[];
-  categories: string[];
-  description: string | null;
-  commentsUrl: string | null;
-  rawContent: string | null;
-  readableHtml: string | null;
-  readableText: string | null;
-  keywords: string[];
-  image: string | null;
-  imageAlt: string | null;
-  media: string[];
-  published: string;
-  updated: string | null;
-  feedId: string;
-}
+import { NewArticle } from './dto/new-article.dto';
 
 export interface Article extends NewArticle {
   id: string;
