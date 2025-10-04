@@ -25,17 +25,19 @@ import {
   ApiConsumes,
   ApiCookieAuth,
   ApiOAuth2,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { FileDto } from 'src/feed/dto/file.dto';
+import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { FeedOutDto } from '../zod/feed.dto';
-import { CountersDto } from './dto/entry.dto';
+import { CountersDto, CreateFeedDto } from './dto/entry.dto';
 import { MinifluxService } from './miniflux.service';
 
 @ApiTags('miniflux')
@@ -185,6 +187,56 @@ export class MinifluxV1Controller {
   }
 
   @Get('entries')
+  @ApiQuery({
+    name: 'status',
+    enum: ['unread', 'read'],
+    required: false,
+  })
+  @ApiQuery({
+    name: 'offset',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'order',
+    enum: ['id', 'status', 'published_at', 'category_title', 'category_id'],
+    required: false,
+  })
+  @ApiQuery({
+    name: 'direction',
+    enum: ['asc', 'desc'],
+    required: false,
+  })
+  @ApiQuery({
+    name: 'before',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'after',
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'starred',
+    type: Boolean,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'search',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'category_id',
+    type: String,
+    required: false,
+  })
   getEntries(@Query() queryParams: any) {
     // return this.minifluxService.getEntries(queryParams);
     return { message: 'Endpoint not implemented', query: queryParams };
