@@ -1,18 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { and, count, eq, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { retryWhen } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
-import z from 'zod';
+import { FolderService } from 'src/folder/folder.service';
 import { DiscoverDto } from '../zod/discover.dto';
-import { feedListDto } from '../zod/feed.dto';
+import { FeedOutListDtoType, feedOutDto } from '../zod/feed.dto';
 
 @Injectable()
 export class MinifluxService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
+    private folderService: FolderService,
   ) {}
 
   private readonly logger = new Logger(MinifluxService.name);
@@ -25,7 +25,7 @@ export class MinifluxService {
     return feeds.filter(Boolean);
   }
 
-  async getFeeds(userId: string): Promise<z.infer<typeof feedListDto>> {
+  async getFeeds(userId: string): Promise<FeedOutListDtoType> {
     const feeds = await this.db
       .select()
       .from(schema.feeds)
@@ -144,5 +144,66 @@ export class MinifluxService {
         ),
       ),
     };
+  }
+
+  async getCategoryFeeds(
+    categoryId: number,
+    userId: string,
+  ): Promise<FeedOutListDtoType> {
+    return (
+      await this.db
+        .select({
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.feeds.title,
+          feed_url: schema.feeds.url,
+          site_url: schema.feeds.site_url,
+          etag_header: schema.feeds.etag_header,
+          last_modified_header: schema.feeds.last_modified_header,
+          parsing_error_count: schema.feeds.parsingErrorCount,
+          parsing_error_message: schema.feeds.parsingErrorMessage,
+          crawler: schema.feeds.crawler,
+          user_agent: schema.feeds.userAgent,
+          icon: schema.icons.url,
+          authors: schema.feeds.authors,
+          categories: schema.feeds.categories,
+          copyright: schema.feeds.copyright,
+          image: schema.feeds.image,
+          checked_at: schema.feeds.updated,
+          description: schema.subscriptions.description,
+          folderId: schema.subscriptions.folderId,
+          subscriptionId: schema.subscriptions.id,
+          category: {
+            id: schema.folders.minifluxId,
+            user_id: schema.subscriptions.userMinifluxId,
+            title: schema.folders.name,
+          },
+        })
+        .from(schema.folders)
+        .innerJoin(
+          schema.subscriptions,
+          and(
+            eq(schema.folders.id, schema.subscriptions.folderId),
+            eq(schema.subscriptions.userId, userId),
+          ),
+        )
+        .innerJoin(
+          schema.feeds,
+          eq(schema.subscriptions.feedId, schema.feeds.id),
+        )
+        .where(eq(schema.folders.minifluxId, categoryId))
+    ).map((item) => ({
+      ...item,
+      checked_at: item.checked_at.toISOString(),
+      disabled: false,
+      username: null,
+      password: null,
+      ignore_http_cache: false,
+      fetch_via_proxy: false,
+      scraper_rules: '',
+      rewrite_rules: '',
+      blocklist_rules: '',
+      keeplist_rules: '',
+    }));
   }
 }

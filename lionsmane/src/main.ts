@@ -12,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false, // better-auth will turn it back on!
     cors: {
-      origin: process.env.CORS_ORIGIN?.split(',') || '*',
+      origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:3000',
       credentials: true,
     },
     logger: new ConsoleLogger({

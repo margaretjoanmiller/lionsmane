@@ -13,8 +13,8 @@ export const feedOutDto = z.object({
   site_url: z.string(),
   feed_url: z.string(),
   checked_at: z.string(),
-  etag_header: z.string(),
-  last_modified_header: z.string(),
+  etag_header: z.string().nullable(),
+  last_modified_header: z.string().nullable(),
   parsing_error_message: z.string().nullable(),
   parsing_error_count: z.number().nullable(),
   scraper_rules: z.string().nullable(),
@@ -35,8 +35,11 @@ export const feedOutDto = z.object({
   }),
   icon: z.object({ feed_id: z.number(), icon_id: z.number() }).nullable(),
 });
-export const feedListDto = z.array(feedOutDto);
+
+export const feedOutDtoArray = z.array(feedOutDto);
+
+export type FeedOutDtoType = z.infer<typeof feedOutDto>;
+export type FeedOutListDtoType = z.infer<typeof feedOutDtoArray>;
 
 export class CreateFeedDto extends createZodDto(createFeedDto) {}
 export class FeedOutDto extends createZodDto(feedOutDto) {}
-export class FeedListOutDto extends createZodDto(feedListDto) {}

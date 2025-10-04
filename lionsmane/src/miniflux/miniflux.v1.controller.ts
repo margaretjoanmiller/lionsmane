@@ -1,3 +1,4 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   Body,
@@ -33,7 +34,7 @@ import { FileDto } from 'src/feed/dto/file.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
+import { FeedOutDto } from '../zod/feed.dto';
 import { CountersDto } from './dto/entry.dto';
 import { MinifluxService } from './miniflux.service';
 
@@ -41,6 +42,7 @@ import { MinifluxService } from './miniflux.service';
 @ApiCookieAuth()
 @ApiBearerAuth()
 @ApiOAuth2(['openid', 'profile', 'email'])
+@UseInterceptors(CacheInterceptor)
 @Controller('miniflux/v1')
 export class MinifluxV1Controller {
   constructor(
@@ -115,7 +117,7 @@ export class MinifluxV1Controller {
   }
 
   @Get('feeds')
-  @ZodResponse({ type: FeedListOutDto, status: 200 })
+  @ZodResponse({ type: [FeedOutDto], status: 200 })
   getFeeds(@Session() session: UserSession) {
     return this.minifluxService.getFeeds(session.user.id);
   }
@@ -272,9 +274,12 @@ export class MinifluxV1Controller {
   }
 
   @Get('categories/:categoryId/feeds')
-  getCategoryFeeds(@Param('categoryId') categoryId: number) {
-    // return this.minifluxService.getCategoryFeeds(categoryId);
-    return { message: 'Endpoint not implemented', categoryId };
+  @ZodResponse({ type: [FeedOutDto], status: HttpStatus.OK })
+  getCategoryFeeds(
+    @Param('categoryId') categoryId: number,
+    @Session() session: UserSession,
+  ) {
+    return this.minifluxService.getCategoryFeeds(categoryId, session.user.id);
   }
 
   @Put('categories/:categoryId/mark-all-as-read')

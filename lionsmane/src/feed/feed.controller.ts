@@ -27,7 +27,6 @@ import {
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { DiscoverDto, DiscoverOutDto } from '../zod/discover.dto';
-import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
 import {
   FeedListOutWithCountsDto,
   FeedOutWithCountsDto,
