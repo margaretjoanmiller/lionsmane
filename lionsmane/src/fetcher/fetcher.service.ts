@@ -23,6 +23,7 @@ import robotsParser from 'robots-parser';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
+import { parseDate } from 'src/utils/date-parse';
 
 @Injectable()
 export class FetcherService {
@@ -233,7 +234,7 @@ export class FetcherService {
                     : ''
                   : '',
                 media: item.media?.contents?.map((media) => media.url) || [],
-                published: item.pubDate,
+                published: parseDate(item.pubDate),
                 feedId: feedId,
               },
               opts: {
@@ -325,7 +326,9 @@ export class FetcherService {
                 image: item.media
                   ? item.media.thumbnails
                     ? item.media.thumbnails[0].url
-                    : item.media[0].url
+                    : item.media.contents
+                      ? item.media.contents[0].url
+                      : ''
                   : '',
                 imageAlt: item.media
                   ? item.media[0].texts
@@ -333,8 +336,12 @@ export class FetcherService {
                     : ''
                   : '',
                 media: item.media?.contents?.map((media) => media.url) || [],
-                published: item.published || item.updated,
-                updated: item.updated,
+                published: item.published
+                  ? parseDate(item.published)
+                  : item.updated
+                    ? parseDate(item.updated)
+                    : null,
+                updated: item.updated ? parseDate(item.updated) : null,
                 feedId: feedId,
               },
               opts: {

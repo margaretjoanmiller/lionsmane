@@ -9,7 +9,7 @@ import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { schema } from '../db/schema';
-import { NewArticle } from './dto/new-article.dto';
+import { NewArticle, NewArticleDate } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -19,7 +19,7 @@ export class ArticleService {
     private fetcher: FetcherService,
   ) {}
 
-  cleanRaw(newArt: NewArticle) {
+  cleanRaw(newArt: NewArticleDate) {
     const window = new JSDOM('').window;
     const purify = createDOMPurify(window as WindowLike);
     const cleanContent = purify.sanitize(newArt.rawContent || '');

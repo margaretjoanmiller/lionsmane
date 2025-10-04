@@ -93,10 +93,10 @@ function Settings() {
     password: z.string().min(15),
   });
   const twoFactorForm = useForm<z.infer<typeof twoFactorFormSchema>>({
-    resolver: zodResolver(twoFactorFormSchema),
     defaultValues: {
       password: '',
     },
+    resolver: zodResolver(twoFactorFormSchema),
   });
   const twoFactorConfirmFomSchema = z.object({
     code: z.string().min(6).max(6),
@@ -104,10 +104,10 @@ function Settings() {
   const twoFactorConfirmForm = useForm<
     z.infer<typeof twoFactorConfirmFomSchema>
   >({
-    resolver: zodResolver(twoFactorConfirmFomSchema),
     defaultValues: {
       code: '',
     },
+    resolver: zodResolver(twoFactorConfirmFomSchema),
   });
   const twoFactorEnabled = user?.data?.user.twoFactorEnabled;
 
@@ -155,16 +155,16 @@ function Settings() {
 
   const appFormSchema = z.object({ name: z.string().min(3) });
   const appPasswordForm = useForm<z.infer<typeof appFormSchema>>({
-    resolver: zodResolver(appFormSchema),
     defaultValues: {
       name: '',
     },
+    resolver: zodResolver(appFormSchema),
   });
 
   async function onAddAppPassword(values: z.infer<typeof appFormSchema>) {
     const { data, error } = await authClient.apiKey.create({
-      name: values.name,
       expiresIn: null,
+      name: values.name,
       prefix: 'app-password',
     });
     if (!data || error) {
@@ -186,7 +186,6 @@ function Settings() {
   }
 
   const { data: appPasswords } = useQuery({
-    queryKey: ['app-passwords'],
     queryFn: async () => {
       const { data, error } = await authClient.apiKey.list();
       if (!data || error) {
@@ -194,6 +193,7 @@ function Settings() {
       }
       return data.filter((k) => k.prefix === 'app-password');
     },
+    queryKey: ['app-passwords'],
   });
 
   async function onDeleteAppPassword(keyId: string) {
@@ -220,29 +220,29 @@ function Settings() {
   });
 
   const apiKeyForm = useForm<z.infer<typeof apiKeySchema>>({
-    resolver: zodResolver(apiKeySchema),
     defaultValues: {
       apiKey: '',
       apiURL: '',
     },
+    resolver: zodResolver(apiKeySchema),
   });
 
   // feed form
   const [feedFormOpen, setFeedFormOpen] = React.useState(false);
   const feedFormSchema = z.object({
-    feedId: z.uuid(),
-    url: z.url(),
     description: z.string().optional(),
+    feedId: z.uuid(),
     folderId: z.uuid().nullable(),
+    url: z.url(),
   });
   const feedForm = useForm<z.infer<typeof feedFormSchema>>({
-    resolver: zodResolver(feedFormSchema),
     defaultValues: {
-      feedId: '',
-      url: '',
       description: undefined,
+      feedId: '',
       folderId: null,
+      url: '',
     },
+    resolver: zodResolver(feedFormSchema),
   });
 
   const { mutate: updateFeed } = $api.useMutation('patch', '/feed/{id}');
@@ -258,17 +258,17 @@ function Settings() {
   // folder form
   const [folderFormOpen, setFolderFormOpen] = React.useState(false);
   const folderFormSchema = z.object({
+    feedIds: z.array(z.object({ label: z.string(), value: z.uuid() })),
     folderId: z.uuid(),
-    feedIds: z.array(z.object({ value: z.uuid(), label: z.string() })),
     name: z.string().min(2).max(100),
   });
   const folderForm = useForm<z.infer<typeof folderFormSchema>>({
-    resolver: zodResolver(folderFormSchema),
     defaultValues: {
-      folderId: '',
       feedIds: [],
+      folderId: '',
       name: '',
     },
+    resolver: zodResolver(folderFormSchema),
   });
 
   const { mutate: updateFolder } = $api.useMutation('patch', '/folder/{id}');
@@ -294,34 +294,34 @@ function Settings() {
     updateFeed(
       {
         body: values,
+        credentials: 'include',
         params: {
           path: { id: values.feedId },
         },
-        credentials: 'include',
       },
       {
-        onSuccess: () => {
-          toast.success('Successfully edited subscription');
-          feedForm.reset();
-        },
         onError: (error) => {
           toast.error('Error editing subscription', {
             // @ts-expect-error: Error in openapi-typescript error types
             description: error.message,
           });
         },
+        onSuccess: () => {
+          toast.success('Successfully edited subscription');
+          feedForm.reset();
+        },
       },
     );
   }
 
   const { mutate: apiKey } = $api.useMutation('post', '/readlater/configure', {
-    onSuccess: () => {
-      toast.info('Saved your readeck API settings');
-      setReadeckkey();
-    },
     onError: (error) => {
       // @ts-expect-error: Error in openapi-typescript error types
       toast.error('Error saving to readeck', { description: error.message });
+    },
+    onSuccess: () => {
+      toast.info('Saved your readeck API settings');
+      setReadeckkey();
     },
   });
 
@@ -337,44 +337,43 @@ function Settings() {
   const columns: ColumnDef<Feed>[] = [
     {
       accessorKey: 'url',
-      header: () => <div className="text-right">URL</div>,
       cell: ({ row }) => {
         const url =
-          row.original.url.length > 50
-            ? `${row.original.url.slice(0, 50)}...`
-            : row.original.url;
+          row.original.feed_url.length > 50
+            ? `${row.original.feed_url.slice(0, 50)}...`
+            : row.original.feed_url;
         return <div className="text-right font-medium">{url}</div>;
       },
+      header: () => <div className="text-right">URL</div>,
     },
     {
       accessorKey: 'title',
-      header: () => <div className="text-right">Title</div>,
       cell: ({ row }) => {
         const title = row.original.title;
         return <div className="text-right font-medium">{title}</div>;
       },
+      header: () => <div className="text-right">Title</div>,
     },
     {
       accessorKey: 'updated',
-      header: () => <div className="text-right">Updated</div>,
       cell: ({ row }) => {
         const updated = row.original.updated;
         return <div className="text-right font-medium">{updated}</div>;
       },
+      header: () => <div className="text-right">Updated</div>,
     },
     {
-      id: 'edit',
       cell: ({ row }) => {
         return (
           <Dialog
-            open={feedFormOpen}
             onOpenChange={(open) => {
               setFeedFormOpen(open);
               const feed = row.original;
               feedForm.setValue('feedId', feed.id);
-              feedForm.setValue('url', feed.url);
+              feedForm.setValue('url', feed.feed_url);
               feedForm.setValue('description', feed.description || '');
             }}
+            open={feedFormOpen}
           >
             <DialogTrigger>
               <Button variant="outline">
@@ -388,8 +387,8 @@ function Settings() {
 
               <Form {...feedForm}>
                 <form
-                  onSubmit={feedForm.handleSubmit(onSubmitFeed)}
                   className="space-y-8"
+                  onSubmit={feedForm.handleSubmit(onSubmitFeed)}
                 >
                   <FormField
                     control={feedForm.control}
@@ -436,12 +435,12 @@ function Settings() {
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
-                                variant="outline"
-                                role="combobox"
                                 className={cn(
                                   'w-[200px] justify-between',
                                   !field.value && 'text-muted-foreground',
                                 )}
+                                role="combobox"
+                                variant="outline"
                               >
                                 {field.value
                                   ? folderSelect?.find(
@@ -454,15 +453,14 @@ function Settings() {
                           <PopoverContent className="w-[200px] p-0">
                             <Command>
                               <CommandInput
-                                placeholder="Search folder..."
                                 className="h-9"
+                                placeholder="Search folder..."
                               />
                               <CommandList>
                                 <CommandEmpty>No folder found.</CommandEmpty>
                                 <CommandGroup>
                                   {folderSelect?.map((folder) => (
                                     <CommandItem
-                                      value={folder.label}
                                       key={folder.value}
                                       onSelect={() => {
                                         feedForm.setValue(
@@ -470,16 +468,17 @@ function Settings() {
                                           folder.value,
                                         );
                                       }}
+                                      value={folder.label}
                                     >
                                       {folder.label}
                                     </CommandItem>
                                   ))}
                                   <CommandItem
-                                    value="No folder"
                                     key={null}
                                     onSelect={() => {
                                       feedForm.setValue('folderId', null);
                                     }}
+                                    value="No folder"
                                   >
                                     No folder
                                   </CommandItem>
@@ -500,16 +499,16 @@ function Settings() {
           </Dialog>
         );
       },
+      id: 'edit',
     },
     {
-      id: 'actions',
       cell: ({ row }) => {
         const feed = row.original;
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button className="h-8 w-8 p-0" variant="ghost">
                 <span className="sr-only">Open menu</span>
                 <MdiMoreHoriz className="h-4 w-4" />
               </Button>
@@ -519,12 +518,12 @@ function Settings() {
               <DropdownMenuItem
                 onClick={() =>
                   deleteFeed({
+                    credentials: 'include',
                     params: {
                       path: {
                         id: feed.id,
                       },
                     },
-                    credentials: 'include',
                   })
                 }
               >
@@ -534,6 +533,7 @@ function Settings() {
           </DropdownMenu>
         );
       },
+      id: 'actions',
     },
   ];
 
@@ -561,13 +561,11 @@ function Settings() {
 
   const folderColumns: ColumnDef<Folder>[] = [
     {
-      id: 'name',
-      header: 'Name',
       accessorKey: 'name',
+      header: 'Name',
+      id: 'name',
     },
     {
-      id: 'feeds',
-      header: 'Feeds',
       accessorKey: 'feeds',
       cell: ({ row }) => {
         const feeds = row.original.feedIds;
@@ -577,15 +575,14 @@ function Settings() {
           </div>
         );
       },
+      header: 'Feeds',
+      id: 'feeds',
     },
     {
-      id: 'actions',
-      header: 'Actions',
       cell: ({ row }) => {
         const folder = row.original;
         return (
           <Dialog
-            open={folderFormOpen}
             onOpenChange={(open) => {
               setFolderFormOpen(open);
               if (open) {
@@ -594,14 +591,15 @@ function Settings() {
                 folderForm.setValue(
                   'feedIds',
                   folder.feedIds.map((feed) => ({
-                    value: feed,
                     label:
                       feeds?.feeds.find((f) => f.id === feed)?.title ||
                       'Unnamed feed',
+                    value: feed,
                   })),
                 );
               }
             }}
+            open={folderFormOpen}
           >
             <DialogTrigger>
               <Button variant="outline">
@@ -614,8 +612,8 @@ function Settings() {
               </DialogHeader>
               <Form {...folderForm}>
                 <form
-                  onSubmit={folderForm.handleSubmit(onSubmitFolder)}
                   className="m-8"
+                  onSubmit={folderForm.handleSubmit(onSubmitFolder)}
                 >
                   <FormField
                     control={folderForm.control}
@@ -639,12 +637,12 @@ function Settings() {
                           <MultipleSelector
                             {...field}
                             defaultOptions={feedSelect}
-                            placeholder="Select feeds you want to add to your folder..."
                             emptyIndicator={
                               <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                                 no results found.
                               </p>
                             }
+                            placeholder="Select feeds you want to add to your folder..."
                           />
                         </FormControl>
                       </FormItem>
@@ -657,6 +655,8 @@ function Settings() {
           </Dialog>
         );
       },
+      header: 'Actions',
+      id: 'actions',
     },
   ];
 
@@ -670,7 +670,6 @@ function Settings() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'createdAt', header: 'Created At' },
     {
-      id: 'delete',
       cell: ({ row }) => {
         const key = row.original;
         return (
@@ -680,6 +679,7 @@ function Settings() {
           </Button>
         );
       },
+      id: 'delete',
     },
   ];
 
@@ -702,8 +702,8 @@ function Settings() {
             {!twoFactorEnabled && (
               <Form {...twoFactorForm}>
                 <form
-                  onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}
                   className="space-y-8 my-8"
+                  onSubmit={twoFactorForm.handleSubmit(onEnableTwoFactor)}
                 >
                   <FormField
                     control={twoFactorForm.control}
@@ -714,8 +714,8 @@ function Settings() {
                         <FormControl>
                           <Input
                             {...field}
-                            type="password"
                             placeholder="current password"
+                            type="password"
                           />
                         </FormControl>
                       </FormItem>
@@ -818,8 +818,8 @@ function Settings() {
               <OpmlUpload />
               <a
                 className="no-underline hover:underline decoration-pink-400 my-2"
-                href={downloadUrl}
                 download="feeds.opml"
+                href={downloadUrl}
               >
                 <Label>Export OPML File</Label>
               </a>
@@ -831,8 +831,8 @@ function Settings() {
           <AccordionContent>
             <Form {...apiKeyForm}>
               <form
-                onSubmit={apiKeyForm.handleSubmit(submitApiKey)}
                 className="space-y-4"
+                onSubmit={apiKeyForm.handleSubmit(submitApiKey)}
               >
                 <FormField
                   control={apiKeyForm.control}
@@ -858,8 +858,8 @@ function Settings() {
                       <FormLabel>Readeck instance</FormLabel>
                       <FormControl>
                         <Input
-                          type="url"
                           placeholder="https://readeck.org"
+                          type="url"
                           {...field}
                         />
                       </FormControl>

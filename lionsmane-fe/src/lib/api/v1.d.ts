@@ -981,14 +981,15 @@ export interface components {
         };
         FeedListOutWithCountsDto_Output: {
             feeds: {
-                id: number;
+                /** Format: uuid */
+                id: string;
                 user_id: number;
                 title: string;
                 site_url: string;
                 feed_url: string;
                 checked_at: string;
-                etag_header: string;
-                last_modified_header: string;
+                etag_header: string | null;
+                last_modified_header: string | null;
                 parsing_error_message: string | null;
                 parsing_error_count: number | null;
                 scraper_rules: string | null;
@@ -1003,14 +1004,15 @@ export interface components {
                 ignore_http_cache: boolean;
                 fetch_via_proxy: boolean;
                 category: {
-                    id: number;
+                    id: number | null;
                     user_id: number;
-                    title: string;
+                    title: string | null;
                 };
                 icon: {
                     feed_id: number;
-                    icon_id: number;
-                } | null;
+                    icon_id: number | null;
+                };
+                unreadCount: number | null;
             }[];
         };
         DiscoverDto: {
@@ -1033,14 +1035,15 @@ export interface components {
             file: Record<string, never>;
         };
         FeedOutWithCountsDto_Output: {
-            id: number;
+            /** Format: uuid */
+            id: string;
             user_id: number;
             title: string;
             site_url: string;
             feed_url: string;
             checked_at: string;
-            etag_header: string;
-            last_modified_header: string;
+            etag_header: string | null;
+            last_modified_header: string | null;
             parsing_error_message: string | null;
             parsing_error_count: number | null;
             scraper_rules: string | null;
@@ -1055,14 +1058,14 @@ export interface components {
             ignore_http_cache: boolean;
             fetch_via_proxy: boolean;
             category: {
-                id: number;
+                id: number | null;
                 user_id: number;
-                title: string;
+                title: string | null;
             };
             icon: {
                 feed_id: number;
-                icon_id: number;
-            } | null;
+                icon_id: number | null;
+            };
             unreadCount: number | null;
         };
         UpdateFeedDto: {
@@ -1246,18 +1249,30 @@ export interface components {
             feeds: {
                 /** Format: uuid */
                 id: string;
-                /** Format: uri */
-                url: string;
-                site_url: string | null;
+                user_id: number;
+                title: string;
+                site_url: string;
+                feed_url: string;
+                checked_at: string;
                 etag_header: string | null;
                 last_modified_header: string | null;
-                favicon: string | null;
-                title: string | null;
-                authors: string[] | null;
-                categories: string[] | null;
-                copyright: string | null;
-                image: string | null;
-                updated: string | null;
+                parsing_error_message: string | null;
+                parsing_error_count: number | null;
+                scraper_rules: string | null;
+                rewrite_rules: string | null;
+                crawler: boolean;
+                blocklist_rules: string | null;
+                keeplist_rules: string | null;
+                user_agent: string | null;
+                username: string | null;
+                password: string | null;
+                disabled: boolean;
+                ignore_http_cache: boolean;
+                fetch_via_proxy: boolean;
+                icon: {
+                    feed_id: number;
+                    icon_id: number | null;
+                };
             }[];
         };
         UpdateFolderDto: {
@@ -1332,39 +1347,37 @@ export interface components {
             /** Format: uri */
             url: string;
         };
-        FeedListOutDto_Output: {
-            root?: {
-                id: number;
+        FeedOutDto_Output: {
+            id: number;
+            user_id: number;
+            title: string;
+            site_url: string;
+            feed_url: string;
+            checked_at: string;
+            etag_header: string | null;
+            last_modified_header: string | null;
+            parsing_error_message: string | null;
+            parsing_error_count: number | null;
+            scraper_rules: string | null;
+            rewrite_rules: string | null;
+            crawler: boolean;
+            blocklist_rules: string | null;
+            keeplist_rules: string | null;
+            user_agent: string | null;
+            username: string | null;
+            password: string | null;
+            disabled: boolean;
+            ignore_http_cache: boolean;
+            fetch_via_proxy: boolean;
+            category: {
+                id: number | null;
                 user_id: number;
-                title: string;
-                site_url: string;
-                feed_url: string;
-                checked_at: string;
-                etag_header: string;
-                last_modified_header: string;
-                parsing_error_message: string | null;
-                parsing_error_count: number | null;
-                scraper_rules: string | null;
-                rewrite_rules: string | null;
-                crawler: boolean;
-                blocklist_rules: string | null;
-                keeplist_rules: string | null;
-                user_agent: string | null;
-                username: string | null;
-                password: string | null;
-                disabled: boolean;
-                ignore_http_cache: boolean;
-                fetch_via_proxy: boolean;
-                category: {
-                    id: number;
-                    user_id: number;
-                    title: string;
-                };
-                icon: {
-                    feed_id: number;
-                    icon_id: number;
-                } | null;
-            }[];
+                title: string | null;
+            };
+            icon: {
+                feed_id: number;
+                icon_id: number | null;
+            };
         };
         CountersDto_Output: {
             reads: {
@@ -3176,7 +3189,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedListOutDto_Output"];
+                    "application/json": components["schemas"]["FeedOutDto_Output"][];
                 };
             };
             /** @description Unauthorized */
@@ -3301,7 +3314,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFeedDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -3490,7 +3507,18 @@ export interface operations {
     };
     MinifluxV1Controller_getEntries: {
         parameters: {
-            query?: never;
+            query?: {
+                category_id?: string;
+                search?: string;
+                starred?: boolean;
+                after?: number;
+                before?: number;
+                direction?: "asc" | "desc";
+                order?: "id" | "status" | "published_at" | "category_title" | "category_id";
+                limit?: number;
+                offset?: number;
+                status?: "unread" | "read";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3862,7 +3890,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FeedOutDto_Output"][];
+                };
             };
             /** @description Unauthorized */
             401: {

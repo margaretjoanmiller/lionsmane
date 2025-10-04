@@ -5,4 +5,10 @@ import { z } from 'zod';
 
 export const newArticleDto = createInsertSchema(articles);
 
+const insertSchema = newArticleDto.extend({
+  published: z.date(),
+  updatedAt: z.date().optional(),
+});
+
+export type NewArticleDate = z.infer<typeof insertSchema>;
 export type NewArticle = z.infer<typeof newArticleDto>;

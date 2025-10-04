@@ -2,8 +2,9 @@ import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { FetcherService } from 'src/fetcher/fetcher.service';
-import { NewArticle } from './article';
+import { parseDate } from 'src/utils/date-parse';
 import { ArticleService } from './article.service';
+import { NewArticle, NewArticleDate } from './dto/new-article.dto';
 
 @Processor('article')
 export class ArticleConsumer extends WorkerHost {
@@ -15,7 +16,7 @@ export class ArticleConsumer extends WorkerHost {
     super();
   }
 
-  async process(job: Job<NewArticle | { id: string; userId: string }>) {
+  async process(job: Job<NewArticleDate | { id: string; userId: string }>) {
     if (job.name === 'new-article' && 'feedId' in job.data) {
       const data = job.data;
 
@@ -43,6 +44,7 @@ export class ArticleConsumer extends WorkerHost {
 
       const article = await this.articleService.newArticle({
         ...data,
+        published: data.published.toISOString(),
         image,
         imageAlt: alt,
         media,
@@ -61,7 +63,7 @@ export class ArticleConsumer extends WorkerHost {
       });
 
       return { result: 'ok', articleId: article[0].id };
-    } else if (job.name === 'readable-article' && 'id' in job.data) {
+    } else if (job.name === 'readable-article' && 'userId' in job.data) {
       const { id, userId } = job.data;
       return await this.articleService.requestFullArticletext(id, userId);
     }

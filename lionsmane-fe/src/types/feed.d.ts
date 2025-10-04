@@ -1,6 +1,7 @@
 export type Feed = {
   id: string;
-  url: string;
+  feed_url: string;
+  site_url: string;
   title: string;
   description: string | null;
   authors: string[] | null;
@@ -8,6 +9,10 @@ export type Feed = {
   copyright: string | null;
   image: string | null;
   updated: string | null;
+  icon: {
+    feed_id: number;
+    icon_id: number;
+  };
 };
 
 export interface FeedTreeData {
