@@ -36,8 +36,8 @@ import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import { FeedOutDto } from '../zod/feed.dto';
-import { CountersDto, CreateFeedDto } from './dto/entry.dto';
+import { CountersDto } from './dto/entry.dto';
+import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { MinifluxService } from './miniflux.service';
 
 @ApiTags('miniflux')
@@ -119,7 +119,7 @@ export class MinifluxV1Controller {
   }
 
   @Get('feeds')
-  @ZodResponse({ type: [FeedOutDto], status: 200 })
+  @ZodResponse({ type: [FeedMini], status: 200 })
   getFeeds(@Session() session: UserSession) {
     return this.minifluxService.getFeeds(session.user.id);
   }
@@ -326,7 +326,7 @@ export class MinifluxV1Controller {
   }
 
   @Get('categories/:categoryId/feeds')
-  @ZodResponse({ type: [FeedOutDto], status: HttpStatus.OK })
+  @ZodResponse({ type: [FeedMini], status: HttpStatus.OK })
   getCategoryFeeds(
     @Param('categoryId') categoryId: number,
     @Session() session: UserSession,

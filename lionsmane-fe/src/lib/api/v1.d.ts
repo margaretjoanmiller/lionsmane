@@ -979,61 +979,6 @@ export interface components {
             image: string | null;
             updated: string | null;
         };
-        FeedListOutWithCountsDto_Output: {
-            feeds: {
-                /** Format: uuid */
-                id: string;
-                user_id: number;
-                title: string;
-                site_url: string;
-                feed_url: string;
-                checked_at: string;
-                etag_header: string | null;
-                last_modified_header: string | null;
-                parsing_error_message: string | null;
-                parsing_error_count: number | null;
-                scraper_rules: string | null;
-                rewrite_rules: string | null;
-                crawler: boolean;
-                blocklist_rules: string | null;
-                keeplist_rules: string | null;
-                user_agent: string | null;
-                username: string | null;
-                password: string | null;
-                disabled: boolean;
-                ignore_http_cache: boolean;
-                fetch_via_proxy: boolean;
-                category: {
-                    id: number | null;
-                    user_id: number;
-                    title: string | null;
-                };
-                icon: {
-                    feed_id: number;
-                    icon_id: number | null;
-                };
-                unreadCount: number | null;
-            }[];
-        };
-        DiscoverDto: {
-            url: string;
-            username?: string;
-            password?: string;
-            user_agent?: string;
-        };
-        DiscoverOutDto_Output: {
-            format: string;
-            title: string | null;
-            /** Format: uri */
-            url: string;
-        };
-        FileDto: {
-            /**
-             * Format: binary
-             * @description OPML file to import
-             */
-            file: Record<string, never>;
-        };
         FeedOutWithCountsDto_Output: {
             /** Format: uuid */
             id: string;
@@ -1067,6 +1012,25 @@ export interface components {
                 icon_id: number | null;
             };
             unreadCount: number | null;
+        };
+        DiscoverDto: {
+            url: string;
+            username?: string;
+            password?: string;
+            user_agent?: string;
+        };
+        DiscoverOutDto_Output: {
+            format: string;
+            title: string | null;
+            /** Format: uri */
+            url: string;
+        };
+        FileDto: {
+            /**
+             * Format: binary
+             * @description OPML file to import
+             */
+            file: Record<string, never>;
         };
         UpdateFeedDto: {
             description?: string;
@@ -1472,7 +1436,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedListOutWithCountsDto_Output"];
+                    "application/json": components["schemas"]["FeedOutWithCountsDto_Output"][];
                 };
             };
             /** @description Unauthorized */

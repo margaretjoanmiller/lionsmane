@@ -28,6 +28,9 @@ export const feedOutDto = z.object({
   disabled: z.boolean(),
   ignore_http_cache: z.boolean(),
   fetch_via_proxy: z.boolean(),
+  copyright: z.string().nullable(),
+  authors: z.array(z.string()).nullable(),
+  categories: z.array(z.string()).nullable(),
   category: z.object({
     id: z.number().nullable(),
     user_id: z.number(),

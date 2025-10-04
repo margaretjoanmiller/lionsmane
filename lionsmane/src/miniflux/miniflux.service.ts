@@ -6,6 +6,7 @@ import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType, feedOutDto } from '../zod/feed.dto';
+import { FeedMiniList } from './dto/feed.dto';
 
 @Injectable()
 export class MinifluxService {
@@ -25,7 +26,7 @@ export class MinifluxService {
     return feeds.filter(Boolean);
   }
 
-  async getFeeds(userId: string): Promise<FeedOutListDtoType> {
+  async getFeeds(userId: string): Promise<FeedMiniList> {
     const feeds = await this.db
       .select()
       .from(schema.feeds)
@@ -66,9 +67,9 @@ export class MinifluxService {
       ignore_http_cache: false,
       fetch_via_proxy: false,
       category: {
-        id: feed.folders?.minifluxId || 0,
+        id: feed.folders?.minifluxId || null,
         user_id: feed.subscriptions.userMinifluxId,
-        title: feed.folders?.name || 'Uncategorized',
+        title: feed.folders?.name || null,
       },
       icon: {
         feed_id: feed.feeds.minifluxId,

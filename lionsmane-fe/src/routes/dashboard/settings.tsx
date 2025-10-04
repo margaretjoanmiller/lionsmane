@@ -809,7 +809,7 @@ function Settings() {
         <AccordionItem value="manage feeds">
           <AccordionTrigger>Manage Feeds</AccordionTrigger>
           <AccordionContent>
-            <DataTable columns={columns} data={feeds?.feeds} />
+            <DataTable columns={columns} data={feeds} />
             <div className="my-6">
               <DataTable columns={folderColumns} data={folders} />
             </div>

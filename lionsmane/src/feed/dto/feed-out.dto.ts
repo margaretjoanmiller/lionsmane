@@ -33,5 +33,4 @@ const hiddenFeedList = feedListOutDto.extend({
 });
 
 export class FeedOutWithCountsDto extends createZodDto(feedOutDtoWithCounts) {}
-export class FeedListOutWithCountsDto extends createZodDto(feedListOutDto) {}
 export class HiddenFeedListDto extends createZodDto(hiddenFeedList) {}
