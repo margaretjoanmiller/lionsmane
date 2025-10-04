@@ -21,7 +21,6 @@ import {
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
-import { upstashCache } from 'drizzle-orm/cache/upstash';
 import {
   ZodSerializationException,
   ZodSerializerInterceptor,
@@ -87,7 +86,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       },
       config: {
         schema: { ...authSchema, ...coreSchema },
-        cache: upstashCache({ global: true, url: '', token: '' }),
       },
     }),
     CacheModule.registerAsync({

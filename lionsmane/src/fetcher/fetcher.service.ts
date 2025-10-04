@@ -97,7 +97,7 @@ export class FetcherService {
     if (feedXML === null) {
       throw new Error('Failed to fetch feed');
     }
-    const { feed } = parseFeed(feedXML);
+    const { feed } = parseFeed(feedXML.data);
     return feed.title || feedUrl;
   }
 

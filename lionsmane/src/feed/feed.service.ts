@@ -135,9 +135,9 @@ export class FeedService {
         f.toString(),
       );
 
-      const feeds = await Promise.all(
-        feedsRaw
-          .map(async (f) => {
+      const feeds = (
+        await Promise.all(
+          feedsRaw.map(async (f) => {
             const data = await this.fetcher.respectfulFetch(f);
             try {
               const { format, feed } = parseFeed(data?.data);
@@ -149,9 +149,9 @@ export class FeedService {
             } catch {
               return null;
             }
-          })
-          .filter(Boolean),
-      );
+          }),
+        )
+      ).filter((f) => f !== null);
 
       return feeds;
     } catch (error) {
@@ -177,7 +177,7 @@ export class FeedService {
 
       const response = await this.fetcher.respectfulFetch(url);
 
-      const { feed: parsedFeed, format } = parseFeed(response);
+      const { feed: parsedFeed, format } = parseFeed(response?.data);
 
       let favicon: string | null = null;
       if (format === 'atom') {
@@ -191,8 +191,12 @@ export class FeedService {
         let icon: number | null = null;
         if (favicon) {
           const [iconInserted] = await tx
-            .update(schema.icons)
-            .set({ url: favicon })
+            .insert(schema.icons)
+            .values({ url: favicon })
+            .onConflictDoUpdate({
+              set: { url: favicon },
+              target: schema.icons.url,
+            })
             .returning();
           icon = iconInserted.id;
         }

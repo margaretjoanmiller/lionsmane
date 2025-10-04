@@ -541,7 +541,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["MinifluxController_discoverSubscriptions"];
+        post: operations["MinifluxV1Controller_discoverSubscriptions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -555,7 +555,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_export"];
+        get: operations["MinifluxV1Controller_export"];
         put?: never;
         post?: never;
         delete?: never;
@@ -573,7 +573,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["MinifluxController_import"];
+        post: operations["MinifluxV1Controller_import"];
         delete?: never;
         options?: never;
         head?: never;
@@ -587,7 +587,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getVersion"];
+        get: operations["MinifluxV1Controller_getVersion"];
         put?: never;
         post?: never;
         delete?: never;
@@ -603,9 +603,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getFeeds"];
+        get: operations["MinifluxV1Controller_getFeeds"];
         put?: never;
-        post: operations["MinifluxController_createFeed"];
+        post: operations["MinifluxV1Controller_createFeed"];
         delete?: never;
         options?: never;
         head?: never;
@@ -619,7 +619,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getFeedCounters"];
+        get: operations["MinifluxV1Controller_getFeedCounters"];
         put?: never;
         post?: never;
         delete?: never;
@@ -635,10 +635,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getFeed"];
-        put: operations["MinifluxController_updateFeed"];
+        get: operations["MinifluxV1Controller_getFeed"];
+        put: operations["MinifluxV1Controller_updateFeed"];
         post?: never;
-        delete: operations["MinifluxController_removeFeed"];
+        delete: operations["MinifluxV1Controller_removeFeed"];
         options?: never;
         head?: never;
         patch?: never;
@@ -652,7 +652,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_refreshFeed"];
+        put: operations["MinifluxV1Controller_refreshFeed"];
         post?: never;
         delete?: never;
         options?: never;
@@ -668,7 +668,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_refreshAllFeeds"];
+        put: operations["MinifluxV1Controller_refreshAllFeeds"];
         post?: never;
         delete?: never;
         options?: never;
@@ -683,7 +683,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getFeedIcon"];
+        get: operations["MinifluxV1Controller_getFeedIcon"];
         put?: never;
         post?: never;
         delete?: never;
@@ -700,7 +700,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_markFeedAsRead"];
+        put: operations["MinifluxV1Controller_markFeedAsRead"];
         post?: never;
         delete?: never;
         options?: never;
@@ -715,8 +715,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getEntries"];
-        put: operations["MinifluxController_updateEntries"];
+        get: operations["MinifluxV1Controller_getEntries"];
+        put: operations["MinifluxV1Controller_updateEntries"];
         post?: never;
         delete?: never;
         options?: never;
@@ -731,8 +731,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getEntry"];
-        put: operations["MinifluxController_updateEntry"];
+        get: operations["MinifluxV1Controller_getEntry"];
+        put: operations["MinifluxV1Controller_updateEntry"];
         post?: never;
         delete?: never;
         options?: never;
@@ -749,7 +749,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["MinifluxController_saveEntry"];
+        post: operations["MinifluxV1Controller_saveEntry"];
         delete?: never;
         options?: never;
         head?: never;
@@ -764,7 +764,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_toggleBookmark"];
+        put: operations["MinifluxV1Controller_toggleBookmark"];
         post?: never;
         delete?: never;
         options?: never;
@@ -779,7 +779,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_fetchOriginalArticle"];
+        get: operations["MinifluxV1Controller_fetchOriginalArticle"];
         put?: never;
         post?: never;
         delete?: never;
@@ -795,9 +795,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getCategories"];
+        get: operations["MinifluxV1Controller_getCategories"];
         put?: never;
-        post: operations["MinifluxController_createCategory"];
+        post: operations["MinifluxV1Controller_createCategory"];
         delete?: never;
         options?: never;
         head?: never;
@@ -812,9 +812,9 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_updateCategory"];
+        put: operations["MinifluxV1Controller_updateCategory"];
         post?: never;
-        delete: operations["MinifluxController_deleteCategory"];
+        delete: operations["MinifluxV1Controller_deleteCategory"];
         options?: never;
         head?: never;
         patch?: never;
@@ -827,7 +827,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getCategoryFeeds"];
+        get: operations["MinifluxV1Controller_getCategoryFeeds"];
         put?: never;
         post?: never;
         delete?: never;
@@ -844,7 +844,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_markCategoryAsRead"];
+        put: operations["MinifluxV1Controller_markCategoryAsRead"];
         post?: never;
         delete?: never;
         options?: never;
@@ -860,7 +860,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_refreshCategoryFeeds"];
+        put: operations["MinifluxV1Controller_refreshCategoryFeeds"];
         post?: never;
         delete?: never;
         options?: never;
@@ -875,7 +875,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getCurrentUser"];
+        get: operations["MinifluxV1Controller_getCurrentUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -892,7 +892,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["MinifluxController_markUserEntriesAsRead"];
+        put: operations["MinifluxV1Controller_markUserEntriesAsRead"];
         post?: never;
         delete?: never;
         options?: never;
@@ -907,7 +907,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getIcon"];
+        get: operations["MinifluxV1Controller_getIcon"];
         put?: never;
         post?: never;
         delete?: never;
@@ -923,9 +923,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["MinifluxController_getApiKeys"];
+        get: operations["MinifluxV1Controller_getApiKeys"];
         put?: never;
-        post: operations["MinifluxController_createApiKey"];
+        post: operations["MinifluxV1Controller_createApiKey"];
         delete?: never;
         options?: never;
         head?: never;
@@ -942,7 +942,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["MinifluxController_deleteApiKey"];
+        delete: operations["MinifluxV1Controller_deleteApiKey"];
         options?: never;
         head?: never;
         patch?: never;
@@ -979,8 +979,8 @@ export interface components {
             image: string | null;
             updated: string | null;
         };
-        FeedListOutDto_Output: {
-            root?: {
+        FeedListOutWithCountsDto_Output: {
+            feeds: {
                 id: number;
                 user_id: number;
                 title: string;
@@ -1015,9 +1015,15 @@ export interface components {
         };
         DiscoverDto: {
             url: string;
+            username?: string;
+            password?: string;
+            user_agent?: string;
         };
-        DiscoveredFeedsDto_Output: {
-            feeds: string[];
+        DiscoverOutDto_Output: {
+            format: string;
+            title: string | null;
+            /** Format: uri */
+            url: string;
         };
         FileDto: {
             /**
@@ -1026,22 +1032,37 @@ export interface components {
              */
             file: Record<string, never>;
         };
-        FeedOutDto_Output: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uri */
-            url: string;
-            favicon: string | null;
+        FeedOutWithCountsDto_Output: {
+            id: number;
+            user_id: number;
             title: string;
-            description: string | null;
-            authors: string[] | null;
-            categories: string[] | null;
-            copyright: string | null;
-            image: string | null;
-            updated: string | null;
-            /** Format: uuid */
-            subscriptionId: string;
-            folderId: string | null;
+            site_url: string;
+            feed_url: string;
+            checked_at: string;
+            etag_header: string;
+            last_modified_header: string;
+            parsing_error_message: string | null;
+            parsing_error_count: number | null;
+            scraper_rules: string | null;
+            rewrite_rules: string | null;
+            crawler: boolean;
+            blocklist_rules: string | null;
+            keeplist_rules: string | null;
+            user_agent: string | null;
+            username: string | null;
+            password: string | null;
+            disabled: boolean;
+            ignore_http_cache: boolean;
+            fetch_via_proxy: boolean;
+            category: {
+                id: number;
+                user_id: number;
+                title: string;
+            };
+            icon: {
+                feed_id: number;
+                icon_id: number;
+            } | null;
             unreadCount: number | null;
         };
         UpdateFeedDto: {
@@ -1227,6 +1248,9 @@ export interface components {
                 id: string;
                 /** Format: uri */
                 url: string;
+                site_url: string | null;
+                etag_header: string | null;
+                last_modified_header: string | null;
                 favicon: string | null;
                 title: string | null;
                 authors: string[] | null;
@@ -1308,13 +1332,47 @@ export interface components {
             /** Format: uri */
             url: string;
         };
-        DiscoverOutDto_Output: {
-            root?: ({
-                format: string;
-                title: string | null;
-                /** Format: uri */
-                url: string;
-            } | null)[];
+        FeedListOutDto_Output: {
+            root?: {
+                id: number;
+                user_id: number;
+                title: string;
+                site_url: string;
+                feed_url: string;
+                checked_at: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsing_error_message: string | null;
+                parsing_error_count: number | null;
+                scraper_rules: string | null;
+                rewrite_rules: string | null;
+                crawler: boolean;
+                blocklist_rules: string | null;
+                keeplist_rules: string | null;
+                user_agent: string | null;
+                username: string | null;
+                password: string | null;
+                disabled: boolean;
+                ignore_http_cache: boolean;
+                fetch_via_proxy: boolean;
+                category: {
+                    id: number;
+                    user_id: number;
+                    title: string;
+                };
+                icon: {
+                    feed_id: number;
+                    icon_id: number;
+                } | null;
+            }[];
+        };
+        CountersDto_Output: {
+            reads: {
+                [key: string]: number;
+            };
+            unreads: {
+                [key: string]: number;
+            };
         };
     };
     responses: never;
@@ -1401,7 +1459,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedListOutDto_Output"];
+                    "application/json": components["schemas"]["FeedListOutWithCountsDto_Output"];
                 };
             };
             /** @description Unauthorized */
@@ -1475,7 +1533,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DiscoveredFeedsDto_Output"];
+                    "application/json": components["schemas"]["DiscoverOutDto_Output"][];
                 };
             };
             /** @description Unauthorized */
@@ -1619,7 +1677,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedOutDto_Output"];
+                    "application/json": components["schemas"]["FeedOutWithCountsDto_Output"];
                 };
             };
             /** @description Unauthorized */
@@ -2960,7 +3018,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_discoverSubscriptions: {
+    MinifluxV1Controller_discoverSubscriptions: {
         parameters: {
             query?: never;
             header?: never;
@@ -2978,7 +3036,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DiscoverOutDto_Output"];
+                    "application/json": components["schemas"]["DiscoverOutDto_Output"][];
                 };
             };
             /** @description Unauthorized */
@@ -2997,7 +3055,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_export: {
+    MinifluxV1Controller_export: {
         parameters: {
             query?: never;
             header?: never;
@@ -3029,7 +3087,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_import: {
+    MinifluxV1Controller_import: {
         parameters: {
             query?: never;
             header?: never;
@@ -3073,7 +3131,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getVersion: {
+    MinifluxV1Controller_getVersion: {
         parameters: {
             query?: never;
             header?: never;
@@ -3104,7 +3162,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getFeeds: {
+    MinifluxV1Controller_getFeeds: {
         parameters: {
             query?: never;
             header?: never;
@@ -3137,7 +3195,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_createFeed: {
+    MinifluxV1Controller_createFeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -3168,7 +3226,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getFeedCounters: {
+    MinifluxV1Controller_getFeedCounters: {
         parameters: {
             query?: never;
             header?: never;
@@ -3181,7 +3239,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CountersDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -3199,7 +3259,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getFeed: {
+    MinifluxV1Controller_getFeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -3232,7 +3292,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_updateFeed: {
+    MinifluxV1Controller_updateFeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -3265,7 +3325,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_removeFeed: {
+    MinifluxV1Controller_removeFeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -3298,7 +3358,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_refreshFeed: {
+    MinifluxV1Controller_refreshFeed: {
         parameters: {
             query?: never;
             header?: never;
@@ -3331,135 +3391,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_refreshAllFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxController_getFeedIcon: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxController_markFeedAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxController_getEntries: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxController_updateEntries: {
+    MinifluxV1Controller_refreshAllFeeds: {
         parameters: {
             query?: never;
             header?: never;
@@ -3490,7 +3422,135 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getEntry: {
+    MinifluxV1Controller_getFeedIcon: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxV1Controller_markFeedAsRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                feedId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxV1Controller_getEntries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxV1Controller_updateEntries: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MinifluxV1Controller_getEntry: {
         parameters: {
             query?: never;
             header?: never;
@@ -3523,7 +3583,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_updateEntry: {
+    MinifluxV1Controller_updateEntry: {
         parameters: {
             query?: never;
             header?: never;
@@ -3556,7 +3616,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_saveEntry: {
+    MinifluxV1Controller_saveEntry: {
         parameters: {
             query?: never;
             header?: never;
@@ -3589,7 +3649,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_toggleBookmark: {
+    MinifluxV1Controller_toggleBookmark: {
         parameters: {
             query?: never;
             header?: never;
@@ -3622,7 +3682,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_fetchOriginalArticle: {
+    MinifluxV1Controller_fetchOriginalArticle: {
         parameters: {
             query: {
                 update_content: boolean;
@@ -3657,7 +3717,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getCategories: {
+    MinifluxV1Controller_getCategories: {
         parameters: {
             query: {
                 counts: boolean;
@@ -3690,7 +3750,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_createCategory: {
+    MinifluxV1Controller_createCategory: {
         parameters: {
             query?: never;
             header?: never;
@@ -3721,7 +3781,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_updateCategory: {
+    MinifluxV1Controller_updateCategory: {
         parameters: {
             query?: never;
             header?: never;
@@ -3754,7 +3814,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_deleteCategory: {
+    MinifluxV1Controller_deleteCategory: {
         parameters: {
             query?: never;
             header?: never;
@@ -3787,7 +3847,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getCategoryFeeds: {
+    MinifluxV1Controller_getCategoryFeeds: {
         parameters: {
             query?: never;
             header?: never;
@@ -3820,7 +3880,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_markCategoryAsRead: {
+    MinifluxV1Controller_markCategoryAsRead: {
         parameters: {
             query?: never;
             header?: never;
@@ -3853,7 +3913,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_refreshCategoryFeeds: {
+    MinifluxV1Controller_refreshCategoryFeeds: {
         parameters: {
             query?: never;
             header?: never;
@@ -3886,7 +3946,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getCurrentUser: {
+    MinifluxV1Controller_getCurrentUser: {
         parameters: {
             query?: never;
             header?: never;
@@ -3917,7 +3977,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_markUserEntriesAsRead: {
+    MinifluxV1Controller_markUserEntriesAsRead: {
         parameters: {
             query?: never;
             header?: never;
@@ -3950,7 +4010,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getIcon: {
+    MinifluxV1Controller_getIcon: {
         parameters: {
             query?: never;
             header?: never;
@@ -3983,7 +4043,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_getApiKeys: {
+    MinifluxV1Controller_getApiKeys: {
         parameters: {
             query?: never;
             header?: never;
@@ -4014,7 +4074,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_createApiKey: {
+    MinifluxV1Controller_createApiKey: {
         parameters: {
             query?: never;
             header?: never;
@@ -4045,7 +4105,7 @@ export interface operations {
             };
         };
     };
-    MinifluxController_deleteApiKey: {
+    MinifluxV1Controller_deleteApiKey: {
         parameters: {
             query?: never;
             header?: never;

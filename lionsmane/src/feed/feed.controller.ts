@@ -28,7 +28,10 @@ import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { ZodResponse } from 'nestjs-zod';
 import { DiscoverDto, DiscoverOutDto } from '../zod/discover.dto';
 import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
-import { FeedListOutInternalDto, FeedOutInternalDto } from './dto/feed-out.dto';
+import {
+  FeedListOutWithCountsDto,
+  FeedOutWithCountsDto,
+} from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
 import { NewSubscriptionDto } from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
@@ -56,13 +59,13 @@ export class FeedController {
   }
 
   @Get()
-  @ZodResponse({ type: FeedListOutInternalDto, status: 200 })
+  @ZodResponse({ type: FeedListOutWithCountsDto, status: 200 })
   async findAll(@Session() session: UserSession) {
     return { feeds: await this.feedService.findAll(session.user.id) };
   }
 
   @Post('discover')
-  @ZodResponse({ type: DiscoverOutDto, status: 200 })
+  @ZodResponse({ type: [DiscoverOutDto], status: 200 })
   async discover(@Body() url: DiscoverDto, @Session() session: UserSession) {
     return await this.feedService.discover(url.url);
   }
@@ -77,7 +80,7 @@ export class FeedController {
   })
   @ApiResponse({ status: 201, description: 'Feed imported' })
   @ApiResponse({ status: 400, description: 'Invalid OPML file' })
-  async import(
+  import(
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addMaxSizeValidator({ maxSize: 5120 }) // 5KB
@@ -86,29 +89,14 @@ export class FeedController {
     file: Express.Multer.File,
     @Session() session: UserSession,
   ) {
-    try {
-      return await this.feedService.importOpml(
-        session.user.id,
-        file.buffer.toString(),
-      );
-    } catch (error) {
-      this.logger.error('Error importing OPML', error);
-      throw new BadRequestException('Error importing OPML', { cause: error });
-    }
+    return this.feedService.importOpml(session.user.id, file.buffer.toString());
   }
 
   @Get('export')
   @ApiResponse({ status: 200, description: 'OPML file exported' })
   async export(@Session() session: UserSession): Promise<StreamableFile> {
-    try {
-      const buffer = await this.feedService.buildOpml(session.user.id);
-      return new StreamableFile(buffer);
-    } catch (error) {
-      this.logger.error('Error exporting OPML', error);
-      throw new InternalServerErrorException('Error exporting OPML', {
-        cause: error,
-      });
-    }
+    const buffer = await this.feedService.buildOpml(session.user.id);
+    return new StreamableFile(buffer);
   }
 
   @Post('mark-all-read/:id')
@@ -117,7 +105,7 @@ export class FeedController {
   }
 
   @Get(':id')
-  @ZodResponse({ type: FeedOutInternalDto, status: 200 })
+  @ZodResponse({ type: FeedOutWithCountsDto, status: 200 })
   findOne(@Param('id') id: string, @Session() session: UserSession) {
     return this.feedService.findOne(id, session.user.id);
   }

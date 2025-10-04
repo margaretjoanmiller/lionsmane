@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { retryWhen } from 'rxjs';
 import { schema } from 'src/db/schema';
@@ -75,5 +75,74 @@ export class MinifluxService {
         icon_id: feed.icons?.id || 0,
       },
     }));
+  }
+
+  async getCounters(userId: string): Promise<{
+    unreads: Record<string, number>;
+    reads: Record<string, number>;
+  }> {
+    const unreadCount = await this.db
+      .select({
+        feedId: schema.feeds.minifluxId,
+        unreadCount: count().as('unreadCount'),
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(
+        or(
+          isNull(schema.userArticleStates.isRead),
+          eq(schema.userArticleStates.isRead, false),
+        ),
+      )
+      .groupBy(schema.feeds.minifluxId);
+    const readCount = await this.db
+      .select({
+        feedId: schema.feeds.minifluxId,
+        readCount: count().as('readCount'),
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(eq(schema.userArticleStates.isRead, true))
+      .groupBy(schema.feeds.minifluxId);
+    return {
+      unreads: Object.fromEntries(
+        new Map(
+          unreadCount.map((item) => [item.feedId.toString(), item.unreadCount]),
+        ),
+      ),
+      reads: Object.fromEntries(
+        new Map(
+          readCount.map((item) => [item.feedId.toString(), item.readCount]),
+        ),
+      ),
+    };
   }
 }

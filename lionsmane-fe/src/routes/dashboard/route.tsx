@@ -66,31 +66,34 @@ import { cn } from '@/lib/utils';
 import IconParkOutlineRss from '~icons/icon-park-outline/rss';
 
 export const Route = createFileRoute('/dashboard')({
-  component: DashLayout,
   beforeLoad: async ({ context, location }) => {
     if (!context.auth?.session) {
       const { data: session, error } = await authClient.getSession();
 
       if (!session || error) {
         throw redirect({
-          to: '/login',
           search: {
             redirect: location.href,
           },
+          to: '/login',
         });
       }
     }
   },
+  component: DashLayout,
 });
 
 const discoverSchema = z.object({
-  url: z.string().min(3),
+  password: z.string().min(1).max(255).optional(),
+  url: z.string().min(1).max(2048),
+  user_agent: z.string().min(1).max(255).optional(),
+  username: z.string().min(1).max(255).optional(),
 });
 
 const createFeedForm = z.object({
-  url: z.url(),
   description: z.string(),
   folderId: z.string().nullable(),
+  url: z.url(),
 });
 function DashLayout() {
   const isMobile = useIsMobile();
@@ -99,10 +102,10 @@ function DashLayout() {
   const [feeds, setFeeds] = React.useState<{ feeds: string[] }>({ feeds: [] });
 
   const step1Form = useForm<z.infer<typeof discoverSchema>>({
-    resolver: zodResolver(discoverSchema),
     defaultValues: {
       url: '',
     },
+    resolver: zodResolver(discoverSchema),
   });
 
   const queryClient = useQueryClient();
@@ -111,16 +114,16 @@ function DashLayout() {
   });
 
   const folderSelect = folders?.map((folder) => ({
-    value: folder.id,
     label: folder.name,
+    value: folder.id,
   }));
   const step2Form = useForm<z.infer<typeof createFeedForm>>({
-    resolver: zodResolver(createFeedForm),
     defaultValues: {
-      url: '',
       description: '',
       folderId: null,
+      url: '',
     },
+    resolver: zodResolver(createFeedForm),
   });
 
   const { mutate: discover, isPending: discoverPending } = $api.useMutation(
@@ -135,18 +138,20 @@ function DashLayout() {
         credentials: 'include',
       },
       {
-        onSuccess: (data) => {
-          setStep1Open(false);
-          step1Form.reset;
-          setFeeds(data);
-
-          setStep2Open(true);
-        },
         onError: (error) => {
           toast.error('Could not find a feed for this url.', {
             // @ts-expect-error: Error in openapi-typescript error types
             description: error.message,
           });
+        },
+        onSuccess: (data) => {
+          setStep1Open(false);
+          step1Form.reset;
+          setFeeds({
+            feeds: data?.map((f) => f?.url || 'err') || [],
+          });
+
+          setStep2Open(true);
         },
       },
     );
@@ -159,6 +164,11 @@ function DashLayout() {
     mutate(
       { body: values, credentials: 'include' },
       {
+        onError(error) {
+          step2Form.reset();
+          // @ts-expect-error: error with error types in openapi-typescript
+          toast.error('Error adding feed', { description: error.message });
+        },
         onSuccess: () => {
           setStep2Open(false);
           step2Form.reset();
@@ -168,11 +178,6 @@ function DashLayout() {
           queryClient.invalidateQueries({
             queryKey: ['get', '/feed'],
           });
-        },
-        onError(error) {
-          step2Form.reset();
-          // @ts-expect-error: error with error types in openapi-typescript
-          toast.error('Error adding feed', { description: error.message });
         },
       },
     );
@@ -185,11 +190,11 @@ function DashLayout() {
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator
-              orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
+              orientation="vertical"
             />
             <div className="">
-              <Dialog open={step1open} onOpenChange={setStep1Open}>
+              <Dialog onOpenChange={setStep1Open} open={step1open}>
                 <DialogTrigger>
                   <Button>
                     <IconParkOutlineRss />
@@ -224,22 +229,22 @@ function DashLayout() {
                           </FormItem>
                         )}
                       />
-                      <LoadingButton type="submit" loading={discoverPending}>
+                      <LoadingButton loading={discoverPending} type="submit">
                         Find
                       </LoadingButton>
                     </form>
                   </Form>
                 </DialogContent>
               </Dialog>
-              <Dialog open={step2open} onOpenChange={setStep2Open}>
+              <Dialog onOpenChange={setStep2Open} open={step2open}>
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Add Feed</DialogTitle>
                   </DialogHeader>
                   <Form {...step2Form}>
                     <form
-                      onSubmit={step2Form.handleSubmit(onCreateFeed)}
                       className="space-y-8"
+                      onSubmit={step2Form.handleSubmit(onCreateFeed)}
                     >
                       <FormField
                         control={step2Form.control}
@@ -248,8 +253,8 @@ function DashLayout() {
                           <FormItem>
                             <FormLabel>URL</FormLabel>
                             <Select
-                              onValueChange={field.onChange}
                               defaultValue={field.value}
+                              onValueChange={field.onChange}
                             >
                               <FormControl>
                                 <SelectTrigger>
@@ -295,12 +300,12 @@ function DashLayout() {
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
-                                    variant="outline"
-                                    role="combobox"
                                     className={cn(
                                       'w-[200px] justify-between',
                                       !field.value && 'text-muted-foreground',
                                     )}
+                                    role="combobox"
+                                    variant="outline"
                                   >
                                     {field.value
                                       ? folderSelect?.find(
@@ -314,8 +319,8 @@ function DashLayout() {
                               <PopoverContent className="w-[200px] p-0">
                                 <Command>
                                   <CommandInput
-                                    placeholder="Search folder..."
                                     className="h-9"
+                                    placeholder="Search folder..."
                                   />
                                   <CommandList>
                                     <CommandEmpty>
@@ -324,7 +329,6 @@ function DashLayout() {
                                     <CommandGroup>
                                       {folderSelect?.map((folder) => (
                                         <CommandItem
-                                          value={folder.label}
                                           key={folder.value}
                                           onSelect={() => {
                                             step2Form.setValue(
@@ -332,6 +336,7 @@ function DashLayout() {
                                               folder.value,
                                             );
                                           }}
+                                          value={folder.label}
                                         >
                                           {folder.label}
                                         </CommandItem>

@@ -34,6 +34,7 @@ import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { FeedListOutDto, FeedOutDto } from '../zod/feed.dto';
+import { CountersDto } from './dto/entry.dto';
 import { MinifluxService } from './miniflux.service';
 
 @ApiTags('miniflux')
@@ -50,7 +51,7 @@ export class MinifluxV1Controller {
   private readonly logger = new Logger(MinifluxV1Controller.name);
 
   @Post('discover')
-  @ZodResponse({ type: DiscoverOutDto, status: 200 })
+  @ZodResponse({ type: [DiscoverOutDto], status: 200 })
   discoverSubscriptions(@Body() discoverDto: DiscoverDto) {
     return this.minifluxService.discoverFeeds(discoverDto);
   }
@@ -120,9 +121,9 @@ export class MinifluxV1Controller {
   }
 
   @Get('feeds/counters')
-  getFeedCounters() {
-    // return this.minifluxService.getFeedCounters();
-    return { message: 'Endpoint not implemented' };
+  @ZodResponse({ type: CountersDto, status: 200 })
+  getFeedCounters(@Session() session: UserSession) {
+    return this.minifluxService.getCounters(session.user.id);
   }
 
   @Get('feeds/:feedId')

@@ -9,5 +9,13 @@
       }
     },
     "includes": ["!node_modules/**", "!dist/**", "!**/routeTree.gen.ts"]
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on"
+      }
+    }
   }
 }
