@@ -15,7 +15,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { Conditions } from 'src/filter/filter';
+import { Category, Person, ThreadItem } from 'src/types/atom';
+import { Geo } from 'src/types/geo';
+import { Itunes } from 'src/types/itunes';
 import { MediaGroup } from 'src/types/media';
+import { PodFeed, PodItem } from 'src/types/podcast';
+import { YtFeed, YtItem } from 'src/types/youtube';
 import { v7 } from 'uuid';
 import { user } from './auth';
 
@@ -28,6 +33,7 @@ export const feeds = pgTable(
       .$defaultFn(() => v7()),
     minifluxId: serial().primaryKey(),
     title: text().notNull(),
+    subtitle: text(),
     url: varchar({ length: 256 }).notNull().unique(),
     site_url: varchar({ length: 256 }).notNull(),
     etag_header: varchar({ length: 256 }),
@@ -36,11 +42,26 @@ export const feeds = pgTable(
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
     crawler: boolean().notNull().default(false),
-    authors: varchar({ length: 256 }).array(),
-    categories: varchar({ length: 256 }).array(),
+    authors: jsonb().$type<Person[]>().notNull().default([]),
+    contributors: jsonb().$type<Person[]>().notNull().default([]),
+    categories: jsonb().$type<Category[]>().notNull().default([]),
     copyright: varchar({ length: 50 }),
     image: varchar({ length: 256 }),
+    lastChecked: timestamp().notNull(),
     updated: timestamp().notNull(),
+    explicit: boolean(),
+    subject: varchar({ length: 256 }),
+    updatePeriod: varchar({ length: 256 }),
+    updateFrequency: integer(),
+    updateBase: varchar({ length: 256 }),
+    publisher: varchar({ length: 256 }),
+    contributor: varchar({ length: 256 }),
+    format: varchar({ length: 256 }),
+    language: varchar({ length: 256 }),
+    rights: varchar({ length: 256 }),
+    youtube: jsonb().$type<YtFeed>(),
+    podcast: jsonb().$type<PodFeed<string>>(),
+    geo: jsonb().$type<Geo>().notNull().default({}),
     icon: integer().references(() => icons.id),
   },
   (table) => [
@@ -151,29 +172,40 @@ export const articles = pgTable(
     minifluxId: serial().unique().notNull(),
     title: text().default('No title'),
     url: text(),
-    authors: jsonb()
-      .$type<{ name: string; email: string }[]>()
-      .notNull()
-      .default([] as { name: string; email: string }[]),
-    categories: varchar({ length: 256 }).array().notNull().default([]),
+    authors: jsonb().$type<Person[]>().notNull().default([]),
+    contributors: jsonb().$type<Person[]>().notNull().default([]),
+    subject: varchar({ length: 256 }),
+    publisher: varchar({ length: 256 }),
+    contributor: varchar({ length: 256 }),
+    format: varchar({ length: 256 }),
+    language: varchar({ length: 256 }),
+    rights: varchar({ length: 256 }),
+    categories: jsonb().$type<Category[]>().notNull().default([]),
     description: text(),
-    commentsUrl: text(),
+    comments: text(),
+    commentRss: text(),
+    geo: jsonb().$type<Geo>().notNull().default({}),
     hash: varchar({ length: 64 }),
     rawContent: text(),
     readableHtml: text(),
     readableText: text(),
     fullArticleHtml: text(),
     fullArticleText: text(),
+    encoded: text(),
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 512 }),
     imageAlt: varchar({ length: 512 }),
     media: jsonb().$type<MediaGroup>().notNull(),
+    youtube: jsonb().$type<YtItem>(),
+    podcast: jsonb().$type<PodItem>(),
+    thread: jsonb().$type<ThreadItem>(),
     published: timestamp({ mode: 'string', withTimezone: true }).notNull(),
     updated: timestamp({ mode: 'string', withTimezone: true }),
     guid: jsonb().$type<{ isPermalink: boolean; value: string }>(),
     enclosures: jsonb()
       .$type<{ url: string; length: number; type: string }[]>()
       .default([]),
+    itunes: jsonb().$type<Itunes>().notNull(),
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),

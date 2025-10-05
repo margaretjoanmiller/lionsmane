@@ -53,11 +53,13 @@ export class FetcherService {
   async respectfulFetch(url: string) {
     try {
       const robots = await this.robots(url);
+      const urlObj = new URL(url);
       if (
         !robots.isAllowed(
           url,
           'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        )
+        ) &&
+        urlObj.host !== 'youtube.com' // youtube blocks rss for some reason while provding it?
       ) {
         console.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
@@ -181,7 +183,7 @@ export class FetcherService {
         .from(schema.feeds)
         .where(eq(schema.feeds.id, feedId));
 
-      if (!feedfromDb || !feedfromDb[0]?.updated) {
+      if (!feedfromDb || !feedfromDb[0]?.lastChecked) {
         throw new Error('Malformed feed in database');
       }
 
@@ -193,7 +195,7 @@ export class FetcherService {
             }
             return isAfter(
               i.pubDate!,
-              feedfromDb[0]?.updated || subWeeks(new Date(), 6),
+              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
             );
           })
           .map((item) => {
@@ -218,8 +220,14 @@ export class FetcherService {
                 title: item.title,
                 url: item.link ? item.source?.url : '',
                 authors: item.authors,
-                categories:
-                  item.categories?.map((i) => i.name).filter(Boolean) || [],
+                categories: item.categories,
+                comments: item.wfw ? item.wfw.comment : item.comments,
+                commentrss: item.wfw?.commentRss,
+                enclosures: item.enclosures,
+                itunes: item.itunes,
+                podcast: item.podcast,
+                geo: item.georss,
+                thread: item.thr,
                 description: item.description || '',
                 rawContent:
                   item.content?.encoded || item.description || 'no content',
@@ -233,7 +241,8 @@ export class FetcherService {
                     ? item.media.contents[0].texts[0].value
                     : ''
                   : '',
-                media: item.media?.contents?.map((media) => media.url) || [],
+                media: item.media,
+
                 published: item.pubDate,
                 feedId: feedId,
               },
@@ -283,7 +292,7 @@ export class FetcherService {
             if (!i.published && i.updated) {
               return isAfter(
                 i.updated,
-                feedfromDb[0]?.updated || subWeeks(new Date(), 6),
+                feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
               );
             }
             if (!i.published && !i.updated) {
@@ -291,7 +300,7 @@ export class FetcherService {
             }
             return isAfter(
               i.published!,
-              feedfromDb[0]?.updated || subWeeks(new Date(), 6),
+              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
             );
           })
           .map((item) => {
@@ -315,14 +324,22 @@ export class FetcherService {
               data: {
                 title: item.title,
                 url: item.links ? item.links[0].href : '',
-                authors: item.authors?.map((author) => ({
-                  name: author.name,
-                  email: author.email,
-                })),
-                categories:
-                  item.categories?.map((i) => i.term).filter(Boolean) || [],
+                authors: item.authors,
+                categories: item.categories,
                 description: item.summary || '',
+                publisher: item.dc?.publisher,
+                contributors: item.contributors,
+                format: item.dc?.format,
+                language: item.dc?.language,
+                rights: item.rights,
+                comments: item.wfw?.comment,
+                commentRss: item.wfw?.commentRss,
+                geo: item.georss,
+                // hash:
+                youtube: item.yt,
+                thread: item.thr,
                 rawContent: item.content || item.summary || 'no content',
+                itunes: item.itunes,
                 image: item.media
                   ? item.media.thumbnails
                     ? item.media.thumbnails[0].url
@@ -335,7 +352,7 @@ export class FetcherService {
                     ? item.media.contents[0].title
                     : ''
                   : '',
-                media: item.media?.contents?.map((media) => media.url) || [],
+                media: item.media,
                 published: item.published ? item.published : item.updated,
                 updated: item.updated,
                 feedId: feedId,
@@ -375,7 +392,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              updated: new Date(),
+              lastChecked: new Date(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;
