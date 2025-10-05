@@ -117,6 +117,7 @@ CREATE TABLE "two_factor" (
 --> statement-breakpoint
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
+	"minifluxId" serial NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"email_verified" boolean NOT NULL,
@@ -125,6 +126,7 @@ CREATE TABLE "user" (
 	"updated_at" timestamp NOT NULL,
 	"two_factor_enabled" boolean,
 	"has_readeck_key" boolean DEFAULT false,
+	CONSTRAINT "user_minifluxId_unique" UNIQUE("minifluxId"),
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
@@ -155,21 +157,37 @@ CREATE TABLE "articles" (
 	"title" text DEFAULT 'No title',
 	"url" text,
 	"authors" jsonb DEFAULT '[]'::jsonb NOT NULL,
-	"categories" varchar(256)[] DEFAULT '{}' NOT NULL,
+	"contributors" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"subject" varchar(256),
+	"publisher" varchar(256),
+	"contributor" varchar(256),
+	"format" varchar(256),
+	"language" varchar(256),
+	"rights" varchar(256),
+	"categories" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"description" text,
-	"commentsUrl" text,
+	"comments" text,
+	"commentRss" text,
+	"geo" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"hash" varchar(64),
 	"rawContent" text,
 	"readableHtml" text,
 	"readableText" text,
 	"fullArticleHtml" text,
 	"fullArticleText" text,
+	"encoded" text,
 	"keywords" varchar(256)[] DEFAULT '{}' NOT NULL,
 	"image" varchar(512),
 	"imageAlt" varchar(512),
-	"media" varchar(512)[] DEFAULT '{}' NOT NULL,
+	"media" jsonb NOT NULL,
+	"youtube" jsonb,
+	"podcast" jsonb,
+	"thread" jsonb,
 	"published" timestamp with time zone NOT NULL,
 	"updated" timestamp with time zone,
+	"guid" jsonb,
+	"enclosures" jsonb DEFAULT '[]'::jsonb,
+	"itunes" jsonb NOT NULL,
 	"feedId" uuid NOT NULL,
 	CONSTRAINT "articles_id_minifluxId_pk" PRIMARY KEY("id","minifluxId"),
 	CONSTRAINT "articles_id_unique" UNIQUE("id"),
@@ -181,20 +199,36 @@ CREATE TABLE "feeds" (
 	"id" uuid NOT NULL,
 	"minifluxId" serial NOT NULL,
 	"title" text NOT NULL,
+	"subtitle" text,
 	"url" varchar(256) NOT NULL,
-	"siteUrl" varchar(256) NOT NULL,
-	"etag" varchar(256),
-	"lastModified" varchar(256),
+	"site_url" varchar(256) NOT NULL,
+	"etag_header" varchar(256),
+	"last_modified_header" varchar(256),
 	"parsingErrorMessage" varchar(256),
 	"parsingErrorCount" integer DEFAULT 0 NOT NULL,
 	"userAgent" varchar(256),
 	"crawler" boolean DEFAULT false NOT NULL,
-	"favicon" varchar(256),
-	"authors" varchar(256)[],
-	"categories" varchar(256)[],
+	"authors" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"contributors" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"categories" jsonb DEFAULT '[]'::jsonb NOT NULL,
 	"copyright" varchar(50),
 	"image" varchar(256),
-	"updated" timestamp,
+	"lastChecked" timestamp NOT NULL,
+	"updated" timestamp NOT NULL,
+	"explicit" boolean,
+	"subject" varchar(256),
+	"updatePeriod" varchar(256),
+	"updateFrequency" integer,
+	"updateBase" varchar(256),
+	"publisher" varchar(256),
+	"contributor" varchar(256),
+	"format" varchar(256),
+	"language" varchar(256),
+	"rights" varchar(256),
+	"youtube" jsonb,
+	"podcast" jsonb,
+	"geo" jsonb DEFAULT '{}'::jsonb NOT NULL,
+	"icon" integer,
 	CONSTRAINT "feeds_id_minifluxId_pk" PRIMARY KEY("id","minifluxId"),
 	CONSTRAINT "feeds_id_unique" UNIQUE("id"),
 	CONSTRAINT "feeds_minifluxId_unique" UNIQUE("minifluxId"),
@@ -202,7 +236,7 @@ CREATE TABLE "feeds" (
 );
 --> statement-breakpoint
 CREATE TABLE "folders" (
-	"id" uuid,
+	"id" uuid NOT NULL,
 	"minifluxId" serial NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"userId" text NOT NULL,
@@ -210,6 +244,15 @@ CREATE TABLE "folders" (
 	CONSTRAINT "folders_id_unique" UNIQUE("id"),
 	CONSTRAINT "folders_minifluxId_unique" UNIQUE("minifluxId"),
 	CONSTRAINT "folders_name_userId_unique" UNIQUE("name","userId")
+);
+--> statement-breakpoint
+CREATE TABLE "icons" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"url" varchar(256) NOT NULL,
+	"width" integer,
+	"height" integer,
+	"type" varchar(256),
+	CONSTRAINT "icons_url_unique" UNIQUE("url")
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
@@ -251,6 +294,7 @@ ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_userId_user_id_fk" FOR
 ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_articleId_articles_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."articles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_ruleId_user_filters_id_fk" FOREIGN KEY ("ruleId") REFERENCES "public"."user_filters"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "articles" ADD CONSTRAINT "articles_feedId_feeds_id_fk" FOREIGN KEY ("feedId") REFERENCES "public"."feeds"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "feeds" ADD CONSTRAINT "feeds_icon_icons_id_fk" FOREIGN KEY ("icon") REFERENCES "public"."icons"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "folders" ADD CONSTRAINT "folders_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_feedId_feeds_id_fk" FOREIGN KEY ("feedId") REFERENCES "public"."feeds"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -264,6 +308,7 @@ CREATE INDEX "applied_rules_applied_at_idx" ON "applied_rules" USING btree ("app
 CREATE INDEX "articles_feed_idx" ON "articles" USING btree ("feedId");--> statement-breakpoint
 CREATE INDEX "articles_published_idx" ON "articles" USING btree ("published");--> statement-breakpoint
 CREATE INDEX "articles_search_idx" ON "articles" USING pgroonga ("readableText");--> statement-breakpoint
+CREATE INDEX "feeds_url_idx" ON "feeds" USING btree ("url");--> statement-breakpoint
 CREATE INDEX "folders_user_idx" ON "folders" USING btree ("userId");--> statement-breakpoint
 CREATE INDEX "user_feeds_feed_idx" ON "subscriptions" USING btree ("feedId");--> statement-breakpoint
 CREATE INDEX "user_feeds_folder_idx" ON "subscriptions" USING btree ("folderId");--> statement-breakpoint

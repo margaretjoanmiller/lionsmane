@@ -34,11 +34,8 @@ export class ArticleConsumer extends WorkerHost {
       const href = $image.attr('src');
       const altText = $image.attr('alt');
 
-      const media: string[] = [];
-
       let image = data.image;
       if (href && image?.length === 0) image = href;
-      else if (href) media.push(href);
       let alt = data.imageAlt;
       if (altText && alt?.length === 0) alt = altText;
 
@@ -48,7 +45,6 @@ export class ArticleConsumer extends WorkerHost {
         updated: data.updated ? parseDate(data.updated).toISOString() : null,
         image,
         imageAlt: alt,
-        media,
         description: cleanDescription,
         readableText: textContent,
         readableHtml: htmlContent,

@@ -31,7 +31,7 @@ export const feeds = pgTable(
       .notNull()
       .unique()
       .$defaultFn(() => v7()),
-    minifluxId: serial().primaryKey(),
+    minifluxId: serial().unique(),
     title: text().notNull(),
     subtitle: text(),
     url: varchar({ length: 256 }).notNull().unique(),
