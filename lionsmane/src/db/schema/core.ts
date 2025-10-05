@@ -14,8 +14,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { p } from 'node_modules/better-auth/dist/shared/better-auth.BbWr-Wga.cjs';
 import { Conditions } from 'src/filter/filter';
+import { MediaGroup } from 'src/types/media';
 import { v7 } from 'uuid';
 import { user } from './auth';
 
@@ -167,9 +167,13 @@ export const articles = pgTable(
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 512 }),
     imageAlt: varchar({ length: 512 }),
-    media: varchar({ length: 512 }).array().notNull().default([]),
+    media: jsonb().$type<MediaGroup>().notNull(),
     published: timestamp({ mode: 'string', withTimezone: true }).notNull(),
     updated: timestamp({ mode: 'string', withTimezone: true }),
+    guid: jsonb().$type<{ isPermalink: boolean; value: string }>(),
+    enclosures: jsonb()
+      .$type<{ url: string; length: number; type: string }[]>()
+      .default([]),
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),
