@@ -242,7 +242,6 @@ export class FetcherService {
                     : ''
                   : '',
                 media: item.media,
-
                 published: item.pubDate,
                 feedId: feedId,
               },
@@ -281,7 +280,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              updated: new Date(),
+              lastChecked: new Date().toISOString(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;
@@ -392,7 +391,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              lastChecked: new Date(),
+              lastChecked: new Date().toISOString(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;
