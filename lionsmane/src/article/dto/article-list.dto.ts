@@ -1,6 +1,6 @@
+import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { articleDetail } from './article-detail.dto';
 
 const articleList = z.object({
   cursor: z.string().nullable(),

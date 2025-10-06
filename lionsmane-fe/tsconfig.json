@@ -7,7 +7,7 @@
     "vite.config.js",
     "tailwind.config.js"
   ],
-
+  "references": [{ "path": "../lionsmane-common" }],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",

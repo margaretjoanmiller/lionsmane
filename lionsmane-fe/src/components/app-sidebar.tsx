@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
   const feedSelect =
     feeds?.map((feed) => ({
-      label: feed.title || feed.feed_url,
+      label: feed.title || feed.url,
       value: feed.id,
     })) || [];
 
@@ -150,8 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         id: feed.id,
         name: feed.title || feed.url,
         type: 'feed' as const,
-        unreadCount:
-          feeds?.feeds.find((f) => f.id === feed.id)?.unreadCount || 0,
+        unreadCount: feeds?.find((f) => f.id === feed.id)?.unreadCount || 0,
       })),
       favicon: null,
       folderId: folder.id,

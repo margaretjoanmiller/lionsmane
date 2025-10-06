@@ -1,6 +1,7 @@
 packages:
   - lionsmane
   - lionsmane-fe
+  - lionsmane-common
 
 injectWorkspacePackages: true
 

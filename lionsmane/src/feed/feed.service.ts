@@ -377,10 +377,7 @@ export class FeedService {
         ...getTableColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         feed_url: schema.feeds.url,
-        icon: {
-          feed_id: schema.feeds.minifluxId,
-          icon_id: schema.icons.id,
-        },
+        favicon: schema.icons.url,
         image: schema.feeds.image,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
@@ -495,10 +492,6 @@ export class FeedService {
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
-        icon: {
-          feed_id: schema.feeds.minifluxId,
-          icon_id: schema.icons.id,
-        },
         category: {
           id: schema.folders.minifluxId,
           user_id: schema.subscriptions.userMinifluxId,
@@ -538,10 +531,7 @@ export class FeedService {
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
-        icon: {
-          feed_id: schema.feeds.minifluxId,
-          icon_id: schema.icons.id,
-        },
+        favicon: schema.icons.url,
         category: {
           id: schema.folders.minifluxId,
           user_id: schema.subscriptions.userMinifluxId,

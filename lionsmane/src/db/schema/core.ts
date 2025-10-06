@@ -185,7 +185,7 @@ export const articles = pgTable(
     comments: text(),
     commentRss: text(),
     geo: jsonb().$type<Geo>().notNull().default({}),
-    hash: varchar({ length: 64 }),
+    hash: varchar({ length: 64 }).unique(),
     rawContent: text(),
     readableHtml: text(),
     readableText: text(),

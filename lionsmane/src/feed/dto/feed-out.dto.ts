@@ -5,13 +5,12 @@ import { z } from 'zod';
 export const feedOutDtoWithCounts = feedOutDto
   .extend({
     unreadCount: z.number().min(0).nullable(),
-    icon: z.object({
-      feed_id: z.number().nullable(),
-      icon_id: z.number().nullable(),
-    }),
+    favicon: z.url().nullable(),
+    folderId: z.uuid().nullable(),
   })
   .omit({
     minifluxId: true,
+    icon: true,
   });
 
 const feedListOutDto = z.object({ feeds: z.array(feedOutDtoWithCounts) });

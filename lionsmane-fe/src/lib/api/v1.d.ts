@@ -959,6 +959,53 @@ export interface components {
             folderId: string | null;
         };
         NewSubscriptionDto_Output: {
+            /** Format: uuid */
+            id: string;
+            minifluxId: number;
+            title: string;
+            subtitle: string | null;
+            url: string;
+            site_url: string;
+            etag_header: string | null;
+            last_modified_header: string | null;
+            parsingErrorMessage: string | null;
+            parsingErrorCount: number;
+            userAgent: string | null;
+            crawler: boolean;
+            authors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            contributors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            categories: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            copyright: string | null;
+            image: string | null;
+            /** Format: date-time */
+            lastChecked: string;
+            updated: string | null;
+            explicit: boolean | null;
+            subject: string | null;
+            updatePeriod: string | null;
+            updateFrequency: number | null;
+            updateBase: string | null;
+            publisher: string | null;
+            contributor: string | null;
+            format: string | null;
+            language: string | null;
+            rights: string | null;
+            youtube: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            podcast: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            geo: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            icon: number | null;
             subscription: {
                 /** Format: uuid */
                 id: string;
@@ -968,50 +1015,56 @@ export interface components {
                 description: string | null;
                 folderId: string | null;
             };
-            /** Format: uuid */
-            id: string;
-            title: string;
-            /** Format: uri */
-            url: string;
-            authors: string[] | null;
-            categories: string[] | null;
-            copyright: string | null;
-            image: string | null;
-            updated: string | null;
         };
         FeedOutWithCountsDto_Output: {
             /** Format: uuid */
             id: string;
-            user_id: number;
             title: string;
+            subtitle: string | null;
+            url: string;
             site_url: string;
-            feed_url: string;
-            checked_at: string;
             etag_header: string | null;
             last_modified_header: string | null;
-            parsing_error_message: string | null;
-            parsing_error_count: number | null;
-            scraper_rules: string | null;
-            rewrite_rules: string | null;
+            parsingErrorMessage: string | null;
+            parsingErrorCount: number;
+            userAgent: string | null;
             crawler: boolean;
-            blocklist_rules: string | null;
-            keeplist_rules: string | null;
-            user_agent: string | null;
-            username: string | null;
-            password: string | null;
-            disabled: boolean;
-            ignore_http_cache: boolean;
-            fetch_via_proxy: boolean;
-            category: {
-                id: number | null;
-                user_id: number;
-                title: string | null;
-            };
-            icon: {
-                feed_id: number;
-                icon_id: number | null;
-            };
+            authors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            contributors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            categories: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            copyright: string | null;
+            image: string | null;
+            /** Format: date-time */
+            lastChecked: string;
+            updated: string | null;
+            explicit: boolean | null;
+            subject: string | null;
+            updatePeriod: string | null;
+            updateFrequency: number | null;
+            updateBase: string | null;
+            publisher: string | null;
+            contributor: string | null;
+            format: string | null;
+            language: string | null;
+            rights: string | null;
+            youtube: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            podcast: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            geo: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
             unreadCount: number | null;
+            favicon: string | null;
+            folderId: string | null;
         };
         DiscoverDto: {
             url: string;
@@ -1052,29 +1105,70 @@ export interface components {
                 id: string;
                 title: string | null;
                 url: string | null;
-                authors: {
-                    name: string;
-                    email: string | null;
-                }[];
-                categories: string[];
+                authors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                contributors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                subject: string | null;
+                publisher: string | null;
+                contributor: string | null;
+                format: string | null;
+                language: string | null;
+                rights: string | null;
+                categories: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
                 description: string | null;
+                comments: string | null;
+                commentRss: string | null;
+                geo: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                hash: string | null;
+                rawContent: string | null;
+                readableHtml: string | null;
                 readableText: string | null;
+                fullArticleHtml: string | null;
+                fullArticleText: string | null;
+                encoded: string | null;
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: string[];
+                media: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                youtube: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                podcast: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                thread: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
+                guid: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                enclosures: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                itunes: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                /** Format: uuid */
+                feedId: string;
+                feedTitle: string | null;
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
                 /** @default [] */
                 contentWarning: string[] | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
             }[];
         };
         ArticleStatusDto_Output: {
@@ -1094,20 +1188,61 @@ export interface components {
                 id: string;
                 title: string | null;
                 url: string | null;
-                authors: {
-                    name: string;
-                    email: string | null;
-                }[];
-                categories: string[];
+                authors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                contributors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                subject: string | null;
+                publisher: string | null;
+                contributor: string | null;
+                format: string | null;
+                language: string | null;
+                rights: string | null;
+                categories: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
                 description: string | null;
+                comments: string | null;
+                commentRss: string | null;
+                geo: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                hash: string | null;
+                rawContent: string | null;
+                readableHtml: string | null;
                 readableText: string | null;
+                fullArticleHtml: string | null;
+                fullArticleText: string | null;
+                encoded: string | null;
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: string[];
+                media: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                youtube: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                podcast: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                thread: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
+                guid: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                enclosures: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                itunes: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
                 /** Format: uuid */
                 feedId: string;
                 feedTitle: string | null;
@@ -1130,29 +1265,70 @@ export interface components {
                 id: string;
                 title: string | null;
                 url: string | null;
-                authors: {
-                    name: string;
-                    email: string | null;
-                }[];
-                categories: string[];
+                authors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                contributors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                subject: string | null;
+                publisher: string | null;
+                contributor: string | null;
+                format: string | null;
+                language: string | null;
+                rights: string | null;
+                categories: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
                 description: string | null;
+                comments: string | null;
+                commentRss: string | null;
+                geo: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                hash: string | null;
+                rawContent: string | null;
+                readableHtml: string | null;
                 readableText: string | null;
+                fullArticleHtml: string | null;
+                fullArticleText: string | null;
+                encoded: string | null;
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: string[];
+                media: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                youtube: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                podcast: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                thread: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
+                guid: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                enclosures: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                itunes: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                /** Format: uuid */
+                feedId: string;
+                feedTitle: string | null;
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
                 /** @default [] */
                 contentWarning: string[] | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
                 /** Format: uuid */
                 ruleId: string;
             }[];
@@ -1162,34 +1338,67 @@ export interface components {
             id: string;
             title: string | null;
             url: string | null;
-            authors: {
-                name: string;
-                email: string | null;
-            }[];
-            categories: string[];
+            authors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            contributors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            subject: string | null;
+            publisher: string | null;
+            contributor: string | null;
+            format: string | null;
+            language: string | null;
+            rights: string | null;
+            categories: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
             description: string | null;
+            comments: string | null;
+            commentRss: string | null;
+            geo: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            hash: string | null;
+            rawContent: string | null;
             readableHtml: string | null;
             readableText: string | null;
-            rawContent: string | null;
             fullArticleHtml: string | null;
             fullArticleText: string | null;
+            encoded: string | null;
             keywords: string[];
             image: string | null;
             imageAlt: string | null;
-            media: string[] | null;
+            media: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            youtube: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            podcast: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            thread: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
             /** Format: date-time */
             published: string;
             updated: string | null;
+            guid: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            enclosures: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            itunes: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
             /** Format: uuid */
             feedId: string;
-            feedTitle: string | null;
-            /** @default false */
+            feedTitle: string;
             isRead: boolean | null;
-            /** @default false */
             isStarred: boolean | null;
-            /** @default false */
             isBlurred: boolean | null;
-            /** @default false */
             isHidden: boolean | null;
             /** @default [] */
             contentWarning: string[] | null;
@@ -1213,30 +1422,50 @@ export interface components {
             feeds: {
                 /** Format: uuid */
                 id: string;
-                user_id: number;
                 title: string;
+                subtitle: string | null;
+                url: string;
                 site_url: string;
-                feed_url: string;
-                checked_at: string;
                 etag_header: string | null;
                 last_modified_header: string | null;
-                parsing_error_message: string | null;
-                parsing_error_count: number | null;
-                scraper_rules: string | null;
-                rewrite_rules: string | null;
+                parsingErrorMessage: string | null;
+                parsingErrorCount: number;
+                userAgent: string | null;
                 crawler: boolean;
-                blocklist_rules: string | null;
-                keeplist_rules: string | null;
-                user_agent: string | null;
-                username: string | null;
-                password: string | null;
-                disabled: boolean;
-                ignore_http_cache: boolean;
-                fetch_via_proxy: boolean;
-                icon: {
-                    feed_id: number;
-                    icon_id: number | null;
-                };
+                authors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                contributors: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                categories: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                copyright: string | null;
+                image: string | null;
+                /** Format: date-time */
+                lastChecked: string;
+                updated: string | null;
+                explicit: boolean | null;
+                subject: string | null;
+                updatePeriod: string | null;
+                updateFrequency: number | null;
+                updateBase: string | null;
+                publisher: string | null;
+                contributor: string | null;
+                format: string | null;
+                language: string | null;
+                rights: string | null;
+                youtube: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                podcast: ((string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[]) | null;
+                geo: (string | number | boolean | null) | {
+                    [key: string]: unknown;
+                } | unknown[];
+                favicon: string | null;
             }[];
         };
         UpdateFolderDto: {
@@ -1311,37 +1540,45 @@ export interface components {
             /** Format: uri */
             url: string;
         };
-        FeedOutDto_Output: {
-            id: number;
-            user_id: number;
+        FeedMini_Output: {
+            minifluxId: number;
             title: string;
+            subtitle: string | null;
+            url: string;
             site_url: string;
-            feed_url: string;
-            checked_at: string;
             etag_header: string | null;
             last_modified_header: string | null;
-            parsing_error_message: string | null;
-            parsing_error_count: number | null;
-            scraper_rules: string | null;
-            rewrite_rules: string | null;
+            parsingErrorMessage: string | null;
+            parsingErrorCount: number;
+            userAgent: string | null;
             crawler: boolean;
-            blocklist_rules: string | null;
-            keeplist_rules: string | null;
-            user_agent: string | null;
-            username: string | null;
-            password: string | null;
-            disabled: boolean;
-            ignore_http_cache: boolean;
-            fetch_via_proxy: boolean;
-            category: {
-                id: number | null;
-                user_id: number;
-                title: string | null;
-            };
-            icon: {
-                feed_id: number;
-                icon_id: number | null;
-            };
+            contributors: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            image: string | null;
+            /** Format: date-time */
+            lastChecked: string;
+            updated: string | null;
+            explicit: boolean | null;
+            subject: string | null;
+            updatePeriod: string | null;
+            updateFrequency: number | null;
+            updateBase: string | null;
+            publisher: string | null;
+            contributor: string | null;
+            format: string | null;
+            language: string | null;
+            rights: string | null;
+            youtube: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            podcast: ((string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[]) | null;
+            geo: (string | number | boolean | null) | {
+                [key: string]: unknown;
+            } | unknown[];
+            icon: number | null;
         };
         CountersDto_Output: {
             reads: {
@@ -1351,6 +1588,11 @@ export interface components {
                 [key: string]: number;
             };
         };
+        CreateFeedDto: {
+            /** Format: uri */
+            feed_url: string;
+            category_id: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -1358,6 +1600,31 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type SchemaSubscribeFeedDto = components['schemas']['SubscribeFeedDto'];
+export type SchemaNewSubscriptionDtoOutput = components['schemas']['NewSubscriptionDto_Output'];
+export type SchemaFeedOutWithCountsDtoOutput = components['schemas']['FeedOutWithCountsDto_Output'];
+export type SchemaDiscoverDto = components['schemas']['DiscoverDto'];
+export type SchemaDiscoverOutDtoOutput = components['schemas']['DiscoverOutDto_Output'];
+export type SchemaFileDto = components['schemas']['FileDto'];
+export type SchemaUpdateFeedDto = components['schemas']['UpdateFeedDto'];
+export type SchemaSubscriptionOutDtoOutput = components['schemas']['SubscriptionOutDto_Output'];
+export type SchemaArticleListDtoOutput = components['schemas']['ArticleListDto_Output'];
+export type SchemaArticleStatusDtoOutput = components['schemas']['ArticleStatusDto_Output'];
+export type SchemaArticleSearchDtoOutput = components['schemas']['ArticleSearchDto_Output'];
+export type SchemaHiddenArticleListDtoOutput = components['schemas']['HiddenArticleListDto_Output'];
+export type SchemaArticleDetailDtoOutput = components['schemas']['ArticleDetailDto_Output'];
+export type SchemaCreateFolderDto = components['schemas']['CreateFolderDto'];
+export type SchemaFolderOutDtoOutput = components['schemas']['FolderOutDto_Output'];
+export type SchemaFolderWithFeedsOutDtoOutput = components['schemas']['FolderWithFeedsOutDto_Output'];
+export type SchemaUpdateFolderDto = components['schemas']['UpdateFolderDto'];
+export type SchemaCreateFilterDto = components['schemas']['CreateFilterDto'];
+export type SchemaFilterOutDtoOutput = components['schemas']['FilterOutDto_Output'];
+export type SchemaUpdateFilterDto = components['schemas']['UpdateFilterDto'];
+export type SchemaCreateConfigDto = components['schemas']['CreateConfigDto'];
+export type SchemaCreateBookmarkDto = components['schemas']['CreateBookmarkDto'];
+export type SchemaFeedMiniOutput = components['schemas']['FeedMini_Output'];
+export type SchemaCountersDtoOutput = components['schemas']['CountersDto_Output'];
+export type SchemaCreateFeedDto = components['schemas']['CreateFeedDto'];
 export type $defs = Record<string, never>;
 export interface operations {
     AppController_getProfile: {
@@ -3153,7 +3420,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedOutDto_Output"][];
+                    "application/json": components["schemas"]["FeedMini_Output"][];
                 };
             };
             /** @description Unauthorized */
@@ -3179,7 +3446,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFeedDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -3855,7 +4126,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FeedOutDto_Output"][];
+                    "application/json": components["schemas"]["FeedMini_Output"][];
                 };
             };
             /** @description Unauthorized */

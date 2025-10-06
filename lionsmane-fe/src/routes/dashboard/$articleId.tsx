@@ -34,12 +34,12 @@ function ArticlePage() {
   const articleId = Route.useParams().articleId;
   const queryClient = useQueryClient();
   const { data } = $api.useSuspenseQuery('get', '/article/{id}', {
+    credentials: 'include',
     params: {
       path: {
         id: articleId,
       },
     },
-    credentials: 'include',
   });
 
   const { mutate } = $api.useMutation('patch', '/article/status/{id}', {
@@ -63,25 +63,26 @@ function ArticlePage() {
   );
 
   const { mutate: readLater } = $api.useMutation('post', '/readlater', {
+    onError(error) {
+      // @ts-expect-error: Error in openapi-typescript error typing
+      toast.error('Error saving to readeck', { description: error.message });
+    },
     onSuccess: () => {
       toast.success('Saved to readeck');
-    },
-    onError(error) {
-      toast.error('Error saving to readeck', { description: error.message });
     },
   });
 
   function markUnread() {
     mutate({
-      params: { path: { id: data.id }, query: { status: 'unread' } },
       credentials: 'include',
+      params: { path: { id: data.id }, query: { status: 'unread' } },
     });
   }
 
   function markRead() {
     mutate({
-      params: { path: { id: data.id }, query: { status: 'read' } },
       credentials: 'include',
+      params: { path: { id: data.id }, query: { status: 'read' } },
     });
   }
 
@@ -98,25 +99,24 @@ function ArticlePage() {
             {data.title}
             {data.isRead ? (
               <Button
-                className="ml-2"
-                variant="ghost"
-                size="sm"
-                onClick={markUnread}
                 asChild
+                className="ml-2"
+                onClick={markUnread}
+                size="sm"
+                variant="ghost"
               >
                 <Badge variant="outline">Read</Badge>
               </Button>
             ) : (
-              <Button className="ml-2" onClick={markRead} size="sm" asChild>
+              <Button asChild className="ml-2" onClick={markRead} size="sm">
                 <Badge>Unread</Badge>
               </Button>
             )}
             {data.isStarred && (
               <Button
-                variant="ghost"
-                size="icon"
                 onClick={() =>
                   mutate({
+                    credentials: 'include',
                     params: {
                       path: {
                         id: data.id,
@@ -125,19 +125,19 @@ function ArticlePage() {
                         status: 'unstarred',
                       },
                     },
-                    credentials: 'include',
                   })
                 }
+                size="icon"
+                variant="ghost"
               >
                 <SolarStarBold />
               </Button>
             )}
             {!data.isStarred && (
               <Button
-                variant="ghost"
-                size="icon"
                 onClick={() =>
                   mutate({
+                    credentials: 'include',
                     params: {
                       path: {
                         id: data.id,
@@ -146,9 +146,10 @@ function ArticlePage() {
                         status: 'starred',
                       },
                     },
-                    credentials: 'include',
                   })
                 }
+                size="icon"
+                variant="ghost"
               >
                 <SolarStarLinear />
               </Button>
@@ -156,14 +157,14 @@ function ArticlePage() {
             <Tooltip>
               <TooltipTrigger>
                 <Button
-                  variant="ghost"
-                  size="icon"
                   onClick={() =>
                     requestFullArticleText({
-                      params: { path: { id: data.id } },
                       credentials: 'include',
+                      params: { path: { id: data.id } },
                     })
                   }
+                  size="icon"
+                  variant="ghost"
                 >
                   <SolarGlassesLineDuotone />
                 </Button>
@@ -174,8 +175,6 @@ function ArticlePage() {
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    variant="ghost"
-                    size="icon"
                     onClick={() =>
                       readLater({
                         body: {
@@ -184,6 +183,8 @@ function ArticlePage() {
                         credentials: 'include',
                       })
                     }
+                    size="icon"
+                    variant="ghost"
                   >
                     <SolarBookBookmarkLineDuotone />
                   </Button>
@@ -193,7 +194,7 @@ function ArticlePage() {
             )}
           </h1>
           <h2 className="text-center font-bold">
-            {data.authors.map((author) => author.name).join(', ')}
+            {data.authors?.map((author) => author.name).join(', ')}
             <Badge className="ml-2" variant="outline">
               {articleFeed}
             </Badge>
@@ -214,8 +215,8 @@ function ArticlePage() {
           <footer className="flex-col">
             <a href={data.url!}>Original article</a>
             <div className="grid-flow-row">
-              {data.categories.map((c) => (
-                <Badge variant="outline" className="m-1">
+              {data.categories?.map((c) => (
+                <Badge className="m-1" variant="outline">
                   {c}
                 </Badge>
               ))}
