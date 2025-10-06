@@ -121,7 +121,7 @@ export class FilterService {
         if (
           filter.conditions.keywords &&
           filter.conditions.keywords.some((keyword) =>
-            article.keywords.includes(keyword),
+            article.keywords?.includes(keyword),
           )
         ) {
           return {
@@ -137,7 +137,7 @@ export class FilterService {
         if (
           filter.conditions.authors &&
           filter.conditions.authors.some((author) =>
-            article.authors.some(
+            article.authors?.some(
               (a) => a.name === author || a.email === author,
             ),
           )
@@ -200,7 +200,7 @@ export class FilterService {
         if (
           filter.conditions.categories &&
           filter.conditions.categories.some((category) =>
-            article.categories.includes(category),
+            article.categories?.includes(category),
           )
         ) {
           return {

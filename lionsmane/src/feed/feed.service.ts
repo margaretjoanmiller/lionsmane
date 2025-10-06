@@ -181,7 +181,6 @@ export class FeedService {
         .from(schema.feeds)
         .where(eq(schema.feeds.url, url));
 
-      const title = await this.fetcher.extractFeedTitle(url);
       const urlObj = new URL(url);
 
       const response = await this.fetcher.respectfulFetch(url);
@@ -212,23 +211,72 @@ export class FeedService {
             .returning();
           icon = iconInserted.id;
         }
-        const [newFeed] = await tx
-          .insert(schema.feeds)
-          .values({
-            title,
-            url,
-            site_url: urlObj.origin,
-            icon,
-            updated: updated ? parseDate(updated) : null,
-            lastChecked: subMonths(new Date(), 6),
-            etag_header: response?.headers['etag'] || null,
-            last_modified_header: response?.headers['last-modified'] || null,
-          })
-          .returning();
-        if (!newFeed) {
-          throw new Error('Failed to create feed');
+        if (format === 'rss') {
+          const [newFeed] = await tx
+            .insert(schema.feeds)
+            .values({
+              // @ts-expect-error: Error with drizzle typing
+              title: parsedFeed.title || 'no title',
+              url,
+              site_url: urlObj.origin,
+              icon,
+              updated: updated ? parseDate(updated) : null,
+              lastChecked: subMonths(new Date(), 6),
+              etag_header: response?.headers['etag'] || null,
+              last_modified_header: response?.headers['last-modified'] || null,
+              copyright: parsedFeed.copyright,
+              image: parsedFeed.image,
+              language: parsedFeed.language,
+              podcast: parsedFeed.podcast,
+              geo: parsedFeed.georss,
+              subject: parsedFeed.dc?.subject,
+              contributor: parsedFeed.dc?.contributor,
+              publisher: parsedFeed.dc?.publisher,
+              format: parsedFeed.dc?.format,
+              rights: parsedFeed.dc?.rights,
+              updatePeriod: parsedFeed.sy?.updatePeriod,
+              updateFrequency: parsedFeed.sy?.updateFrequency,
+              updateBase: parsedFeed.sy?.updateBase,
+            })
+            .returning();
+          if (!newFeed) {
+            throw new Error('Failed to create feed');
+          }
+          feed = newFeed;
+        } else if (format === 'atom') {
+          const [newFeed] = await tx
+            .insert(schema.feeds)
+            .values({
+              // @ts-expect-error: Error with drizzle typing
+              title: parsedFeed.title || 'no title',
+              url,
+              site_url: urlObj.origin,
+              icon,
+              updated: updated ? parseDate(updated) : null,
+              lastChecked: subMonths(new Date(), 6),
+              etag_header: response?.headers['etag'] || null,
+              last_modified_header: response?.headers['last-modified'] || null,
+              authors: parsedFeed.authors,
+              contributors: parsedFeed.contributors,
+              categories: parsedFeed.categories,
+              explicit: parsedFeed.itunes?.explicit,
+              language: parsedFeed.dc?.language,
+              subject: parsedFeed.dc?.subject,
+              contributor: parsedFeed.dc?.contributor,
+              publisher: parsedFeed.dc?.publisher,
+              format: parsedFeed.dc?.format,
+              rights: parsedFeed.dc?.rights,
+              updatePeriod: parsedFeed.sy?.updatePeriod,
+              updateFrequency: parsedFeed.sy?.updateFrequency,
+              updateBase: parsedFeed.sy?.updateBase,
+              youtube: parsedFeed.yt,
+            })
+            .returning();
+          if (!newFeed) {
+            throw new Error('Failed to create feed');
+          }
+          feed = newFeed;
         }
-        feed = newFeed;
       }
       if (!feed.id) {
         throw new Error('Failed to find or create feed');
