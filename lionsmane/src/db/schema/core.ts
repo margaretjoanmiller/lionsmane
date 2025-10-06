@@ -47,8 +47,8 @@ export const feeds = pgTable(
     categories: jsonb().$type<Category[]>().notNull().default([]),
     copyright: varchar({ length: 50 }),
     image: varchar({ length: 256 }),
-    lastChecked: timestamp().notNull(),
-    updated: timestamp().notNull(),
+    lastChecked: timestamp({ mode: 'string' }).notNull(),
+    updated: timestamp({ mode: 'string', withTimezone: true }),
     explicit: boolean(),
     subject: varchar({ length: 256 }),
     updatePeriod: varchar({ length: 256 }),
@@ -195,7 +195,7 @@ export const articles = pgTable(
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 512 }),
     imageAlt: varchar({ length: 512 }),
-    media: jsonb().$type<MediaGroup>().notNull(),
+    media: jsonb().$type<MediaGroup>(),
     youtube: jsonb().$type<YtItem>(),
     podcast: jsonb().$type<PodItem>(),
     thread: jsonb().$type<ThreadItem>(),
@@ -205,7 +205,7 @@ export const articles = pgTable(
     enclosures: jsonb()
       .$type<{ url: string; length: number; type: string }[]>()
       .default([]),
-    itunes: jsonb().$type<Itunes>().notNull(),
+    itunes: jsonb().$type<Itunes>(),
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
       .notNull(),

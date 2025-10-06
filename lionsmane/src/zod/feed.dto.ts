@@ -1,4 +1,6 @@
+import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
+import { schema } from 'src/db/schema';
 import { z } from 'zod';
 
 export const createFeedDto = z.object({
@@ -6,37 +8,29 @@ export const createFeedDto = z.object({
   category_id: z.number(),
 });
 
-export const feedOutDto = z.object({
-  id: z.number(),
-  user_id: z.number(),
-  title: z.string(),
-  site_url: z.string(),
-  feed_url: z.string(),
-  checked_at: z.string(),
-  etag_header: z.string().nullable(),
-  last_modified_header: z.string().nullable(),
-  parsing_error_message: z.string().nullable(),
-  parsing_error_count: z.number().nullable(),
-  scraper_rules: z.string().nullable(),
-  rewrite_rules: z.string().nullable(),
-  crawler: z.boolean(),
-  blocklist_rules: z.string().nullable(),
-  keeplist_rules: z.string().nullable(),
-  user_agent: z.string().nullable(),
-  username: z.string().nullable(),
-  password: z.string().nullable(),
-  disabled: z.boolean(),
-  ignore_http_cache: z.boolean(),
-  fetch_via_proxy: z.boolean(),
-  copyright: z.string().nullable(),
-  authors: z.array(z.string()).nullable(),
-  categories: z.array(z.string()).nullable(),
-  category: z.object({
-    id: z.number().nullable(),
-    user_id: z.number(),
-    title: z.string().nullable(),
-  }),
-  icon: z.object({ feed_id: z.number(), icon_id: z.number().nullable() }),
+export const feedOutDto = createSelectSchema(schema.feeds).extend({
+  lastChecked: z.preprocess((arg: Date | string) => {
+    // If the input is a string, try to parse it into a Date object.
+    // This handles the '2025-09-01 21:54:33' format.
+    if (typeof arg === 'string') {
+      return new Date(arg).toISOString();
+    } else if (arg instanceof Date) {
+      return arg.toISOString();
+    }
+  }, z.iso.datetime()), // Then, validate that the result is a valid ISO datetime string.
+  updated: z
+    .preprocess((arg: Date | string | undefined) => {
+      // If the input is a string, try to parse it into a Date object.
+      // This handles the '2025-09-01 21:54:33' format.
+      if (typeof arg === 'string') {
+        return new Date(arg).toISOString();
+      } else if (arg instanceof Date) {
+        return arg.toISOString();
+      } else {
+        return null;
+      }
+    }, z.iso.datetime())
+    .nullable(), // Then, validate that the result is a valid ISO datetime string.
 });
 
 export const feedOutDtoArray = z.array(feedOutDto);

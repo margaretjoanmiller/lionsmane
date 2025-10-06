@@ -2,10 +2,17 @@ import { createZodDto } from 'nestjs-zod';
 import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
-export const feedOutDtoWithCounts = feedOutDto.extend({
-  id: z.uuid(),
-  unreadCount: z.number().min(0).nullable(),
-});
+export const feedOutDtoWithCounts = feedOutDto
+  .extend({
+    unreadCount: z.number().min(0).nullable(),
+    icon: z.object({
+      feed_id: z.number().nullable(),
+      icon_id: z.number().nullable(),
+    }),
+  })
+  .omit({
+    minifluxId: true,
+  });
 
 const feedListOutDto = z.object({ feeds: z.array(feedOutDtoWithCounts) });
 

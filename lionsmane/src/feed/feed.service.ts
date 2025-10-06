@@ -14,14 +14,23 @@ import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { getTime, subMonths } from 'date-fns';
-import { and, count, desc, eq, inArray, isNull, or } from 'drizzle-orm';
+import {
+  and,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  inArray,
+  isNull,
+  or,
+} from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { OpmlService } from 'src/opml/opml.service';
-import { ur } from 'zod/v4/locales';
+import { parseDate } from 'src/utils/date-parse';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 
@@ -180,9 +189,12 @@ export class FeedService {
       const { feed: parsedFeed, format } = parseFeed(response?.data);
 
       let favicon: string | null = null;
+      let updated: string | null = null;
       if (format === 'atom') {
         if (!parsedFeed.icon) favicon = await this.fetcher.getFavicon(urlObj);
         else favicon = parsedFeed.icon;
+
+        if (parsedFeed.updated) updated = parsedFeed.updated;
       } else {
         favicon = await this.fetcher.getFavicon(urlObj);
       }
@@ -203,11 +215,12 @@ export class FeedService {
         const [newFeed] = await tx
           .insert(schema.feeds)
           .values({
-            title: title ?? newSubscription.url,
-            url: url,
+            title,
+            url,
             site_url: urlObj.origin,
             icon,
-            updated: subMonths(new Date(), 6),
+            updated: updated ? parseDate(updated) : null,
+            lastChecked: subMonths(new Date(), 6),
             etag_header: response?.headers['etag'] || null,
             last_modified_header: response?.headers['last-modified'] || null,
           })
@@ -313,26 +326,14 @@ export class FeedService {
     );
     const feeds = await this.db
       .select({
-        id: schema.feeds.id,
-        title: schema.feeds.title,
+        ...getTableColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         feed_url: schema.feeds.url,
-        site_url: schema.feeds.site_url,
-        etag_header: schema.feeds.etag_header,
-        last_modified_header: schema.feeds.last_modified_header,
-        parsing_error_count: schema.feeds.parsingErrorCount,
-        parsing_error_message: schema.feeds.parsingErrorMessage,
-        crawler: schema.feeds.crawler,
-        user_agent: schema.feeds.userAgent,
         icon: {
           feed_id: schema.feeds.minifluxId,
           icon_id: schema.icons.id,
         },
-        authors: schema.feeds.authors,
-        categories: schema.feeds.categories,
-        copyright: schema.feeds.copyright,
         image: schema.feeds.image,
-        checked_at: schema.feeds.updated,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
@@ -354,7 +355,7 @@ export class FeedService {
 
     return feeds.map((feed) => ({
       ...feed,
-      checked_at: feed.checked_at.toISOString(),
+      lastChecked: parseDate(feed.lastChecked).toISOString(),
       scraper_rules: null,
       rewrite_rules: null,
       blocklist_rules: null,
@@ -440,23 +441,9 @@ export class FeedService {
 
     const [userFeed] = await this.db
       .select({
-        id: schema.feeds.id,
+        ...getTableColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
-        title: schema.feeds.title,
-        feed_url: schema.feeds.url,
-        site_url: schema.feeds.site_url,
-        authors: schema.feeds.authors,
-        categories: schema.feeds.categories,
         favicon: schema.icons.url,
-        etag_header: schema.feeds.etag_header,
-        last_modified_header: schema.feeds.last_modified_header,
-        parsing_error_count: schema.feeds.parsingErrorCount,
-        parsing_error_message: schema.feeds.parsingErrorMessage,
-        crawler: schema.feeds.crawler,
-        user_agent: schema.feeds.userAgent,
-        copyright: schema.feeds.copyright,
-        image: schema.feeds.image,
-        checked_at: schema.feeds.updated,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
@@ -482,7 +469,7 @@ export class FeedService {
     }
     return {
       ...userFeed,
-      checked_at: userFeed.checked_at.toISOString(),
+      lastChecked: parseDate(userFeed.lastChecked).toISOString(),
       scraper_rules: null,
       rewrite_rules: null,
       blocklist_rules: null,
@@ -499,14 +486,7 @@ export class FeedService {
   async findByUrl(url: string, userId: string) {
     const [userFeed] = await this.db
       .select({
-        id: schema.feeds.id,
-        title: schema.feeds.title,
-        url: schema.feeds.url,
-        authors: schema.feeds.authors,
-        categories: schema.feeds.categories,
-        copyright: schema.feeds.copyright,
-        image: schema.feeds.image,
-        updated: schema.feeds.updated,
+        ...getTableColumns(schema.feeds),
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,

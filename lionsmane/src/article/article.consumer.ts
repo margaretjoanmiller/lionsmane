@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job, Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
@@ -39,12 +40,30 @@ export class ArticleConsumer extends WorkerHost {
       let alt = data.imageAlt;
       if (altText && alt?.length === 0) alt = altText;
 
+      let hash: string | null;
+      if (textContent) {
+        hash = createHash('sha256').update(textContent, 'utf-8').digest('hex');
+      } else if (data.rawContent) {
+        hash = createHash('sha256')
+          .update(data.rawContent, 'utf-8')
+          .digest('hex');
+      } else if (data.description && data.description.length > 0) {
+        hash = createHash('sha256')
+          .update(data.description, 'utf-8')
+          .digest('hex');
+      } else if (data.title) {
+        hash = createHash('sha256').update(data.title, 'utf-8').digest('hex');
+      } else {
+        hash = null;
+      }
+
       const article = await this.articleService.newArticle({
         ...data,
         published: parseDate(data.published).toISOString(),
         updated: data.updated ? parseDate(data.updated).toISOString() : null,
         image,
         imageAlt: alt,
+        hash,
         description: cleanDescription,
         readableText: textContent,
         readableHtml: htmlContent,

@@ -13,11 +13,7 @@ const folderWithFeedsOutSchema = z.object({
   id: z.uuid(),
   name: z.string().min(1).max(255),
   userId: z.string(),
-  feeds: z.array(
-    feedOutDto.omit({ category: true }).extend({
-      id: z.uuid(),
-    }),
-  ),
+  feeds: z.array(feedOutDto.omit({ minifluxId: true })),
 });
 
 export class FolderOutDto extends createZodDto(FolderOutSchema) {}

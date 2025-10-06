@@ -1,5 +1,5 @@
 {
-  "id": "cc6c561a-7a1e-404c-92e0-9b0ec13b098b",
+  "id": "4967d763-513a-42b7-9345-bea003afd8d1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1206,7 +1206,7 @@
           "name": "media",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "youtube": {
           "name": "youtube",
@@ -1255,7 +1255,7 @@
           "name": "itunes",
           "type": "jsonb",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "feedId": {
           "name": "feedId",
@@ -1482,9 +1482,9 @@
         },
         "updated": {
           "name": "updated",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "explicit": {
           "name": "explicit",

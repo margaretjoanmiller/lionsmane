@@ -3,7 +3,16 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import createDOMPurify, { WindowLike } from 'dompurify';
-import { and, desc, eq, isNull, lt, or, sql } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  isNull,
+  lt,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -102,20 +111,7 @@ export class ArticleService {
     }
     const artPages = await this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
@@ -189,21 +185,7 @@ export class ArticleService {
 
     const artPages = await this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
@@ -261,24 +243,7 @@ export class ArticleService {
   async getArticle(id: string, userId: string) {
     const [article] = await this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        rawContent: schema.articles.rawContent,
-        readableText: schema.articles.readableText,
-        readableHtml: schema.articles.readableHtml,
-        fullArticleText: schema.articles.fullArticleText,
-        fullArticleHtml: schema.articles.fullArticleHtml,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isRead: schema.userArticleStates.isRead ?? false,
@@ -318,20 +283,7 @@ export class ArticleService {
   ) {
     const searchedArticles = await this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isRead: schema.userArticleStates.isRead ?? false,
@@ -441,22 +393,7 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
@@ -614,22 +551,7 @@ export class ArticleService {
     }
     const query = this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
@@ -745,22 +667,7 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
@@ -956,22 +863,7 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        rawContent: schema.articles.rawContent,
-        fullArticleText: schema.articles.fullArticleText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
@@ -1163,20 +1055,7 @@ export class ArticleService {
     }
     const artPages = await this.db
       .select({
-        id: schema.articles.id,
-        title: schema.articles.title,
-        url: schema.articles.url,
-        authors: schema.articles.authors,
-        categories: schema.articles.categories,
-        description: schema.articles.description,
-        readableText: schema.articles.readableText,
-        keywords: schema.articles.keywords,
-        image: schema.articles.image,
-        imageAlt: schema.articles.imageAlt,
-        media: schema.articles.media,
-        published: schema.articles.published,
-        updated: schema.articles.updated,
-        feedId: schema.articles.feedId,
+        ...getTableColumns(schema.articles),
         feedTitle: schema.feeds.title,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
