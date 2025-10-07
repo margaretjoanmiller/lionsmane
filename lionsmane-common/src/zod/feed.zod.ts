@@ -157,5 +157,6 @@ export const feedSchema = z.object({
     })
     .nullable(),
   geo: geoSchema,
+  icon: z.string().optional(),
   favicon: z.url().nullable(),
 });

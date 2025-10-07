@@ -1,8 +1,8 @@
+import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
-import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
-export const feedOutDtoWithCounts = feedOutDto
+export const feedSchemaWithCounts = feedSchema
   .extend({
     unreadCount: z.number().min(0).nullable(),
     favicon: z.url().nullable(),
@@ -13,7 +13,7 @@ export const feedOutDtoWithCounts = feedOutDto
     icon: true,
   });
 
-const feedListOutDto = z.object({ feeds: z.array(feedOutDtoWithCounts) });
+const feedListOutDto = z.object({ feeds: z.array(feedSchemaWithCounts) });
 
 const hiddenFeedList = feedListOutDto.extend({
   articles: z.array(
@@ -38,5 +38,5 @@ const hiddenFeedList = feedListOutDto.extend({
   ),
 });
 
-export class FeedOutWithCountsDto extends createZodDto(feedOutDtoWithCounts) {}
+export class FeedOutWithCountsDto extends createZodDto(feedSchemaWithCounts) {}
 export class HiddenFeedListDto extends createZodDto(hiddenFeedList) {}

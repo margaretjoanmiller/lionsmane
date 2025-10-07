@@ -964,23 +964,34 @@ export interface components {
             minifluxId: number;
             title: string;
             subtitle: string | null;
+            /** Format: uri */
             url: string;
-            site_url: string;
+            site_url: string | null;
             etag_header: string | null;
             last_modified_header: string | null;
             parsingErrorMessage: string | null;
+            /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: boolean;
-            authors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            contributors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            categories: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
+            crawler: string | null;
+            /** @default [] */
+            authors: {
+                name: string | null;
+                email: string | null;
+                uri: string | null;
+            }[];
+            /** @default [] */
+            contributors: {
+                name: string | null;
+                email: string | null;
+                uri: string | null;
+            }[];
+            /** @default [] */
+            categories: {
+                term: string | null;
+                scheme: string | null;
+                label: string | null;
+            }[];
             copyright: string | null;
             image: string | null;
             /** Format: date-time */
@@ -989,23 +1000,170 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: number | null;
+            updateFrequency: string | null;
             updateBase: string | null;
             publisher: string | null;
-            contributor: string | null;
-            format: string | null;
-            language: string | null;
             rights: string | null;
-            youtube: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            podcast: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            geo: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            icon: number | null;
+            youtube: {
+                channelId: string | null;
+                playlistId: string | null;
+            };
+            podcast: {
+                locked: {
+                    value: boolean;
+                    owner?: string;
+                };
+                fundings: {
+                    /** Format: uri */
+                    url: string;
+                    display?: string;
+                }[];
+                persons?: {
+                    display: string;
+                    role?: string;
+                    group?: string;
+                    /** Format: uri */
+                    img?: string;
+                    /** Format: uri */
+                    href?: string;
+                }[];
+                location?: {
+                    display: string;
+                    geo?: string;
+                    osm?: string;
+                };
+                trailers?: {
+                    display: string;
+                    /** Format: uri */
+                    url: string;
+                    pubDate: string;
+                    length?: number;
+                    type?: string;
+                    season?: number;
+                }[];
+                guid?: string;
+                value?: {
+                    type: string;
+                    method: string;
+                    suggested?: number;
+                    valueRecipients?: {
+                        name?: string;
+                        customKey?: string;
+                        customValue?: string;
+                        type: string;
+                        address: string;
+                        split: number;
+                        fee?: boolean;
+                    }[];
+                    valueTimeSplits?: {
+                        startTime: number;
+                        duration: number;
+                        remoteStartTime?: number;
+                        remotePercentage?: number;
+                        remoteItem?: {
+                            feedGuid: string;
+                            /** Format: uri */
+                            feedUrl?: string;
+                            itemGuid?: string;
+                            medium?: string;
+                        };
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                    }[];
+                };
+                medium?: string;
+                images: {
+                    srcset?: string;
+                }[];
+                liveItems?: {
+                    status: string;
+                    /** Format: date-time */
+                    start: string;
+                    /** Format: date-time */
+                    end: string;
+                    contentLinks?: {
+                        /** Format: uri */
+                        href: string;
+                        display?: string;
+                    }[];
+                }[];
+                blocks?: {
+                    value: boolean;
+                    id?: string;
+                }[];
+                txts?: {
+                    display: string;
+                    purpose?: string;
+                }[];
+                remoteItems?: {
+                    feedGuid: string;
+                    /** Format: uri */
+                    feedUrl?: string;
+                    itemGuid?: string;
+                    medium?: string;
+                }[];
+                podroll?: {
+                    remoteItems?: {
+                        feedGuid: string;
+                        /** Format: uri */
+                        feedUrl?: string;
+                        itemGuid?: string;
+                        medium?: string;
+                    }[];
+                };
+                updateFrequency?: {
+                    display: string;
+                    complete?: boolean;
+                    dtstart?: string;
+                    rrule?: string;
+                };
+                podping?: {
+                    usesPodping?: boolean;
+                };
+            } | null;
+            geo: {
+                point?: {
+                    lat: number;
+                    lng: number;
+                };
+                line?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                polygon?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                box?: {
+                    lowerCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                    upperCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                };
+                featureTypeTag?: string;
+                relationshipTag?: string;
+                featureName?: string;
+                elev?: number;
+                floor?: number;
+                radius?: number;
+            };
+            icon?: string;
+            favicon: string | null;
             subscription: {
                 /** Format: uuid */
                 id: string;
@@ -1021,23 +1179,34 @@ export interface components {
             id: string;
             title: string;
             subtitle: string | null;
+            /** Format: uri */
             url: string;
-            site_url: string;
+            site_url: string | null;
             etag_header: string | null;
             last_modified_header: string | null;
             parsingErrorMessage: string | null;
+            /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: boolean;
-            authors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            contributors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            categories: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
+            crawler: string | null;
+            /** @default [] */
+            authors: {
+                name: string | null;
+                email: string | null;
+                uri: string | null;
+            }[];
+            /** @default [] */
+            contributors: {
+                name: string | null;
+                email: string | null;
+                uri: string | null;
+            }[];
+            /** @default [] */
+            categories: {
+                term: string | null;
+                scheme: string | null;
+                label: string | null;
+            }[];
             copyright: string | null;
             image: string | null;
             /** Format: date-time */
@@ -1046,24 +1215,170 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: number | null;
+            updateFrequency: string | null;
             updateBase: string | null;
             publisher: string | null;
-            contributor: string | null;
-            format: string | null;
-            language: string | null;
             rights: string | null;
-            youtube: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            podcast: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            geo: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            unreadCount: number | null;
+            youtube: {
+                channelId: string | null;
+                playlistId: string | null;
+            };
+            podcast: {
+                locked: {
+                    value: boolean;
+                    owner?: string;
+                };
+                fundings: {
+                    /** Format: uri */
+                    url: string;
+                    display?: string;
+                }[];
+                persons?: {
+                    display: string;
+                    role?: string;
+                    group?: string;
+                    /** Format: uri */
+                    img?: string;
+                    /** Format: uri */
+                    href?: string;
+                }[];
+                location?: {
+                    display: string;
+                    geo?: string;
+                    osm?: string;
+                };
+                trailers?: {
+                    display: string;
+                    /** Format: uri */
+                    url: string;
+                    pubDate: string;
+                    length?: number;
+                    type?: string;
+                    season?: number;
+                }[];
+                guid?: string;
+                value?: {
+                    type: string;
+                    method: string;
+                    suggested?: number;
+                    valueRecipients?: {
+                        name?: string;
+                        customKey?: string;
+                        customValue?: string;
+                        type: string;
+                        address: string;
+                        split: number;
+                        fee?: boolean;
+                    }[];
+                    valueTimeSplits?: {
+                        startTime: number;
+                        duration: number;
+                        remoteStartTime?: number;
+                        remotePercentage?: number;
+                        remoteItem?: {
+                            feedGuid: string;
+                            /** Format: uri */
+                            feedUrl?: string;
+                            itemGuid?: string;
+                            medium?: string;
+                        };
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                    }[];
+                };
+                medium?: string;
+                images: {
+                    srcset?: string;
+                }[];
+                liveItems?: {
+                    status: string;
+                    /** Format: date-time */
+                    start: string;
+                    /** Format: date-time */
+                    end: string;
+                    contentLinks?: {
+                        /** Format: uri */
+                        href: string;
+                        display?: string;
+                    }[];
+                }[];
+                blocks?: {
+                    value: boolean;
+                    id?: string;
+                }[];
+                txts?: {
+                    display: string;
+                    purpose?: string;
+                }[];
+                remoteItems?: {
+                    feedGuid: string;
+                    /** Format: uri */
+                    feedUrl?: string;
+                    itemGuid?: string;
+                    medium?: string;
+                }[];
+                podroll?: {
+                    remoteItems?: {
+                        feedGuid: string;
+                        /** Format: uri */
+                        feedUrl?: string;
+                        itemGuid?: string;
+                        medium?: string;
+                    }[];
+                };
+                updateFrequency?: {
+                    display: string;
+                    complete?: boolean;
+                    dtstart?: string;
+                    rrule?: string;
+                };
+                podping?: {
+                    usesPodping?: boolean;
+                };
+            } | null;
+            geo: {
+                point?: {
+                    lat: number;
+                    lng: number;
+                };
+                line?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                polygon?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                box?: {
+                    lowerCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                    upperCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                };
+                featureTypeTag?: string;
+                relationshipTag?: string;
+                featureName?: string;
+                elev?: number;
+                floor?: number;
+                radius?: number;
+            };
             favicon: string | null;
+            unreadCount: number | null;
             folderId: string | null;
         };
         DiscoverDto: {
@@ -1103,72 +1418,255 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string | null;
-                url: string | null;
-                authors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                contributors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                minifluxId: number;
+                title: string;
+                /** Format: uri */
+                url: string;
+                /** @default [] */
+                authors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
+                /** @default [] */
+                contributors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
                 subject: string | null;
                 publisher: string | null;
                 contributor: string | null;
                 format: string | null;
                 language: string | null;
                 rights: string | null;
-                categories: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                categories: {
+                    term: string;
+                    scheme?: string;
+                    label?: string;
+                }[];
                 description: string | null;
                 comments: string | null;
-                commentRss: string | null;
-                geo: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                hash: string | null;
+                commentsRss: string | null;
+                geo: {
+                    point?: {
+                        lat: number;
+                        lng: number;
+                    };
+                    line?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    polygon?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    box?: {
+                        lowerCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                        upperCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                    };
+                    featureTypeTag?: string;
+                    relationshipTag?: string;
+                    featureName?: string;
+                    elev?: number;
+                    floor?: number;
+                    radius?: number;
+                };
+                /** Format: sha256_hex */
+                hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
-                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
+                /** @default [] */
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                youtube: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                podcast: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                thread: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
+                media: {
+                    contents: {
+                        /** Format: uri */
+                        url: string;
+                        fileSize?: number;
+                        type?: string;
+                        medium?: string;
+                        isDefault?: boolean;
+                        expression?: string;
+                        bitrate?: number;
+                        framerate?: number;
+                        samplingrate?: number;
+                        channels?: number;
+                        duration?: number;
+                        height?: number;
+                        width?: number;
+                        lang?: string;
+                    }[];
+                } | null;
+                youtube: {
+                    videoId?: string;
+                    channelId?: string;
+                } | null;
+                podcast: {
+                    transcripts?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                        language?: string;
+                        rel?: string;
+                    };
+                    chapters?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                    };
+                    soundbites?: {
+                        startTime: number;
+                        duration: number;
+                        display?: string;
+                    }[];
+                    persons?: {
+                        display: string;
+                        role?: string;
+                        group?: string;
+                        /** Format: uri */
+                        img?: string;
+                        /** Format: uri */
+                        href?: string;
+                    }[];
+                    location?: {
+                        display: string;
+                        geo?: string;
+                        osm?: string;
+                    };
+                    episode?: {
+                        number: number;
+                        display?: string;
+                    };
+                    license?: {
+                        display: string;
+                        /** Format: uri */
+                        url?: string;
+                    };
+                    alternateEnclosures?: {
+                        type: string;
+                        length?: number;
+                        bitrate?: number;
+                        height?: number;
+                        lang?: string;
+                        title?: string;
+                        rel?: string;
+                        codecs?: string;
+                        default?: boolean;
+                        sources?: {
+                            /** Format: uri */
+                            uri: string;
+                            contentType?: string;
+                        }[];
+                        integrity?: {
+                            type: string;
+                            value: string;
+                        };
+                    }[];
+                    value?: {
+                        type: string;
+                        method: string;
+                        suggested?: number;
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                        valueTimeSplits?: {
+                            startTime: number;
+                            duration: number;
+                            remoteStartTime?: number;
+                            remotePercentage?: number;
+                            remoteItem?: {
+                                feedGuid: string;
+                                /** Format: uri */
+                                feedUrl?: string;
+                                itemGuid?: string;
+                                medium?: string;
+                            };
+                            valueRecipients?: {
+                                name?: string;
+                                customKey?: string;
+                                customValue?: string;
+                                type: string;
+                                address: string;
+                                split: number;
+                                fee?: boolean;
+                            }[];
+                        }[];
+                    };
+                    images?: {
+                        srcset?: string;
+                    };
+                    socialInteracts?: {
+                        /** Format: uri */
+                        uri?: string;
+                        protocol: string;
+                        accountId?: string;
+                        accountUrl?: string;
+                        priority?: number;
+                    }[];
+                    txts?: {
+                        display: string;
+                        purpose?: string;
+                    }[];
+                } | null;
+                thread: {
+                    total?: number;
+                    inReplyTos?: {
+                        ref: string;
+                        /** Format: uri */
+                        href?: string;
+                        type?: string;
+                        source?: string;
+                    }[];
+                } | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
-                guid: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                enclosures: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                itunes: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
+                guid: {
+                    /** @default false */
+                    isPermalink: boolean;
+                    value: string;
+                };
+                /** @default [] */
+                enclosures: {
+                    /** Format: uri */
+                    url: string;
+                    type: string;
+                    length: number | null;
+                }[];
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
                 /** @default [] */
                 contentWarning: string[] | null;
+                /** Format: uuid */
+                feedId: string;
+                feedTitle: string | null;
             }[];
         };
         ArticleStatusDto_Output: {
@@ -1186,65 +1684,246 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string | null;
-                url: string | null;
-                authors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                contributors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                minifluxId: number;
+                title: string;
+                /** Format: uri */
+                url: string;
+                /** @default [] */
+                authors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
+                /** @default [] */
+                contributors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
                 subject: string | null;
                 publisher: string | null;
                 contributor: string | null;
                 format: string | null;
                 language: string | null;
                 rights: string | null;
-                categories: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                categories: {
+                    term: string;
+                    scheme?: string;
+                    label?: string;
+                }[];
                 description: string | null;
                 comments: string | null;
-                commentRss: string | null;
-                geo: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                hash: string | null;
+                commentsRss: string | null;
+                geo: {
+                    point?: {
+                        lat: number;
+                        lng: number;
+                    };
+                    line?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    polygon?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    box?: {
+                        lowerCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                        upperCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                    };
+                    featureTypeTag?: string;
+                    relationshipTag?: string;
+                    featureName?: string;
+                    elev?: number;
+                    floor?: number;
+                    radius?: number;
+                };
+                /** Format: sha256_hex */
+                hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
-                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
+                /** @default [] */
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                youtube: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                podcast: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                thread: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
+                media: {
+                    contents: {
+                        /** Format: uri */
+                        url: string;
+                        fileSize?: number;
+                        type?: string;
+                        medium?: string;
+                        isDefault?: boolean;
+                        expression?: string;
+                        bitrate?: number;
+                        framerate?: number;
+                        samplingrate?: number;
+                        channels?: number;
+                        duration?: number;
+                        height?: number;
+                        width?: number;
+                        lang?: string;
+                    }[];
+                } | null;
+                youtube: {
+                    videoId?: string;
+                    channelId?: string;
+                } | null;
+                podcast: {
+                    transcripts?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                        language?: string;
+                        rel?: string;
+                    };
+                    chapters?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                    };
+                    soundbites?: {
+                        startTime: number;
+                        duration: number;
+                        display?: string;
+                    }[];
+                    persons?: {
+                        display: string;
+                        role?: string;
+                        group?: string;
+                        /** Format: uri */
+                        img?: string;
+                        /** Format: uri */
+                        href?: string;
+                    }[];
+                    location?: {
+                        display: string;
+                        geo?: string;
+                        osm?: string;
+                    };
+                    episode?: {
+                        number: number;
+                        display?: string;
+                    };
+                    license?: {
+                        display: string;
+                        /** Format: uri */
+                        url?: string;
+                    };
+                    alternateEnclosures?: {
+                        type: string;
+                        length?: number;
+                        bitrate?: number;
+                        height?: number;
+                        lang?: string;
+                        title?: string;
+                        rel?: string;
+                        codecs?: string;
+                        default?: boolean;
+                        sources?: {
+                            /** Format: uri */
+                            uri: string;
+                            contentType?: string;
+                        }[];
+                        integrity?: {
+                            type: string;
+                            value: string;
+                        };
+                    }[];
+                    value?: {
+                        type: string;
+                        method: string;
+                        suggested?: number;
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                        valueTimeSplits?: {
+                            startTime: number;
+                            duration: number;
+                            remoteStartTime?: number;
+                            remotePercentage?: number;
+                            remoteItem?: {
+                                feedGuid: string;
+                                /** Format: uri */
+                                feedUrl?: string;
+                                itemGuid?: string;
+                                medium?: string;
+                            };
+                            valueRecipients?: {
+                                name?: string;
+                                customKey?: string;
+                                customValue?: string;
+                                type: string;
+                                address: string;
+                                split: number;
+                                fee?: boolean;
+                            }[];
+                        }[];
+                    };
+                    images?: {
+                        srcset?: string;
+                    };
+                    socialInteracts?: {
+                        /** Format: uri */
+                        uri?: string;
+                        protocol: string;
+                        accountId?: string;
+                        accountUrl?: string;
+                        priority?: number;
+                    }[];
+                    txts?: {
+                        display: string;
+                        purpose?: string;
+                    }[];
+                } | null;
+                thread: {
+                    total?: number;
+                    inReplyTos?: {
+                        ref: string;
+                        /** Format: uri */
+                        href?: string;
+                        type?: string;
+                        source?: string;
+                    }[];
+                } | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
-                guid: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                enclosures: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                itunes: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                /** Format: uuid */
-                feedId: string;
+                guid: {
+                    /** @default false */
+                    isPermalink: boolean;
+                    value: string;
+                };
+                /** @default [] */
+                enclosures: {
+                    /** Format: uri */
+                    url: string;
+                    type: string;
+                    length: number | null;
+                }[];
                 feedTitle: string | null;
                 /** @default false */
                 isRead: boolean | null;
@@ -1263,66 +1942,246 @@ export interface components {
             articles: {
                 /** Format: uuid */
                 id: string;
-                title: string | null;
-                url: string | null;
-                authors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                contributors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                minifluxId: number;
+                title: string;
+                /** Format: uri */
+                url: string;
+                /** @default [] */
+                authors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
+                /** @default [] */
+                contributors: {
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
+                }[];
                 subject: string | null;
                 publisher: string | null;
                 contributor: string | null;
                 format: string | null;
                 language: string | null;
                 rights: string | null;
-                categories: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                categories: {
+                    term: string;
+                    scheme?: string;
+                    label?: string;
+                }[];
                 description: string | null;
                 comments: string | null;
-                commentRss: string | null;
-                geo: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                hash: string | null;
+                commentsRss: string | null;
+                geo: {
+                    point?: {
+                        lat: number;
+                        lng: number;
+                    };
+                    line?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    polygon?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    box?: {
+                        lowerCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                        upperCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                    };
+                    featureTypeTag?: string;
+                    relationshipTag?: string;
+                    featureName?: string;
+                    elev?: number;
+                    floor?: number;
+                    radius?: number;
+                };
+                /** Format: sha256_hex */
+                hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
-                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
+                /** @default [] */
                 keywords: string[];
                 image: string | null;
                 imageAlt: string | null;
-                media: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                youtube: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                podcast: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                thread: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
+                media: {
+                    contents: {
+                        /** Format: uri */
+                        url: string;
+                        fileSize?: number;
+                        type?: string;
+                        medium?: string;
+                        isDefault?: boolean;
+                        expression?: string;
+                        bitrate?: number;
+                        framerate?: number;
+                        samplingrate?: number;
+                        channels?: number;
+                        duration?: number;
+                        height?: number;
+                        width?: number;
+                        lang?: string;
+                    }[];
+                } | null;
+                youtube: {
+                    videoId?: string;
+                    channelId?: string;
+                } | null;
+                podcast: {
+                    transcripts?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                        language?: string;
+                        rel?: string;
+                    };
+                    chapters?: {
+                        /** Format: uri */
+                        url: string;
+                        type: string;
+                    };
+                    soundbites?: {
+                        startTime: number;
+                        duration: number;
+                        display?: string;
+                    }[];
+                    persons?: {
+                        display: string;
+                        role?: string;
+                        group?: string;
+                        /** Format: uri */
+                        img?: string;
+                        /** Format: uri */
+                        href?: string;
+                    }[];
+                    location?: {
+                        display: string;
+                        geo?: string;
+                        osm?: string;
+                    };
+                    episode?: {
+                        number: number;
+                        display?: string;
+                    };
+                    license?: {
+                        display: string;
+                        /** Format: uri */
+                        url?: string;
+                    };
+                    alternateEnclosures?: {
+                        type: string;
+                        length?: number;
+                        bitrate?: number;
+                        height?: number;
+                        lang?: string;
+                        title?: string;
+                        rel?: string;
+                        codecs?: string;
+                        default?: boolean;
+                        sources?: {
+                            /** Format: uri */
+                            uri: string;
+                            contentType?: string;
+                        }[];
+                        integrity?: {
+                            type: string;
+                            value: string;
+                        };
+                    }[];
+                    value?: {
+                        type: string;
+                        method: string;
+                        suggested?: number;
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                        valueTimeSplits?: {
+                            startTime: number;
+                            duration: number;
+                            remoteStartTime?: number;
+                            remotePercentage?: number;
+                            remoteItem?: {
+                                feedGuid: string;
+                                /** Format: uri */
+                                feedUrl?: string;
+                                itemGuid?: string;
+                                medium?: string;
+                            };
+                            valueRecipients?: {
+                                name?: string;
+                                customKey?: string;
+                                customValue?: string;
+                                type: string;
+                                address: string;
+                                split: number;
+                                fee?: boolean;
+                            }[];
+                        }[];
+                    };
+                    images?: {
+                        srcset?: string;
+                    };
+                    socialInteracts?: {
+                        /** Format: uri */
+                        uri?: string;
+                        protocol: string;
+                        accountId?: string;
+                        accountUrl?: string;
+                        priority?: number;
+                    }[];
+                    txts?: {
+                        display: string;
+                        purpose?: string;
+                    }[];
+                } | null;
+                thread: {
+                    total?: number;
+                    inReplyTos?: {
+                        ref: string;
+                        /** Format: uri */
+                        href?: string;
+                        type?: string;
+                        source?: string;
+                    }[];
+                } | null;
                 /** Format: date-time */
                 published: string;
                 updated: string | null;
-                guid: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                enclosures: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                itunes: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
+                guid: {
+                    /** @default false */
+                    isPermalink: boolean;
+                    value: string;
+                };
+                /** @default [] */
+                enclosures: {
+                    /** Format: uri */
+                    url: string;
+                    type: string;
+                    length: number | null;
+                }[];
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
@@ -1330,78 +2189,255 @@ export interface components {
                 /** @default [] */
                 contentWarning: string[] | null;
                 /** Format: uuid */
+                feedId: string;
+                feedTitle: string | null;
+                /** Format: uuid */
                 ruleId: string;
             }[];
         };
         ArticleDetailDto_Output: {
             /** Format: uuid */
             id: string;
-            title: string | null;
-            url: string | null;
-            authors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            contributors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
+            minifluxId: number;
+            title: string;
+            /** Format: uri */
+            url: string;
+            /** @default [] */
+            authors: {
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
+            }[];
+            /** @default [] */
+            contributors: {
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
+            }[];
             subject: string | null;
             publisher: string | null;
             contributor: string | null;
             format: string | null;
             language: string | null;
             rights: string | null;
-            categories: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
+            categories: {
+                term: string;
+                scheme?: string;
+                label?: string;
+            }[];
             description: string | null;
             comments: string | null;
-            commentRss: string | null;
-            geo: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            hash: string | null;
+            commentsRss: string | null;
+            geo: {
+                point?: {
+                    lat: number;
+                    lng: number;
+                };
+                line?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                polygon?: {
+                    points: {
+                        lat: number;
+                        lng: number;
+                    }[];
+                };
+                box?: {
+                    lowerCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                    upperCorner: {
+                        lat: number;
+                        lng: number;
+                    };
+                };
+                featureTypeTag?: string;
+                relationshipTag?: string;
+                featureName?: string;
+                elev?: number;
+                floor?: number;
+                radius?: number;
+            };
+            /** Format: sha256_hex */
+            hash: string;
             rawContent: string | null;
             readableHtml: string | null;
-            readableText: string | null;
             fullArticleHtml: string | null;
             fullArticleText: string | null;
             encoded: string | null;
+            /** @default [] */
             keywords: string[];
             image: string | null;
             imageAlt: string | null;
-            media: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            youtube: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            podcast: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            thread: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
+            media: {
+                contents: {
+                    /** Format: uri */
+                    url: string;
+                    fileSize?: number;
+                    type?: string;
+                    medium?: string;
+                    isDefault?: boolean;
+                    expression?: string;
+                    bitrate?: number;
+                    framerate?: number;
+                    samplingrate?: number;
+                    channels?: number;
+                    duration?: number;
+                    height?: number;
+                    width?: number;
+                    lang?: string;
+                }[];
+            } | null;
+            youtube: {
+                videoId?: string;
+                channelId?: string;
+            } | null;
+            podcast: {
+                transcripts?: {
+                    /** Format: uri */
+                    url: string;
+                    type: string;
+                    language?: string;
+                    rel?: string;
+                };
+                chapters?: {
+                    /** Format: uri */
+                    url: string;
+                    type: string;
+                };
+                soundbites?: {
+                    startTime: number;
+                    duration: number;
+                    display?: string;
+                }[];
+                persons?: {
+                    display: string;
+                    role?: string;
+                    group?: string;
+                    /** Format: uri */
+                    img?: string;
+                    /** Format: uri */
+                    href?: string;
+                }[];
+                location?: {
+                    display: string;
+                    geo?: string;
+                    osm?: string;
+                };
+                episode?: {
+                    number: number;
+                    display?: string;
+                };
+                license?: {
+                    display: string;
+                    /** Format: uri */
+                    url?: string;
+                };
+                alternateEnclosures?: {
+                    type: string;
+                    length?: number;
+                    bitrate?: number;
+                    height?: number;
+                    lang?: string;
+                    title?: string;
+                    rel?: string;
+                    codecs?: string;
+                    default?: boolean;
+                    sources?: {
+                        /** Format: uri */
+                        uri: string;
+                        contentType?: string;
+                    }[];
+                    integrity?: {
+                        type: string;
+                        value: string;
+                    };
+                }[];
+                value?: {
+                    type: string;
+                    method: string;
+                    suggested?: number;
+                    valueRecipients?: {
+                        name?: string;
+                        customKey?: string;
+                        customValue?: string;
+                        type: string;
+                        address: string;
+                        split: number;
+                        fee?: boolean;
+                    }[];
+                    valueTimeSplits?: {
+                        startTime: number;
+                        duration: number;
+                        remoteStartTime?: number;
+                        remotePercentage?: number;
+                        remoteItem?: {
+                            feedGuid: string;
+                            /** Format: uri */
+                            feedUrl?: string;
+                            itemGuid?: string;
+                            medium?: string;
+                        };
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                    }[];
+                };
+                images?: {
+                    srcset?: string;
+                };
+                socialInteracts?: {
+                    /** Format: uri */
+                    uri?: string;
+                    protocol: string;
+                    accountId?: string;
+                    accountUrl?: string;
+                    priority?: number;
+                }[];
+                txts?: {
+                    display: string;
+                    purpose?: string;
+                }[];
+            } | null;
+            thread: {
+                total?: number;
+                inReplyTos?: {
+                    ref: string;
+                    /** Format: uri */
+                    href?: string;
+                    type?: string;
+                    source?: string;
+                }[];
+            } | null;
             /** Format: date-time */
             published: string;
             updated: string | null;
-            guid: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            enclosures: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            itunes: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            /** Format: uuid */
-            feedId: string;
-            feedTitle: string;
-            isRead: boolean | null;
-            isStarred: boolean | null;
-            isBlurred: boolean | null;
-            isHidden: boolean | null;
+            guid: {
+                /** @default false */
+                isPermalink: boolean;
+                value: string;
+            };
             /** @default [] */
-            contentWarning: string[] | null;
+            enclosures: {
+                /** Format: uri */
+                url: string;
+                type: string;
+                length: number | null;
+            }[];
         };
         CreateFolderDto: {
             name: string;
@@ -1424,23 +2460,34 @@ export interface components {
                 id: string;
                 title: string;
                 subtitle: string | null;
+                /** Format: uri */
                 url: string;
-                site_url: string;
+                site_url: string | null;
                 etag_header: string | null;
                 last_modified_header: string | null;
                 parsingErrorMessage: string | null;
+                /** @default 0 */
                 parsingErrorCount: number;
                 userAgent: string | null;
-                crawler: boolean;
-                authors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                contributors: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
-                categories: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                crawler: string | null;
+                /** @default [] */
+                authors: {
+                    name: string | null;
+                    email: string | null;
+                    uri: string | null;
+                }[];
+                /** @default [] */
+                contributors: {
+                    name: string | null;
+                    email: string | null;
+                    uri: string | null;
+                }[];
+                /** @default [] */
+                categories: {
+                    term: string | null;
+                    scheme: string | null;
+                    label: string | null;
+                }[];
                 copyright: string | null;
                 image: string | null;
                 /** Format: date-time */
@@ -1449,22 +2496,168 @@ export interface components {
                 explicit: boolean | null;
                 subject: string | null;
                 updatePeriod: string | null;
-                updateFrequency: number | null;
+                updateFrequency: string | null;
                 updateBase: string | null;
                 publisher: string | null;
-                contributor: string | null;
-                format: string | null;
-                language: string | null;
                 rights: string | null;
-                youtube: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                podcast: ((string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[]) | null;
-                geo: (string | number | boolean | null) | {
-                    [key: string]: unknown;
-                } | unknown[];
+                youtube: {
+                    channelId: string | null;
+                    playlistId: string | null;
+                };
+                podcast: {
+                    locked: {
+                        value: boolean;
+                        owner?: string;
+                    };
+                    fundings: {
+                        /** Format: uri */
+                        url: string;
+                        display?: string;
+                    }[];
+                    persons?: {
+                        display: string;
+                        role?: string;
+                        group?: string;
+                        /** Format: uri */
+                        img?: string;
+                        /** Format: uri */
+                        href?: string;
+                    }[];
+                    location?: {
+                        display: string;
+                        geo?: string;
+                        osm?: string;
+                    };
+                    trailers?: {
+                        display: string;
+                        /** Format: uri */
+                        url: string;
+                        pubDate: string;
+                        length?: number;
+                        type?: string;
+                        season?: number;
+                    }[];
+                    guid?: string;
+                    value?: {
+                        type: string;
+                        method: string;
+                        suggested?: number;
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                        valueTimeSplits?: {
+                            startTime: number;
+                            duration: number;
+                            remoteStartTime?: number;
+                            remotePercentage?: number;
+                            remoteItem?: {
+                                feedGuid: string;
+                                /** Format: uri */
+                                feedUrl?: string;
+                                itemGuid?: string;
+                                medium?: string;
+                            };
+                            valueRecipients?: {
+                                name?: string;
+                                customKey?: string;
+                                customValue?: string;
+                                type: string;
+                                address: string;
+                                split: number;
+                                fee?: boolean;
+                            }[];
+                        }[];
+                    };
+                    medium?: string;
+                    images: {
+                        srcset?: string;
+                    }[];
+                    liveItems?: {
+                        status: string;
+                        /** Format: date-time */
+                        start: string;
+                        /** Format: date-time */
+                        end: string;
+                        contentLinks?: {
+                            /** Format: uri */
+                            href: string;
+                            display?: string;
+                        }[];
+                    }[];
+                    blocks?: {
+                        value: boolean;
+                        id?: string;
+                    }[];
+                    txts?: {
+                        display: string;
+                        purpose?: string;
+                    }[];
+                    remoteItems?: {
+                        feedGuid: string;
+                        /** Format: uri */
+                        feedUrl?: string;
+                        itemGuid?: string;
+                        medium?: string;
+                    }[];
+                    podroll?: {
+                        remoteItems?: {
+                            feedGuid: string;
+                            /** Format: uri */
+                            feedUrl?: string;
+                            itemGuid?: string;
+                            medium?: string;
+                        }[];
+                    };
+                    updateFrequency?: {
+                        display: string;
+                        complete?: boolean;
+                        dtstart?: string;
+                        rrule?: string;
+                    };
+                    podping?: {
+                        usesPodping?: boolean;
+                    };
+                } | null;
+                geo: {
+                    point?: {
+                        lat: number;
+                        lng: number;
+                    };
+                    line?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    polygon?: {
+                        points: {
+                            lat: number;
+                            lng: number;
+                        }[];
+                    };
+                    box?: {
+                        lowerCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                        upperCorner: {
+                            lat: number;
+                            lng: number;
+                        };
+                    };
+                    featureTypeTag?: string;
+                    relationshipTag?: string;
+                    featureName?: string;
+                    elev?: number;
+                    floor?: number;
+                    radius?: number;
+                };
                 favicon: string | null;
             }[];
         };
@@ -1544,17 +2737,22 @@ export interface components {
             minifluxId: number;
             title: string;
             subtitle: string | null;
+            /** Format: uri */
             url: string;
-            site_url: string;
+            site_url: string | null;
             etag_header: string | null;
             last_modified_header: string | null;
             parsingErrorMessage: string | null;
+            /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: boolean;
-            contributors: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
+            crawler: string | null;
+            /** @default [] */
+            contributors: {
+                name: string | null;
+                email: string | null;
+                uri: string | null;
+            }[];
             image: string | null;
             /** Format: date-time */
             lastChecked: string;
@@ -1562,23 +2760,131 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: number | null;
+            updateFrequency: string | null;
             updateBase: string | null;
             publisher: string | null;
-            contributor: string | null;
-            format: string | null;
-            language: string | null;
             rights: string | null;
-            youtube: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            podcast: ((string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[]) | null;
-            geo: (string | number | boolean | null) | {
-                [key: string]: unknown;
-            } | unknown[];
-            icon: number | null;
+            podcast: {
+                locked: {
+                    value: boolean;
+                    owner?: string;
+                };
+                fundings: {
+                    /** Format: uri */
+                    url: string;
+                    display?: string;
+                }[];
+                persons?: {
+                    display: string;
+                    role?: string;
+                    group?: string;
+                    /** Format: uri */
+                    img?: string;
+                    /** Format: uri */
+                    href?: string;
+                }[];
+                location?: {
+                    display: string;
+                    geo?: string;
+                    osm?: string;
+                };
+                trailers?: {
+                    display: string;
+                    /** Format: uri */
+                    url: string;
+                    pubDate: string;
+                    length?: number;
+                    type?: string;
+                    season?: number;
+                }[];
+                guid?: string;
+                value?: {
+                    type: string;
+                    method: string;
+                    suggested?: number;
+                    valueRecipients?: {
+                        name?: string;
+                        customKey?: string;
+                        customValue?: string;
+                        type: string;
+                        address: string;
+                        split: number;
+                        fee?: boolean;
+                    }[];
+                    valueTimeSplits?: {
+                        startTime: number;
+                        duration: number;
+                        remoteStartTime?: number;
+                        remotePercentage?: number;
+                        remoteItem?: {
+                            feedGuid: string;
+                            /** Format: uri */
+                            feedUrl?: string;
+                            itemGuid?: string;
+                            medium?: string;
+                        };
+                        valueRecipients?: {
+                            name?: string;
+                            customKey?: string;
+                            customValue?: string;
+                            type: string;
+                            address: string;
+                            split: number;
+                            fee?: boolean;
+                        }[];
+                    }[];
+                };
+                medium?: string;
+                images: {
+                    srcset?: string;
+                }[];
+                liveItems?: {
+                    status: string;
+                    /** Format: date-time */
+                    start: string;
+                    /** Format: date-time */
+                    end: string;
+                    contentLinks?: {
+                        /** Format: uri */
+                        href: string;
+                        display?: string;
+                    }[];
+                }[];
+                blocks?: {
+                    value: boolean;
+                    id?: string;
+                }[];
+                txts?: {
+                    display: string;
+                    purpose?: string;
+                }[];
+                remoteItems?: {
+                    feedGuid: string;
+                    /** Format: uri */
+                    feedUrl?: string;
+                    itemGuid?: string;
+                    medium?: string;
+                }[];
+                podroll?: {
+                    remoteItems?: {
+                        feedGuid: string;
+                        /** Format: uri */
+                        feedUrl?: string;
+                        itemGuid?: string;
+                        medium?: string;
+                    }[];
+                };
+                updateFrequency?: {
+                    display: string;
+                    complete?: boolean;
+                    dtstart?: string;
+                    rrule?: string;
+                };
+                podping?: {
+                    usesPodping?: boolean;
+                };
+            } | null;
+            favicon: string | null;
         };
         CountersDto_Output: {
             reads: {
@@ -1600,31 +2906,6 @@ export interface components {
     headers: never;
     pathItems: never;
 }
-export type SchemaSubscribeFeedDto = components['schemas']['SubscribeFeedDto'];
-export type SchemaNewSubscriptionDtoOutput = components['schemas']['NewSubscriptionDto_Output'];
-export type SchemaFeedOutWithCountsDtoOutput = components['schemas']['FeedOutWithCountsDto_Output'];
-export type SchemaDiscoverDto = components['schemas']['DiscoverDto'];
-export type SchemaDiscoverOutDtoOutput = components['schemas']['DiscoverOutDto_Output'];
-export type SchemaFileDto = components['schemas']['FileDto'];
-export type SchemaUpdateFeedDto = components['schemas']['UpdateFeedDto'];
-export type SchemaSubscriptionOutDtoOutput = components['schemas']['SubscriptionOutDto_Output'];
-export type SchemaArticleListDtoOutput = components['schemas']['ArticleListDto_Output'];
-export type SchemaArticleStatusDtoOutput = components['schemas']['ArticleStatusDto_Output'];
-export type SchemaArticleSearchDtoOutput = components['schemas']['ArticleSearchDto_Output'];
-export type SchemaHiddenArticleListDtoOutput = components['schemas']['HiddenArticleListDto_Output'];
-export type SchemaArticleDetailDtoOutput = components['schemas']['ArticleDetailDto_Output'];
-export type SchemaCreateFolderDto = components['schemas']['CreateFolderDto'];
-export type SchemaFolderOutDtoOutput = components['schemas']['FolderOutDto_Output'];
-export type SchemaFolderWithFeedsOutDtoOutput = components['schemas']['FolderWithFeedsOutDto_Output'];
-export type SchemaUpdateFolderDto = components['schemas']['UpdateFolderDto'];
-export type SchemaCreateFilterDto = components['schemas']['CreateFilterDto'];
-export type SchemaFilterOutDtoOutput = components['schemas']['FilterOutDto_Output'];
-export type SchemaUpdateFilterDto = components['schemas']['UpdateFilterDto'];
-export type SchemaCreateConfigDto = components['schemas']['CreateConfigDto'];
-export type SchemaCreateBookmarkDto = components['schemas']['CreateBookmarkDto'];
-export type SchemaFeedMiniOutput = components['schemas']['FeedMini_Output'];
-export type SchemaCountersDtoOutput = components['schemas']['CountersDto_Output'];
-export type SchemaCreateFeedDto = components['schemas']['CreateFeedDto'];
 export type $defs = Record<string, never>;
 export interface operations {
     AppController_getProfile: {

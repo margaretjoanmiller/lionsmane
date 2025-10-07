@@ -1,5 +1,5 @@
+import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
-import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
 const FolderOutSchema = z.object({
@@ -14,7 +14,7 @@ const folderWithFeedsOutSchema = z.object({
   name: z.string().min(1).max(255),
   userId: z.string(),
   feeds: z.array(
-    feedOutDto.omit({ minifluxId: true, icon: true }).extend({
+    feedSchema.omit({ minifluxId: true, icon: true }).extend({
       favicon: z.url().nullable(),
     }),
   ),

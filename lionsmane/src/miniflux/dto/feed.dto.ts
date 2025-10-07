@@ -1,12 +1,15 @@
+import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
-import { feedOutDto } from 'src/zod/feed.dto';
 import { z } from 'zod';
 
-export const feedDtoMini = feedOutDto.omit({
+export const feedDtoMini = feedSchema.omit({
   id: true,
   copyright: true,
   authors: true,
   categories: true,
+  geo: true,
+  youtube: true,
+  icon: true,
 });
 
 export const feedMiniList = z.array(feedDtoMini);

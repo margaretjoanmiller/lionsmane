@@ -1,8 +1,8 @@
+import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
-import { feedOutDto } from 'src/zod/feed.dto';
 import { subscriptionOutDto } from './subscription-out.dto';
 
-export const newSubscriptionDto = feedOutDto.extend({
+export const newSubscriptionDto = feedSchema.extend({
   subscription: subscriptionOutDto,
 });
 
