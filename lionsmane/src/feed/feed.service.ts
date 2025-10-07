@@ -62,12 +62,12 @@ export class FeedService {
         }),
       ),
     );
-    if (data) {
+    const allFeeds: URL[] = [];
+    if (data !== null) {
       // get from meta tag
       const $ = cheerio.load(data);
       const $link = $('link');
 
-      const allFeeds: URL[] = [];
       $link.each((index, element) => {
         const type = $(element).attr('type');
         if (type === 'application/rss+xml' || type === 'application/atom+xml') {
@@ -89,8 +89,9 @@ export class FeedService {
           }
         }
       });
-      if (allFeeds.length > 0) return allFeeds;
-    } else {
+    }
+    if (allFeeds.length > 0) return allFeeds;
+    else {
       // test common feed endpoints
 
       const commonEndpoints = [
@@ -109,10 +110,6 @@ export class FeedService {
         const { status } = await firstValueFrom(
           this.httpService.get(endpoint).pipe(
             catchError((error) => {
-              this.logger.debug(
-                'Error on this endpoint, trying another',
-                error,
-              );
               return of({ status: error.status });
             }),
           ),
