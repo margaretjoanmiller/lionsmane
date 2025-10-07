@@ -14,31 +14,31 @@ export const feedSchema = z.object({
   parsingErrorMessage: z.string().nullable(),
   parsingErrorCount: z.number().min(0).default(0),
   userAgent: z.string().nullable(),
-  crawler: z.string().nullable(),
+  crawler: z.boolean().nullable(),
   authors: z
     .array(
       z.object({
-        name: z.string().nullable(),
-        email: z.email().nullable(),
-        uri: z.url().nullable(),
+        name: z.string(),
+        email: z.email().optional(),
+        uri: z.url().optional(),
       }),
     )
     .default([]),
   contributors: z
     .array(
       z.object({
-        name: z.string().nullable(),
-        email: z.email().nullable(),
-        uri: z.url().nullable(),
+        name: z.string(),
+        email: z.email().optional(),
+        uri: z.url().optional(),
       }),
     )
     .default([]),
   categories: z
     .array(
       z.object({
-        term: z.string().nullable(),
-        scheme: z.string().nullable(),
-        label: z.string().nullable(),
+        term: z.string(),
+        scheme: z.string().optional(),
+        label: z.string().optional(),
       }),
     )
     .default([]),
@@ -69,26 +69,32 @@ export const feedSchema = z.object({
   explicit: z.boolean().nullable(),
   subject: z.string().nullable(),
   updatePeriod: z.string().nullable(),
-  updateFrequency: z.string().nullable(),
+  updateFrequency: z.number().nullable(),
   updateBase: z.string().nullable(),
   publisher: z.string().nullable(),
   rights: z.string().nullable(),
-  youtube: z.object({
-    channelId: z.string().nullable(),
-    playlistId: z.string().nullable(),
-  }),
+  youtube: z
+    .object({
+      channelId: z.string().optional(),
+      playlistId: z.string().optional(),
+    })
+    .nullable(),
   podcast: z
     .object({
-      locked: z.object({
-        value: z.boolean(),
-        owner: z.string().optional(),
-      }),
-      fundings: z.array(
-        z.object({
-          url: z.url(),
-          display: z.string().optional(),
-        }),
-      ),
+      locked: z
+        .object({
+          value: z.boolean(),
+          owner: z.string().optional(),
+        })
+        .optional(),
+      fundings: z
+        .array(
+          z.object({
+            url: z.url(),
+            display: z.string().optional(),
+          }),
+        )
+        .optional(),
       persons: z.array(podPerson).optional(),
       location: podLocation.optional(),
       trailers: z
@@ -106,13 +112,13 @@ export const feedSchema = z.object({
       guid: z.string().optional(),
       value: podValue.optional(),
       medium: z.string().optional(),
-      images: z.array(z.object({ srcset: z.string().optional() })),
+      images: z.object({ srcset: z.string().optional() }).optional(),
       liveItems: z
         .array(
           z.object({
             status: z.string(),
             start: z.iso.datetime(),
-            end: z.iso.datetime(),
+            end: z.iso.datetime().optional(),
             contentLinks: z
               .array(
                 z.object({
@@ -156,7 +162,7 @@ export const feedSchema = z.object({
         .optional(),
     })
     .nullable(),
-  geo: geoSchema,
+  geo: geoSchema.nullable(),
   icon: z.string().optional(),
   favicon: z.url().nullable(),
 });

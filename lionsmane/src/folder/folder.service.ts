@@ -105,10 +105,7 @@ export class FolderService {
             fetch_via_proxy: false,
             parsing_error_count: sub.feed.parsingErrorCount,
             parsing_error_message: sub.feed.parsingErrorMessage,
-            icon: {
-              icon_id: sub.feed.icon?.id || null,
-              feed_id: sub.feed.minifluxId,
-            },
+            favicon: sub.feed.icon?.url || null,
           })) || [],
       };
     });
