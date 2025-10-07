@@ -378,7 +378,6 @@ export class FeedService {
         user_id: schema.subscriptions.userMinifluxId,
         feed_url: schema.feeds.url,
         favicon: schema.icons.url,
-        image: schema.feeds.image,
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,

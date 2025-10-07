@@ -973,24 +973,28 @@ export interface components {
             /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: string | null;
+            crawler: boolean | null;
             /** @default [] */
             authors: {
-                name: string | null;
-                email: string | null;
-                uri: string | null;
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
             }[];
             /** @default [] */
             contributors: {
-                name: string | null;
-                email: string | null;
-                uri: string | null;
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
             }[];
             /** @default [] */
             categories: {
-                term: string | null;
-                scheme: string | null;
-                label: string | null;
+                term: string;
+                scheme?: string;
+                label?: string;
             }[];
             copyright: string | null;
             image: string | null;
@@ -1000,20 +1004,20 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: string | null;
+            updateFrequency: number | null;
             updateBase: string | null;
             publisher: string | null;
             rights: string | null;
             youtube: {
-                channelId: string | null;
-                playlistId: string | null;
-            };
+                channelId?: string;
+                playlistId?: string;
+            } | null;
             podcast: {
-                locked: {
+                locked?: {
                     value: boolean;
                     owner?: string;
                 };
-                fundings: {
+                fundings?: {
                     /** Format: uri */
                     url: string;
                     display?: string;
@@ -1079,15 +1083,15 @@ export interface components {
                     }[];
                 };
                 medium?: string;
-                images: {
+                images?: {
                     srcset?: string;
-                }[];
+                };
                 liveItems?: {
                     status: string;
                     /** Format: date-time */
                     start: string;
                     /** Format: date-time */
-                    end: string;
+                    end?: string;
                     contentLinks?: {
                         /** Format: uri */
                         href: string;
@@ -1161,9 +1165,7 @@ export interface components {
                 elev?: number;
                 floor?: number;
                 radius?: number;
-            };
-            icon?: string;
-            favicon: string | null;
+            } | null;
             subscription: {
                 /** Format: uuid */
                 id: string;
@@ -1188,24 +1190,28 @@ export interface components {
             /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: string | null;
+            crawler: boolean | null;
             /** @default [] */
             authors: {
-                name: string | null;
-                email: string | null;
-                uri: string | null;
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
             }[];
             /** @default [] */
             contributors: {
-                name: string | null;
-                email: string | null;
-                uri: string | null;
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
             }[];
             /** @default [] */
             categories: {
-                term: string | null;
-                scheme: string | null;
-                label: string | null;
+                term: string;
+                scheme?: string;
+                label?: string;
             }[];
             copyright: string | null;
             image: string | null;
@@ -1215,20 +1221,20 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: string | null;
+            updateFrequency: number | null;
             updateBase: string | null;
             publisher: string | null;
             rights: string | null;
             youtube: {
-                channelId: string | null;
-                playlistId: string | null;
-            };
+                channelId?: string;
+                playlistId?: string;
+            } | null;
             podcast: {
-                locked: {
+                locked?: {
                     value: boolean;
                     owner?: string;
                 };
-                fundings: {
+                fundings?: {
                     /** Format: uri */
                     url: string;
                     display?: string;
@@ -1294,15 +1300,15 @@ export interface components {
                     }[];
                 };
                 medium?: string;
-                images: {
+                images?: {
                     srcset?: string;
-                }[];
+                };
                 liveItems?: {
                     status: string;
                     /** Format: date-time */
                     start: string;
                     /** Format: date-time */
-                    end: string;
+                    end?: string;
                     contentLinks?: {
                         /** Format: uri */
                         href: string;
@@ -1376,7 +1382,7 @@ export interface components {
                 elev?: number;
                 floor?: number;
                 radius?: number;
-            };
+            } | null;
             favicon: string | null;
             unreadCount: number | null;
             folderId: string | null;
@@ -1485,9 +1491,8 @@ export interface components {
                     elev?: number;
                     floor?: number;
                     radius?: number;
-                };
-                /** Format: sha256_hex */
-                hash: string;
+                } | null;
+                hash: string | null;
                 rawContent: string | null;
                 readableHtml: string | null;
                 readableText: string | null;
@@ -1499,7 +1504,7 @@ export interface components {
                 image: string | null;
                 imageAlt: string | null;
                 media: {
-                    contents: {
+                    contents?: {
                         /** Format: uri */
                         url: string;
                         fileSize?: number;
@@ -1528,7 +1533,7 @@ export interface components {
                         type: string;
                         language?: string;
                         rel?: string;
-                    };
+                    }[];
                     chapters?: {
                         /** Format: uri */
                         url: string;
@@ -1651,14 +1656,13 @@ export interface components {
                     /** @default false */
                     isPermalink: boolean;
                     value: string;
-                };
-                /** @default [] */
+                } | null;
                 enclosures: {
                     /** Format: uri */
                     url: string;
                     type: string;
                     length: number | null;
-                }[];
+                }[] | null;
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
@@ -1752,9 +1756,8 @@ export interface components {
                     elev?: number;
                     floor?: number;
                     radius?: number;
-                };
-                /** Format: sha256_hex */
-                hash: string;
+                } | null;
+                hash: string | null;
                 rawContent: string | null;
                 readableHtml: string | null;
                 readableText: string | null;
@@ -1766,7 +1769,7 @@ export interface components {
                 image: string | null;
                 imageAlt: string | null;
                 media: {
-                    contents: {
+                    contents?: {
                         /** Format: uri */
                         url: string;
                         fileSize?: number;
@@ -1795,7 +1798,7 @@ export interface components {
                         type: string;
                         language?: string;
                         rel?: string;
-                    };
+                    }[];
                     chapters?: {
                         /** Format: uri */
                         url: string;
@@ -1918,14 +1921,13 @@ export interface components {
                     /** @default false */
                     isPermalink: boolean;
                     value: string;
-                };
-                /** @default [] */
+                } | null;
                 enclosures: {
                     /** Format: uri */
                     url: string;
                     type: string;
                     length: number | null;
-                }[];
+                }[] | null;
                 feedTitle: string | null;
                 /** @default false */
                 isRead: boolean | null;
@@ -2011,9 +2013,8 @@ export interface components {
                     elev?: number;
                     floor?: number;
                     radius?: number;
-                };
-                /** Format: sha256_hex */
-                hash: string;
+                } | null;
+                hash: string | null;
                 rawContent: string | null;
                 readableHtml: string | null;
                 readableText: string | null;
@@ -2025,7 +2026,7 @@ export interface components {
                 image: string | null;
                 imageAlt: string | null;
                 media: {
-                    contents: {
+                    contents?: {
                         /** Format: uri */
                         url: string;
                         fileSize?: number;
@@ -2054,7 +2055,7 @@ export interface components {
                         type: string;
                         language?: string;
                         rel?: string;
-                    };
+                    }[];
                     chapters?: {
                         /** Format: uri */
                         url: string;
@@ -2177,14 +2178,13 @@ export interface components {
                     /** @default false */
                     isPermalink: boolean;
                     value: string;
-                };
-                /** @default [] */
+                } | null;
                 enclosures: {
                     /** Format: uri */
                     url: string;
                     type: string;
                     length: number | null;
-                }[];
+                }[] | null;
                 isRead: boolean | null;
                 isStarred: boolean | null;
                 isBlurred: boolean | null;
@@ -2267,9 +2267,8 @@ export interface components {
                 elev?: number;
                 floor?: number;
                 radius?: number;
-            };
-            /** Format: sha256_hex */
-            hash: string;
+            } | null;
+            hash: string | null;
             rawContent: string | null;
             readableHtml: string | null;
             readableText: string | null;
@@ -2281,7 +2280,7 @@ export interface components {
             image: string | null;
             imageAlt: string | null;
             media: {
-                contents: {
+                contents?: {
                     /** Format: uri */
                     url: string;
                     fileSize?: number;
@@ -2310,7 +2309,7 @@ export interface components {
                     type: string;
                     language?: string;
                     rel?: string;
-                };
+                }[];
                 chapters?: {
                     /** Format: uri */
                     url: string;
@@ -2433,14 +2432,13 @@ export interface components {
                 /** @default false */
                 isPermalink: boolean;
                 value: string;
-            };
-            /** @default [] */
+            } | null;
             enclosures: {
                 /** Format: uri */
                 url: string;
                 type: string;
                 length: number | null;
-            }[];
+            }[] | null;
             feedTitle: string;
             isRead: boolean | null;
             isStarred: boolean | null;
@@ -2479,24 +2477,28 @@ export interface components {
                 /** @default 0 */
                 parsingErrorCount: number;
                 userAgent: string | null;
-                crawler: string | null;
+                crawler: boolean | null;
                 /** @default [] */
                 authors: {
-                    name: string | null;
-                    email: string | null;
-                    uri: string | null;
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
                 }[];
                 /** @default [] */
                 contributors: {
-                    name: string | null;
-                    email: string | null;
-                    uri: string | null;
+                    name: string;
+                    /** Format: email */
+                    email?: string;
+                    /** Format: uri */
+                    uri?: string;
                 }[];
                 /** @default [] */
                 categories: {
-                    term: string | null;
-                    scheme: string | null;
-                    label: string | null;
+                    term: string;
+                    scheme?: string;
+                    label?: string;
                 }[];
                 copyright: string | null;
                 image: string | null;
@@ -2506,20 +2508,20 @@ export interface components {
                 explicit: boolean | null;
                 subject: string | null;
                 updatePeriod: string | null;
-                updateFrequency: string | null;
+                updateFrequency: number | null;
                 updateBase: string | null;
                 publisher: string | null;
                 rights: string | null;
                 youtube: {
-                    channelId: string | null;
-                    playlistId: string | null;
-                };
+                    channelId?: string;
+                    playlistId?: string;
+                } | null;
                 podcast: {
-                    locked: {
+                    locked?: {
                         value: boolean;
                         owner?: string;
                     };
-                    fundings: {
+                    fundings?: {
                         /** Format: uri */
                         url: string;
                         display?: string;
@@ -2585,15 +2587,15 @@ export interface components {
                         }[];
                     };
                     medium?: string;
-                    images: {
+                    images?: {
                         srcset?: string;
-                    }[];
+                    };
                     liveItems?: {
                         status: string;
                         /** Format: date-time */
                         start: string;
                         /** Format: date-time */
-                        end: string;
+                        end?: string;
                         contentLinks?: {
                             /** Format: uri */
                             href: string;
@@ -2667,7 +2669,7 @@ export interface components {
                     elev?: number;
                     floor?: number;
                     radius?: number;
-                };
+                } | null;
                 favicon: string | null;
             }[];
         };
@@ -2756,12 +2758,14 @@ export interface components {
             /** @default 0 */
             parsingErrorCount: number;
             userAgent: string | null;
-            crawler: string | null;
+            crawler: boolean | null;
             /** @default [] */
             contributors: {
-                name: string | null;
-                email: string | null;
-                uri: string | null;
+                name: string;
+                /** Format: email */
+                email?: string;
+                /** Format: uri */
+                uri?: string;
             }[];
             image: string | null;
             /** Format: date-time */
@@ -2770,16 +2774,16 @@ export interface components {
             explicit: boolean | null;
             subject: string | null;
             updatePeriod: string | null;
-            updateFrequency: string | null;
+            updateFrequency: number | null;
             updateBase: string | null;
             publisher: string | null;
             rights: string | null;
             podcast: {
-                locked: {
+                locked?: {
                     value: boolean;
                     owner?: string;
                 };
-                fundings: {
+                fundings?: {
                     /** Format: uri */
                     url: string;
                     display?: string;
@@ -2845,15 +2849,15 @@ export interface components {
                     }[];
                 };
                 medium?: string;
-                images: {
+                images?: {
                     srcset?: string;
-                }[];
+                };
                 liveItems?: {
                     status: string;
                     /** Format: date-time */
                     start: string;
                     /** Format: date-time */
-                    end: string;
+                    end?: string;
                     contentLinks?: {
                         /** Format: uri */
                         href: string;

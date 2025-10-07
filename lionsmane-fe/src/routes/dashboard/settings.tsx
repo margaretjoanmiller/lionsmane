@@ -276,7 +276,7 @@ function Settings() {
   const { data: feeds } = $api.useQuery('get', '/feed', {
     credentials: 'include',
   });
-  const feedSelect = feeds?.feeds.map((feed) => ({
+  const feedSelect = feeds?.map((feed) => ({
     label: feed.title,
     value: feed.id,
   }));
@@ -339,9 +339,9 @@ function Settings() {
       accessorKey: 'url',
       cell: ({ row }) => {
         const url =
-          row.original.feed_url.length > 50
-            ? `${row.original.feed_url.slice(0, 50)}...`
-            : row.original.feed_url;
+          row.original.url.length > 50
+            ? `${row.original.url.slice(0, 50)}...`
+            : row.original.url;
         return <div className="text-right font-medium">{url}</div>;
       },
       header: () => <div className="text-right">URL</div>,
@@ -370,7 +370,7 @@ function Settings() {
               setFeedFormOpen(open);
               const feed = row.original;
               feedForm.setValue('feedId', feed.id);
-              feedForm.setValue('url', feed.feed_url);
+              feedForm.setValue('url', feed.url);
               feedForm.setValue('description', feed.description || '');
             }}
             open={feedFormOpen}
@@ -592,7 +592,7 @@ function Settings() {
                   'feedIds',
                   folder.feedIds.map((feed) => ({
                     label:
-                      feeds?.feeds.find((f) => f.id === feed)?.title ||
+                      feeds?.find((f) => f.id === feed)?.title ||
                       'Unnamed feed',
                     value: feed,
                   })),

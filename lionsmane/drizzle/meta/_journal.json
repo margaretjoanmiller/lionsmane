@@ -15,6 +15,13 @@
       "when": 1759805599941,
       "tag": "0001_dark_lila_cheney",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759827768483,
+      "tag": "0002_sweet_matthew_murdock",
+      "breakpoints": true
     }
   ]
 }

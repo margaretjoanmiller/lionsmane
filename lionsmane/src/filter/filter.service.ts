@@ -200,7 +200,7 @@ export class FilterService {
         if (
           filter.conditions.categories &&
           filter.conditions.categories.some((category) =>
-            article.categories?.includes(category),
+            article.categories?.includes({ term: category }),
           )
         ) {
           return {

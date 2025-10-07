@@ -33,7 +33,7 @@ export const articleDetail = z.object({
   rights: z.string().nullable(),
   categories: z.array(
     z.object({
-      term: z.string().min(1).max(255),
+      term: z.string().min(1).max(255).optional(),
       scheme: z.string().optional(),
       label: z.string().optional(),
     }),

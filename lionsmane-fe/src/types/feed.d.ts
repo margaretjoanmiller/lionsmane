@@ -1,19 +1,15 @@
-export type Feed = {
-  id: string;
-  feed_url: string;
-  site_url: string;
-  title: string;
-  description: string | null;
-  authors: string[] | null;
-  categories: string[] | null;
-  copyright: string | null;
-  image: string | null;
-  updated: string | null;
-  icon: {
-    feed_id: number;
-    icon_id: number;
-  };
-};
+import { feedSchema } from 'lionsmane-common';
+import { z } from 'zod';
+
+const subscriptionSchema = feedSchema
+  .extend({
+    description: z.string().min(1).max(255).optional(),
+  })
+  .omit({
+    minifluxId: true,
+  });
+
+export type Feed = z.infer<typeof subscriptionSchema>;
 
 export interface FeedTreeData {
   id: string;

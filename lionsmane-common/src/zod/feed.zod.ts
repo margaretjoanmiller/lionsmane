@@ -36,14 +36,23 @@ export const feedSchema = z.object({
   categories: z
     .array(
       z.object({
-        term: z.string(),
+        term: z.string().optional(),
         scheme: z.string().optional(),
         label: z.string().optional(),
       }),
     )
     .default([]),
   copyright: z.string().nullable(),
-  image: z.url().nullable(),
+  image: z
+    .object({
+      url: z.url(),
+      title: z.string(),
+      link: z.url(),
+      description: z.string().optional(),
+      width: z.number().min(0).optional(),
+      height: z.number().min(0).optional(),
+    })
+    .nullable(),
   lastChecked: z.preprocess((arg: Date | string) => {
     // If the input is a string, try to parse it into a Date object.
     // This handles the '2025-09-01 21:54:33' format.

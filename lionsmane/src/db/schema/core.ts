@@ -46,7 +46,14 @@ export const feeds = pgTable(
     contributors: jsonb().$type<Person[]>().notNull().default([]),
     categories: jsonb().$type<Category[]>().notNull().default([]),
     copyright: varchar({ length: 50 }),
-    image: varchar({ length: 256 }),
+    image: jsonb().$type<{
+      url: string;
+      title: string;
+      link: string;
+      description?: string;
+      width?: number;
+      height?: number;
+    }>(),
     lastChecked: timestamp({ mode: 'string' }).notNull(),
     updated: timestamp({ mode: 'string', withTimezone: true }),
     explicit: boolean(),
