@@ -29,7 +29,7 @@ export class ArticleConsumer extends WorkerHost {
         keywords = await this.fetcherService.extractKeywords(textContent);
       }
 
-      const $ = cheerio.load(cleanDescription);
+      const $ = cheerio.load(htmlContent || cleanDescription);
 
       const $image = $('img');
       const href = $image.attr('src');

@@ -218,7 +218,7 @@ export class FetcherService {
               name: 'new-article',
               data: {
                 title: item.title,
-                url: item.link ? item.source?.url : '',
+                url: item.link ? item.link : item.source?.url,
                 authors: item.authors,
                 categories: item.categories,
                 comments: item.wfw ? item.wfw.comment : item.comments,
@@ -334,7 +334,6 @@ export class FetcherService {
                 comments: item.wfw?.comment,
                 commentRss: item.wfw?.commentRss,
                 geo: item.georss,
-                // hash:
                 youtube: item.yt,
                 thread: item.thr,
                 rawContent: item.content || item.summary || 'no content',
