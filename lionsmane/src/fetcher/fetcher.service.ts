@@ -220,7 +220,9 @@ export class FetcherService {
                 title: item.title,
                 url: item.link ? item.link : item.source?.url,
                 authors: item.authors,
-                categories: item.categories,
+                categories: item.categories?.map((category) => ({
+                  term: category.name,
+                })),
                 comments: item.wfw ? item.wfw.comment : item.comments,
                 commentrss: item.wfw?.commentRss,
                 enclosures: item.enclosures,

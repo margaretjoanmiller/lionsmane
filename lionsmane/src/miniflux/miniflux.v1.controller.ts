@@ -14,12 +14,14 @@ import {
   Post,
   Put,
   Query,
+  Req,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBasicAuth,
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
@@ -29,8 +31,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
+import {
+  AuthService,
+  Session,
+  type UserSession,
+} from '@thallesp/nestjs-better-auth';
+import { fromNodeHeaders } from 'better-auth/node';
+import type { Request as ExpressRequest } from 'express';
 import { ZodResponse } from 'nestjs-zod';
+import { auth } from 'src/auth';
 import { FileDto } from 'src/feed/dto/file.dto';
 import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
@@ -38,18 +47,18 @@ import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { CountersDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
+import { UserSchemaDto } from './dto/user.dto';
 import { MinifluxService } from './miniflux.service';
 
 @ApiTags('miniflux')
-@ApiCookieAuth()
-@ApiBearerAuth()
-@ApiOAuth2(['openid', 'profile', 'email'])
+@ApiBasicAuth()
 @UseInterceptors(CacheInterceptor)
 @Controller('miniflux/v1')
 export class MinifluxV1Controller {
   constructor(
     private readonly minifluxService: MinifluxService,
     private readonly feedService: FeedService,
+    private authService: AuthService<typeof auth>,
   ) {}
 
   private readonly logger = new Logger(MinifluxV1Controller.name);
@@ -356,9 +365,12 @@ export class MinifluxV1Controller {
   }
 
   @Get('me')
-  getCurrentUser() {
-    // return this.minifluxService.getCurrentUser();
-    return { message: 'Endpoint not implemented' };
+  @ZodResponse({ type: UserSchemaDto, status: HttpStatus.OK })
+  async getCurrentUser(@Req() request: ExpressRequest) {
+    const session = await this.authService.api.getSession({
+      headers: fromNodeHeaders(request.headers),
+    });
+    return this.minifluxService.getUserInfo(session);
   }
 
   @Put('users/:userId/mark-all-as-read')

@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { UserSession } from '@thallesp/nestjs-better-auth';
 import { and, count, eq, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { ArticleService } from 'src/article/article.service';
@@ -8,6 +9,7 @@ import { FolderService } from 'src/folder/folder.service';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
 import { FeedMini, FeedMiniList } from './dto/feed.dto';
+import { UserSessionMini } from './dto/user.dto';
 
 @Injectable()
 export class MinifluxService {
@@ -223,5 +225,32 @@ export class MinifluxService {
       }
       await this.articleService.updateArticleStatus(entry.id, status, userId);
     }
+  }
+
+  async getUserInfo(session: UserSession): UserSessionMini {
+    const [user] = await this.db
+      .select({
+        minifluxId: schema.user.minifluxId,
+      })
+      .from(schema.user)
+      .where(eq(schema.user.id, session.user.id))
+      .limit(1);
+    return {
+      id: user.minifluxId,
+      username: session.user.email,
+      is_admin: false,
+      theme: '',
+      language: '',
+      timezone: '',
+      entry_sorting_direction: '',
+      stylesheet: '',
+      google_id: '',
+      openid_connect_id: '',
+      entries_per_page: 100,
+      keyboard_shortcuts: true,
+      show_reading_time: true,
+      entry_swipe: true,
+      last_login_at: new Date().toISOString(),
+    };
   }
 }
