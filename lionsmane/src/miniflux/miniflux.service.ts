@@ -1,6 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { and, count, eq, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -13,9 +14,8 @@ export class MinifluxService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
+    private articleService: ArticleService,
   ) {}
-
-  private readonly logger = new Logger(MinifluxService.name);
 
   async discoverFeeds(discoverDto: DiscoverDto) {
     const feeds = await this.feedService.discover(discoverDto.url);
@@ -169,7 +169,7 @@ export class MinifluxService {
           categories: schema.feeds.categories,
           copyright: schema.feeds.copyright,
           image: schema.feeds.image,
-          checked_at: schema.feeds.updated,
+          checked_at: schema.feeds.lastChecked,
           description: schema.subscriptions.description,
           folderId: schema.subscriptions.folderId,
           subscriptionId: schema.subscriptions.id,
@@ -194,7 +194,7 @@ export class MinifluxService {
         .where(eq(schema.folders.minifluxId, categoryId))
     ).map((item) => ({
       ...item,
-      checked_at: item.checked_at.toISOString(),
+      checked_at: item.checked_at,
       disabled: false,
       username: null,
       password: null,
@@ -205,5 +205,23 @@ export class MinifluxService {
       blocklist_rules: '',
       keeplist_rules: '',
     }));
+  }
+
+  async updateEntries(
+    entries: number[],
+    status: 'read' | 'unread',
+    userId: string,
+  ) {
+    for (const entryId of entries) {
+      const [entry] = await this.db
+        .select({ id: schema.articles.id })
+        .from(schema.articles)
+        .where(eq(schema.articles.minifluxId, entryId))
+        .limit(1);
+      if (!entry) {
+        throw new BadRequestException('Entry not found');
+      }
+      await this.articleService.updateArticleStatus(entry.id, status, userId);
+    }
   }
 }

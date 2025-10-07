@@ -36,7 +36,7 @@ import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import { CountersDto } from './dto/entry.dto';
+import { CountersDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { MinifluxService } from './miniflux.service';
 
@@ -248,25 +248,32 @@ export class MinifluxV1Controller {
     return { message: 'Endpoint not implemented', entryId };
   }
 
-  @Put('entries/:entryId')
-  @HttpCode(HttpStatus.CREATED)
-  updateEntry(
-    @Param('entryId') entryId: number,
-    @Body() updateEntryDto: UpdateEntryDto,
-  ) {
-    // return this.minifluxService.updateEntry(entryId, updateEntryDto);
-    return {
-      message: 'Endpoint not implemented',
-      entryId,
-      data: updateEntryDto,
-    };
-  }
+  // Not supporting this endpoint right now
+  // @Put('entries/:entryId')
+  // @HttpCode(HttpStatus.CREATED)
+  // updateEntry(
+  //   @Param('entryId') entryId: number,
+  //   @Body() updateEntryDto: UpdateEntryDto,
+  // ) {
+  //   // return this.minifluxService.updateEntry(entryId, updateEntryDto);
+  //   return {
+  //     message: 'Endpoint not implemented',
+  //     entryId,
+  //     data: updateEntryDto,
+  //   };
+  // }
 
   @Put('entries')
   @HttpCode(HttpStatus.NO_CONTENT)
-  updateEntries(@Body() updateEntriesDto: UpdateEntriesDto) {
-    // this.minifluxService.updateEntries(updateEntriesDto);
-    return;
+  updateEntries(
+    @Body() updateEntriesDto: UpdateEntriesDto,
+    @Session() session: UserSession,
+  ) {
+    return this.minifluxService.updateEntries(
+      updateEntriesDto.entry_ids,
+      updateEntriesDto.status,
+      session.user.id,
+    );
   }
 
   @Post('entries/:entryId/save')
