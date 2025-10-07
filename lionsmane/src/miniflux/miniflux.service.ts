@@ -5,15 +5,14 @@ import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
 import { DiscoverDto } from '../zod/discover.dto';
-import { FeedOutListDtoType, feedOutDto } from '../zod/feed.dto';
-import { FeedMiniList } from './dto/feed.dto';
+import { FeedOutListDtoType } from '../zod/feed.dto';
+import { FeedMini, FeedMiniList } from './dto/feed.dto';
 
 @Injectable()
 export class MinifluxService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
-    private folderService: FolderService,
   ) {}
 
   private readonly logger = new Logger(MinifluxService.name);
@@ -26,7 +25,7 @@ export class MinifluxService {
     return feeds.filter(Boolean);
   }
 
-  async getFeeds(userId: string): Promise<FeedMiniList> {
+  async getFeeds(userId: string): Promise<FeedMini[]> {
     const feeds = await this.db
       .select()
       .from(schema.feeds)
@@ -50,7 +49,7 @@ export class MinifluxService {
       feed_url: feed.feeds.url,
       title: feed.feeds.title,
       description: feed.subscriptions.description,
-      checked_at: feed.feeds.updated.toISOString(),
+      checked_at: feed.feeds.lastChecked,
       etag_header: feed.feeds.etag_header || '',
       last_modified_header: feed.feeds.last_modified_header || '',
       parsing_error_count: feed.feeds.parsingErrorCount,
