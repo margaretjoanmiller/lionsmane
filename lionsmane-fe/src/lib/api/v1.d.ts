@@ -1451,7 +1451,7 @@ export interface components {
                 }[];
                 description: string | null;
                 comments: string | null;
-                commentsRss: string | null;
+                commentRss: string | null;
                 geo: {
                     point?: {
                         lat: number;
@@ -1490,6 +1490,7 @@ export interface components {
                 hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
+                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
@@ -1717,7 +1718,7 @@ export interface components {
                 }[];
                 description: string | null;
                 comments: string | null;
-                commentsRss: string | null;
+                commentRss: string | null;
                 geo: {
                     point?: {
                         lat: number;
@@ -1756,6 +1757,7 @@ export interface components {
                 hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
+                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
@@ -1975,7 +1977,7 @@ export interface components {
                 }[];
                 description: string | null;
                 comments: string | null;
-                commentsRss: string | null;
+                commentRss: string | null;
                 geo: {
                     point?: {
                         lat: number;
@@ -2014,6 +2016,7 @@ export interface components {
                 hash: string;
                 rawContent: string | null;
                 readableHtml: string | null;
+                readableText: string | null;
                 fullArticleHtml: string | null;
                 fullArticleText: string | null;
                 encoded: string | null;
@@ -2198,7 +2201,6 @@ export interface components {
         ArticleDetailDto_Output: {
             /** Format: uuid */
             id: string;
-            minifluxId: number;
             title: string;
             /** Format: uri */
             url: string;
@@ -2231,7 +2233,7 @@ export interface components {
             }[];
             description: string | null;
             comments: string | null;
-            commentsRss: string | null;
+            commentRss: string | null;
             geo: {
                 point?: {
                     lat: number;
@@ -2270,6 +2272,7 @@ export interface components {
             hash: string;
             rawContent: string | null;
             readableHtml: string | null;
+            readableText: string | null;
             fullArticleHtml: string | null;
             fullArticleText: string | null;
             encoded: string | null;
@@ -2438,6 +2441,13 @@ export interface components {
                 type: string;
                 length: number | null;
             }[];
+            feedTitle: string;
+            isRead: boolean | null;
+            isStarred: boolean | null;
+            isBlurred: boolean | null;
+            isHidden: boolean | null;
+            /** @default [] */
+            contentWarning: string[] | null;
         };
         CreateFolderDto: {
             name: string;

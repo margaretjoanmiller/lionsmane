@@ -40,11 +40,12 @@ export const articleDetail = z.object({
   ),
   description: z.string().nullable(),
   comments: z.string().nullable(),
-  commentsRss: z.string().nullable(),
-  geo: geoSchema,
-  hash: z.hash('sha256'),
+  commentRss: z.string().nullable(),
+  geo: geoSchema.nullable(),
+  hash: z.hash('sha256').nullable(),
   rawContent: z.string().nullable(),
   readableHtml: z.string().nullable(),
+  readableText: z.string().nullable(),
   fullArticleHtml: z.string().nullable(),
   fullArticleText: z.string().nullable(),
   encoded: z.string().nullable(),
@@ -53,24 +54,26 @@ export const articleDetail = z.object({
   imageAlt: z.string().nullable(),
   media: z
     .object({
-      contents: z.array(
-        z.object({
-          url: z.url(),
-          fileSize: z.number().optional(),
-          type: z.string().optional(),
-          medium: z.string().optional(),
-          isDefault: z.boolean().optional(),
-          expression: z.string().optional(),
-          bitrate: z.number().optional(),
-          framerate: z.number().optional(),
-          samplingrate: z.number().optional(),
-          channels: z.number().optional(),
-          duration: z.number().optional(),
-          height: z.number().optional(),
-          width: z.number().optional(),
-          lang: z.string().optional(),
-        }),
-      ),
+      contents: z
+        .array(
+          z.object({
+            url: z.url(),
+            fileSize: z.number().optional(),
+            type: z.string().optional(),
+            medium: z.string().optional(),
+            isDefault: z.boolean().optional(),
+            expression: z.string().optional(),
+            bitrate: z.number().optional(),
+            framerate: z.number().optional(),
+            samplingrate: z.number().optional(),
+            channels: z.number().optional(),
+            duration: z.number().optional(),
+            height: z.number().optional(),
+            width: z.number().optional(),
+            lang: z.string().optional(),
+          }),
+        )
+        .optional(),
     })
     .nullable(),
   youtube: z
@@ -82,12 +85,14 @@ export const articleDetail = z.object({
   podcast: z
     .object({
       transcripts: z
-        .object({
-          url: z.url(),
-          type: z.string(),
-          language: z.string().optional(),
-          rel: z.string().optional(),
-        })
+        .array(
+          z.object({
+            url: z.url(),
+            type: z.string(),
+            language: z.string().optional(),
+            rel: z.string().optional(),
+          }),
+        )
         .optional(),
       chapters: z
         .object({
@@ -211,10 +216,12 @@ export const articleDetail = z.object({
       }
     }, z.iso.datetime())
     .nullable(), // Then, validate that the result is a valid ISO datetime string.
-  guid: z.object({
-    isPermalink: z.boolean().default(false),
-    value: z.string(),
-  }),
+  guid: z
+    .object({
+      isPermalink: z.boolean().default(false),
+      value: z.string(),
+    })
+    .nullable(),
   enclosures: z
     .array(
       z.object({
@@ -223,5 +230,5 @@ export const articleDetail = z.object({
         length: z.number().min(0).nullable(),
       }),
     )
-    .default([]),
+    .nullable(),
 });

@@ -1,4 +1,4 @@
-CREATE EXTENSION IF NOT EXISTS pgroonga;
+CREATE EXTENSION IF NOT EXISTS pgroonga; --> statement-breakpoint
 
 CREATE TYPE "public"."user_filter_actions" AS ENUM('blur', 'markRead', 'hide');--> statement-breakpoint
 CREATE TABLE "account" (

@@ -65,6 +65,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   function markStarred() {
     mutate({
+      credentials: 'include',
       params: {
         path: {
           id: article.id,
@@ -73,7 +74,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           status: 'starred',
         },
       },
-      credentials: 'include',
     });
   }
   function markUnstarred() {
@@ -94,10 +94,9 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       <CardHeader>
         <CardTitle>
           <Link
-            to="/dashboard/$articleId"
-            params={{ articleId: article.id }}
             onClick={() =>
               mutate({
+                credentials: 'include',
                 params: {
                   path: {
                     id: article.id,
@@ -106,9 +105,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
                     status: 'read',
                   },
                 },
-                credentials: 'include',
               })
             }
+            params={{ articleId: article.id }}
+            to="/dashboard/$articleId"
           >
             {article.title || 'No title'}
           </Link>
@@ -119,12 +119,12 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
                 {articleFeed}
               </Badge>
               {!article.isStarred && (
-                <Button variant="ghost" size="icon" onClick={markStarred}>
+                <Button onClick={markStarred} size="icon" variant="ghost">
                   <SolarStarLinear />
                 </Button>
               )}
               {article.isStarred && (
-                <Button variant="ghost" size="icon" onClick={markUnstarred}>
+                <Button onClick={markUnstarred} size="icon" variant="ghost">
                   <SolarStarBold />
                 </Button>
               )}
@@ -138,13 +138,13 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {article.image || article.media[0] ? (
+        {article.image || article.media?.contents ? (
           <>
             <div className="aspect-video overflow-hidden rounded-md">
               <img
-                src={article.image || article.media[0]}
                 alt={article.imageAlt || article.title}
                 className="h-full w-full object-cover"
+                src={article.image || article.media?.contents[0].url}
               />
             </div>
             <div className="text-sm text-muted-foreground mt-1 line-clamp-3">
@@ -190,8 +190,8 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         </div>
         <Button
           className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
-          variant="ghost"
           onClick={() => setDismissBlur(true)}
+          variant="ghost"
         >
           Dismiss blur
         </Button>
@@ -218,8 +218,8 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         {card}
         <Button
           className="max-w-1/3 -my-3 place-self-center"
-          variant="ghost"
           onClick={() => setDismissBlur(false)}
+          variant="ghost"
         >
           Reapply Blur
         </Button>

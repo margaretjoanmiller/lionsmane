@@ -17,6 +17,6 @@ export const articleDetailWithStatus = articleDetail
     minifluxId: true,
   });
 
-export type ArticleDetail = z.infer<typeof articleDetail>;
+export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;
 
-export class ArticleDetailDto extends createZodDto(articleDetail) {}
+export class ArticleDetailDto extends createZodDto(articleDetailWithStatus) {}

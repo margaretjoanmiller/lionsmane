@@ -18,6 +18,7 @@ import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { schema } from '../db/schema';
+import { ArticleDetail } from './dto/article-detail.dto';
 import { NewArticle, NewArticleDate } from './dto/new-article.dto';
 
 @Injectable()
@@ -240,7 +241,7 @@ export class ArticleService {
     };
   }
 
-  async getArticle(id: string, userId: string) {
+  async getArticle(id: string, userId: string): Promise<ArticleDetail> {
     const [article] = await this.db
       .select({
         ...getTableColumns(schema.articles),
