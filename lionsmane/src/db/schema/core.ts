@@ -14,6 +14,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { e } from 'node_modules/better-auth/dist/shared/better-auth.v_lf-jeY.cjs';
 import { Conditions } from 'src/filter/filter';
 import { Category, Person, ThreadItem } from 'src/types/atom';
 import { Geo } from 'src/types/geo';
@@ -209,9 +210,6 @@ export const articles = pgTable(
     published: timestamp({ mode: 'string', withTimezone: true }).notNull(),
     updated: timestamp({ mode: 'string', withTimezone: true }),
     guid: jsonb().$type<{ isPermalink: boolean; value: string }>(),
-    enclosures: jsonb()
-      .$type<{ url: string; length: number; type: string }[]>()
-      .default([]),
     itunes: jsonb().$type<Itunes>(),
     feedId: uuid()
       .references(() => feeds.id, { onDelete: 'cascade' })
@@ -226,10 +224,28 @@ export const articles = pgTable(
   ],
 );
 
-export const articleRelations = relations(articles, ({ one }) => ({
+export const articleRelations = relations(articles, ({ one, many }) => ({
   feed: one(feeds, {
     fields: [articles.feedId],
     references: [feeds.id],
+  }),
+  enclosures: many(enclosures),
+}));
+
+export const enclosures = pgTable('enclosures', {
+  id: serial().primaryKey(),
+  articleId: integer()
+    .notNull()
+    .references(() => articles.minifluxId, { onDelete: 'cascade' }),
+  url: text().notNull(),
+  size: integer().notNull(),
+  mime_type: varchar({ length: 256 }).notNull(),
+});
+
+export const enclosuresRelations = relations(enclosures, ({ one }) => ({
+  article: one(articles, {
+    fields: [enclosures.articleId],
+    references: [articles.minifluxId],
   }),
 }));
 

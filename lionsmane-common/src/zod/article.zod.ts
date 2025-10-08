@@ -225,9 +225,12 @@ export const articleDetail = z.object({
   enclosures: z
     .array(
       z.object({
+        id: z.number(),
+        entry_id: z.number(),
         url: z.url(),
-        type: z.string().min(1).max(255),
-        length: z.number().min(0).nullable(),
+        mime_type: z.string().min(1).max(255),
+        size: z.number().min(0),
+        media_progression: z.number().min(0).default(0),
       }),
     )
     .nullable(),

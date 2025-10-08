@@ -249,9 +249,32 @@ export class MinifluxV1Controller {
     type: String,
     required: false,
   })
-  getEntries(@Query() queryParams: any) {
-    // return this.minifluxService.getEntries(queryParams);
-    return { message: 'Endpoint not implemented', query: queryParams };
+  getEntries(
+    @Query('status') status: string,
+    @Query('offset') offset: number,
+    @Query('limit') limit: number,
+    @Session() session: UserSession,
+    @Query('order') order?: string,
+    @Query('direction') direction?: string,
+    @Query('before') before?: number,
+    @Query('after') after?: number,
+    @Query('starred') starred?: boolean,
+    @Query('search') search?: string,
+    @Query('category_id') categoryId?: string,
+  ) {
+    return this.minifluxService.getEntries(
+      session.user.id,
+      status,
+      offset,
+      limit,
+      order,
+      direction,
+      before,
+      after,
+      starred,
+      search,
+      categoryId,
+    );
   }
 
   @Get('entries/:entryId')

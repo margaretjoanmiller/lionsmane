@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UserSession } from '@thallesp/nestjs-better-auth';
-import { and, count, eq, isNull, or } from 'drizzle-orm';
+import { and, count, desc, eq, getTableColumns, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
@@ -317,5 +317,42 @@ export class MinifluxService {
       hide_globally: false,
       total_unread: 0,
     }));
+  }
+  async getEntries(
+    userId: string,
+    status: string,
+    offset: number,
+    limit: number,
+    order?: string,
+    direction?: string,
+    before?: number,
+    after?: number,
+    starred?: boolean,
+    search?: string,
+    categoryId?: string,
+  ): Promise<EntryDto[]> {
+    const baseQuery = await this.db
+      .select({
+        ...getTableColumns(schema.articles),
+        feedTitle: schema.feeds.title,
+        isRead: schema.userArticleStates.isRead ?? false,
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(eq(schema.subscriptions.userId, userId));
   }
 }

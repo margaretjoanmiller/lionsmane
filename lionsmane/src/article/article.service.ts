@@ -47,13 +47,24 @@ export class ArticleService {
 
   async newArticle(newArt: NewArticle) {
     try {
-      return await this.db
-        .insert(schema.articles)
-        .values(newArt)
-        .onConflictDoNothing({
-          target: [schema.articles.feedId, schema.articles.url],
-        })
-        .returning();
+      const result = await this.db.transaction(async (tx) => {
+        const [insertedArt] = await tx
+          .insert(schema.articles)
+          .values(newArt)
+          .onConflictDoNothing({
+            target: [schema.articles.feedId, schema.articles.url],
+          })
+          .returning();
+        if (newArt.enclosures && newArt.enclosures?.length > 0) {
+          for (const enclosure of newArt.enclosures) {
+            await tx
+              .insert(schema.enclosures)
+              .values({ articleId: insertedArt.minifluxId, ...enclosure });
+          }
+        }
+        return insertedArt;
+      });
+      return result;
     } catch (error) {
       console.error('Error inserting article:', error);
       throw Error('Could not insert article', { cause: error });

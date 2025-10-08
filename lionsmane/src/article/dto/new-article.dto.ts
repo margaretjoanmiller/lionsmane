@@ -3,7 +3,17 @@ import { createZodDto } from 'nestjs-zod';
 import { articles } from 'src/db/schema/core';
 import { z } from 'zod';
 
-export const newArticleDto = createInsertSchema(articles);
+export const newArticleDto = createInsertSchema(articles).extend({
+  enclosures: z
+    .array(
+      z.object({
+        url: z.url(),
+        mime_type: z.string().min(1).max(255),
+        size: z.number().min(0),
+      }),
+    )
+    .nullable(),
+});
 
 const insertSchema = newArticleDto.extend({
   published: z.date(),
