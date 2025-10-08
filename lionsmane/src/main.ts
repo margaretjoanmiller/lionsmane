@@ -39,6 +39,11 @@ async function bootstrap() {
       .addBearerAuth()
       .addOAuth2()
       .addApiKey()
+      .addSecurity('auth-token', {
+        type: 'apiKey',
+        name: 'x-auth-token',
+        in: 'header',
+      })
       .addGlobalResponse({
         status: 500,
         description: 'Internal server error',

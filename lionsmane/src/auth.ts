@@ -54,7 +54,12 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    apiKey(),
+    apiKey({
+      apiKeyHeaders: ['x-auth-token', 'x-api-key'],
+      rateLimit: {
+        maxRequests: 500,
+      },
+    }),
     passkey(),
     twoFactor(),
     openAPI(),
