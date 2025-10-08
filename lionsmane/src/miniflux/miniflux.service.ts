@@ -1,7 +1,15 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UserSession } from '@thallesp/nestjs-better-auth';
 import { and, count, eq, isNull, or } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import mime from 'mime';
+import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
@@ -17,6 +25,7 @@ export class MinifluxService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
     private articleService: ArticleService,
+    private httpService: HttpService,
   ) {}
 
   async discoverFeeds(discoverDto: DiscoverDto) {
@@ -252,5 +261,38 @@ export class MinifluxService {
       entry_swipe: true,
       last_login_at: new Date().toISOString(),
     };
+  }
+
+  async getIcon(id: number) {
+    const [icon] = await this.db
+      .select({ url: schema.icons.url })
+      .from(schema.icons)
+      .where(eq(schema.icons.id, id))
+      .limit(1);
+
+    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const contentType = mime.getType(icon.url);
+    if (!contentType) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+    const base64 = Buffer.from(data).toString('base64');
+    return `${contentType};base64,${base64}`;
+  }
+
+  async getFeedIcon(id: number) {
+    const [icon] = await this.db
+      .select({ url: schema.icons.url })
+      .from(schema.icons)
+      .innerJoin(schema.feeds, eq(schema.feeds.icon, schema.icons.id))
+      .where(eq(schema.feeds.minifluxId, id))
+      .limit(1);
+
+    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const contentType = mime.getType(icon.url);
+    if (!contentType) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+    const base64 = Buffer.from(data).toString('base64');
+    return `${contentType};base64,${base64}`;
   }
 }

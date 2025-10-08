@@ -16,7 +16,9 @@ import {
   Query,
   Req,
   StreamableFile,
+  UnauthorizedException,
   UploadedFile,
+  UseFilters,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -48,11 +50,13 @@ import { DiscoverOutDto } from '../zod/discover.dto';
 import { CountersDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
+import { MiniHttpExceptionFilter } from './exception.filter';
 import { MinifluxService } from './miniflux.service';
 
 @ApiTags('miniflux')
 @ApiBasicAuth()
 @UseInterceptors(CacheInterceptor)
+@UseFilters(MiniHttpExceptionFilter)
 @Controller('miniflux/v1')
 export class MinifluxV1Controller {
   constructor(
@@ -184,8 +188,7 @@ export class MinifluxV1Controller {
 
   @Get('feeds/:feedId/icon')
   getFeedIcon(@Param('feedId') feedId: number) {
-    // return this.minifluxService.getFeedIcon(feedId);
-    return { message: 'Endpoint not implemented', feedId };
+    return this.minifluxService.getFeedIcon(feedId);
   }
 
   @Put('feeds/:feedId/mark-all-as-read')
@@ -370,6 +373,9 @@ export class MinifluxV1Controller {
     const session = await this.authService.api.getSession({
       headers: fromNodeHeaders(request.headers),
     });
+    if (!session) {
+      throw new UnauthorizedException();
+    }
     return this.minifluxService.getUserInfo(session);
   }
 
@@ -382,8 +388,7 @@ export class MinifluxV1Controller {
 
   @Get('icons/:iconId')
   getIcon(@Param('iconId') iconId: number) {
-    // return this.minifluxService.getIcon(iconId);
-    return { message: 'Endpoint not implemented', iconId };
+    return this.minifluxService.getIcon(iconId);
   }
 
   // --- API Keys ---
