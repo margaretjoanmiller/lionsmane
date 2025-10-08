@@ -33,8 +33,10 @@ export const feedDtoMini = feedSchema
   })
   .extend({
     id: z.number().min(0),
-    parsing_error_message: z.string().min(1).max(255).nullable(),
-    parsing_error_count: z.number().min(0).nullable(),
+    user_id: z.number().min(0),
+    checked_at: z.iso.datetime(),
+    parsing_error_message: z.string(),
+    parsing_error_count: z.number().min(0),
     feed_url: z.url(),
     icon: z.object({
       feed_id: z.number().min(0),
@@ -50,6 +52,11 @@ export const feedDtoMini = feedSchema
     disabled: z.boolean().default(false),
     ignore_http_cache: z.boolean().default(false),
     fetch_via_proxy: z.boolean().default(false),
+    category: z.object({
+      id: z.number().default(0),
+      user_id: z.number().min(0),
+      title: z.string().default(''),
+    }),
   });
 
 export const feedMiniList = z.array(feedDtoMini);

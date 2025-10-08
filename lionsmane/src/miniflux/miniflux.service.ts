@@ -14,8 +14,10 @@ import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
+import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
+import { CategoryDto } from './dto/category.dto';
 import { FeedMini, FeedMiniList } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
@@ -60,11 +62,11 @@ export class MinifluxService {
       feed_url: feed.feeds.url,
       title: feed.feeds.title,
       description: feed.subscriptions.description,
-      checked_at: feed.feeds.lastChecked,
+      checked_at: parseDate(feed.feeds.lastChecked).toISOString(),
       etag_header: feed.feeds.etag_header || '',
       last_modified_header: feed.feeds.last_modified_header || '',
       parsing_error_count: feed.feeds.parsingErrorCount,
-      parsing_error_message: feed.feeds.parsingErrorMessage,
+      parsing_error_message: feed.feeds.parsingErrorMessage || '',
       crawler: feed.feeds.crawler,
       disabled: false,
       scraper_rules: '',
@@ -77,9 +79,9 @@ export class MinifluxService {
       ignore_http_cache: false,
       fetch_via_proxy: false,
       category: {
-        id: feed.folders?.minifluxId || null,
+        id: feed.folders?.minifluxId || 0,
         user_id: feed.subscriptions.userMinifluxId,
-        title: feed.folders?.name || null,
+        title: feed.folders?.name || '',
       },
       icon: {
         feed_id: feed.feeds.minifluxId,
@@ -207,8 +209,10 @@ export class MinifluxService {
       ...item,
       checked_at: item.checked_at,
       disabled: false,
-      username: null,
-      password: null,
+      username: '',
+      password: '',
+      parsing_error_count: '',
+      parsing_error_message: '',
       ignore_http_cache: false,
       fetch_via_proxy: false,
       scraper_rules: '',
@@ -294,5 +298,24 @@ export class MinifluxService {
     }
     const base64 = Buffer.from(data).toString('base64');
     return `${contentType};base64,${base64}`;
+  }
+
+  async getCategories(
+    userId: string,
+    withCounts: boolean,
+  ): Promise<CategoryDto[]> {
+    const categories = await this.db.query.folders.findMany({
+      where: eq(schema.folders.userId, userId),
+      with: {
+        subscriptions: true,
+      },
+    });
+    return categories.map((c) => ({
+      id: c.minifluxId,
+      title: c.name,
+      user_id: c.subscriptions[0].userMinifluxId,
+      hide_globally: false,
+      total_unread: 0,
+    }));
   }
 }

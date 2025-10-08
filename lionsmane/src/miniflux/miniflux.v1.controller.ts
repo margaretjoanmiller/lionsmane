@@ -312,9 +312,12 @@ export class MinifluxV1Controller {
   }
 
   @Get('categories')
-  getCategories(@Query('counts') counts: boolean) {
-    // return this.minifluxService.getCategories(counts);
-    return { message: 'Endpoint not implemented', counts };
+  @ApiQuery({ type: 'boolean', name: 'counts' })
+  getCategories(
+    @Query('counts') counts: boolean,
+    @Session() session: UserSession,
+  ) {
+    return this.minifluxService.getCategories(session.user.id, counts);
   }
 
   @Post('categories')

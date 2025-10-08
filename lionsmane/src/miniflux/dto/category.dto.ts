@@ -1,0 +1,22 @@
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
+
+export const categorySchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  user_id: z.number(),
+  hide_globally: z.boolean(),
+});
+
+export const categoryWithCounts = z.object({
+  id: z.number(),
+  title: z.string(),
+  user_id: z.number(),
+  hide_globally: z.boolean(),
+  feed_count: z.number(),
+  total_unread: z.number(),
+});
+
+export const categoryUnion = z.union([categorySchema, categoryWithCounts]);
+
+export type CategoryDto = z.infer<typeof categoryUnion>;
