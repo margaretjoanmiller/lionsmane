@@ -61,7 +61,7 @@ import { MinifluxService } from './miniflux.service';
 @ApiTags('miniflux')
 @ApiBasicAuth()
 @UseInterceptors(CacheInterceptor)
-// @UseFilters(MiniHttpExceptionFilter)
+@UseFilters(MiniHttpExceptionFilter)
 @Controller('miniflux/v1')
 export class MinifluxV1Controller {
   constructor(
@@ -156,9 +156,11 @@ export class MinifluxV1Controller {
 
   @Post('feeds')
   @HttpCode(HttpStatus.CREATED)
-  createFeed(@Body() createFeedDto: CreateFeedDto) {
-    // return this.minifluxService.createFeed(createFeedDto);
-    return { message: 'Endpoint not implemented', data: createFeedDto };
+  createFeed(
+    @Body() createFeedDto: CreateFeedDto,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.createFeed(session.user.id, createFeedDto);
   }
 
   @Put('feeds/:feedId')
@@ -251,7 +253,7 @@ export class MinifluxV1Controller {
   })
   @ApiQuery({
     name: 'category_id',
-    type: String,
+    type: Number,
     required: false,
   })
   @ZodResponse({ type: EntriesListDto, status: HttpStatus.OK })
@@ -266,7 +268,7 @@ export class MinifluxV1Controller {
     @Query('after') after?: number,
     @Query('starred') starred?: boolean,
     @Query('search') search?: string,
-    @Query('category_id') categoryId?: string,
+    @Query('category_id') categoryId?: number,
   ) {
     return this.minifluxService.getEntries(
       session.user.id,

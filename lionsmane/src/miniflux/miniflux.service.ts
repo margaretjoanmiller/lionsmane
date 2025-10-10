@@ -33,7 +33,7 @@ import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
 import { CategoryDto } from './dto/category.dto';
 import { EntriesList } from './dto/entry.dto';
-import { FeedMini } from './dto/feed.dto';
+import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
 @Injectable()
@@ -178,65 +178,126 @@ export class MinifluxService {
     categoryId: number,
     userId: string,
   ): Promise<FeedMini[]> {
-    return (
-      await this.db
-        .select({
-          id: schema.folders.minifluxId,
-          user_id: schema.subscriptions.userMinifluxId,
-          title: schema.feeds.title,
-          feed_url: schema.feeds.url,
-          site_url: schema.feeds.site_url,
-          etag_header: schema.feeds.etag_header,
-          last_modified_header: schema.feeds.last_modified_header,
-          parsing_error_count: schema.feeds.parsingErrorCount,
-          parsing_error_message: schema.feeds.parsingErrorMessage,
-          crawler: schema.feeds.crawler,
-          user_agent: schema.feeds.userAgent,
-          icon: schema.icons.url,
-          authors: schema.feeds.authors,
-          categories: schema.feeds.categories,
-          copyright: schema.feeds.copyright,
-          image: schema.feeds.image,
-          checked_at: schema.feeds.lastChecked,
-          description: schema.subscriptions.description,
-          folderId: schema.subscriptions.folderId,
-          subscriptionId: schema.subscriptions.id,
-          category: {
+    if (categoryId !== 0) {
+      return (
+        await this.db
+          .select({
             id: schema.folders.minifluxId,
             user_id: schema.subscriptions.userMinifluxId,
-            title: schema.folders.name,
-          },
-        })
-        .from(schema.folders)
-        .innerJoin(
-          schema.subscriptions,
-          and(
-            eq(schema.folders.id, schema.subscriptions.folderId),
-            eq(schema.subscriptions.userId, userId),
-          ),
-        )
-        .innerJoin(
-          schema.feeds,
-          eq(schema.subscriptions.feedId, schema.feeds.id),
-        )
-        .where(eq(schema.folders.minifluxId, categoryId))
-    ).map((item) => ({
-      ...item,
-      user_agent: item.user_agent || '',
-      checked_at: item.checked_at,
-      last_modified_header: item.last_modified_header || '',
-      disabled: false,
-      username: '',
-      password: '',
-      parsing_error_count: 0,
-      parsing_error_message: '',
-      ignore_http_cache: false,
-      fetch_via_proxy: false,
-      scraper_rules: '',
-      rewrite_rules: '',
-      blocklist_rules: '',
-      keeplist_rules: '',
-    }));
+            title: schema.feeds.title,
+            feed_url: schema.feeds.url,
+            site_url: schema.feeds.site_url,
+            etag_header: schema.feeds.etag_header,
+            last_modified_header: schema.feeds.last_modified_header,
+            parsing_error_count: schema.feeds.parsingErrorCount,
+            parsing_error_message: schema.feeds.parsingErrorMessage,
+            crawler: schema.feeds.crawler,
+            user_agent: schema.feeds.userAgent,
+            icon: schema.icons.url,
+            authors: schema.feeds.authors,
+            categories: schema.feeds.categories,
+            copyright: schema.feeds.copyright,
+            image: schema.feeds.image,
+            checked_at: schema.feeds.lastChecked,
+            description: schema.subscriptions.description,
+            folderId: schema.subscriptions.folderId,
+            subscriptionId: schema.subscriptions.id,
+            category: {
+              id: schema.folders.minifluxId,
+              user_id: schema.subscriptions.userMinifluxId,
+              title: schema.folders.name,
+            },
+          })
+          .from(schema.folders)
+          .innerJoin(
+            schema.subscriptions,
+            and(
+              eq(schema.folders.id, schema.subscriptions.folderId),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .innerJoin(
+            schema.feeds,
+            eq(schema.subscriptions.feedId, schema.feeds.id),
+          )
+          .where(eq(schema.folders.minifluxId, categoryId))
+      ).map((item) => ({
+        ...item,
+        user_agent: item.user_agent || '',
+        checked_at: item.checked_at,
+        last_modified_header: item.last_modified_header || '',
+        disabled: false,
+        username: '',
+        password: '',
+        parsing_error_count: 0,
+        parsing_error_message: '',
+        ignore_http_cache: false,
+        fetch_via_proxy: false,
+        scraper_rules: '',
+        rewrite_rules: '',
+        blocklist_rules: '',
+        keeplist_rules: '',
+      }));
+    } else {
+      return (
+        await this.db
+          .select({
+            id: schema.folders.minifluxId,
+            user_id: schema.subscriptions.userMinifluxId,
+            title: schema.feeds.title,
+            feed_url: schema.feeds.url,
+            site_url: schema.feeds.site_url,
+            etag_header: schema.feeds.etag_header,
+            last_modified_header: schema.feeds.last_modified_header,
+            parsing_error_count: schema.feeds.parsingErrorCount,
+            parsing_error_message: schema.feeds.parsingErrorMessage,
+            crawler: schema.feeds.crawler,
+            user_agent: schema.feeds.userAgent,
+            icon: schema.icons.url,
+            authors: schema.feeds.authors,
+            categories: schema.feeds.categories,
+            copyright: schema.feeds.copyright,
+            image: schema.feeds.image,
+            checked_at: schema.feeds.lastChecked,
+            description: schema.subscriptions.description,
+            folderId: schema.subscriptions.folderId,
+            subscriptionId: schema.subscriptions.id,
+            category: {
+              id: schema.folders.minifluxId,
+              user_id: schema.subscriptions.userMinifluxId,
+              title: schema.folders.name,
+            },
+          })
+          .from(schema.folders)
+          .innerJoin(
+            schema.subscriptions,
+            and(
+              eq(schema.folders.id, schema.subscriptions.folderId),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .innerJoin(
+            schema.feeds,
+            eq(schema.subscriptions.feedId, schema.feeds.id),
+          )
+      ).map((item) => ({
+        ...item,
+        user_agent: item.user_agent || '',
+        checked_at: item.checked_at,
+        last_modified_header: item.last_modified_header || '',
+        disabled: false,
+        username: '',
+        password: '',
+        parsing_error_count: 0,
+        parsing_error_message: '',
+        ignore_http_cache: false,
+        fetch_via_proxy: false,
+        scraper_rules: '',
+        rewrite_rules: '',
+        blocklist_rules: '',
+        keeplist_rules: '',
+      }));
+    }
   }
 
   async updateEntries(
@@ -346,7 +407,7 @@ export class MinifluxService {
     after?: number,
     starred?: boolean,
     search?: string,
-    categoryId?: string,
+    categoryId?: number,
   ): Promise<EntriesList> {
     const baseQuery = this.db
       .select({
@@ -414,8 +475,8 @@ export class MinifluxService {
     if (search) {
       where.push(sql`${schema.articles.readableText} &@~ ${search}`);
     }
-    if (categoryId) {
-      where.push(eq(schema.subscriptions.folderId, categoryId));
+    if (categoryId && categoryId !== 0) {
+      where.push(eq(schema.folders.minifluxId, categoryId));
     }
     if (before) {
       where.push(
@@ -700,6 +761,41 @@ export class MinifluxService {
       return {
         total: resultList.length,
         entries: resultList,
+      };
+    }
+  }
+  async createFeed(userId: string, feed: CreateFeedDto) {
+    if (feed.category_id !== 0) {
+      const [category] = await this.db
+        .select({ id: schema.folders.id })
+        .from(schema.folders)
+        .where(
+          and(
+            eq(schema.folders.userId, userId),
+            eq(schema.folders.minifluxId, feed.category_id),
+          ),
+        )
+        .limit(1);
+      const newFeed = await this.feedService.create(
+        {
+          url: feed.feed_url,
+          folderId: category.id,
+        },
+        userId,
+      );
+      return {
+        feed_id: newFeed.minifluxId,
+      };
+    } else {
+      const newFeed = await this.feedService.create(
+        {
+          url: feed.feed_url,
+          folderId: null,
+        },
+        userId,
+      );
+      return {
+        feed_id: newFeed.minifluxId,
       };
     }
   }
