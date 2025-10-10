@@ -47,7 +47,7 @@ import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import { CountersDto, UpdateEntriesDto } from './dto/entry.dto';
+import { CountersDto, EntryDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
@@ -56,7 +56,7 @@ import { MinifluxService } from './miniflux.service';
 @ApiTags('miniflux')
 @ApiBasicAuth()
 @UseInterceptors(CacheInterceptor)
-@UseFilters(MiniHttpExceptionFilter)
+// @UseFilters(MiniHttpExceptionFilter)
 @Controller('miniflux/v1')
 export class MinifluxV1Controller {
   constructor(
@@ -133,13 +133,13 @@ export class MinifluxV1Controller {
 
   @Get('feeds')
   @ZodResponse({ type: [FeedMini], status: 200 })
-  getFeeds(@Session() session: UserSession) {
+  getFeeds(@Session() session: typeof auth.$Infer.Session) {
     return this.minifluxService.getFeeds(session.user.id);
   }
 
   @Get('feeds/counters')
   @ZodResponse({ type: CountersDto, status: 200 })
-  getFeedCounters(@Session() session: UserSession) {
+  getFeedCounters(@Session() session: typeof auth.$Infer.Session) {
     return this.minifluxService.getCounters(session.user.id);
   }
 
@@ -202,17 +202,17 @@ export class MinifluxV1Controller {
   @ApiQuery({
     name: 'status',
     enum: ['unread', 'read'],
-    required: false,
+    required: true,
   })
   @ApiQuery({
     name: 'offset',
     type: Number,
-    required: false,
+    required: true,
   })
   @ApiQuery({
     name: 'limit',
     type: Number,
-    required: false,
+    required: true,
   })
   @ApiQuery({
     name: 'order',
@@ -249,6 +249,7 @@ export class MinifluxV1Controller {
     type: String,
     required: false,
   })
+  @ZodResponse({ type: [EntryDto], status: HttpStatus.OK })
   getEntries(
     @Query('status') status: string,
     @Query('offset') offset: number,

@@ -234,17 +234,18 @@ export const articleRelations = relations(articles, ({ one, many }) => ({
 
 export const enclosures = pgTable('enclosures', {
   id: serial().primaryKey(),
-  articleId: integer()
+  entry_id: integer()
     .notNull()
     .references(() => articles.minifluxId, { onDelete: 'cascade' }),
   url: text().notNull(),
-  size: integer().notNull(),
+  size: integer(),
   mime_type: varchar({ length: 256 }).notNull(),
+  media_progression: integer().notNull().default(0),
 });
 
 export const enclosuresRelations = relations(enclosures, ({ one }) => ({
   article: one(articles, {
-    fields: [enclosures.articleId],
+    fields: [enclosures.entry_id],
     references: [articles.minifluxId],
   }),
 }));

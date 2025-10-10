@@ -6,7 +6,21 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UserSession } from '@thallesp/nestjs-better-auth';
-import { and, count, desc, eq, getTableColumns, isNull, or } from 'drizzle-orm';
+import { fromUnixTime } from 'date-fns';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  isNull,
+  lt,
+  or,
+  SQLWrapper,
+  sql,
+} from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
@@ -14,10 +28,12 @@ import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
+import { Enclosure } from 'src/types/rss';
 import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
 import { CategoryDto } from './dto/category.dto';
+import { EntryDto } from './dto/entry.dto';
 import { FeedMini, FeedMiniList } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
@@ -331,11 +347,28 @@ export class MinifluxService {
     search?: string,
     categoryId?: string,
   ): Promise<EntryDto[]> {
-    const baseQuery = await this.db
+    const baseQuery = this.db
       .select({
         ...getTableColumns(schema.articles),
+        created_at: schema.articles.published,
+        user_id: schema.subscriptions.userMinifluxId,
+        feed_id: schema.feeds.minifluxId,
+        comments_url: schema.articles.comments,
         feedTitle: schema.feeds.title,
+        authors: schema.articles.authors,
+        content: schema.articles.readableHtml,
         isRead: schema.userArticleStates.isRead ?? false,
+        isStarred: schema.userArticleStates.isStarred ?? false,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
+        feed: schema.feeds,
+        category: {
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.folders.name,
+        },
       })
       .from(schema.articles)
       .innerJoin(
@@ -347,12 +380,301 @@ export class MinifluxService {
       )
       .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
       .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
+      .leftJoin(
         schema.userArticleStates,
         and(
           eq(schema.userArticleStates.articleId, schema.articles.id),
           eq(schema.userArticleStates.userId, userId),
         ),
-      )
-      .where(eq(schema.subscriptions.userId, userId));
+      );
+
+    const where: [SQLWrapper | undefined] = [sql`1 = 1`]; // no filters
+
+    if (status === 'unread') {
+      where.push(
+        and(
+          or(
+            eq(schema.userArticleStates.isRead, false),
+            isNull(schema.userArticleStates.isRead),
+          ),
+        ),
+      );
+    } else {
+      where.push(and(eq(schema.userArticleStates.isRead, true)));
+    }
+    if (starred === true) {
+      where.push(and(eq(schema.userArticleStates.isStarred, true)));
+    } else if (starred === false) {
+      where.push(and(eq(schema.userArticleStates.isStarred, false)));
+    }
+    if (search) {
+      where.push(sql`${schema.articles.readableText} &@~ ${search}`);
+    }
+    if (categoryId) {
+      where.push(eq(schema.subscriptions.folderId, categoryId));
+    }
+    if (before) {
+      where.push(
+        lt(sql`${schema.articles.published}::timestamp`, fromUnixTime(before)),
+      );
+    }
+    if (after) {
+      where.push(
+        gte(sql`${schema.articles.published}::timestamp`, fromUnixTime(after)),
+      );
+    }
+
+    const whereFinal = where.filter((w) => w !== undefined);
+
+    let orderQuery: SQLWrapper | undefined;
+    if (order === 'id') {
+      orderQuery = schema.articles.id;
+    } else if (order === 'status') {
+      orderQuery = schema.userArticleStates.isRead;
+    } else if (order === 'published_at') {
+      orderQuery = schema.articles.published;
+    } else if (order === 'category_title') {
+      orderQuery = schema.folders.name;
+    } else if (order === 'category_id') {
+      orderQuery = schema.subscriptions.folderId;
+    }
+
+    if (orderQuery && direction === 'asc') {
+      const result = await baseQuery
+        .where(and(...whereFinal))
+        .orderBy(asc(orderQuery))
+        .limit(limit)
+        .offset(offset);
+      return result.map((entry) => ({
+        ...entry,
+        id: entry.minifluxId,
+        author: entry.authors.at(0)?.name || '',
+        status: entry.isRead ? 'read' : 'unread',
+        starred: entry.isStarred || false,
+        comments_url: entry.comments_url || '',
+        content: entry.content || '',
+        published_at: entry.published,
+        share_code: '',
+        reading_time: 0,
+        enclosures: entry.enclosures as Enclosure[],
+        feed: {
+          ...entry.feed,
+          id: entry.feed.minifluxId,
+          user_id: entry.user_id,
+          feed_url: entry.feed.url,
+          user_agent: '',
+          checked_at: entry.feed.lastChecked,
+          disabled: false,
+          username: '',
+          password: '',
+          parsing_error_count: 0,
+          parsing_error_message: '',
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          scraper_rules: '',
+          rewrite_rules: '',
+          blocklist_rules: '',
+          keeplist_rules: '',
+          icon: {
+            feed_id: entry.feed.minifluxId,
+            icon_id: entry.feed.icon || 0,
+          },
+          category: {
+            id: entry.category.id || 0,
+            user_id: entry.category.user_id,
+            title: entry.category.title || '',
+          },
+        },
+      }));
+    } else if (orderQuery && direction === 'desc') {
+      const result = await baseQuery
+        .where(and(...whereFinal))
+        .orderBy(desc(orderQuery))
+        .limit(limit)
+        .offset(offset);
+      return result.map((entry) => ({
+        ...entry,
+        id: entry.minifluxId,
+        author: entry.authors.at(0)?.name || '',
+        status: entry.isRead ? 'read' : 'unread',
+        starred: entry.isStarred || false,
+        comments_url: entry.comments_url || '',
+        content: entry.content || '',
+        published_at: entry.published,
+        share_code: '',
+        reading_time: 0,
+        enclosures: entry.enclosures as Enclosure[],
+        feed: {
+          ...entry.feed,
+          id: entry.feed.minifluxId,
+          user_id: entry.user_id,
+          feed_url: entry.feed.url,
+          user_agent: '',
+          checked_at: entry.feed.lastChecked,
+          disabled: false,
+          username: '',
+          password: '',
+          parsing_error_count: 0,
+          parsing_error_message: '',
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          scraper_rules: '',
+          rewrite_rules: '',
+          blocklist_rules: '',
+          keeplist_rules: '',
+          icon: {
+            feed_id: entry.feed.minifluxId,
+            icon_id: entry.feed.icon || 0,
+          },
+          category: {
+            id: entry.category.id || 0,
+            user_id: entry.category.user_id,
+            title: entry.category.title || '',
+          },
+        },
+      }));
+    } else if (!orderQuery) {
+      const result = await baseQuery
+        .where(and(...whereFinal))
+        .limit(limit)
+        .offset(offset);
+      return result.map((entry) => ({
+        ...entry,
+        id: entry.minifluxId,
+        author: entry.authors.at(0)?.name || '',
+        status: entry.isRead ? 'read' : 'unread',
+        starred: entry.isStarred || false,
+        comments_url: entry.comments_url || '',
+        content: entry.content || '',
+        published_at: entry.published,
+        share_code: '',
+        reading_time: 0,
+        enclosures: entry.enclosures as Enclosure[],
+        feed: {
+          ...entry.feed,
+          id: entry.feed.minifluxId,
+          user_id: entry.user_id,
+          feed_url: entry.feed.url,
+          user_agent: '',
+          checked_at: entry.feed.lastChecked,
+          disabled: false,
+          username: '',
+          password: '',
+          parsing_error_count: 0,
+          parsing_error_message: '',
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          scraper_rules: '',
+          rewrite_rules: '',
+          blocklist_rules: '',
+          keeplist_rules: '',
+          icon: {
+            feed_id: entry.feed.minifluxId,
+            icon_id: entry.feed.icon || 0,
+          },
+          category: {
+            id: entry.category.id || 0,
+            user_id: entry.category.user_id,
+            title: entry.category.title || '',
+          },
+        },
+      }));
+    } else if (orderQuery && !direction) {
+      const result = await baseQuery
+        .where(and(...whereFinal))
+        .orderBy(desc(orderQuery))
+        .limit(limit)
+        .offset(offset);
+      return result.map((entry) => ({
+        ...entry,
+        id: entry.minifluxId,
+        author: entry.authors.at(0)?.name || '',
+        status: entry.isRead ? 'read' : 'unread',
+        starred: entry.isStarred || false,
+        comments_url: entry.comments_url || '',
+        content: entry.content || '',
+        published_at: entry.published,
+        share_code: '',
+        reading_time: 0,
+        enclosures: entry.enclosures as Enclosure[],
+        feed: {
+          ...entry.feed,
+          id: entry.feed.minifluxId,
+          user_id: entry.user_id,
+          feed_url: entry.feed.url,
+          user_agent: '',
+          checked_at: entry.feed.lastChecked,
+          disabled: false,
+          username: '',
+          password: '',
+          parsing_error_count: 0,
+          parsing_error_message: '',
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          scraper_rules: '',
+          rewrite_rules: '',
+          blocklist_rules: '',
+          keeplist_rules: '',
+          icon: {
+            feed_id: entry.feed.minifluxId,
+            icon_id: entry.feed.icon || 0,
+          },
+          category: {
+            id: entry.category.id || 0,
+            user_id: entry.category.user_id,
+            title: entry.category.title || '',
+          },
+        },
+      }));
+    } else {
+      const result = await baseQuery
+        .where(and(...whereFinal))
+        .limit(limit)
+        .offset(offset);
+      return result.map((entry) => ({
+        ...entry,
+        id: entry.minifluxId,
+        author: entry.authors.at(0)?.name || '',
+        status: entry.isRead ? 'read' : 'unread',
+        starred: entry.isStarred || false,
+        comments_url: entry.comments_url || '',
+        content: entry.content || '',
+        published_at: entry.published,
+        share_code: '',
+        reading_time: 0,
+        enclosures: entry.enclosures as Enclosure[],
+        feed: {
+          ...entry.feed,
+          id: entry.feed.minifluxId,
+          user_id: entry.user_id,
+          feed_url: entry.feed.url,
+          user_agent: '',
+          checked_at: entry.feed.lastChecked,
+          disabled: false,
+          username: '',
+          password: '',
+          parsing_error_count: 0,
+          parsing_error_message: '',
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          scraper_rules: '',
+          rewrite_rules: '',
+          blocklist_rules: '',
+          keeplist_rules: '',
+          icon: {
+            feed_id: entry.feed.minifluxId,
+            icon_id: entry.feed.icon || 0,
+          },
+          category: {
+            id: entry.category.id || 0,
+            user_id: entry.category.user_id,
+            title: entry.category.title || '',
+          },
+        },
+      }));
+    }
   }
 }

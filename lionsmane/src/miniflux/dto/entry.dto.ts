@@ -19,10 +19,10 @@ export const entry = articleDetail
     user_id: z.number().min(0),
     feed_id: z.number().min(0),
     comments_url: z.string(),
-    author: z.string(),
+    author: z.string().nullable(),
     content: z.string(),
-    published_at: z.iso.datetime(),
-    created_at: z.iso.datetime(),
+    published_at: z.string(),
+    created_at: z.string(),
     status: z.enum(['read', 'unread']),
     share_code: z.string(),
     starred: z.boolean().default(false),
@@ -48,7 +48,7 @@ export const entry = articleDetail
     fullArticleHtml: true,
     fullArticleText: true,
     encoded: true,
-    keyword: true,
+    keywords: true,
     image: true,
     imageAlt: true,
     media: true,
@@ -61,3 +61,4 @@ export const entry = articleDetail
 
 export class CountersDto extends createZodDto(counters) {}
 export class UpdateEntriesDto extends createZodDto(updateEntries) {}
+export class EntryDto extends createZodDto(entry) {}

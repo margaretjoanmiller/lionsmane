@@ -34,14 +34,16 @@ export const feedDtoMini = feedSchema
   .extend({
     id: z.number().min(0),
     user_id: z.number().min(0),
-    checked_at: z.iso.datetime(),
+    checked_at: z.string(),
     parsing_error_message: z.string(),
     parsing_error_count: z.number().min(0),
     feed_url: z.url(),
-    icon: z.object({
-      feed_id: z.number().min(0),
-      icon_id: z.number().min(0),
-    }),
+    icon: z
+      .object({
+        feed_id: z.number().min(0),
+        icon_id: z.number().min(0),
+      })
+      .nullable(),
     scraper_rules: z.string(),
     rewrite_rules: z.string(),
     blocklist_rules: z.string(),

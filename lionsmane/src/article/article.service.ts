@@ -16,6 +16,7 @@ import {
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { FetcherService } from 'src/fetcher/fetcher.service';
+import { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { schema } from '../db/schema';
 import { ArticleDetail } from './dto/article-detail.dto';
@@ -59,7 +60,7 @@ export class ArticleService {
           for (const enclosure of newArt.enclosures) {
             await tx
               .insert(schema.enclosures)
-              .values({ articleId: insertedArt.minifluxId, ...enclosure });
+              .values({ entry_id: insertedArt.minifluxId, ...enclosure });
           }
         }
         return insertedArt;
@@ -130,6 +131,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -168,7 +173,10 @@ export class ArticleService {
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures as Enclosure[],
+      })),
       cursor: hasNextPage
         ? createCursor(
             items[items.length - 1].published,
@@ -204,6 +212,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -242,7 +254,10 @@ export class ArticleService {
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures as Enclosure[],
+      })),
       cursor: hasNextPage
         ? createCursor(
             items[items.length - 1].published,
@@ -262,6 +277,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -284,7 +303,7 @@ export class ArticleService {
     if (!article) {
       throw new Error('Article not found or access denied');
     }
-    return { ...article };
+    return { ...article, enclosures: article.enclosures as Enclosure[] };
   }
 
   async articleSearch(
@@ -302,6 +321,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -326,7 +349,12 @@ export class ArticleService {
     if (!searchedArticles) {
       return { articles: [] };
     }
-    return { articles: searchedArticles };
+    return {
+      articles: searchedArticles.map((i) => ({
+        ...i,
+        enclosures: i.enclosures as Enclosure[],
+      })),
+    };
   }
 
   async updateArticleStatus(
@@ -412,6 +440,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -453,7 +485,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -491,7 +526,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -535,7 +573,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -571,6 +612,10 @@ export class ArticleService {
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
         ruleId: schema.appliedRules.ruleId,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -628,7 +673,10 @@ export class ArticleService {
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures as Enclosure[],
+      })),
       cursor: hasNextPage
         ? createCursor(
             items[items.length - 1].published,
@@ -686,6 +734,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -728,7 +780,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -764,7 +819,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -802,7 +860,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -882,6 +943,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -959,7 +1024,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -995,7 +1063,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,
@@ -1074,6 +1145,10 @@ export class ArticleService {
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -1113,7 +1188,10 @@ export class ArticleService {
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures as Enclosure[],
+      })),
       cursor: hasNextPage
         ? createCursor(
             items[items.length - 1].published,
