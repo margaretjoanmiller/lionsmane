@@ -27,14 +27,13 @@ import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
-import { FolderService } from 'src/folder/folder.service';
 import { Enclosure } from 'src/types/rss';
 import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
 import { CategoryDto } from './dto/category.dto';
-import { EntriesList, EntryDto } from './dto/entry.dto';
-import { FeedMini, FeedMiniList } from './dto/feed.dto';
+import { EntriesList } from './dto/entry.dto';
+import { FeedMini } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
 @Injectable()
@@ -178,7 +177,7 @@ export class MinifluxService {
   async getCategoryFeeds(
     categoryId: number,
     userId: string,
-  ): Promise<FeedOutListDtoType> {
+  ): Promise<FeedMini[]> {
     return (
       await this.db
         .select({
@@ -223,12 +222,13 @@ export class MinifluxService {
         .where(eq(schema.folders.minifluxId, categoryId))
     ).map((item) => ({
       ...item,
+      user_agent: item.user_agent || '',
       checked_at: item.checked_at,
       last_modified_header: item.last_modified_header || '',
       disabled: false,
       username: '',
       password: '',
-      parsing_error_count: '',
+      parsing_error_count: 0,
       parsing_error_message: '',
       ignore_http_cache: false,
       fetch_via_proxy: false,
