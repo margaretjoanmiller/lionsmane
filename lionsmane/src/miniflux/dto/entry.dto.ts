@@ -23,7 +23,7 @@ export const entry = articleDetail
     content: z.string(),
     published_at: z.string(),
     created_at: z.string(),
-    status: z.enum(['read', 'unread']),
+    status: z.string(),
     share_code: z.string(),
     starred: z.boolean().default(false),
     reading_time: z.number().min(0),
@@ -41,6 +41,9 @@ export const entry = articleDetail
     description: true,
     comments: true,
     commentRss: true,
+    publisher: true,
+    rights: true,
+    thread: true,
     geo: true,
     rawContent: true,
     readableHtml: true,
@@ -59,6 +62,14 @@ export const entry = articleDetail
     guid: true,
   });
 
+export const entriesList = z.object({
+  total: z.number().min(0),
+  entries: z.array(entry),
+});
+
+export type EntriesList = z.infer<typeof entriesList>;
+
 export class CountersDto extends createZodDto(counters) {}
 export class UpdateEntriesDto extends createZodDto(updateEntries) {}
 export class EntryDto extends createZodDto(entry) {}
+export class EntriesListDto extends createZodDto(entriesList) {}

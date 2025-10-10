@@ -33,7 +33,7 @@ import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { FeedOutListDtoType } from '../zod/feed.dto';
 import { CategoryDto } from './dto/category.dto';
-import { EntryDto } from './dto/entry.dto';
+import { EntriesList, EntryDto } from './dto/entry.dto';
 import { FeedMini, FeedMiniList } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
@@ -224,6 +224,7 @@ export class MinifluxService {
     ).map((item) => ({
       ...item,
       checked_at: item.checked_at,
+      last_modified_header: item.last_modified_header || '',
       disabled: false,
       username: '',
       password: '',
@@ -346,7 +347,7 @@ export class MinifluxService {
     starred?: boolean,
     search?: string,
     categoryId?: string,
-  ): Promise<EntryDto[]> {
+  ): Promise<EntriesList> {
     const baseQuery = this.db
       .select({
         ...getTableColumns(schema.articles),
@@ -448,7 +449,7 @@ export class MinifluxService {
         .orderBy(asc(orderQuery))
         .limit(limit)
         .offset(offset);
-      return result.map((entry) => ({
+      const resultList = result.map((entry) => ({
         ...entry,
         id: entry.minifluxId,
         author: entry.authors.at(0)?.name || '',
@@ -467,6 +468,7 @@ export class MinifluxService {
           feed_url: entry.feed.url,
           user_agent: '',
           checked_at: entry.feed.lastChecked,
+          last_modified_header: entry.feed.last_modified_header || '',
           disabled: false,
           username: '',
           password: '',
@@ -489,13 +491,17 @@ export class MinifluxService {
           },
         },
       }));
+      return {
+        total: resultList.length,
+        entries: resultList,
+      };
     } else if (orderQuery && direction === 'desc') {
       const result = await baseQuery
         .where(and(...whereFinal))
         .orderBy(desc(orderQuery))
         .limit(limit)
         .offset(offset);
-      return result.map((entry) => ({
+      const resultList = result.map((entry) => ({
         ...entry,
         id: entry.minifluxId,
         author: entry.authors.at(0)?.name || '',
@@ -514,6 +520,7 @@ export class MinifluxService {
           feed_url: entry.feed.url,
           user_agent: '',
           checked_at: entry.feed.lastChecked,
+          last_modified_header: entry.feed.last_modified_header || '',
           disabled: false,
           username: '',
           password: '',
@@ -536,12 +543,16 @@ export class MinifluxService {
           },
         },
       }));
+      return {
+        total: resultList.length,
+        entries: resultList,
+      };
     } else if (!orderQuery) {
       const result = await baseQuery
         .where(and(...whereFinal))
         .limit(limit)
         .offset(offset);
-      return result.map((entry) => ({
+      const resultList = result.map((entry) => ({
         ...entry,
         id: entry.minifluxId,
         author: entry.authors.at(0)?.name || '',
@@ -560,6 +571,7 @@ export class MinifluxService {
           feed_url: entry.feed.url,
           user_agent: '',
           checked_at: entry.feed.lastChecked,
+          last_modified_header: entry.feed.last_modified_header || '',
           disabled: false,
           username: '',
           password: '',
@@ -582,13 +594,17 @@ export class MinifluxService {
           },
         },
       }));
+      return {
+        total: resultList.length,
+        entries: resultList,
+      };
     } else if (orderQuery && !direction) {
       const result = await baseQuery
         .where(and(...whereFinal))
         .orderBy(desc(orderQuery))
         .limit(limit)
         .offset(offset);
-      return result.map((entry) => ({
+      const resultList = result.map((entry) => ({
         ...entry,
         id: entry.minifluxId,
         author: entry.authors.at(0)?.name || '',
@@ -607,6 +623,7 @@ export class MinifluxService {
           feed_url: entry.feed.url,
           user_agent: '',
           checked_at: entry.feed.lastChecked,
+          last_modified_header: entry.feed.last_modified_header || '',
           disabled: false,
           username: '',
           password: '',
@@ -629,12 +646,16 @@ export class MinifluxService {
           },
         },
       }));
+      return {
+        total: resultList.length,
+        entries: resultList,
+      };
     } else {
       const result = await baseQuery
         .where(and(...whereFinal))
         .limit(limit)
         .offset(offset);
-      return result.map((entry) => ({
+      const resultList = result.map((entry) => ({
         ...entry,
         id: entry.minifluxId,
         author: entry.authors.at(0)?.name || '',
@@ -653,6 +674,7 @@ export class MinifluxService {
           feed_url: entry.feed.url,
           user_agent: '',
           checked_at: entry.feed.lastChecked,
+          last_modified_header: entry.feed.last_modified_header || '',
           disabled: false,
           username: '',
           password: '',
@@ -675,6 +697,10 @@ export class MinifluxService {
           },
         },
       }));
+      return {
+        total: resultList.length,
+        entries: resultList,
+      };
     }
   }
 }

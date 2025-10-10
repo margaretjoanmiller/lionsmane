@@ -47,7 +47,12 @@ import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import { CountersDto, EntryDto, UpdateEntriesDto } from './dto/entry.dto';
+import {
+  CountersDto,
+  EntriesListDto,
+  EntryDto,
+  UpdateEntriesDto,
+} from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
@@ -249,7 +254,7 @@ export class MinifluxV1Controller {
     type: String,
     required: false,
   })
-  @ZodResponse({ type: [EntryDto], status: HttpStatus.OK })
+  @ZodResponse({ type: EntriesListDto, status: HttpStatus.OK })
   getEntries(
     @Query('status') status: string,
     @Query('offset') offset: number,
