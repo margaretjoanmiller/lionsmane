@@ -346,9 +346,13 @@ export class MinifluxV1Controller {
   @ApiQuery({ type: 'boolean', name: 'counts' })
   getCategories(
     @Query('counts') counts: boolean,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
-    return this.minifluxService.getCategories(session.user.id, counts);
+    return this.minifluxService.getCategories(
+      session.user.id,
+      session.user.minifluxId,
+      counts,
+    );
   }
 
   @Post('categories')

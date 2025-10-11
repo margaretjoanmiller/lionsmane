@@ -96,7 +96,7 @@ export class MinifluxService {
       category: {
         id: feed.folders?.minifluxId || 0,
         user_id: feed.subscriptions.userMinifluxId,
-        title: feed.folders?.name || '',
+        title: feed.folders?.name || 'All',
       },
       icon: {
         feed_id: feed.feeds.minifluxId,
@@ -296,6 +296,11 @@ export class MinifluxService {
         rewrite_rules: '',
         blocklist_rules: '',
         keeplist_rules: '',
+        category: {
+          id: 0,
+          user_id: item.category.user_id,
+          title: 'All',
+        },
       }));
     }
   }
@@ -380,6 +385,7 @@ export class MinifluxService {
 
   async getCategories(
     userId: string,
+    userMiniFlux: number,
     withCounts: boolean,
   ): Promise<CategoryDto[]> {
     const categories = await this.db.query.folders.findMany({
@@ -388,13 +394,21 @@ export class MinifluxService {
         subscriptions: true,
       },
     });
-    return categories.map((c) => ({
+    const returnable = categories.map((c) => ({
       id: c.minifluxId,
       title: c.name,
-      user_id: c.subscriptions[0].userMinifluxId,
+      user_id: userMiniFlux,
       hide_globally: false,
       total_unread: 0,
     }));
+    returnable.push({
+      id: 0,
+      title: 'All',
+      user_id: userMiniFlux,
+      hide_globally: false,
+      total_unread: 0,
+    });
+    return returnable;
   }
   async getEntries(
     userId: string,
