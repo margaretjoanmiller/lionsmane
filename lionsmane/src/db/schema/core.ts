@@ -240,7 +240,7 @@ export const enclosures = pgTable('enclosures', {
     .references(() => articles.minifluxId, { onDelete: 'cascade' }),
   url: text().notNull(),
   size: integer(),
-  mime_type: varchar({ length: 256 }).notNull(),
+  mime_type: varchar({ length: 256 }),
   media_progression: integer().notNull().default(0),
 });
 

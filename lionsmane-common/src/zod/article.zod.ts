@@ -228,8 +228,8 @@ export const articleDetail = z.object({
         id: z.number(),
         entry_id: z.number(),
         url: z.url(),
-        mime_type: z.string().min(1).max(255),
-        size: z.number().min(0),
+        mime_type: z.string().min(1).max(255).nullable(),
+        size: z.number().min(0).nullable(),
         media_progression: z.number().min(0).default(0),
       }),
     )

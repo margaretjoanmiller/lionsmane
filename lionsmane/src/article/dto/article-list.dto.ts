@@ -7,7 +7,7 @@ const articleList = z.object({
   articles: z.array(
     articleDetail.extend({
       isRead: z.boolean().default(false).nullable(),
-      isStarred: z.boolean().default(false).nullable(),
+      isStarred: z.boolean().default(false).nullable().nullable(),
       isBlurred: z.boolean().default(false).nullable(),
       isHidden: z.boolean().default(false).nullable(),
       contentWarning: z.array(z.string()).nullable().default([]),

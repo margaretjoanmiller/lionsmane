@@ -1,0 +1,1 @@
+ALTER TABLE "enclosures" ALTER COLUMN "mime_type" DROP NOT NULL;

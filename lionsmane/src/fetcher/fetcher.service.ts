@@ -1,12 +1,7 @@
 import { Readability } from '@mozilla/readability';
 import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { isAfter, subWeeks } from 'date-fns';
@@ -23,7 +18,6 @@ import robotsParser from 'robots-parser';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
-import { parseDate } from 'src/utils/date-parse';
 
 @Injectable()
 export class FetcherService {
@@ -39,11 +33,27 @@ export class FetcherService {
     const urlObj = new URL(url);
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
     const { data, status, statusText } = await firstValueFrom(
-      this.httpService.get(robotsUrl),
+      this.httpService.get(robotsUrl).pipe(
+        catchError((error) => {
+          this.logger.error('Error fetching feed URL', error);
+          return of({
+            data: null,
+            status: 404,
+            statusText: 'Error fetching robots.txt',
+          });
+        }),
+      ),
     );
 
     if (status !== 200) {
-      throw new Error(`Error getting robots.txt: ${statusText}`);
+      return {
+        isAllowed: (url: string, ua: string) => {
+          return true;
+        },
+        getCrawlDelay: () => {
+          return 5;
+        },
+      };
     }
 
     const robotsTxt = await data;
@@ -59,9 +69,9 @@ export class FetcherService {
           url,
           'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
         ) &&
-        urlObj.host !== 'youtube.com' // youtube blocks rss for some reason while provding it?
+        urlObj.hostname !== 'youtube.com' // youtube blocks rss for some reason while provding it?
       ) {
-        console.warn(`Fetching ${url} is disallowed by robots.txt`);
+        this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
       } else {
         const { data, status, statusText, headers } = await firstValueFrom(
@@ -183,7 +193,7 @@ export class FetcherService {
         .from(schema.feeds)
         .where(eq(schema.feeds.id, feedId));
 
-      if (!feedfromDb || !feedfromDb[0]?.lastChecked) {
+      if (!feedfromDb || !feedfromDb.at(0)?.lastChecked) {
         throw new Error('Malformed feed in database');
       }
 
@@ -219,7 +229,9 @@ export class FetcherService {
               data: {
                 title: item.title,
                 url: item.link ? item.link : item.source?.url,
-                authors: item.authors,
+                authors: item.authors?.map((a) => ({
+                  name: a,
+                })),
                 categories: item.categories?.map((category) => ({
                   term: category.name,
                 })),
@@ -234,13 +246,13 @@ export class FetcherService {
                 rawContent:
                   item.content?.encoded || item.description || 'no content',
                 image: item.media?.thumbnails
-                  ? item.media.thumbnails[0].url
+                  ? item.media.thumbnails.at(0)?.url
                   : item.media?.contents
-                    ? item.media.contents[0].url
+                    ? item.media.contents.at(0)?.url
                     : '',
                 imageAlt: item.media?.contents
-                  ? item.media.contents[0].texts
-                    ? item.media.contents[0].texts[0].value
+                  ? item.media.contents.at(0)?.texts
+                    ? item.media.contents.at(0)?.texts?.at(0)?.value
                     : ''
                   : '',
                 media: item.media,
