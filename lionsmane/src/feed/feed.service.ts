@@ -62,33 +62,45 @@ export class FeedService {
         }),
       ),
     );
-    const allFeeds: URL[] = [];
-    if (data !== null) {
-      // get from meta tag
-      const $ = cheerio.load(data);
-      const $link = $('link');
 
-      $link.each((index, element) => {
-        const type = $(element).attr('type');
-        if (type === 'application/rss+xml' || type === 'application/atom+xml') {
-          const href = $(element).attr('href');
-          if (!href) {
-            return;
-          }
-          try {
-            const feedUrl = new URL(href);
-            allFeeds.push(feedUrl);
-          } catch {
-            try {
-              const mergeUrl = new URL(`https://${url.hostname}${href}`);
-              allFeeds.push(mergeUrl);
-            } catch (error) {
-              this.logger.error('Error in finding url', error);
+    // test base
+    const allFeeds: URL[] = [];
+
+    try {
+      const { feed } = parseFeed(data);
+      this.logger.debug('Found feed', feed.title);
+      allFeeds.push(url);
+    } catch {
+      if (data !== null) {
+        // get from meta tag
+        const $ = cheerio.load(data);
+        const $link = $('link');
+
+        $link.each((index, element) => {
+          const type = $(element).attr('type');
+          if (
+            type === 'application/rss+xml' ||
+            type === 'application/atom+xml'
+          ) {
+            const href = $(element).attr('href');
+            if (!href) {
               return;
             }
+            try {
+              const feedUrl = new URL(href);
+              allFeeds.push(feedUrl);
+            } catch {
+              try {
+                const mergeUrl = new URL(`https://${url.hostname}${href}`);
+                allFeeds.push(mergeUrl);
+              } catch (error) {
+                this.logger.error('Error in finding url', error);
+                return;
+              }
+            }
           }
-        }
-      });
+        });
+      }
     }
     if (allFeeds.length > 0) return allFeeds;
     else {
@@ -124,7 +136,6 @@ export class FeedService {
         throw new BadRequestException('This url does not contain any feeds');
       }
     }
-    throw new BadRequestException('This URL does not contain any feeds');
   }
 
   async discover(url: string) {
