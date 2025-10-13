@@ -23,3 +23,8 @@ mmiller [at] wanderingwires [dot] com
 ## License
 
 Copyright (c) 2024-2025 Margaret Miller. Licensed under the EUPL-1.2-or-later.
+
+
+## Misc info
+
+This project is written by a transgender anti-fascist woman. If that bothers you, send complaints to /dev/null
