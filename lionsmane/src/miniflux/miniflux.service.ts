@@ -30,7 +30,6 @@ import { FeedService } from 'src/feed/feed.service';
 import { Enclosure } from 'src/types/rss';
 import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
-import { FeedOutListDtoType } from '../zod/feed.dto';
 import { CategoryDto } from './dto/category.dto';
 import { EntriesList } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
@@ -323,7 +322,7 @@ export class MinifluxService {
     }
   }
 
-  async getUserInfo(session: UserSession): UserSessionMini {
+  async getUserInfo(session: UserSession): Promise<UserSessionMini> {
     const [user] = await this.db
       .select({
         minifluxId: schema.user.minifluxId,

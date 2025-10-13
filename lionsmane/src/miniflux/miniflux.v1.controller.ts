@@ -24,11 +24,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBasicAuth,
-  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
-  ApiCookieAuth,
-  ApiOAuth2,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -47,12 +44,7 @@ import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
-import {
-  CountersDto,
-  EntriesListDto,
-  EntryDto,
-  UpdateEntriesDto,
-} from './dto/entry.dto';
+import { CountersDto, EntriesListDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
@@ -150,8 +142,7 @@ export class MinifluxV1Controller {
 
   @Get('feeds/:feedId')
   getFeed(@Param('feedId') feedId: number) {
-    // return this.minifluxService.getFeed(feedId);
-    return { message: 'Endpoint not implemented', feedId };
+    return this.minifluxService.getFeed(feedId);
   }
 
   @Post('feeds')

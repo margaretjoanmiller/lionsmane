@@ -8,6 +8,7 @@ injectWorkspacePackages: true
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@scarf/scarf'
+  - '@suites/di.nestjs'
   - '@suites/doubles.vitest'
   - '@swc/core'
   - '@tailwindcss/oxide'
