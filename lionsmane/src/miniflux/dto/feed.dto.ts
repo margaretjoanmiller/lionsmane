@@ -74,6 +74,6 @@ export const updateFeed = z.object({
 });
 
 export class CreateFeedDto extends createZodDto(createSubscription) {}
-export class UpdateFeedDto extends createZodDto(updateFeed) {}
+export class UpdateFeedMiniDto extends createZodDto(updateFeed) {}
 export class FeedMini extends createZodDto(feedDtoMini) {}
 export class FeedMiniList extends createZodDto(feedMiniList) {}

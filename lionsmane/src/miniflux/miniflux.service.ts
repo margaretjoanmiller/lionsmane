@@ -34,7 +34,7 @@ import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { CategoryDto } from './dto/category.dto';
 import { EntriesList } from './dto/entry.dto';
-import { CreateFeedDto, FeedMini, UpdateFeedDto } from './dto/feed.dto';
+import { CreateFeedDto, FeedMini, UpdateFeedMiniDto } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
 @Injectable()
@@ -867,7 +867,7 @@ export class MinifluxService {
     };
   }
 
-  async updateFeed(userId: string, feedId: number, feedDto: UpdateFeedDto) {
+  async updateFeed(userId: string, feedId: number, feedDto: UpdateFeedMiniDto) {
     return await this.db.transaction(async (tx) => {
       const [feed] = await tx
         .select()
@@ -985,5 +985,51 @@ export class MinifluxService {
     } else {
       throw new NotFoundException('Article is not in database');
     }
+  }
+
+  async removeFeed(userId: string, feedId: number) {
+    return await this.db.transaction(async (tx) => {
+      const [feed] = await tx
+        .select({ id: schema.feeds.id })
+        .from(schema.feeds)
+        .where(eq(schema.feeds.minifluxId, feedId))
+        .limit(1);
+
+      if (!feed || !feed.id) {
+        throw new NotFoundException('Feed not found');
+      }
+
+      await tx
+        .delete(schema.subscriptions)
+        .where(
+          and(
+            eq(schema.subscriptions.id, feed.id),
+            eq(schema.subscriptions.userId, userId),
+          ),
+        );
+    });
+  }
+
+  async markFeedAsRead(userId: string, feedId: number) {
+    const [feed] = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        eq(schema.subscriptions.feedId, schema.feeds.id),
+      )
+      .where(
+        and(
+          eq(schema.feeds.minifluxId, feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    if (!feed || !feed.id) {
+      throw new NotFoundException('Feed not found');
+    }
+
+    return await this.feedService.markAllRead(userId, feed.id);
   }
 }

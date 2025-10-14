@@ -44,7 +44,7 @@ import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { CountersDto, EntriesListDto, UpdateEntriesDto } from './dto/entry.dto';
-import { CreateFeedDto, FeedMini, UpdateFeedDto } from './dto/feed.dto';
+import { CreateFeedDto, FeedMini, UpdateFeedMiniDto } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
 import { MinifluxService } from './miniflux.service';
@@ -115,7 +115,6 @@ export class MinifluxV1Controller {
 
   @Get('version')
   getVersion() {
-    // return this.minifluxService.getVersion();
     return {
       version: '2.0.49',
       commit: '69779e795',
@@ -160,7 +159,7 @@ export class MinifluxV1Controller {
   @Put('feeds/:feedId')
   updateFeed(
     @Param('feedId') feedId: number,
-    @Body() updateFeedDto: UpdateFeedDto,
+    @Body() updateFeedDto: UpdateFeedMiniDto,
     @Session() session: typeof auth.$Infer.Session,
   ) {
     return this.minifluxService.updateFeed(
@@ -186,9 +185,11 @@ export class MinifluxV1Controller {
 
   @Delete('feeds/:feedId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeFeed(@Param('feedId') feedId: number) {
-    // this.minifluxService.removeFeed(feedId);
-    return;
+  removeFeed(
+    @Param('feedId') feedId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.removeFeed(session.user.id, feedId);
   }
 
   @Get('feeds/:feedId/icon')
@@ -198,9 +199,11 @@ export class MinifluxV1Controller {
 
   @Put('feeds/:feedId/mark-all-as-read')
   @HttpCode(HttpStatus.NO_CONTENT)
-  markFeedAsRead(@Param('feedId') feedId: number) {
-    // this.minifluxService.markFeedAsRead(feedId);
-    return;
+  markFeedAsRead(
+    @Param('feedId') feedId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.markFeedAsRead(session.user.id, feedId);
   }
 
   @Get('entries')
