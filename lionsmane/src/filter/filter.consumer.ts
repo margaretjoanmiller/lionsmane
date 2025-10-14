@@ -1,9 +1,10 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
-import { eq } from 'drizzle-orm';
+import { eq, getTableColumns, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { schema } from 'src/db/schema';
+import { Enclosure } from 'src/types/rss';
 import { FilterService } from './filter.service';
 
 @Processor('filter')
@@ -17,7 +18,13 @@ export class FilterConsumer extends WorkerHost {
   async process(job: Job<{ articleId: string }>) {
     const { articleId } = job.data;
     const [article] = await this.db
-      .select()
+      .select({
+        ...getTableColumns(schema.articles),
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
+      })
       .from(schema.articles)
       .where(eq(schema.articles.id, articleId))
       .limit(1);
@@ -41,7 +48,10 @@ export class FilterConsumer extends WorkerHost {
         .from(schema.userFilters)
         .where(eq(schema.userFilters.userId, userId));
       const rules = this.filterService.evaluateArticleAgainstFilters(
-        article,
+        {
+          ...article,
+          enclosures: article.enclosures as Enclosure[],
+        },
         activeRules,
       );
       if (rules.length > 0) {
