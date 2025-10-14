@@ -8,5 +8,6 @@ import { ReadlaterService } from './readlater.service';
   imports: [SecretsModule, HttpModule],
   providers: [ReadlaterService],
   controllers: [ReadlaterController],
+  exports: [ReadlaterService],
 })
 export class ReadlaterModule {}

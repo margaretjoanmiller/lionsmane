@@ -9,7 +9,7 @@ import {
 import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { catchError, map } from 'rxjs';
+import { catchError, firstValueFrom, map } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { SecretsService } from 'src/secrets/secrets.service';
 
@@ -51,25 +51,27 @@ export class ReadlaterService {
       throw new PreconditionFailedException('Readlater service not configured');
     }
 
-    return this.httpService
-      .post(
-        apiKey.apiUrl + 'api/bookmarks',
-        {
-          url: articleUrl,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${apiKey.apiKey}`,
-            'Content-Type': 'application/json',
+    return await firstValueFrom(
+      this.httpService
+        .post(
+          apiKey.apiUrl + 'api/bookmarks',
+          {
+            url: articleUrl,
           },
-        },
-      )
-      .pipe(
-        map((res) => res.data),
-        catchError((error: AxiosError) => {
-          this.logger.error(error);
-          throw Error('Error saving readlater item', { cause: error });
-        }),
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${apiKey.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+        .pipe(
+          map((res) => res.data),
+          catchError((error: AxiosError) => {
+            this.logger.error(error);
+            throw Error('Error saving readlater item', { cause: error });
+          }),
+        ),
+    );
   }
 }

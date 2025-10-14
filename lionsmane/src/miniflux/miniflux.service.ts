@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserSession } from '@thallesp/nestjs-better-auth';
 import { fromUnixTime } from 'date-fns';
@@ -42,7 +43,7 @@ export class MinifluxService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
     private articleService: ArticleService,
-    // private readLater: ReadlaterService,
+    private readLater: ReadlaterService,
     private httpService: HttpService,
   ) {}
 
@@ -967,6 +968,22 @@ export class MinifluxService {
         'starred',
         userId,
       );
+    }
+  }
+
+  async saveEntry(userId: string, entryId: number) {
+    const [entry] = await this.db
+      .select({
+        url: schema.articles.url,
+      })
+      .from(schema.articles)
+      .where(eq(schema.articles.minifluxId, entryId))
+      .limit(1);
+
+    if (entry && entry.url) {
+      return await this.readLater.addBookmark(new URL(entry.url), userId);
+    } else {
+      throw new NotFoundException('Article is not in database');
     }
   }
 }

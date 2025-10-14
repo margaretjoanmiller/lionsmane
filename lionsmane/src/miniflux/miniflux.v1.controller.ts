@@ -319,9 +319,11 @@ export class MinifluxV1Controller {
 
   @Post('entries/:entryId/save')
   @HttpCode(HttpStatus.ACCEPTED)
-  saveEntry(@Param('entryId') entryId: number) {
-    // this.minifluxService.saveEntry(entryId);
-    return;
+  saveEntry(
+    @Param('entryId') entryId: number,
+    @Session() session: UserSession,
+  ) {
+    this.minifluxService.saveEntry(session.user.id, entryId);
   }
 
   @Put('entries/:entryId/bookmark')
