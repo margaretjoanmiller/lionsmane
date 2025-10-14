@@ -141,8 +141,12 @@ export class MinifluxV1Controller {
   }
 
   @Get('feeds/:feedId')
-  getFeed(@Param('feedId') feedId: number) {
-    return this.minifluxService.getFeed(feedId);
+  @ZodResponse({ type: FeedMini, status: HttpStatus.OK })
+  getFeed(
+    @Param('feedId') feedId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.getFeed(session.user.id, feedId);
   }
 
   @Post('feeds')

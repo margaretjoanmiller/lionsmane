@@ -812,4 +812,55 @@ export class MinifluxService {
       };
     }
   }
+
+  async getFeed(userId: string, feedId: number) {
+    const [feeds] = await this.db
+      .select()
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        and(eq(schema.subscriptions.userId, userId)),
+      )
+      .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
+      .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
+      .where(eq(schema.feeds.minifluxId, feedId))
+      .limit(1);
+
+    return {
+      id: feeds.feeds.minifluxId,
+      user_id: feeds.subscriptions.userMinifluxId,
+      site_url: feeds.feeds.site_url,
+      feed_url: feeds.feeds.url,
+      title: feeds.feeds.title,
+      description: feeds.subscriptions.description,
+      checked_at: parseDate(feeds.feeds.lastChecked).toISOString(),
+      etag_header: feeds.feeds.etag_header || '',
+      last_modified_header: feeds.feeds.last_modified_header || '',
+      parsing_error_count: feeds.feeds.parsingErrorCount,
+      parsing_error_message: feeds.feeds.parsingErrorMessage || '',
+      crawler: feeds.feeds.crawler,
+      disabled: false,
+      scraper_rules: '',
+      rewrite_rules: '',
+      blocklist_rules: '',
+      keeplist_rules: '',
+      user_agent: '',
+      username: '',
+      password: '',
+      ignore_http_cache: false,
+      fetch_via_proxy: false,
+      category: {
+        id: feeds.folders?.minifluxId || 0,
+        user_id: feeds.subscriptions.userMinifluxId,
+        title: feeds.folders?.name || 'All',
+      },
+      icon: {
+        feed_id: feeds.feeds.minifluxId,
+        icon_id: feeds.icons?.id || 0,
+      },
+    };
+  }
 }
