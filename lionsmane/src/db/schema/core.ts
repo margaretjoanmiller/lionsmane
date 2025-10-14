@@ -70,6 +70,7 @@ export const feeds = pgTable(
     podcast: jsonb().$type<PodFeed<string>>(),
     geo: jsonb().$type<Geo>().notNull().default({}),
     icon: integer().references(() => icons.id),
+    feed_host: uuid().references(() => feedHost.id),
   },
   (table) => [
     primaryKey({ columns: [table.id, table.minifluxId] }),
@@ -117,6 +118,14 @@ export const subscriptions = pgTable(
   ],
 );
 
+export const feedHost = pgTable('feed_host', {
+  id: uuid()
+    .primaryKey()
+    .$defaultFn(() => v7()),
+  url: text().unique(),
+  robotsTxt: text(),
+});
+
 export const folders = pgTable(
   'folders',
   {
@@ -158,6 +167,10 @@ export const feedRelations = relations(feeds, ({ many, one }) => ({
   icon: one(icons, {
     fields: [feeds.icon],
     references: [icons.id],
+  }),
+  feedHost: one(feedHost, {
+    fields: [feeds.feed_host],
+    references: [feedHost.id],
   }),
 }));
 

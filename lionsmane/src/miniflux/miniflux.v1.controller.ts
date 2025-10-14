@@ -40,12 +40,11 @@ import type { Request as ExpressRequest } from 'express';
 import { ZodResponse } from 'nestjs-zod';
 import { auth } from 'src/auth';
 import { FileDto } from 'src/feed/dto/file.dto';
-import { UpdateFeedDto } from 'src/feed/dto/update-feed.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { CountersDto, EntriesListDto, UpdateEntriesDto } from './dto/entry.dto';
-import { CreateFeedDto, FeedMini } from './dto/feed.dto';
+import { CreateFeedDto, FeedMini, UpdateFeedDto } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
 import { MinifluxService } from './miniflux.service';
@@ -129,13 +128,13 @@ export class MinifluxV1Controller {
   }
 
   @Get('feeds')
-  @ZodResponse({ type: [FeedMini], status: 200 })
+  @ZodResponse({ type: [FeedMini], status: HttpStatus.OK })
   getFeeds(@Session() session: typeof auth.$Infer.Session) {
     return this.minifluxService.getFeeds(session.user.id);
   }
 
   @Get('feeds/counters')
-  @ZodResponse({ type: CountersDto, status: 200 })
+  @ZodResponse({ type: CountersDto, status: HttpStatus.OK })
   getFeedCounters(@Session() session: typeof auth.$Infer.Session) {
     return this.minifluxService.getCounters(session.user.id);
   }
@@ -162,9 +161,13 @@ export class MinifluxV1Controller {
   updateFeed(
     @Param('feedId') feedId: number,
     @Body() updateFeedDto: UpdateFeedDto,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
-    // return this.minifluxService.updateFeed(feedId, updateFeedDto);
-    return { message: 'Endpoint not implemented', feedId, data: updateFeedDto };
+    return this.minifluxService.updateFeed(
+      session.user.id,
+      feedId,
+      updateFeedDto,
+    );
   }
 
   @Put('feeds/:feedId/refresh')
@@ -323,9 +326,11 @@ export class MinifluxV1Controller {
 
   @Put('entries/:entryId/bookmark')
   @HttpCode(HttpStatus.NO_CONTENT)
-  toggleBookmark(@Param('entryId') entryId: number) {
-    // this.minifluxService.toggleBookmark(entryId);
-    return;
+  toggleBookmark(
+    @Param('entryId') entryId: number,
+    @Session() session: UserSession,
+  ) {
+    this.minifluxService.toggleBookmark(session.user.id, entryId);
   }
 
   @Get('entries/:entryId/fetch-content')

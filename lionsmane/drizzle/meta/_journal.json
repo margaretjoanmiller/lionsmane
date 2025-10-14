@@ -57,6 +57,13 @@
       "when": 1760152154395,
       "tag": "0007_shallow_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1760471220727,
+      "tag": "0008_loud_songbird",
+      "breakpoints": true
     }
   ]
 }

@@ -31,33 +31,55 @@ export class FetcherService {
 
   async robots(url: string) {
     const urlObj = new URL(url);
+    const [feedHost] = await this.db
+      .select({
+        robotsTxt: schema.feedHost.robotsTxt,
+      })
+      .from(schema.feedHost)
+      .where(eq(schema.feedHost.url, urlObj.hostname))
+      .limit(1);
+
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-    const { data, status, statusText } = await firstValueFrom(
-      this.httpService.get(robotsUrl).pipe(
-        catchError((error) => {
-          this.logger.error('Error fetching feed URL', error);
-          return of({
-            data: null,
-            status: 404,
-            statusText: 'Error fetching robots.txt',
-          });
-        }),
-      ),
-    );
+    if (feedHost && feedHost.robotsTxt) {
+      return robotsParser(robotsUrl, feedHost.robotsTxt);
+    } else {
+      const { data, status } = await firstValueFrom(
+        this.httpService.get(robotsUrl).pipe(
+          catchError((error) => {
+            this.logger.error('Error fetching feed URL', error);
+            return of({
+              data: null,
+              status: 404,
+              statusText: 'Error fetching robots.txt',
+            });
+          }),
+        ),
+      );
 
-    if (status !== 200) {
-      return {
-        isAllowed: (url: string, ua: string) => {
-          return true;
-        },
-        getCrawlDelay: () => {
-          return 5;
-        },
-      };
+      if (status !== 200) {
+        return {
+          isAllowed: (url: string, ua: string) => {
+            return true;
+          },
+          getCrawlDelay: () => {
+            return 5;
+          },
+        };
+      }
+
+      const robotsTxt = await data;
+      const parsedRobots = robotsParser(robotsUrl, robotsTxt);
+
+      await this.db
+        .insert(schema.feedHost)
+        .values({
+          url: urlObj.hostname,
+          robotsTxt: data,
+        })
+        .onConflictDoNothing();
+
+      return parsedRobots;
     }
-
-    const robotsTxt = await data;
-    return robotsParser(robotsUrl, robotsTxt);
   }
 
   async respectfulFetch(url: string) {

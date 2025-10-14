@@ -27,12 +27,13 @@ import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
+import { ReadlaterService } from 'src/readlater/readlater.service';
 import { Enclosure } from 'src/types/rss';
 import { parseDate } from 'src/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { CategoryDto } from './dto/category.dto';
 import { EntriesList } from './dto/entry.dto';
-import { CreateFeedDto, FeedMini } from './dto/feed.dto';
+import { CreateFeedDto, FeedMini, UpdateFeedDto } from './dto/feed.dto';
 import { UserSessionMini } from './dto/user.dto';
 
 @Injectable()
@@ -41,6 +42,7 @@ export class MinifluxService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
     private articleService: ArticleService,
+    // private readLater: ReadlaterService,
     private httpService: HttpService,
   ) {}
 
@@ -862,5 +864,109 @@ export class MinifluxService {
         icon_id: feeds.icons?.id || 0,
       },
     };
+  }
+
+  async updateFeed(userId: string, feedId: number, feedDto: UpdateFeedDto) {
+    return await this.db.transaction(async (tx) => {
+      const [feed] = await tx
+        .select()
+        .from(schema.feeds)
+        .innerJoin(
+          schema.subscriptions,
+          eq(schema.subscriptions.feedId, schema.feeds.id),
+        )
+        .where(
+          and(
+            eq(schema.feeds.minifluxId, feedId),
+            eq(schema.subscriptions.userId, userId),
+          ),
+        )
+        .limit(1);
+      if (!feed) {
+        throw new Error('Feed not found');
+      }
+      if (feedDto.category_id) {
+        const [folder] = await tx
+          .select()
+          .from(schema.folders)
+          .where(
+            and(
+              eq(schema.folders.minifluxId, feedDto.category_id),
+              eq(schema.folders.userId, userId),
+            ),
+          )
+          .limit(1);
+        if (!folder) {
+          throw new Error('Folder not found');
+        }
+        const [subscription] = await tx
+          .update(schema.subscriptions)
+          .set({
+            description: feedDto.title,
+            folderId: folder.id,
+          })
+          .where(
+            and(
+              eq(schema.subscriptions.feedId, feed.feeds.id),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .returning();
+        if (!subscription) {
+          throw new Error('Subscription not found');
+        }
+        return subscription;
+      } else {
+        const [subscription] = await tx
+          .update(schema.subscriptions)
+          .set({
+            description: feedDto.title,
+            folderId: null,
+          })
+          .where(
+            and(
+              eq(schema.subscriptions.feedId, feed.feeds.id),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          )
+          .returning();
+        if (!subscription) {
+          throw new Error('Subscription not found');
+        }
+        return subscription;
+      }
+    });
+  }
+
+  async toggleBookmark(userId: string, entryId: number) {
+    const [entry] = await this.db
+      .select({
+        id: schema.articles.id,
+        isStarred: schema.userArticleStates.isStarred,
+      })
+      .from(schema.articles)
+      .leftJoin(
+        schema.userArticleStates,
+        eq(schema.userArticleStates.articleId, schema.articles.id),
+      )
+      .where(eq(schema.articles.minifluxId, entryId))
+      .limit(1);
+    if (!entry) {
+      throw new BadRequestException('Entry not found');
+    }
+
+    if (entry.isStarred) {
+      await this.articleService.updateArticleStatus(
+        entry.id,
+        'unstarred',
+        userId,
+      );
+    } else {
+      await this.articleService.updateArticleStatus(
+        entry.id,
+        'starred',
+        userId,
+      );
+    }
   }
 }
