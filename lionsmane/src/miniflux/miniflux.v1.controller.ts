@@ -43,6 +43,7 @@ import { FileDto } from 'src/feed/dto/file.dto';
 import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
+import { CategoryOutDto, CreateCategoryDto } from './dto/category.dto';
 import { CountersDto, EntriesListDto, UpdateEntriesDto } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini, UpdateFeedMiniDto } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
@@ -361,10 +362,15 @@ export class MinifluxV1Controller {
   }
 
   @Post('categories')
-  @HttpCode(HttpStatus.CREATED)
-  createCategory(@Body() createCategoryDto: CreateCategoryDto) {
-    // return this.minifluxService.createCategory(createCategoryDto);
-    return { message: 'Endpoint not implemented', data: createCategoryDto };
+  @ZodResponse({ type: CategoryOutDto, status: HttpStatus.CREATED })
+  createCategory(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.createCategory(
+      session.user.id,
+      createCategoryDto.title,
+    );
   }
 
   @Put('categories/:categoryId')

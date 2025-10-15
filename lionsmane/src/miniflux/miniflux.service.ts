@@ -28,6 +28,7 @@ import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
+import { FolderService } from 'src/folder/folder.service';
 import { ReadlaterService } from 'src/readlater/readlater.service';
 import { Enclosure } from 'src/types/rss';
 import { parseDate } from 'src/utils/date-parse';
@@ -42,6 +43,7 @@ export class MinifluxService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     private feedService: FeedService,
+    private folderService: FolderService,
     private articleService: ArticleService,
     private readLater: ReadlaterService,
     private httpService: HttpService,
@@ -1031,5 +1033,13 @@ export class MinifluxService {
     }
 
     return await this.feedService.markAllRead(userId, feed.id);
+  }
+
+  async createCategory(userId: string, title: string) {
+    const category = await this.folderService.create({ name: title }, userId);
+    return {
+      id: category.minifluxId,
+      title: category.name
+    }
   }
 }
