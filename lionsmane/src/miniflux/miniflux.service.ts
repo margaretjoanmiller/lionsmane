@@ -1035,11 +1035,49 @@ export class MinifluxService {
     return await this.feedService.markAllRead(userId, feed.id);
   }
 
-  async createCategory(userId: string, title: string) {
+  async createCategory(userId: string, userMinifluxId: number, title: string) {
     const category = await this.folderService.create({ name: title }, userId);
     return {
       id: category.minifluxId,
-      title: category.name
-    }
+      user_id: userMinifluxId,
+      title: category.name,
+      hide_globally: false,
+    };
+  }
+
+  async updateCategory(
+    userId: string,
+    userMinifluxId: number,
+    categoryId: number,
+    title: string,
+  ) {
+    const [category] = await this.db
+      .update(schema.folders)
+      .set({ name: title })
+      .where(
+        and(
+          eq(schema.folders.minifluxId, categoryId),
+          eq(schema.folders.userId, userId),
+        ),
+      )
+      .returning();
+
+    return {
+      id: category.minifluxId,
+      user_id: userMinifluxId,
+      title: category.name,
+      hide_globally: false,
+    };
+  }
+
+  async deleteCategory(userId: string, categoryId: number) {
+    return await this.db
+      .delete(schema.folders)
+      .where(
+        and(
+          eq(schema.folders.minifluxId, categoryId),
+          eq(schema.folders.userId, userId),
+        ),
+      );
   }
 }

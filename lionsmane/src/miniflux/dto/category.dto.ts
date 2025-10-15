@@ -26,4 +26,4 @@ export const categoryUnion = z.union([categorySchema, categoryWithCounts]);
 export type CategoryDto = z.infer<typeof categoryUnion>;
 
 export class CreateCategoryDto extends createZodDto(createCategory) {}
-export class CategoryOutDto extends createZodDto(createCategory) {}
+export class CategoryOutDto extends createZodDto(categorySchema) {}

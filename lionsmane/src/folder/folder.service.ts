@@ -150,7 +150,9 @@ export class FolderService {
       const [folder] = await tx
         .update(schema.folders)
         .set({ name: updateFolderDto.name })
-        .where(eq(schema.folders.id, id))
+        .where(
+          and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),
+        )
         .returning();
 
       if (!folder) {
@@ -162,7 +164,12 @@ export class FolderService {
         await tx
           .update(schema.subscriptions)
           .set({ folderId: null })
-          .where(eq(schema.subscriptions.folderId, id));
+          .where(
+            and(
+              eq(schema.subscriptions.folderId, id),
+              eq(schema.subscriptions.userId, userId),
+            ),
+          );
         // Add folderId to all subscriptions that are in the new list
         if (updateFolderDto.feedIds.length > 0) {
           await tx

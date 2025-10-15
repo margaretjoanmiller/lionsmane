@@ -369,28 +369,33 @@ export class MinifluxV1Controller {
   ) {
     return this.minifluxService.createCategory(
       session.user.id,
+      session.user.minifluxId,
       createCategoryDto.title,
     );
   }
 
   @Put('categories/:categoryId')
+  @ZodResponse({ type: CategoryOutDto, status: HttpStatus.CREATED })
   updateCategory(
     @Param('categoryId') categoryId: number,
-    @Body() updateCategoryDto: UpdateCategoryDto,
+    @Body() updateCategoryDto: CreateCategoryDto,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
-    // return this.minifluxService.updateCategory(categoryId, updateCategoryDto);
-    return {
-      message: 'Endpoint not implemented',
+    return this.minifluxService.updateCategory(
+      session.user.id,
+      session.user.minifluxId,
       categoryId,
-      data: updateCategoryDto,
-    };
+      updateCategoryDto.title,
+    );
   }
 
   @Delete('categories/:categoryId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteCategory(@Param('categoryId') categoryId: number) {
-    // this.minifluxService.deleteCategory(categoryId);
-    return;
+  deleteCategory(
+    @Param('categoryId') categoryId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.deleteCategory(session.user.id, categoryId);
   }
 
   @Get('categories/:categoryId/feeds')
