@@ -1,7 +1,7 @@
 import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
-import { feedDtoMini, feedMiniList } from './feed.dto';
+import { feedDtoMini } from './feed.dto';
 
 export const counters = z.object({
   reads: z.record(z.string(), z.number().min(0)),

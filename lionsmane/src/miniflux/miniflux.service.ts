@@ -788,6 +788,97 @@ export class MinifluxService {
       };
     }
   }
+
+  async getEntry(userId: string, entryId: number) {
+    const [entry] = await this.db
+      .select({
+        ...getTableColumns(schema.articles),
+        created_at: schema.articles.published,
+        user_id: schema.subscriptions.userMinifluxId,
+        feed_id: schema.feeds.minifluxId,
+        comments_url: schema.articles.comments,
+        feedTitle: schema.feeds.title,
+        authors: schema.articles.authors,
+        content: schema.articles.readableHtml,
+        isRead: schema.userArticleStates.isRead ?? false,
+        isStarred: schema.userArticleStates.isStarred ?? false,
+        enclosures:
+          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
+            'enclosures',
+          ),
+        feed: schema.feeds,
+        category: {
+          id: schema.folders.minifluxId,
+          user_id: schema.subscriptions.userMinifluxId,
+          title: schema.folders.name,
+        },
+      })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(eq(schema.articles.minifluxId, entryId));
+
+    return {
+      ...entry,
+      id: entry.minifluxId,
+      author: entry.authors.at(0)?.name || '',
+      status: entry.isRead ? 'read' : 'unread',
+      starred: entry.isStarred || false,
+      comments_url: entry.comments_url || '',
+      content: entry.content || '',
+      published_at: entry.published,
+      share_code: '',
+      reading_time: 0,
+      enclosures: entry.enclosures as Enclosure[],
+      feed: {
+        ...entry.feed,
+        id: entry.feed.minifluxId,
+        user_id: entry.user_id,
+        feed_url: entry.feed.url,
+        user_agent: '',
+        checked_at: entry.feed.lastChecked,
+        last_modified_header: entry.feed.last_modified_header || '',
+        disabled: false,
+        username: '',
+        password: '',
+        parsing_error_count: 0,
+        parsing_error_message: '',
+        ignore_http_cache: false,
+        fetch_via_proxy: false,
+        scraper_rules: '',
+        rewrite_rules: '',
+        blocklist_rules: '',
+        keeplist_rules: '',
+        icon: {
+          feed_id: entry.feed.minifluxId,
+          icon_id: entry.feed.icon || 0,
+        },
+        category: {
+          id: entry.category.id || 0,
+          user_id: entry.category.user_id,
+          title: entry.category.title || '',
+        },
+      },
+    };
+  }
+
   async createFeed(userId: string, feed: CreateFeedDto) {
     if (feed.category_id !== 0) {
       const [category] = await this.db

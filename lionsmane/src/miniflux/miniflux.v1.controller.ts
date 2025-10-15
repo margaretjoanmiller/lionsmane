@@ -40,7 +40,12 @@ import { FeedService } from 'src/feed/feed.service';
 import { DiscoverDto } from 'src/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { CategoryOutDto, CreateCategoryDto } from './dto/category.dto';
-import { CountersDto, EntriesListDto, UpdateEntriesDto } from './dto/entry.dto';
+import {
+  CountersDto,
+  EntriesListDto,
+  EntryDto,
+  UpdateEntriesDto,
+} from './dto/entry.dto';
 import { CreateFeedDto, FeedMini, UpdateFeedMiniDto } from './dto/feed.dto';
 import { UserSchemaDto } from './dto/user.dto';
 import { MiniHttpExceptionFilter } from './exception.filter';
@@ -287,9 +292,12 @@ export class MinifluxV1Controller {
   }
 
   @Get('entries/:entryId')
-  getEntry(@Param('entryId') entryId: number) {
-    // return this.minifluxService.getEntry(entryId);
-    return { message: 'Endpoint not implemented', entryId };
+  @ZodResponse({ type: EntryDto, status: HttpStatus.OK })
+  getEntry(
+    @Param('entryId') entryId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.getEntry(session.user.id, entryId);
   }
 
   // Not supporting this endpoint right now
