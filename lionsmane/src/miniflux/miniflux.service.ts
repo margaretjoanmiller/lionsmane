@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UserSession } from '@thallesp/nestjs-better-auth';
+import { AuthService, UserSession } from '@thallesp/nestjs-better-auth';
 import { fromUnixTime } from 'date-fns';
 import {
   and,
@@ -26,6 +26,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
+import { auth } from 'src/auth';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -47,7 +48,10 @@ export class MinifluxService {
     private articleService: ArticleService,
     private readLater: ReadlaterService,
     private httpService: HttpService,
+    private authService: AuthService<typeof auth>,
   ) {}
+
+  private readonly logger = new Logger(MinifluxService.name);
 
   async discoverFeeds(discoverDto: DiscoverDto) {
     const feeds = await this.feedService.discover(discoverDto.url);

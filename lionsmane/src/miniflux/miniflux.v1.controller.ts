@@ -447,23 +447,27 @@ export class MinifluxV1Controller {
     return this.minifluxService.getIcon(iconId);
   }
 
-  // --- API Keys ---
-  @Get('api-keys')
-  getApiKeys() {
-    // return this.minifluxService.getApiKeys();
-    return { message: 'Endpoint not implemented' };
-  }
-
-  @Post('api-keys')
-  createApiKey(@Body() createApiKeyDto: CreateApiKeyDto) {
-    // return this.minifluxService.createApiKey(createApiKeyDto);
-    return { message: 'Endpoint not implemented', data: createApiKeyDto };
-  }
-
-  @Delete('api-keys/:apiKeyId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  deleteApiKey(@Param('apiKeyId') apiKeyId: number) {
-    // this.minifluxService.deleteApiKey(apiKeyId);
-    return;
-  }
+  // not implementing these right now since they require some changes to the auth-
+  // key database (numerical IDs)
+  // // --- API Keys ---
+  // @Get('api-keys')
+  // getApiKeys(
+  //   @Req() request: ExpressRequest,
+  //   @Session() session: typeof auth.$Infer.Session,
+  // ) {
+  //   return this.minifluxService.listApiKeys(session.user.minifluxId, request);
+  // }
+  //
+  // @Post('api-keys')
+  // createApiKey(@Body() createApiKeyDto: CreateApiKeyDto) {
+  //   // return this.minifluxService.createApiKey(createApiKeyDto);
+  //   return { message: 'Endpoint not implemented', data: createApiKeyDto };
+  // }
+  //
+  // @Delete('api-keys/:apiKeyId')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // deleteApiKey(@Param('apiKeyId') apiKeyId: number) {
+  //   // this.minifluxService.deleteApiKey(apiKeyId);
+  //   return;
+  // }
 }
