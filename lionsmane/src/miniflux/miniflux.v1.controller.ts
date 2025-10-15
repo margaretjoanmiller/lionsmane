@@ -44,6 +44,7 @@ import {
   CountersDto,
   EntriesListDto,
   EntryDto,
+  FullEntryContent,
   UpdateEntriesDto,
 } from './dto/entry.dto';
 import { CreateFeedDto, FeedMini, UpdateFeedMiniDto } from './dto/feed.dto';
@@ -347,15 +348,21 @@ export class MinifluxV1Controller {
   }
 
   @Get('entries/:entryId/fetch-content')
+  @ZodResponse({ type: FullEntryContent, status: 200 })
   fetchOriginalArticle(
     @Param('entryId') entryId: number,
-    @Query('update_content') updateContent: boolean,
+    @Session() session: typeof auth.$Infer.Session,
+    @Query('update_content') updateContent = false,
   ) {
-    // return this.minifluxService.fetchOriginalArticle(entryId, updateContent);
-    return { message: 'Endpoint not implemented', entryId, updateContent };
+    return this.minifluxService.fetchOriginalArticle(
+      session.user.id,
+      entryId,
+      updateContent,
+    );
   }
 
   @Get('categories')
+  @ZodResponse({ type: [CategoryOutDto], status: 200 })
   @ApiQuery({ type: 'boolean', name: 'counts' })
   getCategories(
     @Query('counts') counts: boolean,

@@ -81,7 +81,7 @@ export class ArticleConsumer extends WorkerHost {
       return { result: 'ok', articleId: article[0].id };
     } else if (job.name === 'readable-article' && 'userId' in job.data) {
       const { id, userId } = job.data;
-      return await this.articleService.requestFullArticletext(id, userId);
+      return await this.articleService.requestFullArticleText(id, userId);
     }
   }
 }

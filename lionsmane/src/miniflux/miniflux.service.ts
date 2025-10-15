@@ -31,6 +31,7 @@ import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
+import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';
 import { ReadlaterService } from 'src/readlater/readlater.service';
 import { Enclosure } from 'src/types/rss';
@@ -49,6 +50,7 @@ export class MinifluxService {
     private feedService: FeedService,
     private folderService: FolderService,
     private articleService: ArticleService,
+    private fetcher: FetcherService,
     private readLater: ReadlaterService,
     private httpService: HttpService,
   ) {}
@@ -330,6 +332,44 @@ export class MinifluxService {
         throw new BadRequestException('Entry not found');
       }
       await this.articleService.updateArticleStatus(entry.id, status, userId);
+    }
+  }
+
+  async fetchOriginalArticle(
+    userId: string,
+    entryId: number,
+    updateDb: boolean,
+  ) {
+    const [article] = await this.db
+      .select({ id: schema.articles.id, url: schema.articles.url })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
+        eq(schema.articles.feedId, schema.subscriptions.feedId),
+      )
+      .innerJoin(schema.feeds, eq(schema.articles.feedId, schema.feeds.id))
+      .where(
+        and(
+          eq(schema.articles.minifluxId, entryId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .limit(1);
+    if (!article) {
+      throw new NotFoundException('Article not found or access denied');
+    }
+    if (!updateDb) {
+      const { htmlContent } = await this.fetcher.readablity(article.url);
+      return { content: htmlContent };
+    } else {
+      const { fullArticleHtml } =
+        await this.articleService.requestFullArticleText(article.id, userId);
+      if (!fullArticleHtml) {
+        throw new InternalServerErrorException(
+          'Could not get article contents',
+        );
+      }
+      return { content: fullArticleHtml };
     }
   }
 

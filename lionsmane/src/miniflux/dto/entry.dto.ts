@@ -67,9 +67,14 @@ export const entriesList = z.object({
   entries: z.array(entry),
 });
 
+export const fullEntryContent = z.object({
+  content: z.string(),
+});
+
 export type EntriesList = z.infer<typeof entriesList>;
 
 export class CountersDto extends createZodDto(counters) {}
 export class UpdateEntriesDto extends createZodDto(updateEntries) {}
 export class EntryDto extends createZodDto(entry) {}
 export class EntriesListDto extends createZodDto(entriesList) {}
+export class FullEntryContent extends createZodDto(fullEntryContent) {}

@@ -77,7 +77,7 @@ export class ArticleService {
     return await this.articlesQueue.add('readable-article', { id, userId });
   }
 
-  async requestFullArticletext(id: string, userId: string) {
+  async requestFullArticleText(id: string, userId: string) {
     const result = await this.db.transaction(async (tx) => {
       const [article] = await tx
         .select()

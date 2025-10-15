@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { ArticleModule } from 'src/article/article.module';
 import { FeedModule } from 'src/feed/feed.module';
+import { FetcherModule } from 'src/fetcher/fetcher.module';
 import { FolderModule } from 'src/folder/folder.module';
 import { ReadlaterModule } from 'src/readlater/readlater.module';
 import { MinifluxService } from './miniflux.service';
@@ -14,6 +15,7 @@ import { MinifluxV1Controller } from './miniflux.v1.controller';
     FeedModule,
     FolderModule,
     ArticleModule,
+    FetcherModule,
     ReadlaterModule,
     HttpModule,
     AuthModule,
