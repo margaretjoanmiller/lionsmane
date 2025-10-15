@@ -1,12 +1,15 @@
 import { HttpService } from '@nestjs/axios';
+import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthService, UserSession } from '@thallesp/nestjs-better-auth';
+import { UserSession } from '@thallesp/nestjs-better-auth';
+import { Queue } from 'bullmq';
 import { fromUnixTime } from 'date-fns';
 import {
   and,
@@ -26,7 +29,6 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
-import { auth } from 'src/auth';
 import { schema } from 'src/db/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -43,12 +45,12 @@ import { UserSessionMini } from './dto/user.dto';
 export class MinifluxService {
   constructor(
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @InjectQueue('feed') private feedQueue: Queue,
     private feedService: FeedService,
     private folderService: FolderService,
     private articleService: ArticleService,
     private readLater: ReadlaterService,
     private httpService: HttpService,
-    private authService: AuthService<typeof auth>,
   ) {}
 
   private readonly logger = new Logger(MinifluxService.name);
@@ -1132,6 +1134,67 @@ export class MinifluxService {
 
     for (const feedId of feeds) {
       await this.feedService.markAllRead(userId, feedId.id);
+    }
+  }
+
+  async refreshFeed(userId: string, feedId: number) {
+    const [feed] = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        eq(schema.subscriptions.feedId, schema.feeds.id),
+      )
+      .where(
+        and(
+          eq(schema.feeds.minifluxId, feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    if (!feed || !feed.id) {
+      throw new NotFoundException('Feed not found');
+    }
+
+    await this.feedQueue.add('fetch', { feedId: feed.id });
+  }
+
+  async refreshAllFeeds(userId: string) {
+    const feeds = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.subscriptions.feedId, schema.feeds.id),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      );
+    this.logger.debug(feeds);
+    for (const feedId of feeds) {
+      await this.feedQueue.add('fetch', { feedId: feedId.id });
+    }
+  }
+
+  async refreshCategoryFeeds(userId: string, categoryId: number) {
+    const feeds = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.folders)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.folders.id, schema.subscriptions.folderId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
+      .where(eq(schema.folders.minifluxId, categoryId));
+
+    this.logger.debug(feeds);
+
+    for (const feedId of feeds) {
+      await this.feedQueue.add('fetch', { feedId: feedId.id });
     }
   }
 }

@@ -155,6 +155,21 @@ export class MinifluxV1Controller {
     return this.minifluxService.createFeed(session.user.id, createFeedDto);
   }
 
+  @Put('feeds/:feedId/refresh')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  refreshFeed(
+    @Param('feedId') feedId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.refreshFeed(session.user.id, feedId);
+  }
+
+  @Put('feeds/refresh')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  refreshAllFeeds(@Session() session: typeof auth.$Infer.Session) {
+    return this.minifluxService.refreshAllFeeds(session.user.id);
+  }
+
   @Put('feeds/:feedId')
   updateFeed(
     @Param('feedId') feedId: number,
@@ -166,20 +181,6 @@ export class MinifluxV1Controller {
       feedId,
       updateFeedDto,
     );
-  }
-
-  @Put('feeds/:feedId/refresh')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  refreshFeed(@Param('feedId') feedId: number) {
-    // this.minifluxService.refreshFeed(feedId);
-    return;
-  }
-
-  @Put('feeds/refresh')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  refreshAllFeeds() {
-    // this.minifluxService.refreshAllFeeds();
-    return;
   }
 
   @Delete('feeds/:feedId')
@@ -416,9 +417,14 @@ export class MinifluxV1Controller {
 
   @Put('categories/:categoryId/refresh')
   @HttpCode(HttpStatus.NO_CONTENT)
-  refreshCategoryFeeds(@Param('categoryId') categoryId: number) {
-    // this.minifluxService.refreshCategoryFeeds(categoryId);
-    return;
+  refreshCategoryFeeds(
+    @Param('categoryId') categoryId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.refreshCategoryFeeds(
+      session.user.id,
+      categoryId,
+    );
   }
 
   @Get('me')

@@ -1,4 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { ArticleModule } from 'src/article/article.module';
@@ -16,6 +17,7 @@ import { MinifluxV1Controller } from './miniflux.v1.controller';
     ReadlaterModule,
     HttpModule,
     AuthModule,
+    BullModule.registerQueue({ name: 'feed' }),
   ],
   controllers: [MinifluxV1Controller],
   providers: [MinifluxService],

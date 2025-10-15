@@ -3,7 +3,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { l } from 'node_modules/msw/lib/core/HttpResponse-BbwAqLE_';
 import { schema } from 'src/db/schema';
 
 @Injectable()
