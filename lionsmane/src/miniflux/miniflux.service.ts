@@ -1095,7 +1095,7 @@ export class MinifluxService {
 
     if (!folder || !folder.id) {
       throw new NotFoundException('Feed not found');
-    }
+    } // I know the typing doesn't reflect this, need to look into that
 
     const feeds = await this.db
       .select({ id: schema.feeds.id })
@@ -1108,6 +1108,23 @@ export class MinifluxService {
         ),
       )
       .where(eq(schema.subscriptions.folderId, folder.id));
+
+    for (const feedId of feeds) {
+      await this.feedService.markAllRead(userId, feedId.id);
+    }
+  }
+
+  async markUserEntriesAsRead(userId: string, userMinifluxId: number) {
+    const feeds = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.feeds.id, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      );
 
     for (const feedId of feeds) {
       await this.feedService.markAllRead(userId, feedId.id);

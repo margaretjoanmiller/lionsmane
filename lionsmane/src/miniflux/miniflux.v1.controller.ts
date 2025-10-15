@@ -30,11 +30,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  AuthService,
-  Session,
-  type UserSession,
-} from '@thallesp/nestjs-better-auth';
+import { AuthService, Session } from '@thallesp/nestjs-better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request as ExpressRequest } from 'express';
 import { ZodResponse } from 'nestjs-zod';
@@ -72,7 +68,9 @@ export class MinifluxV1Controller {
 
   @Get('export')
   @ApiResponse({ status: 200, description: 'OPML file exported' })
-  async export(@Session() session: UserSession): Promise<StreamableFile> {
+  async export(
+    @Session() session: typeof auth.$Infer.Session,
+  ): Promise<StreamableFile> {
     try {
       const buffer = await this.feedService.buildOpml(session.user.id);
       return new StreamableFile(buffer);
@@ -101,7 +99,7 @@ export class MinifluxV1Controller {
         .build({ fileIsRequired: true }),
     )
     file: Express.Multer.File,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     try {
       return await this.feedService.importOpml(
@@ -263,7 +261,7 @@ export class MinifluxV1Controller {
     @Query('status') status: string,
     @Query('offset') offset: number,
     @Query('limit') limit: number,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
     @Query('order') order?: string,
     @Query('direction') direction?: string,
     @Query('before') before?: number,
@@ -312,7 +310,7 @@ export class MinifluxV1Controller {
   @HttpCode(HttpStatus.NO_CONTENT)
   updateEntries(
     @Body() updateEntriesDto: UpdateEntriesDto,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     return this.minifluxService.updateEntries(
       updateEntriesDto.entry_ids,
@@ -325,7 +323,7 @@ export class MinifluxV1Controller {
   @HttpCode(HttpStatus.ACCEPTED)
   saveEntry(
     @Param('entryId') entryId: number,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     this.minifluxService.saveEntry(session.user.id, entryId);
   }
@@ -334,7 +332,7 @@ export class MinifluxV1Controller {
   @HttpCode(HttpStatus.NO_CONTENT)
   toggleBookmark(
     @Param('entryId') entryId: number,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     this.minifluxService.toggleBookmark(session.user.id, entryId);
   }
@@ -402,7 +400,7 @@ export class MinifluxV1Controller {
   @ZodResponse({ type: [FeedMini], status: HttpStatus.OK })
   getCategoryFeeds(
     @Param('categoryId') categoryId: number,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     return this.minifluxService.getCategoryFeeds(categoryId, session.user.id);
   }
@@ -411,7 +409,7 @@ export class MinifluxV1Controller {
   @HttpCode(HttpStatus.NO_CONTENT)
   markCategoryAsRead(
     @Param('categoryId') categoryId: number,
-    @Session() session: UserSession,
+    @Session() session: typeof auth.$Infer.Session,
   ) {
     return this.minifluxService.markCategoryAsRead(session.user.id, categoryId);
   }
@@ -437,9 +435,11 @@ export class MinifluxV1Controller {
 
   @Put('users/:userId/mark-all-as-read')
   @HttpCode(HttpStatus.NO_CONTENT)
-  markUserEntriesAsRead(@Param('userId') userId: number) {
-    // this.minifluxService.markUserEntriesAsRead(userId);
-    return;
+  markUserEntriesAsRead(
+    @Param('userId') userId: number,
+    @Session() session: typeof auth.$Infer.Session,
+  ) {
+    return this.minifluxService.markUserEntriesAsRead(session.user.id, userId);
   }
 
   @Get('icons/:iconId')
