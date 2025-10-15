@@ -358,6 +358,11 @@ export class MinifluxService {
     if (!article) {
       throw new NotFoundException('Article not found or access denied');
     }
+
+    if (!article.url) {
+      throw new BadRequestException('Article contains only enclosures');
+    }
+
     if (!updateDb) {
       const { htmlContent } = await this.fetcher.readablity(article.url);
       return { content: htmlContent };

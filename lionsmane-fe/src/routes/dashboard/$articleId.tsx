@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -212,6 +213,13 @@ function ArticlePage() {
               }} // we clean this on the backend
             />
           }
+          <div>
+            {data.enclosures?.map((e) => (
+              <ReactPlayer controls>
+                <source src={e.url} type={e.type} />
+              </ReactPlayer>
+            ))}
+          </div>
           <footer className="flex-col">
             <a href={data.url!}>Original article</a>
             <div className="grid-flow-row">
