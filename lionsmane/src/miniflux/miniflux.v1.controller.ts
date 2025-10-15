@@ -10,7 +10,9 @@ import {
   InternalServerErrorException,
   Logger,
   Param,
+  ParseBoolPipe,
   ParseFilePipeBuilder,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -266,16 +268,17 @@ export class MinifluxV1Controller {
   @ZodResponse({ type: EntriesListDto, status: HttpStatus.OK })
   getEntries(
     @Query('status') status: string,
-    @Query('offset') offset: number,
-    @Query('limit') limit: number,
+    @Query('offset', ParseIntPipe) offset: number,
+    @Query('limit', ParseIntPipe) limit: number,
     @Session() session: typeof auth.$Infer.Session,
     @Query('order') order?: string,
     @Query('direction') direction?: string,
-    @Query('before') before?: number,
-    @Query('after') after?: number,
-    @Query('starred') starred?: boolean,
+    @Query('before', new ParseIntPipe({ optional: true })) before?: number,
+    @Query('after', new ParseIntPipe({ optional: true })) after?: number,
+    @Query('starred', new ParseBoolPipe({ optional: true })) starred?: boolean,
     @Query('search') search?: string,
-    @Query('category_id') categoryId?: number,
+    @Query('category_id', new ParseIntPipe({ optional: true }))
+    categoryId?: number,
   ) {
     return this.minifluxService.getEntries(
       session.user.id,

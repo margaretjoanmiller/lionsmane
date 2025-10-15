@@ -460,6 +460,7 @@ export class MinifluxService {
     });
     return returnable;
   }
+
   async getEntries(
     userId: string,
     status: string,
@@ -473,6 +474,55 @@ export class MinifluxService {
     search?: string,
     categoryId?: number,
   ): Promise<EntriesList> {
+    // Build WHERE conditions (used for both full and count queries)
+    const buildWhereConditions = () => {
+      const where: SQLWrapper[] = [];
+      if (status === 'unread') {
+        const condition = or(
+          eq(schema.userArticleStates.isRead, false),
+          isNull(schema.userArticleStates.isRead),
+        );
+        if (condition) where.push(condition);
+      } else {
+        where.push(eq(schema.userArticleStates.isRead, true));
+      }
+
+      if (starred === true) {
+        where.push(eq(schema.userArticleStates.isStarred, true));
+      } else if (starred === false) {
+        where.push(eq(schema.userArticleStates.isStarred, false));
+      }
+
+      if (search) {
+        where.push(sql`${schema.articles.readableText} &@~ ${search}`);
+      }
+
+      if (categoryId && categoryId !== 0) {
+        where.push(eq(schema.folders.minifluxId, categoryId));
+      }
+
+      if (before) {
+        where.push(
+          lt(
+            sql`${schema.articles.published}::timestamp`,
+            fromUnixTime(before),
+          ),
+        );
+      }
+
+      if (after) {
+        where.push(
+          gte(
+            sql`${schema.articles.published}::timestamp`,
+            fromUnixTime(after),
+          ),
+        );
+      }
+
+      return where;
+    };
+
+    // base joins query
     const baseQuery = this.db
       .select({
         ...getTableColumns(schema.articles),
@@ -517,44 +567,35 @@ export class MinifluxService {
         ),
       );
 
-    const where: [SQLWrapper | undefined] = [sql`1 = 1`]; // no filters
-
-    if (status === 'unread') {
-      where.push(
+    // Build count query
+    const countQuery = this.db
+      .select({ count: count() })
+      .from(schema.articles)
+      .innerJoin(
+        schema.subscriptions,
         and(
-          or(
-            eq(schema.userArticleStates.isRead, false),
-            isNull(schema.userArticleStates.isRead),
-          ),
+          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
         ),
       );
-    } else {
-      where.push(and(eq(schema.userArticleStates.isRead, true)));
-    }
-    if (starred === true) {
-      where.push(and(eq(schema.userArticleStates.isStarred, true)));
-    } else if (starred === false) {
-      where.push(and(eq(schema.userArticleStates.isStarred, false)));
-    }
-    if (search) {
-      where.push(sql`${schema.articles.readableText} &@~ ${search}`);
-    }
-    if (categoryId && categoryId !== 0) {
-      where.push(eq(schema.folders.minifluxId, categoryId));
-    }
-    if (before) {
-      where.push(
-        lt(sql`${schema.articles.published}::timestamp`, fromUnixTime(before)),
-      );
-    }
-    if (after) {
-      where.push(
-        gte(sql`${schema.articles.published}::timestamp`, fromUnixTime(after)),
-      );
-    }
 
-    const whereFinal = where.filter((w) => w !== undefined);
+    const whereConditions = buildWhereConditions();
+    const whereFinal =
+      whereConditions.length > 0 ? and(...whereConditions) : undefined;
 
+    // Determine ordering
     let orderQuery: SQLWrapper | undefined;
     if (order === 'id') {
       orderQuery = schema.articles.id;
@@ -568,265 +609,79 @@ export class MinifluxService {
       orderQuery = schema.subscriptions.folderId;
     }
 
-    if (orderQuery && direction === 'asc') {
-      const result = await baseQuery
-        .where(and(...whereFinal))
-        .orderBy(asc(orderQuery))
-        .limit(limit)
-        .offset(offset);
-      const resultList = result.map((entry) => ({
-        ...entry,
-        id: entry.minifluxId,
-        author: entry.authors.at(0)?.name || '',
-        status: entry.isRead ? 'read' : 'unread',
-        starred: entry.isStarred || false,
-        comments_url: entry.comments_url || '',
-        content: entry.content || '',
-        published_at: entry.published,
-        share_code: '',
-        reading_time: 0,
-        enclosures: entry.enclosures as Enclosure[],
-        feed: {
-          ...entry.feed,
-          id: entry.feed.minifluxId,
-          user_id: entry.user_id,
-          feed_url: entry.feed.url,
-          user_agent: '',
-          checked_at: entry.feed.lastChecked,
-          last_modified_header: entry.feed.last_modified_header || '',
-          disabled: false,
-          username: '',
-          password: '',
-          parsing_error_count: 0,
-          parsing_error_message: '',
-          ignore_http_cache: false,
-          fetch_via_proxy: false,
-          scraper_rules: '',
-          rewrite_rules: '',
-          blocklist_rules: '',
-          keeplist_rules: '',
-          icon: {
-            feed_id: entry.feed.minifluxId,
-            icon_id: entry.feed.icon || 0,
-          },
-          category: {
-            id: entry.category.id || 0,
-            user_id: entry.category.user_id,
-            title: entry.category.title || '',
-          },
-        },
-      }));
-      return {
-        total: resultList.length,
-        entries: resultList,
-      };
-    } else if (orderQuery && direction === 'desc') {
-      const result = await baseQuery
-        .where(and(...whereFinal))
-        .orderBy(desc(orderQuery))
-        .limit(limit)
-        .offset(offset);
-      const resultList = result.map((entry) => ({
-        ...entry,
-        id: entry.minifluxId,
-        author: entry.authors.at(0)?.name || '',
-        status: entry.isRead ? 'read' : 'unread',
-        starred: entry.isStarred || false,
-        comments_url: entry.comments_url || '',
-        content: entry.content || '',
-        published_at: entry.published,
-        share_code: '',
-        reading_time: 0,
-        enclosures: entry.enclosures as Enclosure[],
-        feed: {
-          ...entry.feed,
-          id: entry.feed.minifluxId,
-          user_id: entry.user_id,
-          feed_url: entry.feed.url,
-          user_agent: '',
-          checked_at: entry.feed.lastChecked,
-          last_modified_header: entry.feed.last_modified_header || '',
-          disabled: false,
-          username: '',
-          password: '',
-          parsing_error_count: 0,
-          parsing_error_message: '',
-          ignore_http_cache: false,
-          fetch_via_proxy: false,
-          scraper_rules: '',
-          rewrite_rules: '',
-          blocklist_rules: '',
-          keeplist_rules: '',
-          icon: {
-            feed_id: entry.feed.minifluxId,
-            icon_id: entry.feed.icon || 0,
-          },
-          category: {
-            id: entry.category.id || 0,
-            user_id: entry.category.user_id,
-            title: entry.category.title || '',
-          },
-        },
-      }));
-      return {
-        total: resultList.length,
-        entries: resultList,
-      };
-    } else if (!orderQuery) {
-      const result = await baseQuery
-        .where(and(...whereFinal))
-        .limit(limit)
-        .offset(offset);
-      const resultList = result.map((entry) => ({
-        ...entry,
-        id: entry.minifluxId,
-        author: entry.authors.at(0)?.name || '',
-        status: entry.isRead ? 'read' : 'unread',
-        starred: entry.isStarred || false,
-        comments_url: entry.comments_url || '',
-        content: entry.content || '',
-        published_at: entry.published,
-        share_code: '',
-        reading_time: 0,
-        enclosures: entry.enclosures as Enclosure[],
-        feed: {
-          ...entry.feed,
-          id: entry.feed.minifluxId,
-          user_id: entry.user_id,
-          feed_url: entry.feed.url,
-          user_agent: '',
-          checked_at: entry.feed.lastChecked,
-          last_modified_header: entry.feed.last_modified_header || '',
-          disabled: false,
-          username: '',
-          password: '',
-          parsing_error_count: 0,
-          parsing_error_message: '',
-          ignore_http_cache: false,
-          fetch_via_proxy: false,
-          scraper_rules: '',
-          rewrite_rules: '',
-          blocklist_rules: '',
-          keeplist_rules: '',
-          icon: {
-            feed_id: entry.feed.minifluxId,
-            icon_id: entry.feed.icon || 0,
-          },
-          category: {
-            id: entry.category.id || 0,
-            user_id: entry.category.user_id,
-            title: entry.category.title || '',
-          },
-        },
-      }));
-      return {
-        total: resultList.length,
-        entries: resultList,
-      };
-    } else if (orderQuery && !direction) {
-      const result = await baseQuery
-        .where(and(...whereFinal))
-        .orderBy(desc(orderQuery))
-        .limit(limit)
-        .offset(offset);
-      const resultList = result.map((entry) => ({
-        ...entry,
-        id: entry.minifluxId,
-        author: entry.authors.at(0)?.name || '',
-        status: entry.isRead ? 'read' : 'unread',
-        starred: entry.isStarred || false,
-        comments_url: entry.comments_url || '',
-        content: entry.content || '',
-        published_at: entry.published,
-        share_code: '',
-        reading_time: 0,
-        enclosures: entry.enclosures as Enclosure[],
-        feed: {
-          ...entry.feed,
-          id: entry.feed.minifluxId,
-          user_id: entry.user_id,
-          feed_url: entry.feed.url,
-          user_agent: '',
-          checked_at: entry.feed.lastChecked,
-          last_modified_header: entry.feed.last_modified_header || '',
-          disabled: false,
-          username: '',
-          password: '',
-          parsing_error_count: 0,
-          parsing_error_message: '',
-          ignore_http_cache: false,
-          fetch_via_proxy: false,
-          scraper_rules: '',
-          rewrite_rules: '',
-          blocklist_rules: '',
-          keeplist_rules: '',
-          icon: {
-            feed_id: entry.feed.minifluxId,
-            icon_id: entry.feed.icon || 0,
-          },
-          category: {
-            id: entry.category.id || 0,
-            user_id: entry.category.user_id,
-            title: entry.category.title || '',
-          },
-        },
-      }));
-      return {
-        total: resultList.length,
-        entries: resultList,
-      };
-    } else {
-      const result = await baseQuery
-        .where(and(...whereFinal))
-        .limit(limit)
-        .offset(offset);
-      const resultList = result.map((entry) => ({
-        ...entry,
-        id: entry.minifluxId,
-        author: entry.authors.at(0)?.name || '',
-        status: entry.isRead ? 'read' : 'unread',
-        starred: entry.isStarred || false,
-        comments_url: entry.comments_url || '',
-        content: entry.content || '',
-        published_at: entry.published,
-        share_code: '',
-        reading_time: 0,
-        enclosures: entry.enclosures as Enclosure[],
-        feed: {
-          ...entry.feed,
-          id: entry.feed.minifluxId,
-          user_id: entry.user_id,
-          feed_url: entry.feed.url,
-          user_agent: '',
-          checked_at: entry.feed.lastChecked,
-          last_modified_header: entry.feed.last_modified_header || '',
-          disabled: false,
-          username: '',
-          password: '',
-          parsing_error_count: 0,
-          parsing_error_message: '',
-          ignore_http_cache: false,
-          fetch_via_proxy: false,
-          scraper_rules: '',
-          rewrite_rules: '',
-          blocklist_rules: '',
-          keeplist_rules: '',
-          icon: {
-            feed_id: entry.feed.minifluxId,
-            icon_id: entry.feed.icon || 0,
-          },
-          category: {
-            id: entry.category.id || 0,
-            user_id: entry.category.user_id,
-            title: entry.category.title || '',
-          },
-        },
-      }));
-      return {
-        total: resultList.length,
-        entries: resultList,
-      };
+    // Build final queries
+    let dataQuery = baseQuery.$dynamic();
+    let finalCountQuery = countQuery.$dynamic();
+
+    if (whereFinal) {
+      dataQuery = dataQuery.where(whereFinal);
+      finalCountQuery = finalCountQuery.where(whereFinal);
     }
+
+    if (orderQuery) {
+      if (direction === 'asc') {
+        dataQuery = dataQuery.orderBy(asc(orderQuery));
+      } else {
+        dataQuery = dataQuery.orderBy(desc(orderQuery));
+      }
+    }
+
+    dataQuery = dataQuery.limit(limit).offset(offset);
+
+    const [result, countResult] = await Promise.all([
+      dataQuery,
+      finalCountQuery,
+    ]);
+
+    const total = countResult[0]?.count ?? 0;
+
+    const resultList = result.map((entry) => ({
+      ...entry,
+      id: entry.minifluxId,
+      author: entry.authors.at(0)?.name || '',
+      status: entry.isRead ? 'read' : 'unread',
+      starred: entry.isStarred || false,
+      comments_url: entry.comments_url || '',
+      content: entry.content || '',
+      published_at: entry.published,
+      share_code: '',
+      reading_time: 0,
+      enclosures: entry.enclosures as Enclosure[],
+      feed: {
+        ...entry.feed,
+        id: entry.feed.minifluxId,
+        user_id: entry.user_id,
+        feed_url: entry.feed.url,
+        user_agent: '',
+        checked_at: entry.feed.lastChecked,
+        last_modified_header: entry.feed.last_modified_header || '',
+        disabled: false,
+        username: '',
+        password: '',
+        parsing_error_count: 0,
+        parsing_error_message: '',
+        ignore_http_cache: false,
+        fetch_via_proxy: false,
+        scraper_rules: '',
+        rewrite_rules: '',
+        blocklist_rules: '',
+        keeplist_rules: '',
+        icon: {
+          feed_id: entry.feed.minifluxId,
+          icon_id: entry.feed.icon || 0,
+        },
+        category: {
+          id: entry.category.id || 0,
+          user_id: entry.category.user_id,
+          title: entry.category.title || '',
+        },
+      },
+    }));
+
+    return {
+      total,
+      entries: resultList,
+    };
   }
 
   async getEntry(userId: string, entryId: number) {
