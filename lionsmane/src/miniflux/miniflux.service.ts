@@ -1080,4 +1080,37 @@ export class MinifluxService {
         ),
       );
   }
+
+  async markCategoryAsRead(userId: string, categoryId: number) {
+    const [folder] = await this.db
+      .select({ id: schema.folders.id })
+      .from(schema.folders)
+      .where(
+        and(
+          eq(schema.folders.minifluxId, categoryId),
+          eq(schema.folders.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    if (!folder || !folder.id) {
+      throw new NotFoundException('Feed not found');
+    }
+
+    const feeds = await this.db
+      .select({ id: schema.feeds.id })
+      .from(schema.feeds)
+      .innerJoin(
+        schema.subscriptions,
+        and(
+          eq(schema.feeds.id, schema.subscriptions.feedId),
+          eq(schema.subscriptions.userId, userId),
+        ),
+      )
+      .where(eq(schema.subscriptions.folderId, folder.id));
+
+    for (const feedId of feeds) {
+      await this.feedService.markAllRead(userId, feedId.id);
+    }
+  }
 }

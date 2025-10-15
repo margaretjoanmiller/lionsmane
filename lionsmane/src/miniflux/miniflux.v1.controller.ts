@@ -409,9 +409,11 @@ export class MinifluxV1Controller {
 
   @Put('categories/:categoryId/mark-all-as-read')
   @HttpCode(HttpStatus.NO_CONTENT)
-  markCategoryAsRead(@Param('categoryId') categoryId: number) {
-    // this.minifluxService.markCategoryAsRead(categoryId);
-    return;
+  markCategoryAsRead(
+    @Param('categoryId') categoryId: number,
+    @Session() session: UserSession,
+  ) {
+    return this.minifluxService.markCategoryAsRead(session.user.id, categoryId);
   }
 
   @Put('categories/:categoryId/refresh')
