@@ -772,38 +772,34 @@ function Settings() {
                 </Form>
               </div>
             )}
-            {user?.data?.user.twoFactorEnabled && (
-              <div className="flex-col space-y-8">
-                <h3 className="my-4">App passwords</h3>
-                <Form {...appPasswordForm}>
-                  <form
-                    onSubmit={appPasswordForm.handleSubmit(onAddAppPassword)}
-                  >
-                    <FormField
-                      control={appPasswordForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="cool app" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            The name of the service or application this app
-                            password is for.
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit">Create</Button>
-                  </form>
-                </Form>
-                <DataTable
-                  columns={appPasswordColumns}
-                  data={appPasswords || []}
-                />
-              </div>
-            )}
+            <div className="flex-col space-y-8">
+              <h3 className="my-4">App passwords</h3>
+              <Form {...appPasswordForm}>
+                <form onSubmit={appPasswordForm.handleSubmit(onAddAppPassword)}>
+                  <FormField
+                    control={appPasswordForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="cool app" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          The name of the service or application this app
+                          password is for.
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Create</Button>
+                </form>
+              </Form>
+              <DataTable
+                columns={appPasswordColumns}
+                data={appPasswords || []}
+              />
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="manage feeds">
