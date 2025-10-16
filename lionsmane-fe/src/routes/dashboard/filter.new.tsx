@@ -251,7 +251,7 @@ function NewFilter() {
               <FormControl>
                 <MultipleSelector
                   {...field}
-                  defaultOptions={feeds?.feeds.map((feed) => ({
+                  defaultOptions={feeds?.map((feed) => ({
                     label: feed.title || feed.url,
                     value: feed.id,
                   }))}

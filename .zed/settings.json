@@ -5,35 +5,32 @@
 {
   "languages": {
     "JavaScript": {
-      "formatter": { "language_server": { "name": "biome" } },
+      "formatter": [
+        { "language_server": { "name": "biome" } },
+        { "code_action": "source.organizeImports.biome" },
+        { "code_action": "source.fixAll.biome" }
+      ],
 
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-
-        "source.organizeImports.biome": true
-      },
       "language_servers": ["!eslint", "..."]
     },
 
     "TypeScript": {
-      "formatter": { "language_server": { "name": "biome" } },
+      "formatter": [
+        { "language_server": { "name": "biome" } },
+        { "code_action": "source.organizeImports.biome" },
+        { "code_action": "source.fixAll.biome" }
+      ],
 
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-
-        "source.organizeImports.biome": true
-      },
       "language_servers": ["!eslint", "..."]
     },
 
     "TSX": {
-      "formatter": { "language_server": { "name": "biome" } },
+      "formatter": [
+        { "language_server": { "name": "biome" } },
+        { "code_action": "source.organizeImports.biome" },
+        { "code_action": "source.fixAll.biome" }
+      ],
 
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-
-        "source.organizeImports.biome": true
-      },
       "language_servers": ["!eslint", "..."]
     },
 
@@ -44,4 +41,3 @@
     "CSS": { "formatter": { "language_server": { "name": "biome" } } }
   }
 }
-

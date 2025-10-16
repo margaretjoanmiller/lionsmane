@@ -176,14 +176,15 @@ function ArticlePage() {
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    onClick={() =>
-                      readLater({
-                        body: {
-                          url: data.url,
-                        },
-                        credentials: 'include',
-                      })
-                    }
+                    onClick={() => {
+                      if (data.url)
+                        readLater({
+                          body: {
+                            url: data.url,
+                          },
+                          credentials: 'include',
+                        });
+                    }}
                     size="icon"
                     variant="ghost"
                   >
@@ -214,11 +215,20 @@ function ArticlePage() {
             />
           }
           <div>
-            {data.enclosures?.map((e) => (
-              <ReactPlayer controls>
-                <source src={e.url} type={e.type} />
-              </ReactPlayer>
-            ))}
+            {data.enclosures?.map((e) => {
+              if (e.mime_type)
+                return (
+                  <ReactPlayer controls>
+                    <source src={e.url} type={e.mime_type} />
+                  </ReactPlayer>
+                );
+              else
+                return (
+                  <ReactPlayer controls>
+                    <source src={e.url} />
+                  </ReactPlayer>
+                );
+            })}
           </div>
           <footer className="flex-col">
             <a href={data.url!}>Original article</a>
