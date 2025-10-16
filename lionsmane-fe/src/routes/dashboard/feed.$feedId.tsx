@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
+import UilDesert from '~icons/uil/desert';
 import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import {
@@ -96,6 +97,15 @@ function FeedId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
+
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -140,6 +150,17 @@ function FeedId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return <UilDesert />;
+      }
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -183,6 +204,14 @@ function FeedId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -226,6 +255,14 @@ function FeedId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {

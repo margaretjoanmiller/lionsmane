@@ -3,6 +3,7 @@ import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import { Button } from '@/components/ui/button';
 import { $api } from '@/lib/fetch-client';
+import UilDesert from '~icons/uil/desert';
 import {
   ArticleFilter,
   useArticleFilterStore,
@@ -37,6 +38,14 @@ function DashIndex() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-60">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -73,6 +82,14 @@ function DashIndex() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-60">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -109,6 +126,14 @@ function DashIndex() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-60">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {
@@ -144,6 +169,14 @@ function DashIndex() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-60">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
       return articles
         .filter((i) => !i.isHidden)
         .map((i) => {

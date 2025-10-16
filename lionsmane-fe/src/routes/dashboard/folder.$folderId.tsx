@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import UilDesert from '~icons/uil/desert';
 import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import { Button } from '@/components/ui/button';
@@ -41,9 +42,19 @@ function FolderId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
     return (
       <>
@@ -79,9 +90,19 @@ function FolderId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
     return (
       <>
@@ -118,9 +139,19 @@ function FolderId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
     return (
       <>
@@ -156,9 +187,19 @@ function FolderId() {
     if (isLoading || !data) return <SkeletonGrid />;
 
     const articles = data.pages.map(({ articles }) => {
-      return articles.map((i) => {
-        return <ArticleCard article={i} />;
-      });
+      if (articles.length === 0) {
+        return (
+          <div className="absolute place-self-center items-center transform translate-y-50">
+            <UilDesert fontSize="5em" />
+            <p>No articles</p>
+          </div>
+        );
+      }
+      return articles
+        .filter((i) => !i.isHidden)
+        .map((i) => {
+          return <ArticleCard article={i} />;
+        });
     });
     return (
       <>
