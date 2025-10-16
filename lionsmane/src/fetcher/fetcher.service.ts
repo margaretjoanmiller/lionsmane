@@ -9,6 +9,7 @@ import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
+import { parse as parseURL } from 'tldts';
 import { JSDOM } from 'jsdom';
 import { toString as treeToString } from 'nlcst-to-string';
 import { retext } from 'retext';
@@ -439,25 +440,28 @@ export class FetcherService {
   }
 
   async getFavicon(url: URL) {
-    const tryFavi = `https://${url.host}/favicon.ico`;
+    const { domain } = parseURL(url.toString());
 
-    let favicon: string | null;
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(tryFavi, {
-          responseType: 'text',
-        })
-        .pipe(
-          catchError((error) => {
-            this.logger.warn(
-              `No favicon found for ${url}, setting to null`,
-              error,
-            );
-            return of({ data: null });
-          }),
-        ),
+    if (!domain) {
+      throw new Error('Invalid URL');
+    }
+
+    const tryFavi = `https://${domain}/favicon.ico`;
+
+    let favicon: string | null = null;
+    const { data, status } = await firstValueFrom(
+      this.httpService.get(tryFavi).pipe(
+        catchError((error) => {
+          this.logger.warn(
+            `No favicon found for ${url}, setting to null`,
+            error,
+          );
+          return of({ data: null, status: 404 });
+        }),
+      ),
     );
-    if (data) {
+
+    if (data && status === 200) {
       favicon = tryFavi;
     } else {
       favicon = null;

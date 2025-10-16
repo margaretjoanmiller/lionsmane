@@ -224,7 +224,7 @@ export class FeedService {
             .insert(schema.feeds)
             .values({
               // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || 'no title',
+              title: parsedFeed.title || url,
               url,
               site_url: urlObj.origin,
               icon,
@@ -256,7 +256,7 @@ export class FeedService {
             .insert(schema.feeds)
             .values({
               // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || 'no title',
+              title: parsedFeed.title || url,
               url,
               site_url: urlObj.origin,
               icon,

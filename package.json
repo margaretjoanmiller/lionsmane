@@ -11,5 +11,13 @@
   "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "@biomejs/biome": "2.2.4"
-  }
+  },
+  "dependencies": {
+    "mime": ""
+  },
+  "workspaces": [
+    "lionsmane",
+    "lionsmane-fe",
+    "lionsmane-common"
+  ]
 }
