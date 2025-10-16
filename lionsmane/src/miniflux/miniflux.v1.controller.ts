@@ -223,7 +223,7 @@ export class MinifluxV1Controller {
   @ApiQuery({
     name: 'offset',
     type: Number,
-    required: true,
+    required: false,
   })
   @ApiQuery({
     name: 'limit',
@@ -268,9 +268,9 @@ export class MinifluxV1Controller {
   @ZodResponse({ type: EntriesListDto, status: HttpStatus.OK })
   getEntries(
     @Query('status') status: string,
-    @Query('offset', ParseIntPipe) offset: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Session() session: typeof auth.$Infer.Session,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
     @Query('order') order?: string,
     @Query('direction') direction?: string,
     @Query('before', new ParseIntPipe({ optional: true })) before?: number,
