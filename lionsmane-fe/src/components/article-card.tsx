@@ -144,7 +144,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
               <img
                 alt={article.imageAlt || article.title}
                 className="h-full w-full object-cover"
-                src={article.image || article.media?.contents[0].url}
+                src={article.image || article.media?.contents?.at(0)?.url}
               />
             </div>
             <div className="text-sm text-muted-foreground mt-1 line-clamp-3">

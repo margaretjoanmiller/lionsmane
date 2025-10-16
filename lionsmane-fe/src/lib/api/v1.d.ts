@@ -732,7 +732,7 @@ export interface paths {
             cookie?: never;
         };
         get: operations["MinifluxV1Controller_getEntry"];
-        put: operations["MinifluxV1Controller_updateEntry"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -916,38 +916,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/miniflux/v1/api-keys": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getApiKeys"];
-        put?: never;
-        post: operations["MinifluxV1Controller_createApiKey"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/miniflux/v1/api-keys/{apiKeyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["MinifluxV1Controller_deleteApiKey"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -992,12 +960,21 @@ export interface components {
             }[];
             /** @default [] */
             categories: {
-                term: string;
+                term?: string;
                 scheme?: string;
                 label?: string;
             }[];
             copyright: string | null;
-            image: string | null;
+            image: {
+                /** Format: uri */
+                url: string;
+                title: string;
+                /** Format: uri */
+                link: string;
+                description?: string;
+                width?: number;
+                height?: number;
+            } | null;
             /** Format: date-time */
             lastChecked: string;
             updated: string | null;
@@ -1209,12 +1186,21 @@ export interface components {
             }[];
             /** @default [] */
             categories: {
-                term: string;
+                term?: string;
                 scheme?: string;
                 label?: string;
             }[];
             copyright: string | null;
-            image: string | null;
+            image: {
+                /** Format: uri */
+                url: string;
+                title: string;
+                /** Format: uri */
+                link: string;
+                description?: string;
+                width?: number;
+                height?: number;
+            } | null;
             /** Format: date-time */
             lastChecked: string;
             updated: string | null;
@@ -1426,8 +1412,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                /** Format: uri */
-                url: string;
+                url: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -1451,7 +1436,7 @@ export interface components {
                 language: string | null;
                 rights: string | null;
                 categories: {
-                    term: string;
+                    term?: string;
                     scheme?: string;
                     label?: string;
                 }[];
@@ -1658,13 +1643,17 @@ export interface components {
                     value: string;
                 } | null;
                 enclosures: {
+                    id: number;
+                    entry_id: number;
                     /** Format: uri */
                     url: string;
-                    type: string;
-                    length: number | null;
+                    mime_type: string | null;
+                    size: number | null;
+                    /** @default 0 */
+                    media_progression: number;
                 }[] | null;
                 isRead: boolean | null;
-                isStarred: boolean | null;
+                isStarred: (boolean | null) | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
                 /** @default [] */
@@ -1691,8 +1680,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                /** Format: uri */
-                url: string;
+                url: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -1716,7 +1704,7 @@ export interface components {
                 language: string | null;
                 rights: string | null;
                 categories: {
-                    term: string;
+                    term?: string;
                     scheme?: string;
                     label?: string;
                 }[];
@@ -1923,10 +1911,14 @@ export interface components {
                     value: string;
                 } | null;
                 enclosures: {
+                    id: number;
+                    entry_id: number;
                     /** Format: uri */
                     url: string;
-                    type: string;
-                    length: number | null;
+                    mime_type: string | null;
+                    size: number | null;
+                    /** @default 0 */
+                    media_progression: number;
                 }[] | null;
                 feedTitle: string | null;
                 /** @default false */
@@ -1948,8 +1940,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                /** Format: uri */
-                url: string;
+                url: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -1973,7 +1964,7 @@ export interface components {
                 language: string | null;
                 rights: string | null;
                 categories: {
-                    term: string;
+                    term?: string;
                     scheme?: string;
                     label?: string;
                 }[];
@@ -2180,13 +2171,17 @@ export interface components {
                     value: string;
                 } | null;
                 enclosures: {
+                    id: number;
+                    entry_id: number;
                     /** Format: uri */
                     url: string;
-                    type: string;
-                    length: number | null;
+                    mime_type: string | null;
+                    size: number | null;
+                    /** @default 0 */
+                    media_progression: number;
                 }[] | null;
                 isRead: boolean | null;
-                isStarred: boolean | null;
+                isStarred: (boolean | null) | null;
                 isBlurred: boolean | null;
                 isHidden: boolean | null;
                 /** @default [] */
@@ -2202,8 +2197,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             title: string;
-            /** Format: uri */
-            url: string;
+            url: string | null;
             /** @default [] */
             authors: {
                 name: string;
@@ -2227,7 +2221,7 @@ export interface components {
             language: string | null;
             rights: string | null;
             categories: {
-                term: string;
+                term?: string;
                 scheme?: string;
                 label?: string;
             }[];
@@ -2434,10 +2428,14 @@ export interface components {
                 value: string;
             } | null;
             enclosures: {
+                id: number;
+                entry_id: number;
                 /** Format: uri */
                 url: string;
-                type: string;
-                length: number | null;
+                mime_type: string | null;
+                size: number | null;
+                /** @default 0 */
+                media_progression: number;
             }[] | null;
             feedTitle: string;
             isRead: boolean | null;
@@ -2496,12 +2494,21 @@ export interface components {
                 }[];
                 /** @default [] */
                 categories: {
-                    term: string;
+                    term?: string;
                     scheme?: string;
                     label?: string;
                 }[];
                 copyright: string | null;
-                image: string | null;
+                image: {
+                    /** Format: uri */
+                    url: string;
+                    title: string;
+                    /** Format: uri */
+                    link: string;
+                    description?: string;
+                    width?: number;
+                    height?: number;
+                } | null;
                 /** Format: date-time */
                 lastChecked: string;
                 updated: string | null;
@@ -2746,159 +2753,42 @@ export interface components {
             url: string;
         };
         FeedMini_Output: {
-            minifluxId: number;
             title: string;
-            subtitle: string | null;
-            /** Format: uri */
-            url: string;
             site_url: string | null;
             etag_header: string | null;
             last_modified_header: string | null;
-            parsingErrorMessage: string | null;
-            /** @default 0 */
-            parsingErrorCount: number;
-            userAgent: string | null;
             crawler: boolean | null;
-            /** @default [] */
-            contributors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            image: string | null;
-            /** Format: date-time */
-            lastChecked: string;
-            updated: string | null;
-            explicit: boolean | null;
-            subject: string | null;
-            updatePeriod: string | null;
-            updateFrequency: number | null;
-            updateBase: string | null;
-            publisher: string | null;
-            rights: string | null;
-            podcast: {
-                locked?: {
-                    value: boolean;
-                    owner?: string;
-                };
-                fundings?: {
-                    /** Format: uri */
-                    url: string;
-                    display?: string;
-                }[];
-                persons?: {
-                    display: string;
-                    role?: string;
-                    group?: string;
-                    /** Format: uri */
-                    img?: string;
-                    /** Format: uri */
-                    href?: string;
-                }[];
-                location?: {
-                    display: string;
-                    geo?: string;
-                    osm?: string;
-                };
-                trailers?: {
-                    display: string;
-                    /** Format: uri */
-                    url: string;
-                    pubDate: string;
-                    length?: number;
-                    type?: string;
-                    season?: number;
-                }[];
-                guid?: string;
-                value?: {
-                    type: string;
-                    method: string;
-                    suggested?: number;
-                    valueRecipients?: {
-                        name?: string;
-                        customKey?: string;
-                        customValue?: string;
-                        type: string;
-                        address: string;
-                        split: number;
-                        fee?: boolean;
-                    }[];
-                    valueTimeSplits?: {
-                        startTime: number;
-                        duration: number;
-                        remoteStartTime?: number;
-                        remotePercentage?: number;
-                        remoteItem?: {
-                            feedGuid: string;
-                            /** Format: uri */
-                            feedUrl?: string;
-                            itemGuid?: string;
-                            medium?: string;
-                        };
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                    }[];
-                };
-                medium?: string;
-                images?: {
-                    srcset?: string;
-                };
-                liveItems?: {
-                    status: string;
-                    /** Format: date-time */
-                    start: string;
-                    /** Format: date-time */
-                    end?: string;
-                    contentLinks?: {
-                        /** Format: uri */
-                        href: string;
-                        display?: string;
-                    }[];
-                }[];
-                blocks?: {
-                    value: boolean;
-                    id?: string;
-                }[];
-                txts?: {
-                    display: string;
-                    purpose?: string;
-                }[];
-                remoteItems?: {
-                    feedGuid: string;
-                    /** Format: uri */
-                    feedUrl?: string;
-                    itemGuid?: string;
-                    medium?: string;
-                }[];
-                podroll?: {
-                    remoteItems?: {
-                        feedGuid: string;
-                        /** Format: uri */
-                        feedUrl?: string;
-                        itemGuid?: string;
-                        medium?: string;
-                    }[];
-                };
-                updateFrequency?: {
-                    display: string;
-                    complete?: boolean;
-                    dtstart?: string;
-                    rrule?: string;
-                };
-                podping?: {
-                    usesPodping?: boolean;
-                };
+            id: number;
+            user_id: number;
+            checked_at: string;
+            parsing_error_message: string;
+            parsing_error_count: number;
+            /** Format: uri */
+            feed_url: string;
+            icon: {
+                feed_id: number;
+                icon_id: number;
             } | null;
-            favicon: string | null;
+            scraper_rules: string;
+            rewrite_rules: string;
+            blocklist_rules: string;
+            keeplist_rules: string;
+            user_agent: string;
+            username: string;
+            password: string;
+            /** @default false */
+            disabled: boolean;
+            /** @default false */
+            ignore_http_cache: boolean;
+            /** @default false */
+            fetch_via_proxy: boolean;
+            category: {
+                /** @default 0 */
+                id: number;
+                user_id: number;
+                /** @default  */
+                title: string;
+            };
         };
         CountersDto_Output: {
             reads: {
@@ -2912,6 +2802,179 @@ export interface components {
             /** Format: uri */
             feed_url: string;
             category_id: number;
+        };
+        UpdateFeedMiniDto: {
+            title?: string;
+            category_id?: number;
+        };
+        EntriesListDto_Output: {
+            total: number;
+            entries: {
+                id: number;
+                title: string;
+                url: string | null;
+                hash: string | null;
+                enclosures: {
+                    id: number;
+                    entry_id: number;
+                    /** Format: uri */
+                    url: string;
+                    mime_type: string | null;
+                    size: number | null;
+                    /** @default 0 */
+                    media_progression: number;
+                }[] | null;
+                user_id: number;
+                feed_id: number;
+                comments_url: string;
+                author: string | null;
+                content: string;
+                published_at: string;
+                created_at: string;
+                status: string;
+                share_code: string;
+                /** @default false */
+                starred: boolean;
+                reading_time: number;
+                feed: {
+                    title: string;
+                    site_url: string | null;
+                    etag_header: string | null;
+                    last_modified_header: string | null;
+                    crawler: boolean | null;
+                    id: number;
+                    user_id: number;
+                    checked_at: string;
+                    parsing_error_message: string;
+                    parsing_error_count: number;
+                    /** Format: uri */
+                    feed_url: string;
+                    icon: {
+                        feed_id: number;
+                        icon_id: number;
+                    } | null;
+                    scraper_rules: string;
+                    rewrite_rules: string;
+                    blocklist_rules: string;
+                    keeplist_rules: string;
+                    user_agent: string;
+                    username: string;
+                    password: string;
+                    /** @default false */
+                    disabled: boolean;
+                    /** @default false */
+                    ignore_http_cache: boolean;
+                    /** @default false */
+                    fetch_via_proxy: boolean;
+                    category: {
+                        /** @default 0 */
+                        id: number;
+                        user_id: number;
+                        /** @default  */
+                        title: string;
+                    };
+                };
+            }[];
+        };
+        EntryDto_Output: {
+            id: number;
+            title: string;
+            url: string | null;
+            hash: string | null;
+            enclosures: {
+                id: number;
+                entry_id: number;
+                /** Format: uri */
+                url: string;
+                mime_type: string | null;
+                size: number | null;
+                /** @default 0 */
+                media_progression: number;
+            }[] | null;
+            user_id: number;
+            feed_id: number;
+            comments_url: string;
+            author: string | null;
+            content: string;
+            published_at: string;
+            created_at: string;
+            status: string;
+            share_code: string;
+            /** @default false */
+            starred: boolean;
+            reading_time: number;
+            feed: {
+                title: string;
+                site_url: string | null;
+                etag_header: string | null;
+                last_modified_header: string | null;
+                crawler: boolean | null;
+                id: number;
+                user_id: number;
+                checked_at: string;
+                parsing_error_message: string;
+                parsing_error_count: number;
+                /** Format: uri */
+                feed_url: string;
+                icon: {
+                    feed_id: number;
+                    icon_id: number;
+                } | null;
+                scraper_rules: string;
+                rewrite_rules: string;
+                blocklist_rules: string;
+                keeplist_rules: string;
+                user_agent: string;
+                username: string;
+                password: string;
+                /** @default false */
+                disabled: boolean;
+                /** @default false */
+                ignore_http_cache: boolean;
+                /** @default false */
+                fetch_via_proxy: boolean;
+                category: {
+                    /** @default 0 */
+                    id: number;
+                    user_id: number;
+                    /** @default  */
+                    title: string;
+                };
+            };
+        };
+        UpdateEntriesDto: {
+            entry_ids: number[];
+            /** @enum {string} */
+            status: "read" | "unread";
+        };
+        FullEntryContent_Output: {
+            content: string;
+        };
+        CategoryOutDto_Output: {
+            id: number;
+            title: string;
+            user_id: number;
+            hide_globally: boolean;
+        };
+        CreateCategoryDto: {
+            title: string;
+        };
+        UserSchemaDto_Output: {
+            id: number;
+            username: string;
+            is_admin: boolean;
+            theme: string;
+            language: string;
+            timezone: string;
+            entry_sorting_direction: string;
+            stylesheet: string;
+            google_id: string;
+            openid_connect_id: string;
+            entries_per_page: number;
+            keyboard_shortcuts: boolean;
+            show_reading_time: boolean;
+            entry_swipe: boolean;
+            last_login_at: string;
         };
     };
     responses: never;
@@ -4374,11 +4437,13 @@ export interface operations {
                     "application/json": {
                         /** @example ok */
                         status?: string;
-                        /** @example {
+                        /**
+                         * @example {
                          *       "database": {
                          *         "status": "up"
                          *       }
-                         *     } */
+                         *     }
+                         */
                         info?: {
                             [key: string]: {
                                 status: string;
@@ -4394,11 +4459,13 @@ export interface operations {
                                 [key: string]: unknown;
                             };
                         } | null;
-                        /** @example {
+                        /**
+                         * @example {
                          *       "database": {
                          *         "status": "up"
                          *       }
-                         *     } */
+                         *     }
+                         */
                         details?: {
                             [key: string]: {
                                 status: string;
@@ -4432,11 +4499,13 @@ export interface operations {
                     "application/json": {
                         /** @example error */
                         status?: string;
-                        /** @example {
+                        /**
+                         * @example {
                          *       "database": {
                          *         "status": "up"
                          *       }
-                         *     } */
+                         *     }
+                         */
                         info?: {
                             [key: string]: {
                                 status: string;
@@ -4444,12 +4513,14 @@ export interface operations {
                                 [key: string]: unknown;
                             };
                         } | null;
-                        /** @example {
+                        /**
+                         * @example {
                          *       "redis": {
                          *         "status": "down",
                          *         "message": "Could not connect"
                          *       }
-                         *     } */
+                         *     }
+                         */
                         error?: {
                             [key: string]: {
                                 status: string;
@@ -4457,7 +4528,8 @@ export interface operations {
                                 [key: string]: unknown;
                             };
                         } | null;
-                        /** @example {
+                        /**
+                         * @example {
                          *       "database": {
                          *         "status": "up"
                          *       },
@@ -4465,7 +4537,8 @@ export interface operations {
                          *         "status": "down",
                          *         "message": "Could not connect"
                          *       }
-                         *     } */
+                         *     }
+                         */
                         details?: {
                             [key: string]: {
                                 status: string;
@@ -4817,7 +4890,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FeedMini_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -4846,7 +4921,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateFeedDto"];
+                "application/json": components["schemas"]["UpdateFeedMiniDto"];
             };
         };
         responses: {
@@ -5037,17 +5112,17 @@ export interface operations {
     };
     MinifluxV1Controller_getEntries: {
         parameters: {
-            query?: {
-                category_id?: string;
-                search?: string;
-                starred?: boolean;
-                after?: number;
-                before?: number;
-                direction?: "asc" | "desc";
-                order?: "id" | "status" | "published_at" | "category_title" | "category_id";
-                limit?: number;
+            query: {
+                status: "unread" | "read";
+                limit: number;
                 offset?: number;
-                status?: "unread" | "read";
+                order?: "id" | "status" | "published_at" | "category_title" | "category_id";
+                direction?: "asc" | "desc";
+                before?: number;
+                after?: number;
+                starred?: boolean;
+                search?: string;
+                category_id?: number;
             };
             header?: never;
             path?: never;
@@ -5059,7 +5134,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["EntriesListDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5084,7 +5161,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEntriesDto"];
+            };
+        };
         responses: {
             204: {
                 headers: {
@@ -5123,40 +5204,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
+                content: {
+                    "application/json": components["schemas"]["EntryDto_Output"];
                 };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxV1Controller_updateEntry: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Unauthorized */
             401: {
@@ -5242,9 +5292,7 @@ export interface operations {
     };
     MinifluxV1Controller_fetchOriginalArticle: {
         parameters: {
-            query: {
-                update_content: boolean;
-            };
+            query?: never;
             header?: never;
             path: {
                 entryId: number;
@@ -5257,7 +5305,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["FullEntryContent_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5290,7 +5340,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryOutDto_Output"][];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5315,13 +5367,19 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCategoryDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryOutDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5348,13 +5406,19 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCategoryDto"];
+            };
+        };
         responses: {
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryOutDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5519,7 +5583,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserSchemaDto_Output"];
+                };
             };
             /** @description Unauthorized */
             401: {
@@ -5582,101 +5648,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxV1Controller_getApiKeys: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxV1Controller_createApiKey: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    MinifluxV1Controller_deleteApiKey: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                apiKeyId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
                 headers: {
                     [name: string]: unknown;
                 };

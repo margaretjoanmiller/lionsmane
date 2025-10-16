@@ -989,7 +989,10 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          enclosures: i.enclosures as Enclosure[],
+        })),
         cursor: hasNextPage
           ? createCursor(
               items[items.length - 1].published,

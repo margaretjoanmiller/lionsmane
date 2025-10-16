@@ -83,6 +83,7 @@
     "@iconify-json/solar": "^1.2.4",
     "@iconify-json/stash": "^1.2.4",
     "@iconify-json/tabler": "^1.2.23",
+    "@iconify-json/uil": "^1.2.3",
     "@playwright/test": "^1.56.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
