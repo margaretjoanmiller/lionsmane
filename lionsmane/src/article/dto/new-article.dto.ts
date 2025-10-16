@@ -8,8 +8,8 @@ export const newArticleDto = createInsertSchema(articles).extend({
     .array(
       z.object({
         url: z.url(),
-        mime_type: z.string().min(1).max(255),
-        size: z.number().min(0),
+        mime_type: z.string().min(1).max(255).nullable(),
+        size: z.number().min(0).nullable(),
       }),
     )
     .nullable(),

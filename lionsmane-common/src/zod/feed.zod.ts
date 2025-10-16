@@ -46,7 +46,7 @@ export const feedSchema = z.object({
   image: z
     .object({
       url: z.url(),
-      title: z.string(),
+      title: z.string().optional(),
       link: z.url(),
       description: z.string().optional(),
       width: z.number().min(0).optional(),

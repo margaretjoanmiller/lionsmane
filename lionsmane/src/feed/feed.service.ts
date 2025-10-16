@@ -233,7 +233,7 @@ export class FeedService {
               etag_header: response?.headers['etag'] || null,
               last_modified_header: response?.headers['last-modified'] || null,
               copyright: parsedFeed.copyright,
-              image: parsedFeed.image,
+              image: parsedFeed.image || null,
               language: parsedFeed.language,
               podcast: parsedFeed.podcast,
               geo: parsedFeed.georss,
@@ -508,6 +508,10 @@ export class FeedService {
       .from(schema.subscriptions)
       .innerJoin(schema.feeds, eq(schema.subscriptions.feedId, schema.feeds.id))
       .leftJoin(schema.icons, eq(schema.icons.id, schema.feeds.icon))
+      .leftJoin(
+        schema.folders,
+        eq(schema.folders.id, schema.subscriptions.folderId),
+      )
       .where(
         and(eq(schema.feeds.id, id), eq(schema.subscriptions.userId, userId)),
       )
