@@ -48,6 +48,9 @@ export function LoginForm() {
         ...values,
       },
       {
+        onError() {
+          toast.error('Error signing in');
+        },
         async onSuccess(context) {
           if (context.data.twoFactorRedirect) {
             setIsTfa(true);
