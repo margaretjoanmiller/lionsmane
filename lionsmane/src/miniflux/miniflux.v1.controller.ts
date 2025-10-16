@@ -283,8 +283,8 @@ export class MinifluxV1Controller {
     return this.minifluxService.getEntries(
       session.user.id,
       status,
-      offset,
       limit,
+      offset,
       order,
       direction,
       before,

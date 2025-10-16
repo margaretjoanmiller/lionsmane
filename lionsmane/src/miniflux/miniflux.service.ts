@@ -469,8 +469,8 @@ export class MinifluxService {
   async getEntries(
     userId: string,
     status: string,
-    offset: number,
     limit: number,
+    offset?: number,
     order?: string,
     direction?: string,
     before?: number,
@@ -631,7 +631,7 @@ export class MinifluxService {
       }
     }
 
-    dataQuery = dataQuery.limit(limit).offset(offset);
+    dataQuery = dataQuery.limit(limit).offset(offset || 0);
 
     const [result, countResult] = await Promise.all([
       dataQuery,
