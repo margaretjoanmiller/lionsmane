@@ -21,27 +21,27 @@ import SolarFolderLineDuotone from '~icons/solar/folder-line-duotone';
 export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
   const queryClient = useQueryClient();
   const { mutate: deleteFolder } = $api.useMutation('delete', '/folder/{id}', {
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
-      await queryClient.invalidateQueries({
-        queryKey: ['get', '/folder/feed'],
-      });
-    },
     onError(e) {
       //@ts-expect-error: Error in openapi-typescript's typing of errors
       toast.error('Failed to delete folder', { description: e.message });
     },
-  });
-  const { mutate: editFeed } = $api.useMutation('patch', '/feed/{id}', {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
       await queryClient.invalidateQueries({
         queryKey: ['get', '/folder/feed'],
       });
     },
+  });
+  const { mutate: editFeed } = $api.useMutation('patch', '/feed/{id}', {
     onError(e) {
       //@ts-expect-error: Error in openapi-typescript's typing of errors
       toast.error('Failed to edit feed', { description: e.message });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/folder/feed'],
+      });
     },
   });
   const { dragAndDropHooks } = useDragAndDrop({
@@ -49,8 +49,8 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       [...keys].map((key) => {
         const item = treeData.find((i) => i.id === key);
         return {
-          'text/plain': item?.name || '',
           'application/json': JSON.stringify(item),
+          'text/plain': item?.name || '',
         };
       }),
     async onItemDrop(e) {
@@ -59,14 +59,14 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       const target = treeData.find((i) => i.id === e.target.key);
       if (e.dropOperation === 'move' && target?.type === 'folder') {
         editFeed({
+          body: {
+            folderId: target?.id || null,
+          },
+          credentials: 'include',
           params: {
             path: {
               id: parsed.id,
             },
-          },
-          credentials: 'include',
-          body: {
-            folderId: target?.id || null,
           },
         });
       }
@@ -75,9 +75,9 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
   return (
     <Tree
       aria-label="Feeds and Folders"
-      selectionMode="single"
-      items={treeData}
       dragAndDropHooks={dragAndDropHooks}
+      items={treeData}
+      selectionMode="single"
     >
       {function renderItem(item) {
         return (
@@ -85,15 +85,16 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
             <TreeItemContent>
               {item.type === 'feed' ? (
                 <Link
-                  to="/dashboard/feed/$feedId"
                   className="flex flex-row items-center max-w-40 space-x-3"
                   params={{ feedId: item.id }}
+                  to="/dashboard/feed/$feedId"
                 >
                   {item.favicon && (
                     <img
-                      src={item.favicon}
-                      alt={`${item.name} favicon`}
+                      alt=""
+                      aria-label={`${item.name} favicon`}
                       className="max-w-[16px] max-h-[16px]"
+                      src={item.favicon}
                     />
                   )}
                   <span className="truncate">{item.name}</span>
@@ -103,9 +104,9 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
                 <ContextMenu>
                   <ContextMenuTrigger>
                     <Link
-                      to="/dashboard/folder/$folderId"
-                      params={{ folderId: item.id }}
                       className="flex flex-row items-center max-w-35 space-x-2"
+                      params={{ folderId: item.id }}
+                      to="/dashboard/folder/$folderId"
                     >
                       <SolarFolderLineDuotone />
                       <span className="truncate">{item.name}</span>
@@ -115,12 +116,12 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
                     <ContextMenuItem
                       onSelect={() => {
                         deleteFolder({
+                          credentials: 'include',
                           params: {
                             path: {
                               id: item.id,
                             },
                           },
-                          credentials: 'include',
                         });
                       }}
                     >

@@ -98,6 +98,8 @@ function ArticlePage() {
         <header>
           <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
             {data.title}
+          </h1>
+          <h2 className="text-center font-bold">
             {data.isRead ? (
               <Button
                 asChild
@@ -194,8 +196,6 @@ function ArticlePage() {
                 <TooltipContent>Add to readeck</TooltipContent>
               </Tooltip>
             )}
-          </h1>
-          <h2 className="text-center font-bold">
             {data.authors?.map((author) => author.name).join(', ')}
             <Badge className="ml-2" variant="outline">
               {articleFeed}
