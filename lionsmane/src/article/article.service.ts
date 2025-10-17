@@ -15,6 +15,7 @@ import {
 } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
+import mime from 'mime';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
@@ -58,9 +59,18 @@ export class ArticleService {
           .returning();
         if (newArt.enclosures && newArt.enclosures?.length > 0) {
           for (const enclosure of newArt.enclosures) {
-            await tx
-              .insert(schema.enclosures)
-              .values({ entry_id: insertedArt.minifluxId, ...enclosure });
+            if (enclosure.mime_type)
+              await tx
+                .insert(schema.enclosures)
+                .values({ entry_id: insertedArt.minifluxId, ...enclosure });
+            else {
+              const fileType = mime.getType(enclosure.url);
+              await tx.insert(schema.enclosures).values({
+                entry_id: insertedArt.minifluxId,
+                ...enclosure,
+                mime_type: fileType,
+              });
+            }
           }
         }
         return insertedArt;

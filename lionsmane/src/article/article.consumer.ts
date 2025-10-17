@@ -59,6 +59,7 @@ export class ArticleConsumer extends WorkerHost {
 
       const article = await this.articleService.newArticle({
         ...data,
+        url: data.url === '' ? null : data.url,
         published: parseDate(data.published).toISOString(),
         updated: data.updated ? parseDate(data.updated).toISOString() : null,
         image,

@@ -73,9 +73,6 @@ importers:
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
-      '@types/mime':
-        specifier: ^3.0.4
-        version: 3.0.4
       '@upstash/redis':
         specifier: ^1.35.6
         version: 1.35.6
@@ -209,6 +206,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@types/mime':
+        specifier: ^3.0.4
+        version: 3.0.4
       '@types/multer':
         specifier: ^2.0.0
         version: 2.0.0

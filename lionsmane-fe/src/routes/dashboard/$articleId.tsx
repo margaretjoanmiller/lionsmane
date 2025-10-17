@@ -196,11 +196,13 @@ function ArticlePage() {
                 <TooltipContent>Add to readeck</TooltipContent>
               </Tooltip>
             )}
+          </h2>
+          <h3 className="text-center font-bold py-1">
             {data.authors?.map((author) => author.name).join(', ')}
             <Badge className="ml-2" variant="outline">
               {articleFeed}
             </Badge>
-          </h2>
+          </h3>
         </header>
         <div className="prose prose-lg prose-pink">
           {
@@ -222,12 +224,10 @@ function ArticlePage() {
                     <source src={e.url} type={e.mime_type} />
                   </ReactPlayer>
                 );
-              else
-                return (
-                  <ReactPlayer controls>
-                    <source src={e.url} />
-                  </ReactPlayer>
-                );
+              <img
+                aria-label="enclosure image did not include alt text"
+                src={e.url}
+              />;
             })}
           </div>
           <footer className="flex-col">
