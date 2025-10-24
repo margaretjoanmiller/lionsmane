@@ -217,6 +217,7 @@ function ArticlePage() {
             />
           }
           <div>
+            {data.youtube ? <ReactPlayer controls src={data.url!} /> : []}
             {data.enclosures?.map((e) => {
               if (e.mime_type && e.mime_type !== 'application/octet-stream')
                 return (

@@ -234,7 +234,7 @@ export const articles = pgTable(
     index('articles_search_idx').using('pgroonga', table.readableText),
     index('articles_category_idx').using('pgroonga', table.categories),
     index('articles_media_idx').using('pgroonga', table.media),
-    unique('articles_feed_id_text_unique').on(table.feedId, table.rawContent),
+    unique('articles_feed_id_hash_unique').on(table.feedId, table.hash),
   ],
 );
 

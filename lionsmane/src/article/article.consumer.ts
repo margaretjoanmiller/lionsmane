@@ -41,11 +41,13 @@ export class ArticleConsumer extends WorkerHost {
       if (altText && alt?.length === 0) alt = altText;
 
       let hash: string | null;
-      if (textContent) {
-        hash = createHash('sha256').update(textContent, 'utf-8').digest('hex');
-      } else if (data.rawContent) {
+      if (textContent && data.url) {
         hash = createHash('sha256')
-          .update(data.rawContent, 'utf-8')
+          .update(`${data.url}/${textContent}`, 'utf-8')
+          .digest('hex');
+      } else if (data.rawContent && data.url) {
+        hash = createHash('sha256')
+          .update(`${data.url}/${data.rawContent}`, 'utf-8')
           .digest('hex');
       } else if (data.description && data.description.length > 0) {
         hash = createHash('sha256')
@@ -68,6 +70,11 @@ export class ArticleConsumer extends WorkerHost {
         throw new Error('Invalid article, missing URL or enclosure');
       }
 
+      let content: string = '';
+      if (data.rawContent === 'no content') content = artUrl;
+      else if (data.rawContent) content = data.rawContent;
+      else throw new Error('Invalid article, missing URL or contnent');
+
       const article = await this.articleService.newArticle({
         ...data,
         url: artUrl,
@@ -77,6 +84,7 @@ export class ArticleConsumer extends WorkerHost {
         imageAlt: alt,
         hash,
         description: cleanDescription,
+        rawContent: content,
         readableText: textContent,
         readableHtml: htmlContent,
         keywords,

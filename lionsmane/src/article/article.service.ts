@@ -53,19 +53,17 @@ export class ArticleService {
           .insert(schema.articles)
           .values(newArt)
           .onConflictDoNothing({
-            target: [schema.articles.feedId, schema.articles.rawContent],
+            target: [schema.articles.feedId, schema.articles.hash],
           })
           .returning();
         if (insertedArt && newArt.enclosures && newArt.enclosures?.length > 0) {
           for (const enclosure of newArt.enclosures) {
             if (enclosure.type)
-              await tx
-                .insert(schema.enclosures)
-                .values({
-                  entry_id: insertedArt.minifluxId,
-                  ...enclosure,
-                  mime_type: enclosure.type,
-                });
+              await tx.insert(schema.enclosures).values({
+                entry_id: insertedArt.minifluxId,
+                ...enclosure,
+                mime_type: enclosure.type,
+              });
           }
         }
         return insertedArt;

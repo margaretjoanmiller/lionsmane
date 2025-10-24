@@ -55,6 +55,7 @@
     "ioredis": "^5.8.1",
     "jsdom": "^26.1.0",
     "lionsmane-common": "workspace:*",
+    "mime": "^3.0.0",
     "nestjs-zod": "^5.0.1",
     "nlcst-to-string": "^4.0.0",
     "node-vault": "^0.10.9",

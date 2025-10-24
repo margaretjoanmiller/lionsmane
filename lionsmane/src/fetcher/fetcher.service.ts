@@ -92,7 +92,7 @@ export class FetcherService {
           url,
           'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
         ) &&
-        urlObj.hostname !== 'youtube.com' // youtube blocks rss for some reason while provding it?
+        urlObj.hostname !== 'www.youtube.com' // youtube blocks rss for some reason while provding it?
       ) {
         this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
