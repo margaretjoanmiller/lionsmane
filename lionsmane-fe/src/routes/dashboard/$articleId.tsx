@@ -230,6 +230,18 @@ function ArticlePage() {
                 src={e.url}
               />;
             })}
+            {data.media?.contents?.map((m) => {
+              if (m.type && m.type !== 'application/octet-stream')
+                return (
+                  <ReactPlayer controls>
+                    <source src={m.url} type={m.type} />
+                  </ReactPlayer>
+                );
+              <img
+                aria-label="enclosure image did not include alt text"
+                src={m.url}
+              />;
+            })}
           </div>
           <footer className="flex-col">
             <a href={data.url!}>Original article</a>
