@@ -224,7 +224,15 @@ function ArticlePage() {
           }
         </div>
         <div className="flex flex-col items-center">
-          {data.youtube ? <ReactPlayer controls src={data.url!} /> : []}
+          {data.youtube ? (
+            <ReactPlayer
+              controls
+              src={data.url!}
+              style={{ aspectRatio: '16/9', height: 'auto', width: '100%' }}
+            />
+          ) : (
+            []
+          )}
           {data.enclosures?.map((e) => {
             if (e.mime_type && e.mime_type !== 'application/octet-stream')
               return (
