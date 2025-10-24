@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { format } from 'date-fns';
 import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -203,6 +204,11 @@ function ArticlePage() {
               {articleFeed}
             </Badge>
           </h3>
+          <h4 className="text-center py-1">
+            <time dateTime={data.published}>
+              {format(new Date(data.published), 'MMM d, yyyy HH:mm')}
+            </time>
+          </h4>
         </header>
         <div className="prose prose-lg prose-pink">
           {
@@ -216,44 +222,53 @@ function ArticlePage() {
               }} // we clean this on the backend
             />
           }
-          <div>
-            {data.youtube ? <ReactPlayer controls src={data.url!} /> : []}
-            {data.enclosures?.map((e) => {
-              if (e.mime_type && e.mime_type !== 'application/octet-stream')
-                return (
-                  <ReactPlayer controls>
-                    <source src={e.url} type={e.mime_type} />
-                  </ReactPlayer>
-                );
+        </div>
+        <div className="flex flex-col items-center">
+          {data.youtube ? <ReactPlayer controls src={data.url!} /> : []}
+          {data.enclosures?.map((e) => {
+            if (e.mime_type && e.mime_type !== 'application/octet-stream')
+              return (
+                <ReactPlayer controls>
+                  <source src={e.url} type={e.mime_type} />
+                </ReactPlayer>
+              );
+            return (
               <img
                 aria-label="enclosure image did not include alt text"
                 src={e.url}
-              />;
-            })}
-            {data.media?.contents?.map((m) => {
-              if (m.type && m.type !== 'application/octet-stream')
-                return (
-                  <ReactPlayer controls>
-                    <source src={m.url} type={m.type} />
-                  </ReactPlayer>
-                );
+              />
+            );
+          })}
+          {data.media?.contents?.map((m) => {
+            if (m.type && m.type !== 'application/octet-stream')
+              return (
+                <ReactPlayer controls>
+                  <source src={m.url} type={m.type} />
+                </ReactPlayer>
+              );
+            return (
               <img
                 aria-label="enclosure image did not include alt text"
                 src={m.url}
-              />;
-            })}
-          </div>
-          <footer className="flex-col">
-            <a href={data.url!}>Original article</a>
-            <div className="grid-flow-row">
-              {data.categories?.map((c) => (
-                <Badge className="m-1" variant="outline">
-                  {c.term}
-                </Badge>
-              ))}
-            </div>
-          </footer>
+              />
+            );
+          })}
         </div>
+        <footer className="flex flex-col items-center pt-8">
+          <a
+            className="font-bold hover:underline text-(--primary)"
+            href={data.url!}
+          >
+            Original article
+          </a>
+          <div className="grid-flow-row">
+            {data.categories?.map((c) => (
+              <Badge className="m-1" variant="outline">
+                {c.term}
+              </Badge>
+            ))}
+          </div>
+        </footer>
       </div>
     </article>
   );
