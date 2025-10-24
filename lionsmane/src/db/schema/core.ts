@@ -191,7 +191,7 @@ export const articles = pgTable(
       .$defaultFn(() => v7()),
     minifluxId: serial().unique().notNull(),
     title: text().notNull().default('No title'),
-    url: text(),
+    url: text().notNull(),
     authors: jsonb().$type<Person[]>().notNull().default([]),
     contributors: jsonb().$type<Person[]>().notNull().default([]),
     subject: varchar({ length: 256 }),

@@ -57,9 +57,20 @@ export class ArticleConsumer extends WorkerHost {
         hash = null;
       }
 
+      let artUrl: string = '';
+      if (!data.url && data.enclosures) {
+        const enclosureUrl = data.enclosures.at(0)?.url;
+        if (!enclosureUrl)
+          throw new Error('Invalid article, missing URL or enclosure');
+      } else if (data.url) {
+        artUrl = data.url;
+      } else {
+        throw new Error('Invalid article, missing URL or enclosure');
+      }
+
       const article = await this.articleService.newArticle({
         ...data,
-        url: data.url === '' ? null : data.url,
+        url: artUrl,
         published: parseDate(data.published).toISOString(),
         updated: data.updated ? parseDate(data.updated).toISOString() : null,
         image,

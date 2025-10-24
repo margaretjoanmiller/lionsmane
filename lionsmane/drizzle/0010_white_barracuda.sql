@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ALTER COLUMN "url" SET NOT NULL;

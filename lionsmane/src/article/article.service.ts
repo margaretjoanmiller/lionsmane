@@ -57,7 +57,7 @@ export class ArticleService {
             target: [schema.articles.feedId, schema.articles.url],
           })
           .returning();
-        if (newArt.enclosures && newArt.enclosures?.length > 0) {
+        if (insertedArt && newArt.enclosures && newArt.enclosures?.length > 0) {
           for (const enclosure of newArt.enclosures) {
             if (enclosure.mime_type)
               await tx
@@ -524,11 +524,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: (i.enclosures as Enclosure[]).map((e) => ({
-            ...e,
-            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-            size: e.size ? e.size : 0,
-          })),
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
