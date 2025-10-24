@@ -10,10 +10,7 @@
   "license": "EUPL-1.2",
   "packageManager": "pnpm@10.19.0",
   "devDependencies": {
-    "@biomejs/biome": "2.2.4"
-  },
-  "dependencies": {
-    "mime": ""
+    "@biomejs/biome": "2.2.7"
   },
   "workspaces": ["lionsmane", "lionsmane-fe", "lionsmane-common"]
 }
