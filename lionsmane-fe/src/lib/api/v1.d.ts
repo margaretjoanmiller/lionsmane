@@ -968,7 +968,7 @@ export interface components {
             image: {
                 /** Format: uri */
                 url: string;
-                title: string;
+                title?: string;
                 /** Format: uri */
                 link: string;
                 description?: string;
@@ -1194,7 +1194,7 @@ export interface components {
             image: {
                 /** Format: uri */
                 url: string;
-                title: string;
+                title?: string;
                 /** Format: uri */
                 link: string;
                 description?: string;
@@ -1412,7 +1412,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                url: string | null;
+                url?: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -1647,11 +1647,22 @@ export interface components {
                     entry_id: number;
                     /** Format: uri */
                     url: string;
-                    mime_type: string | null;
-                    size: number | null;
+                    mime_type: string;
+                    size: number;
                     /** @default 0 */
                     media_progression: number;
                 }[] | null;
+                itunes: {
+                    duration?: number;
+                    /** Format: uri */
+                    image?: string;
+                    explicit?: boolean;
+                    title?: string;
+                    episode?: number;
+                    season?: number;
+                    episodeType?: string;
+                    block?: boolean;
+                } | null;
                 isRead: boolean | null;
                 isStarred: (boolean | null) | null;
                 isBlurred: boolean | null;
@@ -1680,7 +1691,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                url: string | null;
+                url?: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -1915,11 +1926,22 @@ export interface components {
                     entry_id: number;
                     /** Format: uri */
                     url: string;
-                    mime_type: string | null;
-                    size: number | null;
+                    mime_type: string;
+                    size: number;
                     /** @default 0 */
                     media_progression: number;
                 }[] | null;
+                itunes: {
+                    duration?: number;
+                    /** Format: uri */
+                    image?: string;
+                    explicit?: boolean;
+                    title?: string;
+                    episode?: number;
+                    season?: number;
+                    episodeType?: string;
+                    block?: boolean;
+                } | null;
                 feedTitle: string | null;
                 /** @default false */
                 isRead: boolean | null;
@@ -1940,7 +1962,7 @@ export interface components {
                 id: string;
                 minifluxId: number;
                 title: string;
-                url: string | null;
+                url?: string | null;
                 /** @default [] */
                 authors: {
                     name: string;
@@ -2175,11 +2197,22 @@ export interface components {
                     entry_id: number;
                     /** Format: uri */
                     url: string;
-                    mime_type: string | null;
-                    size: number | null;
+                    mime_type: string;
+                    size: number;
                     /** @default 0 */
                     media_progression: number;
                 }[] | null;
+                itunes: {
+                    duration?: number;
+                    /** Format: uri */
+                    image?: string;
+                    explicit?: boolean;
+                    title?: string;
+                    episode?: number;
+                    season?: number;
+                    episodeType?: string;
+                    block?: boolean;
+                } | null;
                 isRead: boolean | null;
                 isStarred: (boolean | null) | null;
                 isBlurred: boolean | null;
@@ -2197,7 +2230,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             title: string;
-            url: string | null;
+            url?: string | null;
             /** @default [] */
             authors: {
                 name: string;
@@ -2432,11 +2465,22 @@ export interface components {
                 entry_id: number;
                 /** Format: uri */
                 url: string;
-                mime_type: string | null;
-                size: number | null;
+                mime_type: string;
+                size: number;
                 /** @default 0 */
                 media_progression: number;
             }[] | null;
+            itunes: {
+                duration?: number;
+                /** Format: uri */
+                image?: string;
+                explicit?: boolean;
+                title?: string;
+                episode?: number;
+                season?: number;
+                episodeType?: string;
+                block?: boolean;
+            } | null;
             feedTitle: string;
             isRead: boolean | null;
             isStarred: boolean | null;
@@ -2502,7 +2546,7 @@ export interface components {
                 image: {
                     /** Format: uri */
                     url: string;
-                    title: string;
+                    title?: string;
                     /** Format: uri */
                     link: string;
                     description?: string;
@@ -2812,18 +2856,29 @@ export interface components {
             entries: {
                 id: number;
                 title: string;
-                url: string | null;
+                url?: string | null;
                 hash: string | null;
                 enclosures: {
                     id: number;
                     entry_id: number;
                     /** Format: uri */
                     url: string;
-                    mime_type: string | null;
-                    size: number | null;
+                    mime_type: string;
+                    size: number;
                     /** @default 0 */
                     media_progression: number;
                 }[] | null;
+                itunes: {
+                    duration?: number;
+                    /** Format: uri */
+                    image?: string;
+                    explicit?: boolean;
+                    title?: string;
+                    episode?: number;
+                    season?: number;
+                    episodeType?: string;
+                    block?: boolean;
+                } | null;
                 user_id: number;
                 feed_id: number;
                 comments_url: string;
@@ -2879,18 +2934,29 @@ export interface components {
         EntryDto_Output: {
             id: number;
             title: string;
-            url: string | null;
+            url?: string | null;
             hash: string | null;
             enclosures: {
                 id: number;
                 entry_id: number;
                 /** Format: uri */
                 url: string;
-                mime_type: string | null;
-                size: number | null;
+                mime_type: string;
+                size: number;
                 /** @default 0 */
                 media_progression: number;
             }[] | null;
+            itunes: {
+                duration?: number;
+                /** Format: uri */
+                image?: string;
+                explicit?: boolean;
+                title?: string;
+                episode?: number;
+                season?: number;
+                episodeType?: string;
+                block?: boolean;
+            } | null;
             user_id: number;
             feed_id: number;
             comments_url: string;

@@ -218,7 +218,7 @@ function ArticlePage() {
           }
           <div>
             {data.enclosures?.map((e) => {
-              if (e.mime_type)
+              if (e.mime_type && e.mime_type !== 'application/octet-stream')
                 return (
                   <ReactPlayer controls>
                     <source src={e.url} type={e.mime_type} />

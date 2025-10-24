@@ -21,7 +21,7 @@ import { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { schema } from '../db/schema';
 import { ArticleDetail } from './dto/article-detail.dto';
-import { NewArticle, NewArticleDate } from './dto/new-article.dto';
+import { NewArticle } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {

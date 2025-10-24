@@ -234,4 +234,16 @@ export const articleDetail = z.object({
       }),
     )
     .nullable(),
+  itunes: z
+    .object({
+      duration: z.number().optional(),
+      image: z.url().optional(),
+      explicit: z.boolean().optional(),
+      title: z.string().optional(),
+      episode: z.number().min(1).optional(),
+      season: z.number().min(1).optional(),
+      episodeType: z.string().optional(),
+      block: z.boolean().optional(),
+    })
+    .nullable(),
 });
