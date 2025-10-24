@@ -6,7 +6,7 @@ export const articleDetail = z.object({
   id: z.uuid(),
   minifluxId: z.number().min(0),
   title: z.string().min(1).max(255),
-  url: z.preprocess((arg) => (arg === '' ? null : arg), z.url().nullish()),
+  url: z.url().nullish(),
   authors: z
     .array(
       z.object({
@@ -228,8 +228,8 @@ export const articleDetail = z.object({
         id: z.number(),
         entry_id: z.number(),
         url: z.url(),
-        mime_type: z.string().min(1).max(255).nullable(),
-        size: z.number().min(0).nullable(),
+        mime_type: z.string().min(1).max(255),
+        size: z.number().min(0),
         media_progression: z.number().min(0).default(0),
       }),
     )

@@ -185,7 +185,13 @@ export class ArticleService {
     return {
       articles: items.map((i) => ({
         ...i,
-        enclosures: i.enclosures as Enclosure[],
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
       })),
       cursor: hasNextPage
         ? createCursor(
@@ -266,7 +272,13 @@ export class ArticleService {
     return {
       articles: items.map((i) => ({
         ...i,
-        enclosures: i.enclosures as Enclosure[],
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
       })),
       cursor: hasNextPage
         ? createCursor(
@@ -313,7 +325,16 @@ export class ArticleService {
     if (!article) {
       throw new Error('Article not found or access denied');
     }
-    return { ...article, enclosures: article.enclosures as Enclosure[] };
+    return {
+      ...article,
+      enclosures: article.enclosures
+        ? (article.enclosures as Enclosure[]).map((e) => ({
+            ...e,
+            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+            size: e.size ? e.size : 0,
+          }))
+        : null,
+    };
   }
 
   async articleSearch(
@@ -362,7 +383,13 @@ export class ArticleService {
     return {
       articles: searchedArticles.map((i) => ({
         ...i,
-        enclosures: i.enclosures as Enclosure[],
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
       })),
     };
   }
@@ -497,7 +524,11 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: (i.enclosures as Enclosure[]).map((e) => ({
+            ...e,
+            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+            size: e.size ? e.size : 0,
+          })),
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -538,7 +569,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -585,7 +624,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -685,7 +732,13 @@ export class ArticleService {
     return {
       articles: items.map((i) => ({
         ...i,
-        enclosures: i.enclosures as Enclosure[],
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
       })),
       cursor: hasNextPage
         ? createCursor(
@@ -792,7 +845,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -831,7 +892,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -872,7 +941,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -1001,7 +1078,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -1039,7 +1124,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -1078,7 +1171,15 @@ export class ArticleService {
       return {
         articles: items.map((i) => ({
           ...i,
-          enclosures: i.enclosures as Enclosure[],
+          enclosures: i.enclosures
+            ? (i.enclosures as Enclosure[]).map((e) => ({
+                ...e,
+                mime_type: e.mime_type
+                  ? e.mime_type
+                  : 'application/octet-stream',
+                size: e.size ? e.size : 0,
+              }))
+            : null,
         })),
         cursor: hasNextPage
           ? createCursor(
@@ -1203,7 +1304,13 @@ export class ArticleService {
     return {
       articles: items.map((i) => ({
         ...i,
-        enclosures: i.enclosures as Enclosure[],
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
       })),
       cursor: hasNextPage
         ? createCursor(

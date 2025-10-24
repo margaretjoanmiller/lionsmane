@@ -53,6 +53,10 @@ export function SignupForm() {
     if (data) {
       navigate({ to: '/dashboard' });
     }
+
+    if (!data) {
+      toast.error('Error signing up');
+    }
   }
 
   return (

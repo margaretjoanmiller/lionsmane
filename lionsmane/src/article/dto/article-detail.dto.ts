@@ -1,7 +1,5 @@
-import { createSelectSchema } from 'drizzle-zod';
 import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
-import { schema } from 'src/db/schema';
 import { z } from 'zod';
 
 export const articleDetailWithStatus = articleDetail
