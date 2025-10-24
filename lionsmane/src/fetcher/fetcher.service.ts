@@ -9,7 +9,6 @@ import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
-import { parse as parseURL } from 'tldts';
 import { JSDOM } from 'jsdom';
 import { toString as treeToString } from 'nlcst-to-string';
 import { retext } from 'retext';
@@ -19,6 +18,7 @@ import robotsParser from 'robots-parser';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { RedisService } from 'src/redis/redis.service';
+import { parse as parseURL } from 'tldts';
 
 @Injectable()
 export class FetcherService {

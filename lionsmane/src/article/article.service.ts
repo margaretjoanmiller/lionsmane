@@ -54,7 +54,7 @@ export class ArticleService {
           .insert(schema.articles)
           .values(newArt)
           .onConflictDoNothing({
-            target: [schema.articles.feedId, schema.articles.url],
+            target: [schema.articles.feedId, schema.articles.rawContent],
           })
           .returning();
         if (insertedArt && newArt.enclosures && newArt.enclosures?.length > 0) {

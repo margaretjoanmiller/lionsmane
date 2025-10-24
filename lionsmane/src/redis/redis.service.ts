@@ -1,13 +1,13 @@
-import {
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-  Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Redis, Cluster } from 'ioredis';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Cluster, Redis } from 'ioredis';
 
 type RedisClient = Redis | Cluster;
 type RedisClientWithCommands = RedisClient & {

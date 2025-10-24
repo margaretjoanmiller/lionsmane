@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FeedService } from './feed.service';
 import { vi } from 'vitest';
+import { FeedService } from './feed.service';
 
 describe('FeedService', () => {
   let service: FeedService;

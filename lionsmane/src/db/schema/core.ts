@@ -191,7 +191,7 @@ export const articles = pgTable(
       .$defaultFn(() => v7()),
     minifluxId: serial().unique().notNull(),
     title: text().notNull().default('No title'),
-    url: text().notNull(),
+    url: text(),
     authors: jsonb().$type<Person[]>().notNull().default([]),
     contributors: jsonb().$type<Person[]>().notNull().default([]),
     subject: varchar({ length: 256 }),
@@ -234,7 +234,7 @@ export const articles = pgTable(
     index('articles_search_idx').using('pgroonga', table.readableText),
     index('articles_category_idx').using('pgroonga', table.categories),
     index('articles_media_idx').using('pgroonga', table.media),
-    unique('articles_feed_id_url_unique').on(table.feedId, table.url),
+    unique('articles_feed_id_text_unique').on(table.feedId, table.rawContent),
   ],
 );
 

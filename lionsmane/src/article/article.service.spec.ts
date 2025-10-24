@@ -1,6 +1,6 @@
+import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ArticleService } from './article.service';
-import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 
 describe('ArticleService', () => {
   let service: ArticleService;

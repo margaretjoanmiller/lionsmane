@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { FilterService } from './filter.service';
-import { FilterController } from './filter.controller';
 import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
 import { FilterConsumer } from './filter.consumer';
+import { FilterController } from './filter.controller';
+import { FilterService } from './filter.service';
 
 @Module({
   imports: [BullModule.registerQueue({ name: 'filter' })],
