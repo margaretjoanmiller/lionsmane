@@ -1,13 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import UilDesert from '~icons/uil/desert';
 import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import { Button } from '@/components/ui/button';
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
 import {
   ArticleFilter,
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
+import UilDesert from '~icons/uil/desert';
 
 export const Route = createFileRoute('/dashboard/folder/$folderId')({
   component: FolderId,
@@ -23,6 +24,7 @@ function FolderId() {
         'get',
         '/article/unread/folder/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: folderId,
@@ -31,7 +33,6 @@ function FolderId() {
               pageSize: 12,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -41,28 +42,29 @@ function FolderId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -74,12 +76,12 @@ function FolderId() {
         'get',
         '/article/read/folder/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: folderId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -89,28 +91,29 @@ function FolderId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -122,12 +125,12 @@ function FolderId() {
         'get',
         '/article/starred/folder/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: folderId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -138,28 +141,29 @@ function FolderId() {
 
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -171,12 +175,12 @@ function FolderId() {
         'get',
         '/article/folder/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: folderId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -186,28 +190,29 @@ function FolderId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}

@@ -1,7 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import UilDesert from '~icons/uil/desert';
 import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import {
@@ -16,11 +15,13 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
 import {
   ArticleFilter,
   useArticleFilterStore,
 } from '@/stores/articleFilter.store';
+import UilDesert from '~icons/uil/desert';
 
 export const Route = createFileRoute('/dashboard/feed/$feedId')({
   component: FeedId,
@@ -37,12 +38,12 @@ function AlertMarkRead({ feedId }: { feedId: string }) {
 
   function markAllAsRead() {
     mutate({
+      credentials: 'include',
       params: {
         path: {
           id: feedId,
         },
       },
-      credentials: 'include',
     });
   }
   return (
@@ -78,6 +79,7 @@ function FeedId() {
         'get',
         '/article/unread/feed/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: feedId,
@@ -86,7 +88,6 @@ function FeedId() {
               pageSize: 12,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -99,10 +100,12 @@ function FeedId() {
     const articles = data.pages.map(({ articles }) => {
       if (articles.length === 0) {
         return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
-            <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
+          <Empty className="grow">
+            <EmptyMedia variant="icon">
+              <UilDesert fontSize="5em" />
+            </EmptyMedia>
+            <EmptyHeader>No articles;</EmptyHeader>
+          </Empty>
         );
       }
 
@@ -121,7 +124,7 @@ function FeedId() {
           {articles}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -133,12 +136,12 @@ function FeedId() {
         'get',
         '/article/read/feed/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: feedId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -155,10 +158,12 @@ function FeedId() {
       }
       if (articles.length === 0) {
         return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
-            <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
+          <Empty className="grow">
+            <EmptyMedia variant="icon">
+              <UilDesert fontSize="5em" />
+            </EmptyMedia>
+            <EmptyHeader>No articles;</EmptyHeader>
+          </Empty>
         );
       }
       return articles
@@ -176,7 +181,7 @@ function FeedId() {
           {articles}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -188,12 +193,12 @@ function FeedId() {
         'get',
         '/article/starred/feed/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: feedId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -203,31 +208,29 @@ function FeedId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
-        <div className="flex gap-4 mb-6">
-          <AlertMarkRead feedId={feedId} />
-        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
@@ -239,12 +242,12 @@ function FeedId() {
         'get',
         '/article/feed/{id}',
         {
+          credentials: 'include',
           params: {
             path: {
               id: feedId,
             },
           },
-          credentials: 'include',
         },
         {
           // @ts-expect-error: cursor typing
@@ -254,31 +257,29 @@ function FeedId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <div className="absolute place-self-center items-center transform translate-y-50">
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
-            <p>No articles</p>
-          </div>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+          </EmptyMedia>
+          <EmptyHeader>No articles</EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
-        <div className="flex gap-4 mb-6">
-          <AlertMarkRead feedId={feedId} />
-        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
+          <Button disabled={isFetching} onClick={() => fetchNextPage()}>
             {isFetching ? 'Loading...' : 'Load More'}
           </Button>
         )}
