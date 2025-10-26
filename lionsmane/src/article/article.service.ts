@@ -339,6 +339,7 @@ export class ArticleService {
     const searchedArticles = await this.db
       .select({
         ...getTableColumns(schema.articles),
+        feedId: schema.feeds.id,
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isRead: schema.userArticleStates.isRead ?? false,

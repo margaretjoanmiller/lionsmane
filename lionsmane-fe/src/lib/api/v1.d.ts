@@ -1943,6 +1943,7 @@ export interface components {
                     block?: boolean;
                 } | null;
                 feedTitle: string | null;
+                feedId: string | null;
                 /** @default false */
                 isRead: boolean | null;
                 /** @default false */

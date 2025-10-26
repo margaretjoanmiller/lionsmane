@@ -23,7 +23,12 @@ async function bootstrap() {
     helmet({
       contentSecurityPolicy: {
         directives: {
-          scriptSrc: [`'self'`, 'cdn.jsdelivr.net/npm/@scalar/api-reference '],
+          scriptSrc: [
+            `'self'`,
+            `'unsafe-eval'`,
+            `'unsafe-inline'`,
+            'https://cdn.jsdelivr.net/npm/@scalar/api-reference',
+          ],
         },
       },
     }),

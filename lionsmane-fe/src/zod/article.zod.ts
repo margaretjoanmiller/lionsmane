@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const articleDetailWithStatus = articleDetail
   .extend({
     contentWarning: z.array(z.string()).nullable().default([]),
-    feedId: z.uuid(),
+    feedId: z.uuid().nullable(),
     feedTitle: z.string().nullable(),
     isBlurred: z.boolean().default(false).nullable(),
     isHidden: z.boolean().default(false).nullable(),
