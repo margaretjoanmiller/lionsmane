@@ -3,25 +3,31 @@ import { useNavigate } from '@tanstack/react-router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { FieldGroup } from '@/components/ui/field';
 import {
-  SearchField,
-  SearchFieldClear,
-  SearchFieldInput,
-} from '@/components/ui/searchfield';
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from '@/components/ui/field';
 import FluentSearch20Filled from '~icons/fluent/search-20-filled';
 import IconoirCancel from '~icons/iconoir/cancel';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog';
 import { Form, FormField } from './ui/form';
+import { Input } from './ui/input';
 
 export function SearchBar() {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const schema = z.object({
-    query: z.string().min(2).max(256),
-    page: z.number().min(1).max(100).default(1),
     limit: z.number().min(1).max(100).default(10),
+    page: z.number().min(1).max(100).default(1),
+    query: z.string().min(2).max(256),
   });
 
   const form = useForm({
@@ -33,47 +39,38 @@ export function SearchBar() {
   const onSubmit = (data: z.infer<typeof schema>) => {
     setIsOpen(false);
     navigate({
-      to: '/dashboard/search',
       search: {
-        query: data.query,
-        page: data.page,
         limit: data.limit,
+        page: data.page,
+        query: data.query,
       },
+      to: '/dashboard/search',
     });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center align-center">
+        <Button className="flex items-center align-center" variant="outline">
           <FluentSearch20Filled /> Search
         </Button>
       </DialogTrigger>
       <DialogContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
             className="flex items-center align-center m-4"
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
               control={form.control}
               name="query"
               render={({ field }) => (
-                <SearchField className="max-w-[200px]">
-                  <FieldGroup>
-                    <FluentSearch20Filled
-                      aria-hidden
-                      className="size-4 text-muted-foreground"
-                    />
-                    <SearchFieldInput placeholder="Search..." {...field} />
-                    <SearchFieldClear>
-                      <IconoirCancel aria-hidden className="size-4" />
-                    </SearchFieldClear>
-                  </FieldGroup>
-                </SearchField>
+                <Field className="max-w-[200px]">
+                  <Input placeholder="Search..." {...field} />
+                </Field>
               )}
             />
-            <Button type="submit" className="ml-2">
+            <Button className="ml-4" type="submit">
               Search query
             </Button>
           </form>
