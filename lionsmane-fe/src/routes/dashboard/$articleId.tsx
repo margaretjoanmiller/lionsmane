@@ -1,10 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@radix-ui/react-accordion';
-import { dataTagErrorSymbol, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import ReactPlayer from 'react-player';
@@ -13,9 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemHeader,
   ItemMedia,
   ItemTitle,
@@ -219,7 +213,7 @@ function ArticlePage() {
               {articleFeed}
             </Badge>
           </h3>
-          <h4 className="text-center py-1">
+          <h4 className="text-center py-1 flex flex-col">
             <time dateTime={data.published}>
               {format(new Date(data.published), 'MMM d, yyyy HH:mm')}
             </time>
@@ -262,7 +256,7 @@ function ArticlePage() {
               <ItemContent>
                 {data.podcast.episode && (
                   <ItemTitle>
-                    {data.podcast.episode?.number} -{' '}
+                    {data.podcast.episode?.number} -
                     {data.podcast.episode?.display}
                   </ItemTitle>
                 )}
@@ -276,8 +270,49 @@ function ArticlePage() {
                   </ul>
                 </ItemDescription>
               </ItemContent>
+              {data.podcast.license && (
+                <ItemFooter>
+                  {data.podcast.license.url ? (
+                    <a href={data.podcast.license.url}>
+                      {data.podcast.license.display}
+                    </a>
+                  ) : (
+                    <small>{data.podcast.license.display}</small>
+                  )}
+                </ItemFooter>
+              )}
             </Item>
           )}
+          {data.itunes && (
+            <Item>
+              <ItemHeader>Podcast episode info</ItemHeader>
+              {data.itunes.image && (
+                <ItemMedia>
+                  <img
+                    aria-label="Podcast episode image did not provide alt text"
+                    className="object-cover"
+                    height={80}
+                    src={data.itunes.image}
+                    width={80}
+                  ></img>
+                </ItemMedia>
+              )}
+              <ItemContent>
+                <ItemTitle>
+                  {data.itunes.episode} - {data.itunes.title}{' '}
+                  {data.itunes.explicit && (
+                    <Badge variant="outline">Explicit</Badge>
+                  )}
+                </ItemTitle>
+                <ItemDescription>
+                  {data.itunes.duration && (
+                    <p>Duration: {data.itunes.duration} minutes</p>
+                  )}
+                </ItemDescription>
+              </ItemContent>
+            </Item>
+          )}
+
           {data.enclosures?.map((e) => {
             if (e.mime_type && e.mime_type !== 'application/octet-stream')
               return (
