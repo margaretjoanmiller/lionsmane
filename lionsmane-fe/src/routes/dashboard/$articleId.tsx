@@ -22,6 +22,7 @@ import {
 import { authClient } from '@/lib/auth-client';
 import { $api } from '@/lib/fetch-client';
 import { usePrefStore } from '@/stores/userPref.store';
+import FlowbiteMapPinAltOutline from '~icons/flowbite/map-pin-alt-outline';
 import SolarBookBookmarkLineDuotone from '~icons/solar/book-bookmark-line-duotone';
 import SolarGlassesLineDuotone from '~icons/solar/glasses-line-duotone';
 import SolarStarBold from '~icons/solar/star-bold';
@@ -217,6 +218,12 @@ function ArticlePage() {
             <time dateTime={data.published}>
               {format(new Date(data.published), 'MMM d, yyyy HH:mm')}
             </time>
+            {data.geo && data.geo.point && (
+              <Badge>
+                <FlowbiteMapPinAltOutline />
+                {data.geo.point.lat}, {data.geo.point.lng}
+              </Badge>
+            )}
           </h4>
         </header>
         <div className="prose prose-lg prose-pink">
@@ -243,7 +250,7 @@ function ArticlePage() {
             []
           )}
           {data.podcast && (
-            <Item>
+            <Item variant="outline">
               <ItemHeader>Podcast episode info</ItemHeader>
               {data.podcast.images && data.podcast.images.srcset && (
                 <ItemMedia>
@@ -284,7 +291,7 @@ function ArticlePage() {
             </Item>
           )}
           {data.itunes && (
-            <Item>
+            <Item variant="outline">
               <ItemHeader>Podcast episode info</ItemHeader>
               {data.itunes.image && (
                 <ItemMedia>
