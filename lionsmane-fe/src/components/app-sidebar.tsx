@@ -29,6 +29,7 @@ import GardenEyeHideStroke16 from '~icons/garden/eye-hide-stroke-16';
 import NotoV1Mushroom from '~icons/noto-v1/mushroom';
 import SolarAddFolderOutline from '~icons/solar/add-folder-outline';
 import SolarFilterLinear from '~icons/solar/filter-linear';
+import { AddFeed } from './add-feed';
 import FeedTree from './feed-tree';
 import MultipleSelector from './multi-select';
 import { SearchBar } from './search-bar';
@@ -197,6 +198,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SearchBar />
           </div>
         )}
+        {isMobile && <AddFeed />}
         <Dialog onOpenChange={setFormOpen} open={formOpen}>
           <DialogTrigger>
             <Tooltip>
