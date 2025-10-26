@@ -1,10 +1,25 @@
-import { useQueryClient } from '@tanstack/react-query';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@radix-ui/react-accordion';
+import { dataTagErrorSymbol, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemHeader,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
 import {
   Tooltip,
   TooltipContent,
@@ -233,6 +248,28 @@ function ArticlePage() {
           ) : (
             []
           )}
+          {data.podcast && (
+            <Item>
+              <ItemHeader>Podcast episode info</ItemHeader>
+              <ItemContent>
+                {data.podcast.episode && (
+                  <ItemTitle>
+                    {data.podcast.episode?.number} -{' '}
+                    {data.podcast.episode?.display}
+                  </ItemTitle>
+                )}
+                <ItemDescription>
+                  <ul>
+                    {data.podcast.persons?.map((p) => (
+                      <li>
+                        <a href={p.href}>{p.display}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </ItemDescription>
+              </ItemContent>
+            </Item>
+          )}
           {data.enclosures?.map((e) => {
             if (e.mime_type && e.mime_type !== 'application/octet-stream')
               return (
@@ -247,6 +284,7 @@ function ArticlePage() {
               />
             );
           })}
+
           {data.media?.contents?.map((m) => {
             if (m.type && m.type !== 'application/octet-stream')
               return (
