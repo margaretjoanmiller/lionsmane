@@ -251,6 +251,14 @@ function ArticlePage() {
           {data.podcast && (
             <Item>
               <ItemHeader>Podcast episode info</ItemHeader>
+              {data.podcast.images && data.podcast.images.srcset && (
+                <ItemMedia>
+                  <img
+                    aria-label="Podcast episode image did not provide alt text"
+                    src={data.podcast.images.srcset}
+                  ></img>
+                </ItemMedia>
+              )}
               <ItemContent>
                 {data.podcast.episode && (
                   <ItemTitle>
