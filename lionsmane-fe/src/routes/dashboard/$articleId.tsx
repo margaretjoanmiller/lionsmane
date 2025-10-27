@@ -313,7 +313,9 @@ function ArticlePage() {
                 </ItemTitle>
                 <ItemDescription>
                   {data.itunes.duration && (
-                    <p>Duration: {data.itunes.duration} minutes</p>
+                    <p>
+                      Duration: about {Math.round(data.itunes.duration / 60)} minutes
+                    </p>
                   )}
                 </ItemDescription>
               </ItemContent>
