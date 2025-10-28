@@ -208,7 +208,7 @@ function ArticlePage() {
               </Tooltip>
             )}
           </h2>
-          <h3 className="text-center scroll-m-20 text-2xl font-semibold tracking-tight pb-1">
+          <h3 className="text-center scroll-m-20 font-semibold tracking-tight py-1">
             {data.authors?.map((author) => author.name).join(', ')}
             <Badge className="ml-2" variant="outline">
               {articleFeed}
@@ -256,6 +256,7 @@ function ArticlePage() {
                 <ItemMedia>
                   <img
                     aria-label="Podcast episode image did not provide alt text"
+                    className="rounded-md"
                     src={data.podcast.images.srcset}
                   ></img>
                 </ItemMedia>
@@ -297,7 +298,7 @@ function ArticlePage() {
                 <ItemMedia>
                   <img
                     aria-label="Podcast episode image did not provide alt text"
-                    className="object-cover"
+                    className="object-cover rounded-md"
                     height={80}
                     src={data.itunes.image}
                     width={80}
