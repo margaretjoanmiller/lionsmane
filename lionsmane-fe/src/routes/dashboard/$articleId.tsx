@@ -226,7 +226,7 @@ function ArticlePage() {
             )}
           </h4>
         </header>
-        <div className="prose prose-lg prose-pink">
+        <div className="prose prose-lg prose-pink prose-headings:underline">
           {
             <div
               dangerouslySetInnerHTML={{

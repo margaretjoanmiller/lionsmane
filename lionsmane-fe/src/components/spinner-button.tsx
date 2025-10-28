@@ -3,7 +3,7 @@ import { Spinner } from '@/components/ui/spinner';
 
 export function SpinnerButton() {
   return (
-    <Button disabled size="sm">
+    <Button className="cursor-progress" disabled size="sm">
       <Spinner />
       Loading...
     </Button>
