@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -146,7 +147,7 @@ function NewFilter() {
           name="titleContains"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
                 <TagInput
                   {...field}
@@ -273,16 +274,19 @@ function NewFilter() {
           control={form.control}
           name="type"
           render={({ field }) => (
-            <Select defaultValue={field.value} onValueChange={field.onChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select an action" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="blur">Blur</SelectItem>
-                <SelectItem value="markRead">Mark Read</SelectItem>
-                <SelectItem value="hide">Hide</SelectItem>
-              </SelectContent>
-            </Select>
+            <>
+              <Label className="mb-2">Filter action</Label>
+              <Select defaultValue={field.value} onValueChange={field.onChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an action" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="blur">Blur</SelectItem>
+                  <SelectItem value="markRead">Mark Read</SelectItem>
+                  <SelectItem value="hide">Hide</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
           )}
         />
         {form.watch('type') === 'blur' && (
