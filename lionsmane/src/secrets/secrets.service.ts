@@ -8,7 +8,7 @@ export class SecretsService {
   private clientToken: string | null;
   constructor(private config: ConfigService) {
     const vaultAddress = this.config.getOrThrow<string>('VAULT_ADDR');
-    const vaultToken = this.config.getOrThrow<string>('VAULT_TOKEN');
+    const vaultToken = this.config.getOrThrow<string>('VAULT_TOKEN').trim();
     this.vaultClient = vault({ endpoint: vaultAddress, token: vaultToken });
     this.clientToken = null;
   }
