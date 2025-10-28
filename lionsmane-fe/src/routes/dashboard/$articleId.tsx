@@ -110,7 +110,7 @@ function ArticlePage() {
           <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
             {data.title}
           </h1>
-          <h2 className="text-center font-bold">
+          <h2 className="text-center scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
             {data.isRead ? (
               <Button
                 asChild
@@ -208,13 +208,13 @@ function ArticlePage() {
               </Tooltip>
             )}
           </h2>
-          <h3 className="text-center font-bold py-1">
+          <h3 className="text-center scroll-m-20 text-2xl font-semibold tracking-tight pb-1">
             {data.authors?.map((author) => author.name).join(', ')}
             <Badge className="ml-2" variant="outline">
               {articleFeed}
             </Badge>
           </h3>
-          <h4 className="text-center py-1 flex flex-col">
+          <h4 className="text-center scroll-m-20 font-medium tracking-tight py-1 flex flex-col">
             <time dateTime={data.published}>
               {format(new Date(data.published), 'MMM d, yyyy HH:mm')}
             </time>
@@ -314,7 +314,8 @@ function ArticlePage() {
                 <ItemDescription>
                   {data.itunes.duration && (
                     <p>
-                      Duration: about {Math.round(data.itunes.duration / 60)} minutes
+                      Duration: about {Math.round(data.itunes.duration / 60)}{' '}
+                      minutes
                     </p>
                   )}
                 </ItemDescription>

@@ -4,7 +4,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { LoadingButton } from '@/components/spinner-button';
+import { SpinnerButton } from '@/components/spinner-button';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -179,9 +179,11 @@ export function AddFeed() {
                   </FormItem>
                 )}
               />
-              <LoadingButton loading={discoverPending} type="submit">
-                Find
-              </LoadingButton>
+              {discoverPending ? (
+                <SpinnerButton />
+              ) : (
+                <Button type="submit">Find</Button>
+              )}
             </form>
           </Form>
         </DialogContent>
@@ -296,9 +298,11 @@ export function AddFeed() {
                   </FormItem>
                 )}
               />
-              <LoadingButton loading={isPending} type="submit">
-                Submit
-              </LoadingButton>
+              {isPending ? (
+                <SpinnerButton />
+              ) : (
+                <Button type="submit">Submit</Button>
+              )}
             </form>
           </Form>
         </DialogContent>

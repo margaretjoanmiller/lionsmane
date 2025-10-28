@@ -33,7 +33,7 @@ import { AddFeed } from './add-feed';
 import FeedTree from './feed-tree';
 import MultipleSelector from './multi-select';
 import { SearchBar } from './search-bar';
-import { LoadingButton } from './spinner-button';
+import { SpinnerButton } from './spinner-button';
 import { Button } from './ui/button';
 import {
   Dialog,
@@ -250,9 +250,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   )}
                 />
                 <div className="flex flex-row">
-                  <LoadingButton loading={isPending} type="submit">
-                    Add Folder
-                  </LoadingButton>
+                  {isPending ? (
+                    <SpinnerButton />
+                  ) : (
+                    <Button type="submit">Add folder</Button>
+                  )}
                 </div>
               </form>
             </Form>

@@ -6,7 +6,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import MultipleSelector from '@/components/multi-select';
-import { LoadingButton } from '@/components/spinner-button';
+import { SpinnerButton } from '@/components/spinner-button';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -48,40 +49,40 @@ function NewFilter() {
 
   function onSubmit(values: z.infer<typeof filterFormSchema>) {
     const valuesToSend = {
-      name: values.name,
+      action: {
+        contentWarning: values.contentWarning || null,
+        type: values.type,
+      },
       conditions: {
-        keywords: values.keywords?.map((keyword) => keyword.text),
-        titleContains: values.titleContains?.map((title) => title.text),
-        contentContains: values.contentContains?.map((content) => content.text),
         authors: values.authors?.map((author) => author.text),
         categories: values.categories?.map((category) => category.text),
+        contentContains: values.contentContains?.map((content) => content.text),
         feeds: values.feeds?.map((feed) => feed.value),
-      },
-      action: {
-        type: values.type,
-        contentWarning: values.contentWarning || null,
+        keywords: values.keywords?.map((keyword) => keyword.text),
+        titleContains: values.titleContains?.map((title) => title.text),
       },
       isActive: values.enabled,
+      name: values.name,
     };
     mutate({
-      credentials: 'include',
       body: valuesToSend,
+      credentials: 'include',
     });
   }
 
   const form = useForm<z.infer<typeof filterFormSchema>>({
-    resolver: zodResolver(filterFormSchema),
     defaultValues: {
-      keywords: [],
-      titleContains: [],
-      contentContains: [],
       authors: [],
       categories: [],
-      feeds: [],
-      type: 'blur',
+      contentContains: [],
       contentWarning: '',
       enabled: true,
+      feeds: [],
+      keywords: [],
+      titleContains: [],
+      type: 'blur',
     },
+    resolver: zodResolver(filterFormSchema),
   });
 
   const [keywords, setKeywords] = React.useState<Tag[]>([]);
@@ -103,7 +104,7 @@ function NewFilter() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -123,14 +124,14 @@ function NewFilter() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={keywords}
                   activeTagIndex={keywordsIndex}
+                  placeholder="Keyword1, Keyword2, Keyword3"
                   setActiveTagIndex={setKeywordsIndex}
                   setTags={(newTags) => {
                     setKeywords(newTags);
                     form.setValue('keywords', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Keyword1, Keyword2, Keyword3"
+                  tags={keywords}
                 />
               </FormControl>
               <FormDescription>
@@ -149,14 +150,14 @@ function NewFilter() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={titleContains}
                   activeTagIndex={titleContainsIndex}
+                  placeholder="Title1, Title2, Title3"
                   setActiveTagIndex={setTitleContainsIndex}
                   setTags={(newTags) => {
                     setTitleContains(newTags);
                     form.setValue('titleContains', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Title1, Title2, Title3"
+                  tags={titleContains}
                 />
               </FormControl>
               <FormDescription>title contains</FormDescription>
@@ -173,8 +174,9 @@ function NewFilter() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={contentContains}
                   activeTagIndex={contentContainsIndex}
+                  onChange={field.onChange}
+                  placeholder="Content1, Content2, Content3"
                   setActiveTagIndex={setContentContainsIndex}
                   setTags={(newTags) => {
                     setContentContains(newTags);
@@ -183,8 +185,7 @@ function NewFilter() {
                       newTags as [Tag, ...Tag[]],
                     );
                   }}
-                  onChange={field.onChange}
-                  placeholder="Content1, Content2, Content3"
+                  tags={contentContains}
                 />
               </FormControl>
               <FormDescription>content contains</FormDescription>
@@ -201,14 +202,14 @@ function NewFilter() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={authors}
                   activeTagIndex={authorsIndex}
+                  placeholder="Author1, Author2, Author3"
                   setActiveTagIndex={setAuthorsIndex}
                   setTags={(newTags) => {
                     setAuthors(newTags);
                     form.setValue('authors', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Author1, Author2, Author3"
+                  tags={authors}
                 />
               </FormControl>
               <FormDescription>contains authors</FormDescription>
@@ -225,14 +226,14 @@ function NewFilter() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={categories}
                   activeTagIndex={categoriesIndex}
+                  placeholder="Category1, Category2, Category3"
                   setActiveTagIndex={setCategoriesIndex}
                   setTags={(newTags) => {
                     setCategories(newTags);
                     form.setValue('categories', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Category1, Category2, Category3"
+                  tags={categories}
                 />
               </FormControl>
               <FormDescription>
@@ -255,12 +256,12 @@ function NewFilter() {
                     label: feed.title || feed.url,
                     value: feed.id,
                   }))}
-                  placeholder="Select feeds you want to add to your folder..."
                   emptyIndicator={
                     <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                       no results found.
                     </p>
                   }
+                  placeholder="Select feeds you want to add to your folder..."
                 />
               </FormControl>
               <FormDescription>entire feed to filter</FormDescription>
@@ -272,7 +273,7 @@ function NewFilter() {
           control={form.control}
           name="type"
           render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select defaultValue={field.value} onValueChange={field.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an action" />
               </SelectTrigger>
@@ -306,9 +307,7 @@ function NewFilter() {
             )}
           />
         )}
-        <LoadingButton loading={isPending} type="submit">
-          Submit
-        </LoadingButton>
+        {isPending ? <SpinnerButton /> : <Button type="submit">Submit</Button>}
       </form>
     </Form>
   );

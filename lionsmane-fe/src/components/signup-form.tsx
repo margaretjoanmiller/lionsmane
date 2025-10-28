@@ -18,11 +18,11 @@ import { authClient } from '@/lib/auth-client';
 
 const formSchema = z
   .object({
-    name: z.string().min(2).max(100),
-    email: z.email(),
-    password: z.string().min(8),
     confirm: z.string().min(8),
+    email: z.email(),
     image: z.url().optional(),
+    name: z.string().min(2).max(100),
+    password: z.string().min(8),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match",
@@ -33,13 +33,13 @@ export function SignupForm() {
   const navigate = useNavigate({ from: '/signup' });
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
       email: '',
-      password: '',
       image: undefined,
+      name: '',
+      password: '',
     },
+    resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -61,7 +61,7 @@ export function SignupForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -84,8 +84,8 @@ export function SignupForm() {
               <FormLabel>image</FormLabel>
               <FormControl>
                 <Input
-                  type="url"
                   placeholder="https://example.com/image.jpg"
+                  type="url"
                   {...field}
                 />
               </FormControl>
@@ -102,8 +102,8 @@ export function SignupForm() {
               <FormLabel>email</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
                   placeholder="doc.brown@mit.edu"
+                  type="email"
                   {...field}
                 />
               </FormControl>
@@ -121,7 +121,7 @@ export function SignupForm() {
             <FormItem>
               <FormLabel>password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="thatsheavyman" {...field} />
+                <Input placeholder="thatsheavyman" type="password" {...field} />
               </FormControl>
               <FormDescription>This is your password.</FormDescription>
               <FormMessage />
@@ -135,7 +135,7 @@ export function SignupForm() {
             <FormItem>
               <FormLabel>confirm</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="thatsheavyman" {...field} />
+                <Input placeholder="thatsheavyman" type="password" {...field} />
               </FormControl>
               <FormDescription>This is your password.</FormDescription>
               <FormMessage />
