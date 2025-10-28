@@ -3,7 +3,9 @@ import React from 'react';
 import { ArticleCard } from '@/components/article-card';
 import MultipleSelector, { type Option } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
+import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
+import UilDesert from '~icons/uil/desert';
 
 export const Route = createFileRoute('/dashboard/hidden')({
   component: HiddenDashboard,
@@ -50,25 +52,35 @@ function HiddenDashboard() {
     return selectedRules.map((rule) => rule.value).includes(article.ruleId);
   });
 
-  return (
-    <>
-      <div className="flex gap-4 mb-6">
-        <MultipleSelector
-          defaultOptions={filterOptions || []}
-          onChange={handleFilterChange}
-          value={selectedRules}
-        />
-      </div>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        {visibleArticles.map((article) => (
-          <ArticleCard article={article} />
-        ))}
-        {hasNextPage && (
-          <Button onClick={() => fetchNextPage()} disabled={isFetching}>
-            {isFetching ? 'Loading...' : 'Load More'}
-          </Button>
-        )}
-      </div>
-    </>
-  );
+  if (visibleArticles.length === 0) {
+    return (
+      <Empty className="grow">
+        <EmptyMedia variant="icon">
+          <UilDesert fontSize="5em" />
+        </EmptyMedia>
+        <EmptyHeader>No articles</EmptyHeader>
+      </Empty>
+    );
+  } else
+    return (
+      <>
+        <div className="flex gap-4 mb-6">
+          <MultipleSelector
+            defaultOptions={filterOptions || []}
+            onChange={handleFilterChange}
+            value={selectedRules}
+          />
+        </div>
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          {visibleArticles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+          {hasNextPage && (
+            <Button disabled={isFetching} onClick={() => fetchNextPage()}>
+              {isFetching ? 'Loading...' : 'Load More'}
+            </Button>
+          )}
+        </div>
+      </>
+    );
 }

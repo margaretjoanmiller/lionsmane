@@ -104,7 +104,7 @@ function FeedId() {
             <EmptyMedia variant="icon">
               <UilDesert fontSize="5em" />
             </EmptyMedia>
-            <EmptyHeader>No articles;</EmptyHeader>
+            <EmptyHeader>No articles</EmptyHeader>
           </Empty>
         );
       }
@@ -154,7 +154,14 @@ function FeedId() {
 
     const articles = data.pages.map(({ articles }) => {
       if (articles.length === 0) {
-        return <UilDesert />;
+        return (
+          <Empty className="grow">
+            <EmptyMedia variant="icon">
+              <UilDesert fontSize="5em" />
+            </EmptyMedia>
+            <EmptyHeader>No articles</EmptyHeader>
+          </Empty>
+        );
       }
       if (articles.length === 0) {
         return (
@@ -162,7 +169,7 @@ function FeedId() {
             <EmptyMedia variant="icon">
               <UilDesert fontSize="5em" />
             </EmptyMedia>
-            <EmptyHeader>No articles;</EmptyHeader>
+            <EmptyHeader>No articles</EmptyHeader>
           </Empty>
         );
       }

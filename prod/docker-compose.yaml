@@ -62,9 +62,7 @@ services:
     depends_on:
       - vault
   lionsmane-be:
-    build:
-      context: ../.
-      target: lionsmane-be
+    image: codeberg.org/0x4d6165/lionsmane:dev
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       VAULT_ADDR: http://vault:8200
