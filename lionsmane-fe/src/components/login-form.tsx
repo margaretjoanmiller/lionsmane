@@ -35,11 +35,11 @@ export function LoginForm() {
   const [isTfa, setIsTfa] = React.useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
     },
+    resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -66,10 +66,10 @@ export function LoginForm() {
     code: z.string().min(6).max(6),
   });
   const twoFactorConfirmForm = useForm<z.infer<typeof twoFactorConfirmSchema>>({
-    resolver: zodResolver(twoFactorConfirmSchema),
     defaultValues: {
       code: '',
     },
+    resolver: zodResolver(twoFactorConfirmSchema),
   });
 
   async function onConfirmTwoFactor(
@@ -92,12 +92,41 @@ export function LoginForm() {
     }
   }
 
+  const backupCodeSchema = z.object({
+    code: z.string(),
+  });
+
+  const backupCodeForm = useForm<z.infer<typeof backupCodeSchema>>({
+    defaultValues: {
+      code: '',
+    },
+    resolver: zodResolver(backupCodeSchema),
+  });
+
+  async function onUseBackupCode(values: z.infer<typeof backupCodeSchema>) {
+    const { data, error } = await authClient.twoFactor.verifyBackupCode(
+      {
+        code: values.code,
+      },
+      {
+        async onSuccess() {
+          await navigate({ to: '/dashboard' });
+        },
+      },
+    );
+    if (error || !data) {
+      toast.error('Error verifying two-factor authentication code', {
+        description: error.message,
+      });
+    }
+  }
+
   return (
     <>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8 flex flex-col"
+          onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormField
             control={form.control}
@@ -107,8 +136,8 @@ export function LoginForm() {
                 <FormLabel>email</FormLabel>
                 <FormControl>
                   <Input
-                    type="email"
                     placeholder="doc.brown@mit.edu"
+                    type="email"
                     {...field}
                   />
                 </FormControl>
@@ -127,8 +156,8 @@ export function LoginForm() {
                 <FormLabel>password</FormLabel>
                 <FormControl>
                   <Input
-                    type="password"
                     placeholder="supersecretpassword"
+                    type="password"
                     {...field}
                   />
                 </FormControl>
@@ -141,39 +170,64 @@ export function LoginForm() {
         </form>
       </Form>
       {isTfa && (
-        <Form {...twoFactorConfirmForm}>
-          <form
-            onSubmit={twoFactorConfirmForm.handleSubmit(onConfirmTwoFactor)}
-            className="space-y-4 mt-8"
-          >
-            <FormField
-              control={twoFactorConfirmForm.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>One-Time Password</FormLabel>
-                  <FormControl>
-                    <InputOTP maxLength={6} {...field}>
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </FormControl>
-                  <FormDescription>
-                    Please enter the one-time code from your authenticator app.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Verify TOTP</Button>
-          </form>
-        </Form>
+        <>
+          <Form {...twoFactorConfirmForm}>
+            <form
+              className="space-y-4 mt-8"
+              onSubmit={twoFactorConfirmForm.handleSubmit(onConfirmTwoFactor)}
+            >
+              <FormField
+                control={twoFactorConfirmForm.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>One-Time Password</FormLabel>
+                    <FormControl>
+                      <InputOTP maxLength={6} {...field}>
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormDescription>
+                      Please enter the one-time code from your authenticator
+                      app.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Verify TOTP</Button>
+            </form>
+          </Form>
+          <Form {...backupCodeForm}>
+            <form
+              className="space-y-4 mt-8"
+              onSubmit={backupCodeForm.handleSubmit(onUseBackupCode)}
+            >
+              <FormField
+                control={backupCodeForm.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Backup code</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="backup code" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </form>
+            <Button className="mt-4" type="submit">
+              Use backup code
+            </Button>
+          </Form>
+        </>
       )}
       <hr className="h-px my-8" />
       <div className="flex flex-col gap-4">
@@ -183,8 +237,8 @@ export function LoginForm() {
         <Button
           onClick={async () => {
             await authClient.signIn.social({
-              provider: 'discord',
               callbackURL: '/callback',
+              provider: 'discord',
             });
           }}
         >
@@ -193,8 +247,8 @@ export function LoginForm() {
         <Button
           onClick={async () => {
             await authClient.signIn.social({
-              provider: 'github',
               callbackURL: '/callback',
+              provider: 'github',
             });
           }}
         >

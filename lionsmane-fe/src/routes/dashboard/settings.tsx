@@ -18,7 +18,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Command,
   CommandEmpty,
@@ -56,6 +56,12 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from '@/components/ui/item';
 import { Label } from '@/components/ui/label';
 import {
   Popover,
@@ -89,6 +95,7 @@ function Settings() {
   const [isEnablingTwoFactor, setIsEnablingTwoFactor] = React.useState(false);
 
   const [tfaURI, setTfaURI] = React.useState<string | null>(null);
+  const [tfaBackups, setTfaBackups] = React.useState<string[] | null>(null);
   const twoFactorFormSchema = z.object({
     password: z.string().min(15),
   });
@@ -100,6 +107,7 @@ function Settings() {
   });
   const twoFactorConfirmFomSchema = z.object({
     code: z.string().min(6).max(6),
+    password: z.string().min(15),
   });
   const twoFactorConfirmForm = useForm<
     z.infer<typeof twoFactorConfirmFomSchema>
@@ -149,6 +157,53 @@ function Settings() {
     toast.success('Two-Factor Authentication enabled successfully!');
     setIsEnablingTwoFactor(false);
     twoFactorConfirmForm.reset();
+
+    const { data: backups, error: backupError } =
+      await authClient.twoFactor.generateBackupCodes({
+        password: values.password,
+      });
+
+    if (!backups || backupError)
+      toast.error('Error getting backup codes for two factor');
+    else setTfaBackups(backups?.backupCodes);
+  }
+
+  const getBackupCodesForm = useForm<z.infer<typeof twoFactorFormSchema>>({
+    defaultValues: {
+      password: '',
+    },
+    resolver: zodResolver(twoFactorFormSchema),
+  });
+
+  async function onGetBackupCodes(values: z.infer<typeof twoFactorFormSchema>) {
+    const { data, error } = await authClient.twoFactor.generateBackupCodes({
+      password: values.password,
+    });
+
+    if (!data || error)
+      toast.error('Error getting backup codes for two factor');
+    else setTfaBackups(data?.backupCodes);
+  }
+
+  const twoFactorDisableForm = useForm<z.infer<typeof twoFactorFormSchema>>({
+    defaultValues: {
+      password: '',
+    },
+    resolver: zodResolver(twoFactorFormSchema),
+  });
+
+  async function onDisableTwoFactor(
+    values: z.infer<typeof twoFactorFormSchema>,
+  ) {
+    const { data, error } = await authClient.twoFactor.disable({
+      password: values.password, // required
+    });
+    if (error || !data) {
+      toast.error(
+        'Could not disable two factor authentication, please try again.',
+      );
+      return;
+    }
   }
 
   // app passwords
@@ -699,7 +754,7 @@ function Settings() {
           <AccordionTrigger>Manage account</AccordionTrigger>
           <AccordionContent>
             <UpdateUser />
-            {!twoFactorEnabled && (
+            {!twoFactorEnabled ? (
               <Form {...twoFactorForm}>
                 <form
                   className="space-y-8 my-8"
@@ -724,10 +779,37 @@ function Settings() {
                   <Button type="submit">Enable</Button>
                 </form>
               </Form>
+            ) : (
+              <Form {...twoFactorDisableForm}>
+                <form
+                  className="space-y-8 my-8"
+                  onSubmit={twoFactorDisableForm.handleSubmit(
+                    onDisableTwoFactor,
+                  )}
+                >
+                  <FormField
+                    control={twoFactorDisableForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Disable Two-Factor Authentication</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="current password"
+                            type="password"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Disable</Button>
+                </form>
+              </Form>
             )}
             {isEnablingTwoFactor && (
-              <div className="my-4 p-4">
-                <Card className="card bg-white w-md">
+              <div className="space-y-4 p-4">
+                <Card className="card bg-white w-full max-w-sm">
                   <CardContent>
                     <QRCode value={tfaURI || ''} />
                   </CardContent>
@@ -767,10 +849,64 @@ function Settings() {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={twoFactorConfirmForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm password</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="current password"
+                              type="password"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                     <Button type="submit">Confirm</Button>
                   </form>
                 </Form>
               </div>
+            )}
+            {twoFactorEnabled && (
+              <Form {...twoFactorDisableForm}>
+                <form
+                  className="space-y-8 my-8"
+                  onSubmit={getBackupCodesForm.handleSubmit(onGetBackupCodes)}
+                >
+                  <FormField
+                    control={getBackupCodesForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Get two factor backup codes</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="current password"
+                            type="password"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Get codes</Button>
+                </form>
+              </Form>
+            )}
+            {tfaBackups && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Backup codes</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-3 space-x-3">
+                  {tfaBackups.map((b) => (
+                    <p>{b}</p>
+                  ))}
+                </CardContent>
+              </Card>
             )}
             <div className="flex-col space-y-8">
               <h3 className="my-4">App passwords</h3>
