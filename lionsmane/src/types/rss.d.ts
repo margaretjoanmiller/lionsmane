@@ -2,7 +2,7 @@ export interface Enclosure {
   id: number;
   entry_id: number;
   url: string;
-  size: number | null;
-  mime_type: string | null;
+  size: number;
+  mime_type: string;
   media_progression: number;
 }

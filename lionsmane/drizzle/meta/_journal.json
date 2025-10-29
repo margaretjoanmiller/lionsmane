@@ -92,6 +92,13 @@
       "when": 1761447853717,
       "tag": "0012_daily_adam_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1761715466648,
+      "tag": "0013_tan_killmonger",
+      "breakpoints": true
     }
   ]
 }
