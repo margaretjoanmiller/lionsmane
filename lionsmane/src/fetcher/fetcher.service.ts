@@ -210,6 +210,10 @@ export class FetcherService {
         if (!feed || !feed.entries) {
           throw new Error('No items found in the feed');
         }
+      } else if (format === 'json') {
+        if (!feed || !feed.items) {
+          throw new Error('No items found in the feed');
+        }
       }
       const feedfromDb = await this.db
         .select()
@@ -394,6 +398,89 @@ export class FetcherService {
                 media: item.media,
                 published: item.published ? item.published : item.updated,
                 updated: item.updated,
+                feedId: feedId,
+              },
+              opts: {
+                delay: 0, // Will be set later based on rate limiting
+              },
+            };
+          });
+        if (feedProcess) {
+          if (feedProcess.length === 0) {
+            this.logger.log('No new articles to process');
+            return [];
+          } else {
+            this.logger.log(`Processing ${feedProcess.length} new articles`);
+          }
+
+          // Rate limiting logic
+          const host = new URL(feedUrl).host;
+          const lockKey = `feed-time-slot:${host}`;
+          const robots = await this.robots(feedUrl);
+          const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
+
+          const startingPoint = await redis.getNextTimeSlot(
+            lockKey,
+            crawlDelay,
+            feedProcess.length,
+          );
+          for (let job = 0; job < feedProcess.length; job++) {
+            const job_delay =
+              parseInt(startingPoint) + job * crawlDelay - Date.now();
+
+            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
+          }
+
+          const jobs = await this.articleQueue.addBulk(feedProcess);
+          await this.db
+            .update(schema.feeds)
+            .set({
+              lastChecked: new Date().toISOString(),
+            })
+            .where(eq(schema.feeds.id, feedId));
+          return jobs;
+        }
+      } else if (format === 'json') {
+        const feedProcess = feed.items
+          ?.filter((i) => {
+            if (!i.date_published) {
+              throw new Error('Item is missing required fields');
+            }
+            return isAfter(
+              i.date_published!,
+              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
+            );
+          })
+          .map((item) => {
+            if (
+              !item.url &&
+              !item.content_html &&
+              !item.summary &&
+              !item.content_text
+            ) {
+              this.logger.error(
+                `Item is missing required fields: ${JSON.stringify(item)}`,
+              );
+              throw new Error('Item is missing required fields');
+            }
+            if (!item.date_published && !item.date_modified) {
+              throw new Error('Item is missing required fields');
+            }
+
+            return {
+              name: 'new-article',
+              data: {
+                title: item.title,
+                url: item.url || '',
+                authors: item.authors,
+                categories: item.tags,
+                description: item.summary || '',
+                language: item.language,
+                rawContent:
+                  item.content_html || item.content_text || 'No content',
+                image: item.image,
+                published: item.date_published,
+                updated: item.date_modified,
                 feedId: feedId,
               },
               opts: {
