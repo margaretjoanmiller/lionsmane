@@ -1,6 +1,6 @@
 {
   "name": "lionsmane",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,9 +12,5 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.2"
   },
-  "workspaces": [
-    "lionsmane",
-    "lionsmane-fe",
-    "lionsmane-common"
-  ]
+  "workspaces": ["lionsmane", "lionsmane-fe", "lionsmane-common"]
 }
