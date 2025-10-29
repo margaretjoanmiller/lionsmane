@@ -441,7 +441,7 @@ export class MinifluxService {
   async getCategories(
     userId: string,
     userMiniFlux: number,
-    withCounts: boolean,
+    withCounts: boolean, // TODO: set counts
   ): Promise<CategoryDto[]> {
     const categories = await this.db.query.folders.findMany({
       where: eq(schema.folders.userId, userId),
@@ -651,7 +651,13 @@ export class MinifluxService {
       published_at: entry.published,
       share_code: '',
       reading_time: 0,
-      enclosures: entry.enclosures as Enclosure[],
+      enclosures: entry.enclosures
+        ? (entry.enclosures as Enclosure[]).map((e) => ({
+            ...e,
+            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+            size: e.size ? e.size : 0,
+          }))
+        : null,
       feed: {
         ...entry.feed,
         id: entry.feed.minifluxId,
@@ -746,7 +752,13 @@ export class MinifluxService {
       published_at: entry.published,
       share_code: '',
       reading_time: 0,
-      enclosures: entry.enclosures as Enclosure[],
+      enclosures: entry.enclosures
+        ? (entry.enclosures as Enclosure[]).map((e) => ({
+            ...e,
+            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+            size: e.size ? e.size : 0,
+          }))
+        : null,
       feed: {
         ...entry.feed,
         id: entry.feed.minifluxId,
