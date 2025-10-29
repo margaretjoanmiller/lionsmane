@@ -235,6 +235,7 @@ export class MinifluxService {
           .where(eq(schema.folders.minifluxId, categoryId))
       ).map((item) => ({
         ...item,
+        etag_header: item.etag_header || '',
         user_agent: item.user_agent || '',
         checked_at: item.checked_at,
         last_modified_header: item.last_modified_header || '',
@@ -294,6 +295,7 @@ export class MinifluxService {
           )
       ).map((item) => ({
         ...item,
+        etag_header: item.etag_header || '',
         user_agent: item.user_agent || '',
         checked_at: item.checked_at,
         last_modified_header: item.last_modified_header || '',
@@ -660,6 +662,7 @@ export class MinifluxService {
         : null,
       feed: {
         ...entry.feed,
+        etag_header: entry.feed.etag_header || '',
         id: entry.feed.minifluxId,
         user_id: entry.user_id,
         feed_url: entry.feed.url,
@@ -761,6 +764,7 @@ export class MinifluxService {
         : null,
       feed: {
         ...entry.feed,
+        etag_header: entry.feed.etag_header || '',
         id: entry.feed.minifluxId,
         user_id: entry.user_id,
         feed_url: entry.feed.url,

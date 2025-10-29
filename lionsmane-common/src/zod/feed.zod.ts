@@ -9,7 +9,7 @@ export const feedSchema = z.object({
   subtitle: z.string().nullable(),
   url: z.url(),
   site_url: z.url().nullable(),
-  etag_header: z.string().nullable(),
+  etag_header: z.string().default(''),
   last_modified_header: z.string().nullable(),
   parsingErrorMessage: z.string().nullable(),
   parsingErrorCount: z.number().min(0).default(0),
