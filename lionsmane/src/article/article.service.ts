@@ -712,6 +712,7 @@ export class ArticleService {
       )
       .groupBy(
         schema.articles.id,
+        schema.articles.minifluxId,
         schema.feeds.title,
         schema.userArticleStates.isStarred,
         schema.userArticleStates.isRead,
