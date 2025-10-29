@@ -3,7 +3,12 @@ import React from 'react';
 import { ArticleCard } from '@/components/article-card';
 import MultipleSelector, { type Option } from '@/components/multi-select';
 import { Button } from '@/components/ui/button';
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
 import UilDesert from '~icons/uil/desert';
 
@@ -31,7 +36,6 @@ function HiddenDashboard() {
         credentials: 'include',
       },
       {
-        // @ts-expect-error: cursor typing
         getNextPageParam: (lastPage) => lastPage.cursor,
         initialPageParam: null,
       },
@@ -58,7 +62,9 @@ function HiddenDashboard() {
         <EmptyMedia variant="icon">
           <UilDesert fontSize="5em" />
         </EmptyMedia>
-        <EmptyHeader>No articles</EmptyHeader>
+        <EmptyHeader>
+          <EmptyTitle>No articles</EmptyTitle>
+        </EmptyHeader>
       </Empty>
     );
   } else

@@ -104,7 +104,9 @@ function FeedId() {
             <EmptyMedia variant="icon">
               <UilDesert fontSize="5em" />
             </EmptyMedia>
-            <EmptyHeader>No articles</EmptyHeader>
+            <EmptyHeader>
+              <EmptyTitle>No articles</EmptyTitle>
+            </EmptyHeader>
           </Empty>
         );
       }
@@ -159,7 +161,9 @@ function FeedId() {
             <EmptyMedia variant="icon">
               <UilDesert fontSize="5em" />
             </EmptyMedia>
-            <EmptyHeader>No articles</EmptyHeader>
+            <EmptyHeader>
+              <EmptyTitle>No articles</EmptyTitle>
+            </EmptyHeader>
           </Empty>
         );
       }
@@ -169,7 +173,9 @@ function FeedId() {
             <EmptyMedia variant="icon">
               <UilDesert fontSize="5em" />
             </EmptyMedia>
-            <EmptyHeader>No articles</EmptyHeader>
+            <EmptyHeader>
+              <EmptyTitle>No articles</EmptyTitle>
+            </EmptyHeader>
           </Empty>
         );
       }
@@ -225,7 +231,9 @@ function FeedId() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }
@@ -274,7 +282,9 @@ function FeedId() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }

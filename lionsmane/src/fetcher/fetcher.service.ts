@@ -260,7 +260,11 @@ export class FetcherService {
                 })),
                 comments: item.wfw ? item.wfw.comment : item.comments,
                 commentrss: item.wfw?.commentRss,
-                enclosures: item.enclosures,
+                enclosures: item.enclosures?.map((i) => ({
+                  url: i.url,
+                  type: i.type || 'application/octet-stream',
+                  size: i.length || 0,
+                })),
                 itunes: item.itunes,
                 podcast: item.podcast,
                 geo: item.georss,

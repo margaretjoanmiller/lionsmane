@@ -2,7 +2,12 @@ import { createFileRoute } from '@tanstack/react-router';
 import { ArticleCard } from '@/components/article-card';
 import { SkeletonGrid } from '@/components/skeleton-grid';
 import { Button } from '@/components/ui/button';
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
 import {
   ArticleFilter,
@@ -31,7 +36,6 @@ function DashIndex() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -48,7 +52,9 @@ function DashIndex() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }
@@ -75,7 +81,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -92,7 +97,9 @@ function DashIndex() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }
@@ -119,7 +126,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -136,7 +142,9 @@ function DashIndex() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }
@@ -163,7 +171,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -180,7 +187,9 @@ function DashIndex() {
           <EmptyMedia variant="icon">
             <UilDesert fontSize="5em" />
           </EmptyMedia>
-          <EmptyHeader>No articles</EmptyHeader>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
         </Empty>
       );
     }

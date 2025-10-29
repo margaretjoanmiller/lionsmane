@@ -161,7 +161,6 @@ function NewFilter() {
                   tags={titleContains}
                 />
               </FormControl>
-              <FormDescription>title contains</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -189,7 +188,6 @@ function NewFilter() {
                   tags={contentContains}
                 />
               </FormControl>
-              <FormDescription>content contains</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -213,7 +211,6 @@ function NewFilter() {
                   tags={authors}
                 />
               </FormControl>
-              <FormDescription>contains authors</FormDescription>
               <FormMessage />
             </FormItem>
           )}
