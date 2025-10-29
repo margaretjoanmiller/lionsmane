@@ -36,7 +36,6 @@ function DashIndex() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -82,7 +81,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -128,7 +126,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -174,7 +171,6 @@ function DashIndex() {
           credentials: 'include',
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
