@@ -123,7 +123,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         onSuccess: async () => {
           toast.success('Folder added');
           setFormOpen(false);
-          await queryClient.invalidateQueries();
+          await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
+          await queryClient.invalidateQueries({
+            queryKey: ['get', '/folder/feeds'],
+          });
           form.reset();
         },
       },
@@ -161,7 +164,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       unreadCount: null,
     })) || [];
 
-  const initialItems: FeedTreeData[] = [...folderFeeds, ...orphanedFeeds];
+  const initialItems: FeedTreeData[] = React.useMemo(
+    () => [...folderFeeds, ...orphanedFeeds],
+    [folders, feeds],
+  );
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -188,7 +194,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <p>No data available</p>
             </div>
           ) : (
-            <FeedTree treeData={initialItems} />
+            <FeedTree
+              key={`${feeds?.length}-${folders?.length}`}
+              treeData={initialItems}
+            />
           )}
         </SidebarMenu>
       </SidebarContent>
