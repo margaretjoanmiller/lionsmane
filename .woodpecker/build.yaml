@@ -7,9 +7,9 @@ steps:
     settings:
       repo: 0x4d6165/lionsmane
       platforms: linux/amd64
-      auto_tag: true
       registry: codeberg.org
       cache: true
+      tag: ${CI_COMMIT_TAG}
       username: ${CI_REPO_OWNER}
       password:
         from_secret: codeberg
