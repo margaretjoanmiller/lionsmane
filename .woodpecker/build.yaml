@@ -1,0 +1,15 @@
+when:
+  - event: tag
+
+steps:
+  publish-container:
+    image: woodpeckerci/plugin-kaniko
+    settings:
+      repo: 0x4d6165/lionsmane
+      platforms: linux/amd64
+      auto_tag: true
+      registry: codeberg.org
+      cache: true
+      username: ${CI_REPO_OWNER}
+      password:
+        from_secret: codeberg
