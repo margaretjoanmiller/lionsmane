@@ -361,7 +361,7 @@ function ArticlePage() {
           >
             Original article
           </a>
-          <div className="grid-flow-row">
+          <div className="grid-flow-row pt-2">
             {data.categories?.map((c) => (
               <Badge className="m-1" variant="outline">
                 {c.term}
