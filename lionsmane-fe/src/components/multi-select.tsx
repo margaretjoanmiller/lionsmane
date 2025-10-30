@@ -165,9 +165,9 @@ const CommandEmpty = forwardRef<
 
   return (
     <div
-      ref={forwardedRef}
       className={cn('py-6 text-center text-sm', className)}
       cmdk-empty=""
+      ref={forwardedRef}
       role="presentation"
       {...props}
     />
@@ -224,10 +224,10 @@ const MultipleSelector = React.forwardRef<
     React.useImperativeHandle(
       ref,
       () => ({
-        selectedValue: [...selected],
-        input: inputRef.current as HTMLInputElement,
         focus: () => inputRef?.current?.focus(),
+        input: inputRef.current as HTMLInputElement,
         reset: () => setSelected([]),
+        selectedValue: [...selected],
       }),
       [selected],
     );
@@ -360,7 +360,7 @@ const MultipleSelector = React.forwardRef<
     const CreatableItem = () => {
       if (!creatable) return undefined;
       if (
-        isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
+        isOptionsExist(options, [{ label: inputValue, value: inputValue }]) ||
         selected.find((s) => s.value === inputValue)
       ) {
         return undefined;
@@ -368,7 +368,6 @@ const MultipleSelector = React.forwardRef<
 
       const Item = (
         <CommandItem
-          value={inputValue}
           className="cursor-pointer"
           onMouseDown={(e) => {
             e.preventDefault();
@@ -380,10 +379,11 @@ const MultipleSelector = React.forwardRef<
               return;
             }
             setInputValue('');
-            const newOptions = [...selected, { value, label: value }];
+            const newOptions = [...selected, { label: value, value }];
             setSelected(newOptions);
             onChange?.(newOptions);
           }}
+          value={inputValue}
         >
           {`Create "${inputValue}"`}
         </CommandItem>
@@ -408,7 +408,7 @@ const MultipleSelector = React.forwardRef<
       // For async search that showing emptyIndicator
       if (onSearch && !creatable && Object.keys(options).length === 0) {
         return (
-          <CommandItem value="-" disabled>
+          <CommandItem disabled value="-">
             {emptyIndicator}
           </CommandItem>
         );
@@ -441,20 +441,20 @@ const MultipleSelector = React.forwardRef<
       <Command
         ref={dropdownRef}
         {...commandProps}
-        onKeyDown={(e) => {
-          handleKeyDown(e);
-          commandProps?.onKeyDown?.(e);
-        }}
         className={cn(
           'h-auto overflow-visible bg-transparent',
           commandProps?.className,
         )}
+        filter={commandFilter()}
+        onKeyDown={(e) => {
+          handleKeyDown(e);
+          commandProps?.onKeyDown?.(e);
+        }} // When onSearch is provided, we don't want to filter the options. You can still override it.
         shouldFilter={
           commandProps?.shouldFilter !== undefined
             ? commandProps.shouldFilter
             : !onSearch
-        } // When onSearch is provided, we don't want to filter the options. You can still override it.
-        filter={commandFilter()}
+        }
       >
         <div
           className={cn(
@@ -473,22 +473,22 @@ const MultipleSelector = React.forwardRef<
             {selected.map((option) => {
               return (
                 <Badge
-                  key={option.value}
                   className={cn(
                     'data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground',
                     'data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground',
                     badgeClassName,
                   )}
-                  data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
+                  data-fixed={option.fixed}
+                  key={option.value}
                 >
                   {option.label}
                   <button
-                    type="button"
                     className={cn(
                       'ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
                       (disabled || option.fixed) && 'hidden',
                     )}
+                    onClick={() => handleUnselect(option)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         handleUnselect(option);
@@ -498,7 +498,7 @@ const MultipleSelector = React.forwardRef<
                       e.preventDefault();
                       e.stopPropagation();
                     }}
-                    onClick={() => handleUnselect(option)}
+                    type="button"
                   >
                     <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                   </button>
@@ -508,13 +508,15 @@ const MultipleSelector = React.forwardRef<
             {/* Avoid having the "Search" Icon */}
             <CommandPrimitive.Input
               {...inputProps}
-              ref={inputRef}
-              value={inputValue}
+              className={cn(
+                'flex-1 self-baseline bg-transparent outline-none placeholder:text-muted-foreground',
+                {
+                  'ml-1': selected.length !== 0,
+                  'w-full': hidePlaceholderWhenSelected,
+                },
+                inputProps?.className,
+              )}
               disabled={disabled}
-              onValueChange={(value) => {
-                setInputValue(value);
-                inputProps?.onValueChange?.(value);
-              }}
               onBlur={(event) => {
                 if (!onScrollbar) {
                   setOpen(false);
@@ -525,27 +527,20 @@ const MultipleSelector = React.forwardRef<
                 setOpen(true);
                 inputProps?.onFocus?.(event);
               }}
+              onValueChange={(value) => {
+                setInputValue(value);
+                inputProps?.onValueChange?.(value);
+              }}
               placeholder={
                 hidePlaceholderWhenSelected && selected.length !== 0
                   ? ''
                   : placeholder
               }
-              className={cn(
-                'flex-1 self-baseline bg-transparent outline-none placeholder:text-muted-foreground',
-                {
-                  'w-full': hidePlaceholderWhenSelected,
-                  'ml-1': selected.length !== 0,
-                },
-                inputProps?.className,
-              )}
+              ref={inputRef}
+              value={inputValue}
             />
           </div>
           <button
-            type="button"
-            onClick={() => {
-              setSelected(selected.filter((s) => s.fixed));
-              onChange?.(selected.filter((s) => s.fixed));
-            }}
             className={cn(
               'size-5',
               (hideClearAllButton ||
@@ -554,6 +549,11 @@ const MultipleSelector = React.forwardRef<
                 selected.filter((s) => s.fixed).length === selected.length) &&
                 'hidden',
             )}
+            onClick={() => {
+              setSelected(selected.filter((s) => s.fixed));
+              onChange?.(selected.filter((s) => s.fixed));
+            }}
+            type="button"
           >
             <X />
           </button>
@@ -572,11 +572,11 @@ const MultipleSelector = React.forwardRef<
           {open && (
             <CommandList
               className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
-              onMouseLeave={() => {
-                setOnScrollbar(false);
-              }}
               onMouseEnter={() => {
                 setOnScrollbar(true);
+              }}
+              onMouseLeave={() => {
+                setOnScrollbar(false);
               }}
               onMouseUp={() => {
                 inputRef?.current?.focus();
@@ -589,21 +589,25 @@ const MultipleSelector = React.forwardRef<
                   {EmptyItem()}
                   {CreatableItem()}
                   {!selectFirstItem && (
-                    <CommandItem value="-" className="hidden" />
+                    <CommandItem className="hidden" value="-" />
                   )}
                   {Object.entries(selectables).map(([key, dropdowns]) => (
                     <CommandGroup
-                      key={key}
-                      heading={key}
                       className="h-full overflow-auto"
+                      heading={key}
+                      key={key}
                     >
                       <>
                         {dropdowns.map((option) => {
                           return (
                             <CommandItem
-                              key={option.value}
-                              value={option.label}
+                              className={cn(
+                                'cursor-pointer',
+                                option.disable &&
+                                  'cursor-default text-muted-foreground',
+                              )}
                               disabled={option.disable}
+                              key={option.value}
                               onMouseDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -618,11 +622,7 @@ const MultipleSelector = React.forwardRef<
                                 setSelected(newOptions);
                                 onChange?.(newOptions);
                               }}
-                              className={cn(
-                                'cursor-pointer',
-                                option.disable &&
-                                  'cursor-default text-muted-foreground',
-                              )}
+                              value={option.label}
                             >
                               {option.label}
                             </CommandItem>

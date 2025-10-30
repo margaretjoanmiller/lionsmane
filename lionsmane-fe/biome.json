@@ -1,15 +1,4 @@
 {
-  "root": false,
-  "extends": "//",
-  "linter": {
-    "rules": {
-      "a11y": "warn",
-      "correctness": {
-        "noNestedComponentDefinitions": "error"
-      }
-    },
-    "includes": ["!node_modules/**", "!dist/**", "!**/routeTree.gen.ts"]
-  },
   "assist": {
     "actions": {
       "source": {
@@ -17,5 +6,16 @@
         "useSortedKeys": "on"
       }
     }
-  }
+  },
+  "extends": "//",
+  "linter": {
+    "includes": ["!node_modules/**", "!dist/**", "!**/routeTree.gen.ts"],
+    "rules": {
+      "a11y": "warn",
+      "correctness": {
+        "noNestedComponentDefinitions": "error"
+      }
+    }
+  },
+  "root": false
 }

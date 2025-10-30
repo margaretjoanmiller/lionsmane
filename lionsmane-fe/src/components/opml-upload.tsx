@@ -36,8 +36,8 @@ export function OpmlUpload() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
         className="my-4 w-2/3 space-y-4"
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
           control={form.control}
@@ -46,9 +46,9 @@ export function OpmlUpload() {
             <FormItem>
               <FormControl>
                 <Input
-                  type="file"
-                  placeholder="shadcn"
                   onChange={(e) => field.onChange(e.target.files?.[0])}
+                  placeholder="shadcn"
+                  type="file"
                 />
               </FormControl>
               <FormDescription>

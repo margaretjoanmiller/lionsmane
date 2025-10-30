@@ -13,8 +13,8 @@ const updateUserSchema = z.object({
 
 const updatePasswordSchema = z
   .object({
-    password: z.string().min(8).max(128),
     confirm: z.string().min(8).max(128),
+    password: z.string().min(8).max(128),
   })
   .refine((val) => val.password === val.confirm, {
     message: 'Passwords do not match',
@@ -23,11 +23,11 @@ const updatePasswordSchema = z
 
 export default function UpdateUser() {
   const updateUserForm = useForm<z.infer<typeof updateUserSchema>>({
-    resolver: zodResolver(updateUserSchema),
     defaultValues: {
       image: null,
       name: undefined,
     },
+    resolver: zodResolver(updateUserSchema),
   });
 
   async function onUserUpdate(values: z.infer<typeof updateUserSchema>) {
@@ -40,8 +40,8 @@ export default function UpdateUser() {
   return (
     <Form {...updateUserForm}>
       <form
-        onSubmit={updateUserForm.handleSubmit(onUserUpdate)}
         className="space-y-8"
+        onSubmit={updateUserForm.handleSubmit(onUserUpdate)}
       >
         <FormField
           control={updateUserForm.control}
@@ -50,7 +50,7 @@ export default function UpdateUser() {
             <FormItem>
               <FormLabel>Image?</FormLabel>
               <FormControl>
-                <Input type="url" placeholder="Image URL" {...field} />
+                <Input placeholder="Image URL" type="url" {...field} />
               </FormControl>
             </FormItem>
           )}

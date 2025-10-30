@@ -7,27 +7,27 @@ import { cn } from '@/lib/utils';
 import TablerLoader2 from '~icons/tabler/loader-2';
 
 const spinnerVariants = cva('flex-col items-center justify-center', {
-  variants: {
-    show: {
-      true: 'flex',
-      false: 'hidden',
-    },
-  },
   defaultVariants: {
     show: true,
+  },
+  variants: {
+    show: {
+      false: 'hidden',
+      true: 'flex',
+    },
   },
 });
 
 const loaderVariants = cva('animate-spin text-primary', {
-  variants: {
-    size: {
-      small: 'size-6',
-      medium: 'size-8',
-      large: 'size-12',
-    },
-  },
   defaultVariants: {
     size: 'medium',
+  },
+  variants: {
+    size: {
+      large: 'size-12',
+      medium: 'size-8',
+      small: 'size-6',
+    },
   },
 });
 

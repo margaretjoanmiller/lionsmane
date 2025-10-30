@@ -8,6 +8,6 @@ interface UserPrefs {
 
 export const usePrefStore = create<UserPrefs>((set) => ({
   hasReadeckKey: undefined,
-  setToTrue: () => set(() => ({ hasReadeckKey: true })),
   setToFalse: () => set(() => ({ hasReadeckKey: true })),
+  setToTrue: () => set(() => ({ hasReadeckKey: true })),
 }));

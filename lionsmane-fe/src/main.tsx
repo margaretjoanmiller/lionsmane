@@ -18,15 +18,15 @@ import reportWebVitals from './reportWebVitals.ts';
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
 const router = createRouter({
-  routeTree,
   context: {
     ...TanStackQueryProviderContext,
     auth: undefined!, // Placeholder, will be set after auth client is initialized
   },
   defaultPreload: 'intent',
-  scrollRestoration: true,
-  defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultStructuralSharing: true,
+  routeTree,
+  scrollRestoration: true,
 });
 
 // Register the router instance for type safety
@@ -38,7 +38,7 @@ declare module '@tanstack/react-router' {
 
 function App() {
   const { data: session } = authClient.useSession();
-  return <RouterProvider router={router} context={{ auth: session }} />;
+  return <RouterProvider context={{ auth: session }} router={router} />;
 }
 
 // Render the app

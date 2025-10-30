@@ -1,11 +1,11 @@
 {
-  "projectName": "lionsmane-fe",
-  "mode": "file-router",
-  "typescript": true,
-  "tailwind": true,
-  "packageManager": "pnpm",
-  "git": true,
-  "version": 1,
+  "chosenAddOns": ["eslint", "shadcn", "table", "tanstack-query"],
   "framework": "react-cra",
-  "chosenAddOns": ["eslint", "shadcn", "table", "tanstack-query"]
+  "git": true,
+  "mode": "file-router",
+  "packageManager": "pnpm",
+  "projectName": "lionsmane-fe",
+  "tailwind": true,
+  "typescript": true,
+  "version": 1
 }

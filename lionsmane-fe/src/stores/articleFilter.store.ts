@@ -17,8 +17,8 @@ interface FilterState {
 
 export const useArticleFilterStore = create<FilterState>((set) => ({
   filter: ArticleFilter.Unread,
-  setToUnread: () => set(() => ({ filter: ArticleFilter.Unread })),
+  setToAll: () => set(() => ({ filter: ArticleFilter.All })),
   setToRead: () => set(() => ({ filter: ArticleFilter.Read })),
   setToStarred: () => set(() => ({ filter: ArticleFilter.Starred })),
-  setToAll: () => set(() => ({ filter: ArticleFilter.All })),
+  setToUnread: () => set(() => ({ filter: ArticleFilter.Unread })),
 }));

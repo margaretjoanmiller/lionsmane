@@ -31,46 +31,46 @@ export const Route = createFileRoute('/dashboard/filter/$filterId')({
 
 function RouteComponent() {
   const formSchema = z.object({
-    keywords: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    titleContains: z
-      .array(z.object({ text: z.string(), id: z.string() }))
+    authors: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
+    categories: z
+      .array(z.object({ id: z.string(), text: z.string() }))
       .optional(),
     contentContains: z
-      .array(z.object({ text: z.string(), id: z.string() }))
+      .array(z.object({ id: z.string(), text: z.string() }))
       .optional(),
-    authors: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-    categories: z
-      .array(z.object({ text: z.string(), id: z.string() }))
-      .optional(),
-    feeds: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-    type: z.enum(['blur', 'markRead', 'hide']),
     contentWarning: z.string().max(512).optional(),
     enabled: z.boolean(),
+    feeds: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
+    keywords: z
+      .array(z.object({ id: z.string(), text: z.string() }))
+      .optional(),
+    titleContains: z
+      .array(z.object({ id: z.string(), text: z.string() }))
+      .optional(),
+    type: z.enum(['blur', 'markRead', 'hide']),
   });
 
   const filterId = Route.useParams().filterId;
   const { data } = $api.useSuspenseQuery('get', '/filter/{id}', {
+    credentials: 'include',
     params: {
       path: {
         id: filterId,
       },
     },
-    credentials: 'include',
   });
 
   const [keywords, setKeywords] = React.useState<Tag[]>(
     data.conditions.keywords?.map((keyword) => ({
-      text: keyword,
       id: keyword,
+      text: keyword,
     })) || [],
   );
   const [keywordsIndex, setKeywordsIndex] = React.useState<number | null>(0);
   const [titleContains, setTitleContains] = React.useState<Tag[]>(
     data.conditions.titleContains?.map((title) => ({
-      text: title,
       id: title,
+      text: title,
     })) || [],
   );
   const [titleContainsIndex, setTitleContainsIndex] = React.useState<
@@ -78,8 +78,8 @@ function RouteComponent() {
   >(0);
   const [contentContains, setContentContains] = React.useState<Tag[]>(
     data.conditions.contentContains?.map((content) => ({
-      text: content,
       id: content,
+      text: content,
     })) || [],
   );
   const [contentContainsIndex, setContentContainsIndex] = React.useState<
@@ -87,15 +87,15 @@ function RouteComponent() {
   >(0);
   const [authors, setAuthors] = React.useState<Tag[]>(
     data.conditions.authors?.map((author) => ({
-      text: author,
       id: author,
+      text: author,
     })) || [],
   );
   const [authorsIndex, setAuthorsIndex] = React.useState<number | null>(0);
   const [categories, setCategories] = React.useState<Tag[]>(
     data.conditions.categories?.map((category) => ({
-      text: category,
       id: category,
+      text: category,
     })) || [],
   );
   const [categoriesIndex, setCategoriesIndex] = React.useState<number | null>(
@@ -120,49 +120,49 @@ function RouteComponent() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const valuesToSend = {
+      action: {
+        contentWarning: values.contentWarning,
+        type: values.type,
+      },
       conditions: {
-        keywords: values.keywords?.map((keyword) => keyword.text),
-        titleContains: values.titleContains?.map((title) => title.text),
-        contentContains: values.contentContains?.map((content) => content.text),
         authors: values.authors?.map((author) => author.text),
         categories: values.categories?.map((category) => category.text),
+        contentContains: values.contentContains?.map((content) => content.text),
         feeds: values.feeds?.map((feed) => feed.text),
-      },
-      action: {
-        type: values.type,
-        contentWarning: values.contentWarning,
+        keywords: values.keywords?.map((keyword) => keyword.text),
+        titleContains: values.titleContains?.map((title) => title.text),
       },
       isActive: values.enabled,
     };
     mutate({
+      body: valuesToSend,
+      credentials: 'include',
       params: {
         path: {
           id: filterId,
         },
       },
-      credentials: 'include',
-      body: valuesToSend,
     });
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
-      keywords: keywords,
-      titleContains: titleContains,
-      contentContains: contentContains,
       authors: authors,
       categories: categories,
-      feeds: feeds?.feeds.map((f) => ({ text: f.title, id: f.id })),
-      type: data.action.type,
+      contentContains: contentContains,
       contentWarning: data.action.contentWarning || undefined,
       enabled: data.isActive,
+      feeds: feeds?.feeds.map((f) => ({ id: f.id, text: f.title })),
+      keywords: keywords,
+      titleContains: titleContains,
+      type: data.action.type,
     },
+    resolver: zodResolver(formSchema),
   });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="keywords"
@@ -172,14 +172,14 @@ function RouteComponent() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={keywords}
                   activeTagIndex={keywordsIndex}
+                  placeholder="Keyword1, Keyword2, Keyword3"
                   setActiveTagIndex={setKeywordsIndex}
                   setTags={(newTags) => {
                     setKeywords(newTags);
                     form.setValue('keywords', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Keyword1, Keyword2, Keyword3"
+                  tags={keywords}
                 />
               </FormControl>
               <FormDescription>These are your keywords.</FormDescription>
@@ -196,14 +196,14 @@ function RouteComponent() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={titleContains}
                   activeTagIndex={titleContainsIndex}
+                  placeholder="Title1, Title2, Title3"
                   setActiveTagIndex={setTitleContainsIndex}
                   setTags={(newTags) => {
                     setTitleContains(newTags);
                     form.setValue('titleContains', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Title1, Title2, Title3"
+                  tags={titleContains}
                 />
               </FormControl>
               <FormDescription>This is your feed description.</FormDescription>
@@ -220,8 +220,9 @@ function RouteComponent() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={contentContains}
                   activeTagIndex={contentContainsIndex}
+                  onChange={field.onChange}
+                  placeholder="Content1, Content2, Content3"
                   setActiveTagIndex={setContentContainsIndex}
                   setTags={(newTags) => {
                     setContentContains(newTags);
@@ -230,8 +231,7 @@ function RouteComponent() {
                       newTags as [Tag, ...Tag[]],
                     );
                   }}
-                  onChange={field.onChange}
-                  placeholder="Content1, Content2, Content3"
+                  tags={contentContains}
                 />
               </FormControl>
               <FormDescription>This is your feed content.</FormDescription>
@@ -248,14 +248,14 @@ function RouteComponent() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={authors}
                   activeTagIndex={authorsIndex}
+                  placeholder="Author1, Author2, Author3"
                   setActiveTagIndex={setAuthorsIndex}
                   setTags={(newTags) => {
                     setAuthors(newTags);
                     form.setValue('authors', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Author1, Author2, Author3"
+                  tags={authors}
                 />
               </FormControl>
               <FormDescription>This is your feed authors.</FormDescription>
@@ -272,14 +272,14 @@ function RouteComponent() {
               <FormControl>
                 <TagInput
                   {...field}
-                  tags={categories}
                   activeTagIndex={categoriesIndex}
+                  placeholder="Category1, Category2, Category3"
                   setActiveTagIndex={setCategoriesIndex}
                   setTags={(newTags) => {
                     setCategories(newTags);
                     form.setValue('categories', newTags as [Tag, ...Tag[]]);
                   }}
-                  placeholder="Category1, Category2, Category3"
+                  tags={categories}
                 />
               </FormControl>
               <FormDescription>This is your feed categories.</FormDescription>
