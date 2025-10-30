@@ -356,7 +356,7 @@ function ArticlePage() {
         </div>
         <footer className="flex flex-col items-center pt-8">
           <a
-            className="font-bold hover:underline text-(--primary)"
+            className="font-bold hover:underline text-primary"
             href={data.url!}
           >
             Original article
