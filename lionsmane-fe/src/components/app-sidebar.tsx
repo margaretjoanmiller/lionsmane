@@ -42,6 +42,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
+import { FieldGroup } from './ui/field';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 
@@ -225,39 +226,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </DialogHeader>
             <Form {...form}>
               <form className="m-8" onSubmit={form.handleSubmit(onSubmit)}>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Name" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="feedIds"
-                  render={({ field }) => (
-                    <FormItem className="my-6">
-                      <FormLabel>Feeds</FormLabel>
-                      <FormControl>
-                        <MultipleSelector
-                          {...field}
-                          defaultOptions={feedSelect}
-                          emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                              no results found.
-                            </p>
-                          }
-                          placeholder="Select feeds you want to add to your folder..."
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                <FieldGroup>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Name" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="feedIds"
+                    render={({ field }) => (
+                      <FormItem className="mb-6">
+                        <FormLabel>Feeds</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            {...field}
+                            defaultOptions={feedSelect}
+                            emptyIndicator={
+                              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found.
+                              </p>
+                            }
+                            placeholder="Select feeds you want to add to your folder..."
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </FieldGroup>
                 <div className="flex flex-row">
                   {isPending ? (
                     <SpinnerButton />

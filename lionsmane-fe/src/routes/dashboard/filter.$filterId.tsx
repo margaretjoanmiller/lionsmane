@@ -6,6 +6,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import { FieldGroup } from '@/components/ui/field';
 import {
   Form,
   FormControl,
@@ -162,179 +163,190 @@ function RouteComponent() {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="keywords"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Keywords</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  activeTagIndex={keywordsIndex}
-                  placeholder="Keyword1, Keyword2, Keyword3"
-                  setActiveTagIndex={setKeywordsIndex}
-                  setTags={(newTags) => {
-                    setKeywords(newTags);
-                    form.setValue('keywords', newTags as [Tag, ...Tag[]]);
-                  }}
-                  tags={keywords}
-                />
-              </FormControl>
-              <FormDescription>These are your keywords.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="titleContains"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  activeTagIndex={titleContainsIndex}
-                  placeholder="Title1, Title2, Title3"
-                  setActiveTagIndex={setTitleContainsIndex}
-                  setTags={(newTags) => {
-                    setTitleContains(newTags);
-                    form.setValue('titleContains', newTags as [Tag, ...Tag[]]);
-                  }}
-                  tags={titleContains}
-                />
-              </FormControl>
-              <FormDescription>This is your feed description.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="contentContains"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content Contains</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  activeTagIndex={contentContainsIndex}
-                  onChange={field.onChange}
-                  placeholder="Content1, Content2, Content3"
-                  setActiveTagIndex={setContentContainsIndex}
-                  setTags={(newTags) => {
-                    setContentContains(newTags);
-                    form.setValue(
-                      'contentContains',
-                      newTags as [Tag, ...Tag[]],
-                    );
-                  }}
-                  tags={contentContains}
-                />
-              </FormControl>
-              <FormDescription>This is your feed content.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="authors"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Authors</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  activeTagIndex={authorsIndex}
-                  placeholder="Author1, Author2, Author3"
-                  setActiveTagIndex={setAuthorsIndex}
-                  setTags={(newTags) => {
-                    setAuthors(newTags);
-                    form.setValue('authors', newTags as [Tag, ...Tag[]]);
-                  }}
-                  tags={authors}
-                />
-              </FormControl>
-              <FormDescription>This is your feed authors.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="categories"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Categories</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  activeTagIndex={categoriesIndex}
-                  placeholder="Category1, Category2, Category3"
-                  setActiveTagIndex={setCategoriesIndex}
-                  setTags={(newTags) => {
-                    setCategories(newTags);
-                    form.setValue('categories', newTags as [Tag, ...Tag[]]);
-                  }}
-                  tags={categories}
-                />
-              </FormControl>
-              <FormDescription>This is your feed categories.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="feeds"
-          render={() => (
-            <FormItem>
-              <FormLabel>Feeds</FormLabel>
-              <FormControl>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a feed" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {feeds?.feeds.map((feed) => (
-                      <SelectItem key={feed.id} value={feed.id}>
-                        {feed.title || feed.url}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>These are your filtered feeds.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {form.watch('type') === 'blur' && (
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup>
           <FormField
             control={form.control}
-            name="contentWarning"
+            name="keywords"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Content Warning</FormLabel>
+                <FormLabel>Keywords</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="This content has been blurred"
+                  <TagInput
                     {...field}
+                    activeTagIndex={keywordsIndex}
+                    placeholder="Keyword1, Keyword2, Keyword3"
+                    setActiveTagIndex={setKeywordsIndex}
+                    setTags={(newTags) => {
+                      setKeywords(newTags);
+                      form.setValue('keywords', newTags as [Tag, ...Tag[]]);
+                    }}
+                    tags={keywords}
+                  />
+                </FormControl>
+                <FormDescription>These are your keywords.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="titleContains"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    activeTagIndex={titleContainsIndex}
+                    placeholder="Title1, Title2, Title3"
+                    setActiveTagIndex={setTitleContainsIndex}
+                    setTags={(newTags) => {
+                      setTitleContains(newTags);
+                      form.setValue(
+                        'titleContains',
+                        newTags as [Tag, ...Tag[]],
+                      );
+                    }}
+                    tags={titleContains}
                   />
                 </FormControl>
                 <FormDescription>
-                  This is the content warning shown when the action is set to
-                  blur.
+                  This is your feed description.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-        )}
-        <Button type="submit">Submit</Button>
+          <FormField
+            control={form.control}
+            name="contentContains"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Content Contains</FormLabel>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    activeTagIndex={contentContainsIndex}
+                    onChange={field.onChange}
+                    placeholder="Content1, Content2, Content3"
+                    setActiveTagIndex={setContentContainsIndex}
+                    setTags={(newTags) => {
+                      setContentContains(newTags);
+                      form.setValue(
+                        'contentContains',
+                        newTags as [Tag, ...Tag[]],
+                      );
+                    }}
+                    tags={contentContains}
+                  />
+                </FormControl>
+                <FormDescription>This is your feed content.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="authors"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Authors</FormLabel>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    activeTagIndex={authorsIndex}
+                    placeholder="Author1, Author2, Author3"
+                    setActiveTagIndex={setAuthorsIndex}
+                    setTags={(newTags) => {
+                      setAuthors(newTags);
+                      form.setValue('authors', newTags as [Tag, ...Tag[]]);
+                    }}
+                    tags={authors}
+                  />
+                </FormControl>
+                <FormDescription>This is your feed authors.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categories</FormLabel>
+                <FormControl>
+                  <TagInput
+                    {...field}
+                    activeTagIndex={categoriesIndex}
+                    placeholder="Category1, Category2, Category3"
+                    setActiveTagIndex={setCategoriesIndex}
+                    setTags={(newTags) => {
+                      setCategories(newTags);
+                      form.setValue('categories', newTags as [Tag, ...Tag[]]);
+                    }}
+                    tags={categories}
+                  />
+                </FormControl>
+                <FormDescription>This is your feed categories.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="feeds"
+            render={() => (
+              <FormItem>
+                <FormLabel>Feeds</FormLabel>
+                <FormControl>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a feed" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {feeds?.feeds.map((feed) => (
+                        <SelectItem key={feed.id} value={feed.id}>
+                          {feed.title || feed.url}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormDescription>
+                  These are your filtered feeds.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {form.watch('type') === 'blur' && (
+            <FormField
+              control={form.control}
+              name="contentWarning"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content Warning</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="This content has been blurred"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is the content warning shown when the action is set to
+                    blur.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </FieldGroup>
+        <Button className="pt-8" type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

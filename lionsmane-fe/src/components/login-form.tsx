@@ -23,6 +23,7 @@ import {
 import { authClient } from '@/lib/auth-client';
 import FlowbiteDiscordSolid from '~icons/flowbite/discord-solid';
 import FlowbiteGithubSolid from '~icons/flowbite/github-solid';
+import { FieldGroup } from './ui/field';
 
 const formSchema = z.object({
   email: z.email(),
@@ -124,49 +125,50 @@ export function LoginForm() {
   return (
     <>
       <Form {...form}>
-        <form
-          className="space-y-8 flex flex-col"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="doc.brown@mit.edu"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  This is your account email address.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="supersecretpassword"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>This is your password.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Submit</Button>
+        <form className="flex flex-col" onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="doc.brown@mit.edu"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is your account email address.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="supersecretpassword"
+                      type="password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>This is your password.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </FieldGroup>
+          <Button className="mt-6" type="submit">
+            Submit
+          </Button>
         </form>
       </Form>
       {isTfa && (
