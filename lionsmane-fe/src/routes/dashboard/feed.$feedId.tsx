@@ -15,7 +15,12 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Empty, EmptyHeader, EmptyMedia } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { $api } from '@/lib/fetch-client';
 import {
   ArticleFilter,
@@ -90,7 +95,6 @@ function FeedId() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -146,7 +150,6 @@ function FeedId() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -214,7 +217,6 @@ function FeedId() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
@@ -265,7 +267,6 @@ function FeedId() {
           },
         },
         {
-          // @ts-expect-error: cursor typing
           getNextPageParam: (lastPage) => lastPage.cursor,
           initialPageParam: null,
         },
