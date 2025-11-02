@@ -153,7 +153,7 @@ function RouteComponent() {
       contentContains: contentContains,
       contentWarning: data.action.contentWarning || undefined,
       enabled: data.isActive,
-      feeds: feeds?.feeds.map((f) => ({ id: f.id, text: f.title })),
+      feeds: feeds?.map((f) => ({ id: f.id, text: f.title })),
       keywords: keywords,
       titleContains: titleContains,
       type: data.action.type,
@@ -306,7 +306,7 @@ function RouteComponent() {
                       <SelectValue placeholder="Select a feed" />
                     </SelectTrigger>
                     <SelectContent>
-                      {feeds?.feeds.map((feed) => (
+                      {feeds?.map((feed) => (
                         <SelectItem key={feed.id} value={feed.id}>
                           {feed.title || feed.url}
                         </SelectItem>

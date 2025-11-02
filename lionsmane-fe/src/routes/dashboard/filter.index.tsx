@@ -87,7 +87,7 @@ function FiltersDash() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link
                   className="text-right font-medium"
                   params={{ filterId: filter.id }}
