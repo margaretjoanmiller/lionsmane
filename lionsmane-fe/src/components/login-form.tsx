@@ -27,7 +27,7 @@ import { FieldGroup } from './ui/field';
 
 const formSchema = z.object({
   email: z.email(),
-  password: z.string().min(15),
+  password: z.string().min(8).max(256),
 });
 
 export function LoginForm() {
