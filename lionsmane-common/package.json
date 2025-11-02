@@ -1,7 +1,7 @@
 {
   "name": "lionsmane-common",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.3",
   "module": "./dist/lionsmane-common.js",
   "exports": {
     ".": {
@@ -10,9 +10,7 @@
       "default": "./dist/lionsmane-common.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite --host",
