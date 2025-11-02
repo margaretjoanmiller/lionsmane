@@ -356,12 +356,12 @@ function ArticlePage() {
         </div>
         <footer className="flex flex-col items-center pt-8">
           <a
-            className="font-bold hover:underline text-(--primary)"
+            className="font-bold hover:underline text-primary"
             href={data.url!}
           >
             Original article
           </a>
-          <div className="grid-flow-row">
+          <div className="grid-flow-row pt-2">
             {data.categories?.map((c) => (
               <Badge className="m-1" variant="outline">
                 {c.term}

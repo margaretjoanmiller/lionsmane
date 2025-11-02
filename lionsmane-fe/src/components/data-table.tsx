@@ -38,10 +38,10 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
     filterFns: {
       fuzzy: fuzzyFilter,
     },
+    getCoreRowModel: getCoreRowModel(),
   });
 
   return (
@@ -69,8 +69,8 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                key={row.id}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell className="h-24 text-center" colSpan={columns.length}>
                 No results.
               </TableCell>
             </TableRow>

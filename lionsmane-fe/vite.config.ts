@@ -7,6 +7,10 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['better-auth'],
+    include: ['vaul'],
+  },
   plugins: [
     TanStackRouterVite({ autoCodeSplitting: true }),
     viteReact(),
@@ -16,17 +20,13 @@ export default defineConfig({
       jsx: 'react',
     }),
   ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
-  optimizeDeps: {
-    exclude: ['better-auth'],
-    include: ['vaul'],
-  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
   },
 });

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
+import { FieldGroup } from './ui/field';
 
 const formSchema = z
   .object({
@@ -61,88 +62,100 @@ export function SignupForm() {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>name</FormLabel>
-              <FormControl>
-                <Input placeholder="Doc Brown" {...field} />
-              </FormControl>
-              <FormDescription>This is your display name.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>image</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="https://example.com/image.jpg"
-                  type="url"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>This is your profile picture.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>email</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="doc.brown@mit.edu"
-                  type="email"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                This is your account email address.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>password</FormLabel>
-              <FormControl>
-                <Input placeholder="thatsheavyman" type="password" {...field} />
-              </FormControl>
-              <FormDescription>This is your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirm"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>confirm</FormLabel>
-              <FormControl>
-                <Input placeholder="thatsheavyman" type="password" {...field} />
-              </FormControl>
-              <FormDescription>This is your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Doc Brown" {...field} />
+                </FormControl>
+                <FormDescription>This is your display name.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>image</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="https://example.com/image.jpg"
+                    type="url"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>This is your profile picture.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="doc.brown@mit.edu"
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is your account email address.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>password</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="thatsheavyman"
+                    type="password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>This is your password.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>confirm</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="thatsheavyman"
+                    type="password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>This is your password.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </FieldGroup>
+        <Button className="mt-6" type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

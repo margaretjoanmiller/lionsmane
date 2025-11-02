@@ -1,20 +1,20 @@
 import { z } from 'zod';
 
 export const filterFormSchema = z.object({
-  name: z.string().max(255),
-  keywords: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-  titleContains: z
-    .array(z.object({ text: z.string(), id: z.string() }))
+  authors: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
+  categories: z
+    .array(z.object({ id: z.string(), text: z.string() }))
     .optional(),
   contentContains: z
-    .array(z.object({ text: z.string(), id: z.string() }))
+    .array(z.object({ id: z.string(), text: z.string() }))
     .optional(),
-  authors: z.array(z.object({ text: z.string(), id: z.string() })).optional(),
-  categories: z
-    .array(z.object({ text: z.string(), id: z.string() }))
-    .optional(),
-  feeds: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
-  type: z.enum(['blur', 'markRead', 'hide']),
   contentWarning: z.string().max(512).optional(),
   enabled: z.boolean(),
+  feeds: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+  keywords: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
+  name: z.string().max(255),
+  titleContains: z
+    .array(z.object({ id: z.string(), text: z.string() }))
+    .optional(),
+  type: z.enum(['blur', 'markRead', 'hide']),
 });

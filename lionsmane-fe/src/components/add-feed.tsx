@@ -109,12 +109,18 @@ export function AddFeed() {
         },
         onSuccess: (data) => {
           setStep1Open(false);
-          step1Form.reset;
-          setFeeds({
-            feeds: data?.map((f) => f?.url || 'err') || [],
-          });
+          step1Form.reset();
 
-          setStep2Open(true);
+          if (data && data.length > 0) {
+            setFeeds({
+              feeds: data?.map((f) => f?.url || 'err') || [],
+            });
+
+            setStep2Open(true);
+          } else {
+            toast.error('Cound not find a feed for this url.');
+            setStep1Open(false);
+          }
         },
       },
     );

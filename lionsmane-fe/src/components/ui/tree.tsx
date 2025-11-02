@@ -28,7 +28,7 @@ function Tree<T extends object>({ className, ...props }: AriaTreeProps<T>) {
 
 function TreeItemExpandButton({ className, children, ...props }: ButtonProps) {
   return (
-    <Button slot="chevron" className={cn('outline-none', className)} {...props}>
+    <Button className={cn('outline-none', className)} slot="chevron" {...props}>
       {composeRenderProps(children, (children) => (
         <>
           <ChevronRightIcon className="size-4 shrink-0 transition-transform duration-200 group-data-[expanded]:rotate-90" />
