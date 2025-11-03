@@ -7,7 +7,15 @@
       }
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "extends": "//",
+  "html": {
+    "experimentalFullSupportEnabled": true
+  },
   "linter": {
     "includes": ["!node_modules/**", "!dist/**", "!**/routeTree.gen.ts"],
     "rules": {
