@@ -3,8 +3,6 @@ import { generateOpml, parseOpml } from 'feedsmith';
 
 @Injectable()
 export class OpmlService {
-  importDynamic = new Function('modulePath', 'return import(modulePath)');
-
   getFeedsFromOpml(xml: string) {
     const opml = parseOpml(xml);
     const feeds = opml?.body?.outlines?.flatMap((outline) => {

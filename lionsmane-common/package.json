@@ -10,22 +10,24 @@
       "default": "./dist/lionsmane-common.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build && dts-bundle-generator --config ./dts-bundle-generator.config.ts"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
+    "@types/node": "^24.10.0",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.46.2",
-    "vite": "^7.1.12",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.2",
     "zod": "^4.1.12"
   }
 }
