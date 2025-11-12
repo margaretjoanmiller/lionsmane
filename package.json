@@ -8,13 +8,9 @@
   "keywords": [],
   "author": "Margaret Miller <mmiller@wanderingwires.net>",
   "license": "EUPL-1.2",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.21.0",
   "devDependencies": {
     "@biomejs/biome": "2.3.4"
   },
-  "workspaces": [
-    "lionsmane",
-    "lionsmane-fe",
-    "lionsmane-common"
-  ]
+  "workspaces": ["lionsmane", "lionsmane-fe", "lionsmane-common"]
 }
