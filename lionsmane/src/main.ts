@@ -43,7 +43,6 @@ async function bootstrap() {
       .addCookieAuth()
       .addBearerAuth()
       .addOAuth2()
-      .addApiKey()
       .addSecurity('auth-token', {
         type: 'apiKey',
         name: 'x-auth-token',
