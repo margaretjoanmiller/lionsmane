@@ -36,7 +36,7 @@
     "@nestjs/swagger": "^11.2.3",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.4.0",
-    "@scalar/nestjs-api-reference": "^1.0.7",
+    "@scalar/nestjs-api-reference": "^1.0.8",
     "@thallesp/nestjs-better-auth": "^2.1.0",
     "@types/jsdom": "^27.0.0",
     "@upstash/redis": "^1.35.6",

@@ -10,9 +10,7 @@
       "default": "./dist/lionsmane-common.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite --host",
@@ -21,9 +19,6 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "dts-bundle-generator": "^9.5.1",
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.47.0",
