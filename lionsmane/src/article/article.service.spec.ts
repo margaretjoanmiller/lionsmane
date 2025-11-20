@@ -1,11 +1,18 @@
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { Test, TestingModule } from '@nestjs/testing';
+import { enclosures } from 'src/db/schema/core';
+import { FetcherService } from 'src/fetcher/fetcher.service';
+import { vi } from 'vitest';
 import { ArticleService } from './article.service';
 
 describe('ArticleService', () => {
   let service: ArticleService;
 
+  let fetcherService: FetcherService;
   beforeEach(async () => {
+    fetcherService = {
+      readability: vi.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         DrizzlePGModule.register({
@@ -20,7 +27,26 @@ describe('ArticleService', () => {
           },
         }),
       ],
-      providers: [ArticleService],
+      providers: [
+        ArticleService,
+        {
+          provide: 'BullQueue_article',
+          useValue: {
+            registerQueue: vi.fn().mockReturnValue({ name: 'article' }),
+          },
+        },
+        {
+          provide: 'DB',
+          useValue: {
+            db: vi.fn(),
+            transaction: vi.fn(),
+          },
+        },
+        {
+          provide: FetcherService,
+          useValue: fetcherService,
+        },
+      ],
     }).compile();
 
     service = module.get<ArticleService>(ArticleService);
@@ -34,21 +60,28 @@ describe('ArticleService', () => {
     const newArt = {
       title: 'Test Article',
       url: 'http://example.com/test-article',
-      authors: ['Author One', 'Author Two'],
-      categories: ['Category1', 'Category2'],
+      authors: [{ name: 'Author one' }],
+      categories: [{ term: 'Category1' }],
       description: 'This is a test article.',
       readableText: 'This is the readable text of the test article.',
       keywords: ['test', 'article'],
       image: 'http://example.com/image.jpg',
-      media: ['http://example.com/media.mp3'],
+      media: {
+        contents: [
+          {
+            url: 'http://example.com/art.mp3',
+          },
+        ],
+      },
       published: new Date().toISOString(),
       updated: new Date().toISOString(),
       feedId: 'feed-123',
+      enclosures: null,
     };
 
     const result = await service.newArticle(newArt);
-    expect(result).toBeDefined();
-    expect(result[0]).toMatchObject({
+    // expect(result).toBeDefined();
+    expect(result).toMatchObject({
       title: newArt.title,
       url: newArt.url,
       authors: newArt.authors,
