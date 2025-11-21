@@ -318,7 +318,7 @@ export class FetcherService {
             const job_delay =
               parseInt(startingPoint) + job * crawlDelay - Date.now();
 
-            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
+            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 5;
           }
 
           const jobs = await this.articleQueue.addBulk(feedProcess);
