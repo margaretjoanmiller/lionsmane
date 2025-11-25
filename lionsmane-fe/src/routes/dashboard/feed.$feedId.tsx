@@ -101,33 +101,28 @@ function FeedId() {
       );
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <Empty className="grow">
-            <EmptyMedia variant="icon">
-              <UilDesert fontSize="5em" />
-            </EmptyMedia>
-            <EmptyHeader>
-              <EmptyTitle>No articles</EmptyTitle>
-            </EmptyHeader>
-          </Empty>
-        );
-      }
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
 
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
+            <UilDesert fontSize="5em" />
+          </EmptyMedia>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
-        <div className="flex gap-4 mb-6">
-          <AlertMarkRead feedId={feedId} />
-        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
           <Button disabled={isFetching} onClick={() => fetchNextPage()}>
@@ -157,44 +152,28 @@ function FeedId() {
 
     if (isLoading || !data) return <SkeletonGrid />;
 
-    const articles = data.pages.map(({ articles }) => {
-      if (articles.length === 0) {
-        return (
-          <Empty className="grow">
-            <EmptyMedia variant="icon">
-              <UilDesert fontSize="5em" />
-            </EmptyMedia>
-            <EmptyHeader>
-              <EmptyTitle>No articles</EmptyTitle>
-            </EmptyHeader>
-          </Empty>
-        );
-      }
-      if (articles.length === 0) {
-        return (
-          <Empty className="grow">
-            <EmptyMedia variant="icon">
-              <UilDesert fontSize="5em" />
-            </EmptyMedia>
-            <EmptyHeader>
-              <EmptyTitle>No articles</EmptyTitle>
-            </EmptyHeader>
-          </Empty>
-        );
-      }
-      return articles
-        .filter((i) => !i.isHidden)
-        .map((i) => {
-          return <ArticleCard article={i} />;
-        });
-    });
+    const allArticles = data.pages.flatMap(({ articles }) =>
+      articles.filter((i) => !i.isHidden),
+    );
+
+    if (allArticles.length === 0) {
+      return (
+        <Empty className="grow">
+          <EmptyMedia variant="icon">
+            <UilDesert fontSize="5em" />
+          </EmptyMedia>
+          <EmptyHeader>
+            <EmptyTitle>No articles</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
+      );
+    }
     return (
       <>
-        <div className="flex gap-4 mb-6">
-          <AlertMarkRead feedId={feedId} />
-        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {articles}
+          {allArticles.map((article) => (
+            <ArticleCard article={article} key={article.id} />
+          ))}
         </div>
         {hasNextPage && (
           <Button disabled={isFetching} onClick={() => fetchNextPage()}>
