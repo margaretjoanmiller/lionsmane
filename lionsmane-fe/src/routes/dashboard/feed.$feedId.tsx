@@ -119,6 +119,9 @@ function FeedId() {
     }
     return (
       <>
+        <div className="flex gap-4 mb-6">
+          <AlertMarkRead feedId={feedId} />
+        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {allArticles.map((article) => (
             <ArticleCard article={article} key={article.id} />
@@ -170,6 +173,9 @@ function FeedId() {
     }
     return (
       <>
+        <div className="flex gap-4 mb-6">
+          <AlertMarkRead feedId={feedId} />
+        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {allArticles.map((article) => (
             <ArticleCard article={article} key={article.id} />
@@ -220,6 +226,9 @@ function FeedId() {
     }
     return (
       <>
+        <div className="flex gap-4 mb-6">
+          <AlertMarkRead feedId={feedId} />
+        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {allArticles.map((article) => (
             <ArticleCard article={article} key={article.id} />
@@ -270,6 +279,9 @@ function FeedId() {
     }
     return (
       <>
+        <div className="flex gap-4 mb-6">
+          <AlertMarkRead feedId={feedId} />
+        </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           {allArticles.map((article) => (
             <ArticleCard article={article} key={article.id} />
