@@ -83,7 +83,7 @@ export class FetcherService {
     }
   }
 
-  async respectfulFetch(url: string) {
+  async respectfulFetch(url: string, etag?: string) {
     try {
       const robots = await this.robots(url);
       const urlObj = new URL(url);
@@ -97,19 +97,43 @@ export class FetcherService {
         this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
         return null;
       } else {
-        const { data, status, statusText, headers } = await firstValueFrom(
-          this.httpService.get(url),
-        );
+        if (!etag) {
+          const { data, status, statusText, headers } = await firstValueFrom(
+            this.httpService.get(url),
+          );
 
-        if (status !== 200) {
-          throw new Error(`Failed to fetch URL: ${statusText}`);
+          if (status === 304) {
+            return null;
+          }
+
+          if (status !== 200) {
+            throw new Error(`Failed to fetch URL: ${statusText}`);
+          }
+          return {
+            data,
+            status,
+            statusText,
+            headers,
+          };
+        } else {
+          const { data, status, statusText, headers } = await firstValueFrom(
+            this.httpService.get(url, {
+              headers: {
+                'If-None-Match': etag,
+              },
+            }),
+          );
+
+          if (status !== 200) {
+            throw new Error(`Failed to fetch URL: ${statusText}`);
+          }
+          return {
+            data,
+            status,
+            statusText,
+            headers,
+          };
         }
-        return {
-          data,
-          status,
-          statusText,
-          headers,
-        };
       }
     } catch {
       const { data, status, statusText, headers } = await firstValueFrom(
@@ -196,11 +220,32 @@ export class FetcherService {
   async parseArticlesFromFeed(feedUrl: string, feedId: string) {
     const redis = this.redisService.getClient();
 
+    const feedfromDb = await this.db
+      .select()
+      .from(schema.feeds)
+      .where(eq(schema.feeds.id, feedId));
+
+    if (!feedfromDb || !feedfromDb.at(0)?.lastChecked) {
+      throw new Error('Malformed feed in database');
+    }
+
     try {
-      const feedXML = await this.respectfulFetch(feedUrl);
+      const feedXML = await this.respectfulFetch(
+        feedUrl,
+        feedfromDb[0].etag_header,
+      );
       if (feedXML === null) {
-        throw new Error('Failed to fetch feed');
+        this.logger.log('Feed not modified, skipping'); // etag matched
+        return [];
       }
+
+      if (feedXML.headers['etag']) {
+        await this.db
+          .update(schema.feeds)
+          .set({ etag_header: feedXML.headers['etag'] })
+          .where(eq(schema.feeds.id, feedId));
+      }
+
       const { feed, format } = parseFeed(feedXML.data);
       if (format === 'rss') {
         if (!feed || !feed.items) {
@@ -214,14 +259,6 @@ export class FetcherService {
         if (!feed || !feed.items) {
           throw new Error('No items found in the feed');
         }
-      }
-      const feedfromDb = await this.db
-        .select()
-        .from(schema.feeds)
-        .where(eq(schema.feeds.id, feedId));
-
-      if (!feedfromDb || !feedfromDb.at(0)?.lastChecked) {
-        throw new Error('Malformed feed in database');
       }
 
       if (format === 'rss') {
