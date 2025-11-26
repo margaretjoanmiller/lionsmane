@@ -655,7 +655,11 @@ export class FeedService {
     }
     await Promise.all(
       feeds.map(async (feed) => {
-        await this.feedQueue.add('import', { url: feed.url, userId });
+        await this.feedQueue.add('import', {
+          url: feed.url,
+          folder: feed.folder,
+          userId,
+        });
       }),
     );
   }

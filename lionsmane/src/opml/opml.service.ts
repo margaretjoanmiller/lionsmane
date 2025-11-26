@@ -10,11 +10,13 @@ export class OpmlService {
         return outline.outlines.map((subOutline) => ({
           title: subOutline.title,
           url: subOutline.xmlUrl,
+          folder: outline.title,
         }));
       } else {
         return {
           title: outline.title,
           url: outline.xmlUrl,
+          folder: undefined,
         };
       }
     });
