@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Collection, useDragAndDrop } from 'react-aria-components';
+import { toast } from 'sonner';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -47,7 +48,14 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
   const { dragAndDropHooks } = useDragAndDrop({
     getItems: (keys) =>
       [...keys].map((key) => {
-        const item = treeData.find((i) => i.id === key);
+        // Search both top-level and nested items
+        let item = treeData.find((i) => i.id === key);
+        if (!item) {
+          for (const parent of treeData) {
+            item = parent.children?.find((child) => child.id === key);
+            if (item) break;
+          }
+        }
         return {
           'application/json': JSON.stringify(item),
           'text/plain': item?.name || '',
@@ -55,12 +63,25 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       }),
     async onItemDrop(e) {
       const data = e.items.filter((i) => i.kind === 'text')[0];
+      if (!data) return;
+
       const parsed = JSON.parse(await data.getText('application/json'));
-      const target = treeData.find((i) => i.id === e.target.key);
-      if (e.dropOperation === 'move' && target?.type === 'folder') {
+
+      // Only allow dragging feeds, not folders
+      if (parsed.type !== 'feed') return;
+
+      let target = treeData.find((i) => i.id === e.target.key);
+      if (!target) {
+        for (const parent of treeData) {
+          target = parent.children?.find((child) => child.id === e.target.key);
+          if (target) break;
+        }
+      }
+
+      if (target?.type === 'folder') {
         editFeed({
           body: {
-            folderId: target?.id || null,
+            folderId: target.id,
           },
           credentials: 'include',
           params: {
