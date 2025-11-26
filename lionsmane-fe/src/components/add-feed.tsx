@@ -56,7 +56,7 @@ const discoverSchema = z.object({
 
 const createFeedForm = z.object({
   description: z.string(),
-  folderId: z.string().nullable(),
+  folderName: z.string().min(2).nullable(),
   url: z.url(),
 });
 export function AddFeed() {
@@ -78,12 +78,12 @@ export function AddFeed() {
 
   const folderSelect = folders?.map((folder) => ({
     label: folder.name,
-    value: folder.id,
+    value: folder.name,
   }));
   const step2Form = useForm<z.infer<typeof createFeedForm>>({
     defaultValues: {
       description: '',
-      folderId: null,
+      folderName: null,
       url: '',
     },
     resolver: zodResolver(createFeedForm),
@@ -248,7 +248,7 @@ export function AddFeed() {
               />
               <FormField
                 control={step2Form.control}
-                name="folderId"
+                name="folderName"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Folder</FormLabel>
@@ -285,7 +285,7 @@ export function AddFeed() {
                                   key={folder.value}
                                   onSelect={() => {
                                     step2Form.setValue(
-                                      'folderId',
+                                      'folderName',
                                       folder.value,
                                     );
                                   }}

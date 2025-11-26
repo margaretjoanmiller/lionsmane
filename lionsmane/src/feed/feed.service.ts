@@ -29,6 +29,7 @@ import { parseFeed } from 'feedsmith';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { schema } from 'src/db/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
+import { FolderService } from 'src/folder/folder.service';
 import { OpmlService } from 'src/opml/opml.service';
 import { parseDate } from 'src/utils/date-parse';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
@@ -40,6 +41,7 @@ export class FeedService {
     @Inject('DB') private db: NodePgDatabase<typeof schema>,
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
+    private folderService: FolderService,
     private opmlService: OpmlService,
     private httpService: HttpService,
   ) {}
@@ -301,37 +303,61 @@ export class FeedService {
       if (subscription) {
         throw new ConflictException('Already subscribed to this feed');
       }
-      if (newSubscription.folderId) {
-        const [folder] = await tx
-          .select()
-          .from(schema.folders)
-          .where(
-            and(
-              eq(schema.folders.id, newSubscription.folderId),
-              eq(schema.folders.userId, userId),
-            ),
-          );
-
-        if (!folder) {
-          throw new NotFoundException('Folder not found');
-        }
-
-        const [newSubscriptionRecord] = await tx
-          .insert(schema.subscriptions)
-          .values({
-            feedId: feed.id,
+      if (newSubscription.folderName) {
+        try {
+          const folder = await this.folderService.findByName(
+            newSubscription.folderName,
             userId,
-            folderId: newSubscription.folderId,
-          })
-          .returning();
-
-        if (!newSubscriptionRecord) {
-          throw new InternalServerErrorException(
-            'Failed to create subscription',
           );
-        }
 
-        return { ...feed, subscription: newSubscriptionRecord };
+          const [newSubscriptionRecord] = await tx
+            .insert(schema.subscriptions)
+            .values({
+              feedId: feed.id,
+              userId,
+              folderId: folder.id,
+            })
+            .returning();
+
+          if (!newSubscriptionRecord) {
+            throw new InternalServerErrorException(
+              'Failed to create subscription',
+            );
+          }
+
+          return { ...feed, subscription: newSubscriptionRecord };
+        } catch {
+          const [newSubscriptionRecord] = await tx
+            .insert(schema.subscriptions)
+            .values({
+              feedId: feed.id,
+              userId,
+            })
+            .returning();
+
+          if (!newSubscriptionRecord) {
+            throw new InternalServerErrorException(
+              'Failed to create subscription',
+            );
+          }
+          const newFolder = await this.folderService.create(
+            {
+              feedIds: [newSubscriptionRecord.feedId],
+              name: newSubscription.folderName,
+            },
+            userId,
+          );
+
+          const [newFeedWNewFolder] = await tx
+            .update(schema.subscriptions)
+            .set({
+              folderId: newFolder.id,
+            })
+            .where(eq(schema.subscriptions.id, newSubscriptionRecord.id))
+            .returning();
+
+          return { ...feed, subscription: newFeedWNewFolder };
+        }
       } else {
         const [newSubscriptionRecord] = await tx
           .insert(schema.subscriptions)
