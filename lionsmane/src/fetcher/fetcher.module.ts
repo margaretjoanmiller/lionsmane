@@ -19,7 +19,7 @@ import { FetcherService } from './fetcher.service';
       },
     }),
   ],
-  providers: [FetcherService, RedisService],
+  providers: [FetcherService],
   exports: [FetcherService],
 })
 export class FetcherModule {}
