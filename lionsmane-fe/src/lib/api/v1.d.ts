@@ -4,5742 +4,5759 @@
  */
 
 export interface paths {
-    "/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["AppController_getProfile"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["AppController_getLogin"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['AppController_getProfile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/callback': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FeedController_findAll"];
-        put?: never;
-        post: operations["FeedController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['AppController_getLogin'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed/discover": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["FeedController_discover"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FeedController_findAll'];
+    put?: never;
+    post: operations['FeedController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/discover': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed/import": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["FeedController_import"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['FeedController_discover'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed/export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FeedController_export"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['FeedController_import'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed/mark-all-read/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["FeedController_markAllRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FeedController_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/mark-all-read/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/feed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FeedController_findOne"];
-        put?: never;
-        post?: never;
-        delete: operations["FeedController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["FeedController_update"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['FeedController_markAllRead'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getPagedArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FeedController_findOne'];
+    put?: never;
+    post?: never;
+    delete: operations['FeedController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['FeedController_update'];
+    trace?: never;
+  };
+  '/article': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/status/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ArticleController_updateArticleStatus"];
-        trace?: never;
+    get: operations['ArticleController_getPagedArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/status/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_searchArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['ArticleController_updateArticleStatus'];
+    trace?: never;
+  };
+  '/article/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/feed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getPagedArticlesForFeed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_searchArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getReadArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getPagedArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/unread": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getUnReadArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getReadArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/unread': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/starred": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getStarredArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getUnReadArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/hidden": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getHiddenArticles"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getStarredArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/hidden': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/unread/feed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getUnReadArticlesForFeed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getHiddenArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/unread/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/starred/feed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getStarredArticlesForFeed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getUnReadArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/read/feed/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getReadArticlesForFeed"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getStarredArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/unread/folder/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getUnReadArticlesForFolder"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getReadArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/unread/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/starred/folder/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getStarredArticlesForFolder"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getUnReadArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/read/folder/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getReadArticlesForFolder"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getStarredArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/folder/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getAllArticlesForFolder"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getReadArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/readable/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ArticleController_requestFullArticleText"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getAllArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/readable/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/article/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ArticleController_getArticle"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['ArticleController_requestFullArticleText'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/folder": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FolderController_findAll"];
-        put?: never;
-        post: operations["FolderController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['ArticleController_getArticle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/folder': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/folder/feeds": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FolderController_findAllWithFeeds"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FolderController_findAll'];
+    put?: never;
+    post: operations['FolderController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/folder/feeds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/folder/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FolderController_findOne"];
-        put?: never;
-        post?: never;
-        delete: operations["FolderController_remove"];
-        options?: never;
-        head?: never;
-        patch: operations["FolderController_update"];
-        trace?: never;
+    get: operations['FolderController_findAllWithFeeds'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/filter": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FilterController_findAll"];
-        put?: never;
-        post: operations["FilterController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FolderController_findOne'];
+    put?: never;
+    post?: never;
+    delete: operations['FolderController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['FolderController_update'];
+    trace?: never;
+  };
+  '/filter': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/filter/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["FilterController_findOne"];
-        put: operations["FilterController_update"];
-        post?: never;
-        delete: operations["FilterController_remove"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FilterController_findAll'];
+    put?: never;
+    post: operations['FilterController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/filter/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["HealthController_check"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['FilterController_findOne'];
+    put: operations['FilterController_update'];
+    post?: never;
+    delete: operations['FilterController_remove'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/readlater/configure": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ReadlaterController_createConfig"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['HealthController_check'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/readlater/configure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/readlater": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ReadlaterController_addBookmark"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['ReadlaterController_createConfig'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/readlater': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/discover": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["MinifluxV1Controller_discoverSubscriptions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['ReadlaterController_addBookmark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/discover': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_export"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_discoverSubscriptions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/import": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["MinifluxV1Controller_import"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/version": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getVersion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_import'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/version': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getFeeds"];
-        put?: never;
-        post: operations["MinifluxV1Controller_createFeed"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getVersion'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/counters": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getFeedCounters"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getFeeds'];
+    put?: never;
+    post: operations['MinifluxV1Controller_createFeed'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/counters': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/{feedId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getFeed"];
-        put: operations["MinifluxV1Controller_updateFeed"];
-        post?: never;
-        delete: operations["MinifluxV1Controller_removeFeed"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getFeedCounters'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/{feedId}/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_refreshFeed"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getFeed'];
+    put: operations['MinifluxV1Controller_updateFeed'];
+    post?: never;
+    delete: operations['MinifluxV1Controller_removeFeed'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_refreshAllFeeds"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_refreshFeed'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/{feedId}/icon": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getFeedIcon"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_refreshAllFeeds'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/icon': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/feeds/{feedId}/mark-all-as-read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_markFeedAsRead"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getFeedIcon'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/mark-all-as-read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/entries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getEntries"];
-        put: operations["MinifluxV1Controller_updateEntries"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_markFeedAsRead'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/entries/{entryId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getEntry"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getEntries'];
+    put: operations['MinifluxV1Controller_updateEntries'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/entries/{entryId}/save": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["MinifluxV1Controller_saveEntry"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getEntry'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/save': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/entries/{entryId}/bookmark": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_toggleBookmark"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_saveEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/bookmark': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/entries/{entryId}/fetch-content": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_fetchOriginalArticle"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_toggleBookmark'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/fetch-content': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getCategories"];
-        put?: never;
-        post: operations["MinifluxV1Controller_createCategory"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_fetchOriginalArticle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/categories/{categoryId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_updateCategory"];
-        post?: never;
-        delete: operations["MinifluxV1Controller_deleteCategory"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getCategories'];
+    put?: never;
+    post: operations['MinifluxV1Controller_createCategory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/categories/{categoryId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/categories/{categoryId}/feeds": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getCategoryFeeds"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_updateCategory'];
+    post?: never;
+    delete: operations['MinifluxV1Controller_deleteCategory'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/categories/{categoryId}/feeds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/categories/{categoryId}/mark-all-as-read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_markCategoryAsRead"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getCategoryFeeds'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/categories/{categoryId}/mark-all-as-read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/categories/{categoryId}/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_refreshCategoryFeeds"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_markCategoryAsRead'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/categories/{categoryId}/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getCurrentUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_refreshCategoryFeeds'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/users/{userId}/mark-all-as-read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["MinifluxV1Controller_markUserEntriesAsRead"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['MinifluxV1Controller_getCurrentUser'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/users/{userId}/mark-all-as-read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/miniflux/v1/icons/{iconId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["MinifluxV1Controller_getIcon"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['MinifluxV1Controller_markUserEntriesAsRead'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/icons/{iconId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations['MinifluxV1Controller_getIcon'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        SubscribeFeedDto: {
-            /** Format: uri */
-            url: string;
-            description?: string;
-            folderId: string | null;
-        };
-        NewSubscriptionDto_Output: {
-            /** Format: uuid */
-            id: string;
-            minifluxId: number;
-            title: string;
-            subtitle: string | null;
-            /** Format: uri */
-            url: string;
-            site_url: string | null;
-            /** @default  */
-            etag_header: string;
-            last_modified_header: string | null;
-            parsingErrorMessage: string | null;
-            /** @default 0 */
-            parsingErrorCount: number;
-            userAgent: string | null;
-            crawler: boolean | null;
-            /** @default [] */
-            authors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            /** @default [] */
-            contributors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            /** @default [] */
-            categories: {
-                term?: string;
-                scheme?: string;
-                label?: string;
-            }[];
-            copyright: string | null;
-            image: {
-                /** Format: uri */
-                url: string;
-                title?: string;
-                /** Format: uri */
-                link: string;
-                description?: string;
-                width?: number;
-                height?: number;
-            } | null;
-            /** Format: date-time */
-            lastChecked: string;
-            updated: string | null;
-            explicit: boolean | null;
-            subject: string | null;
-            updatePeriod: string | null;
-            updateFrequency: number | null;
-            updateBase: string | null;
-            publisher: string | null;
-            rights: string | null;
-            youtube: {
-                channelId?: string;
-                playlistId?: string;
-            } | null;
-            podcast: {
-                locked?: {
-                    value: boolean;
-                    owner?: string;
-                };
-                fundings?: {
-                    /** Format: uri */
-                    url: string;
-                    display?: string;
-                }[];
-                persons?: {
-                    display: string;
-                    role?: string;
-                    group?: string;
-                    /** Format: uri */
-                    img?: string;
-                    /** Format: uri */
-                    href?: string;
-                }[];
-                location?: {
-                    display: string;
-                    geo?: string;
-                    osm?: string;
-                };
-                trailers?: {
-                    display: string;
-                    /** Format: uri */
-                    url: string;
-                    pubDate: string;
-                    length?: number;
-                    type?: string;
-                    season?: number;
-                }[];
-                guid?: string;
-                value?: {
-                    type: string;
-                    method: string;
-                    suggested?: number;
-                    valueRecipients?: {
-                        name?: string;
-                        customKey?: string;
-                        customValue?: string;
-                        type: string;
-                        address: string;
-                        split: number;
-                        fee?: boolean;
-                    }[];
-                    valueTimeSplits?: {
-                        startTime: number;
-                        duration: number;
-                        remoteStartTime?: number;
-                        remotePercentage?: number;
-                        remoteItem?: {
-                            feedGuid: string;
-                            /** Format: uri */
-                            feedUrl?: string;
-                            itemGuid?: string;
-                            medium?: string;
-                        };
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                    }[];
-                };
-                medium?: string;
-                images?: {
-                    srcset?: string;
-                };
-                liveItems?: {
-                    status: string;
-                    /** Format: date-time */
-                    start: string;
-                    /** Format: date-time */
-                    end?: string;
-                    contentLinks?: {
-                        /** Format: uri */
-                        href: string;
-                        display?: string;
-                    }[];
-                }[];
-                blocks?: {
-                    value: boolean;
-                    id?: string;
-                }[];
-                txts?: {
-                    display: string;
-                    purpose?: string;
-                }[];
-                remoteItems?: {
-                    feedGuid: string;
-                    /** Format: uri */
-                    feedUrl?: string;
-                    itemGuid?: string;
-                    medium?: string;
-                }[];
-                podroll?: {
-                    remoteItems?: {
-                        feedGuid: string;
-                        /** Format: uri */
-                        feedUrl?: string;
-                        itemGuid?: string;
-                        medium?: string;
-                    }[];
-                };
-                updateFrequency?: {
-                    display: string;
-                    complete?: boolean;
-                    dtstart?: string;
-                    rrule?: string;
-                };
-                podping?: {
-                    usesPodping?: boolean;
-                };
-            } | null;
-            geo: {
-                point?: {
-                    lat: number;
-                    lng: number;
-                };
-                line?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                polygon?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                box?: {
-                    lowerCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                    upperCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                };
-                featureTypeTag?: string;
-                relationshipTag?: string;
-                featureName?: string;
-                elev?: number;
-                floor?: number;
-                radius?: number;
-            } | null;
-            subscription: {
-                /** Format: uuid */
-                id: string;
-                userId: string;
-                /** Format: uuid */
-                feedId: string;
-                description: string | null;
-                folderId: string | null;
-            };
-        };
-        FeedOutWithCountsDto_Output: {
-            /** Format: uuid */
-            id: string;
-            title: string;
-            subtitle: string | null;
-            /** Format: uri */
-            url: string;
-            site_url: string | null;
-            /** @default  */
-            etag_header: string;
-            last_modified_header: string | null;
-            parsingErrorMessage: string | null;
-            /** @default 0 */
-            parsingErrorCount: number;
-            userAgent: string | null;
-            crawler: boolean | null;
-            /** @default [] */
-            authors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            /** @default [] */
-            contributors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            /** @default [] */
-            categories: {
-                term?: string;
-                scheme?: string;
-                label?: string;
-            }[];
-            copyright: string | null;
-            image: {
-                /** Format: uri */
-                url: string;
-                title?: string;
-                /** Format: uri */
-                link: string;
-                description?: string;
-                width?: number;
-                height?: number;
-            } | null;
-            /** Format: date-time */
-            lastChecked: string;
-            updated: string | null;
-            explicit: boolean | null;
-            subject: string | null;
-            updatePeriod: string | null;
-            updateFrequency: number | null;
-            updateBase: string | null;
-            publisher: string | null;
-            rights: string | null;
-            youtube: {
-                channelId?: string;
-                playlistId?: string;
-            } | null;
-            podcast: {
-                locked?: {
-                    value: boolean;
-                    owner?: string;
-                };
-                fundings?: {
-                    /** Format: uri */
-                    url: string;
-                    display?: string;
-                }[];
-                persons?: {
-                    display: string;
-                    role?: string;
-                    group?: string;
-                    /** Format: uri */
-                    img?: string;
-                    /** Format: uri */
-                    href?: string;
-                }[];
-                location?: {
-                    display: string;
-                    geo?: string;
-                    osm?: string;
-                };
-                trailers?: {
-                    display: string;
-                    /** Format: uri */
-                    url: string;
-                    pubDate: string;
-                    length?: number;
-                    type?: string;
-                    season?: number;
-                }[];
-                guid?: string;
-                value?: {
-                    type: string;
-                    method: string;
-                    suggested?: number;
-                    valueRecipients?: {
-                        name?: string;
-                        customKey?: string;
-                        customValue?: string;
-                        type: string;
-                        address: string;
-                        split: number;
-                        fee?: boolean;
-                    }[];
-                    valueTimeSplits?: {
-                        startTime: number;
-                        duration: number;
-                        remoteStartTime?: number;
-                        remotePercentage?: number;
-                        remoteItem?: {
-                            feedGuid: string;
-                            /** Format: uri */
-                            feedUrl?: string;
-                            itemGuid?: string;
-                            medium?: string;
-                        };
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                    }[];
-                };
-                medium?: string;
-                images?: {
-                    srcset?: string;
-                };
-                liveItems?: {
-                    status: string;
-                    /** Format: date-time */
-                    start: string;
-                    /** Format: date-time */
-                    end?: string;
-                    contentLinks?: {
-                        /** Format: uri */
-                        href: string;
-                        display?: string;
-                    }[];
-                }[];
-                blocks?: {
-                    value: boolean;
-                    id?: string;
-                }[];
-                txts?: {
-                    display: string;
-                    purpose?: string;
-                }[];
-                remoteItems?: {
-                    feedGuid: string;
-                    /** Format: uri */
-                    feedUrl?: string;
-                    itemGuid?: string;
-                    medium?: string;
-                }[];
-                podroll?: {
-                    remoteItems?: {
-                        feedGuid: string;
-                        /** Format: uri */
-                        feedUrl?: string;
-                        itemGuid?: string;
-                        medium?: string;
-                    }[];
-                };
-                updateFrequency?: {
-                    display: string;
-                    complete?: boolean;
-                    dtstart?: string;
-                    rrule?: string;
-                };
-                podping?: {
-                    usesPodping?: boolean;
-                };
-            } | null;
-            geo: {
-                point?: {
-                    lat: number;
-                    lng: number;
-                };
-                line?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                polygon?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                box?: {
-                    lowerCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                    upperCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                };
-                featureTypeTag?: string;
-                relationshipTag?: string;
-                featureName?: string;
-                elev?: number;
-                floor?: number;
-                radius?: number;
-            } | null;
-            favicon: string | null;
-            unreadCount: number | null;
-            folderId: string | null;
-        };
-        DiscoverDto: {
-            url: string;
-            username?: string;
-            password?: string;
-            user_agent?: string;
-        };
-        DiscoverOutDto_Output: {
-            format: string;
-            title: string | null;
-            /** Format: uri */
-            url: string;
-        };
-        FileDto: {
-            /**
-             * Format: binary
-             * @description OPML file to import
-             */
-            file: Record<string, never>;
-        };
-        UpdateFeedDto: {
-            description?: string;
-            folderId: string | null;
-        };
-        SubscriptionOutDto_Output: {
-            /** Format: uuid */
-            id: string;
-            userId: string;
-            /** Format: uuid */
-            feedId: string;
-            description: string | null;
-            folderId: string | null;
-        };
-        ArticleListDto_Output: {
-            cursor: string | null;
-            articles: {
-                /** Format: uuid */
-                id: string;
-                minifluxId: number;
-                title: string;
-                url?: string | null;
-                /** @default [] */
-                authors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                /** @default [] */
-                contributors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                subject: string | null;
-                publisher: string | null;
-                contributor: string | null;
-                format: string | null;
-                language: string | null;
-                rights: string | null;
-                categories: {
-                    term?: string;
-                    scheme?: string;
-                    label?: string;
-                }[];
-                description: string | null;
-                comments: string | null;
-                commentRss: string | null;
-                geo: {
-                    point?: {
-                        lat: number;
-                        lng: number;
-                    };
-                    line?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    polygon?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    box?: {
-                        lowerCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                        upperCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                    };
-                    featureTypeTag?: string;
-                    relationshipTag?: string;
-                    featureName?: string;
-                    elev?: number;
-                    floor?: number;
-                    radius?: number;
-                } | null;
-                hash: string | null;
-                rawContent: string | null;
-                readableHtml: string | null;
-                readableText: string | null;
-                fullArticleHtml: string | null;
-                fullArticleText: string | null;
-                encoded: string | null;
-                /** @default [] */
-                keywords: string[];
-                image: string | null;
-                imageAlt: string | null;
-                media: {
-                    contents?: {
-                        /** Format: uri */
-                        url: string;
-                        fileSize?: number;
-                        type?: string;
-                        medium?: string;
-                        isDefault?: boolean;
-                        expression?: string;
-                        bitrate?: number;
-                        framerate?: number;
-                        samplingrate?: number;
-                        channels?: number;
-                        duration?: number;
-                        height?: number;
-                        width?: number;
-                        lang?: string;
-                    }[];
-                } | null;
-                youtube: {
-                    videoId?: string;
-                    channelId?: string;
-                } | null;
-                podcast: {
-                    transcripts?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                        language?: string;
-                        rel?: string;
-                    }[];
-                    chapters?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                    };
-                    soundbites?: {
-                        startTime: number;
-                        duration: number;
-                        display?: string;
-                    }[];
-                    persons?: {
-                        display: string;
-                        role?: string;
-                        group?: string;
-                        /** Format: uri */
-                        img?: string;
-                        /** Format: uri */
-                        href?: string;
-                    }[];
-                    location?: {
-                        display: string;
-                        geo?: string;
-                        osm?: string;
-                    };
-                    episode?: {
-                        number: number;
-                        display?: string;
-                    };
-                    license?: {
-                        display: string;
-                        /** Format: uri */
-                        url?: string;
-                    };
-                    alternateEnclosures?: {
-                        type: string;
-                        length?: number;
-                        bitrate?: number;
-                        height?: number;
-                        lang?: string;
-                        title?: string;
-                        rel?: string;
-                        codecs?: string;
-                        default?: boolean;
-                        sources?: {
-                            /** Format: uri */
-                            uri: string;
-                            contentType?: string;
-                        }[];
-                        integrity?: {
-                            type: string;
-                            value: string;
-                        };
-                    }[];
-                    value?: {
-                        type: string;
-                        method: string;
-                        suggested?: number;
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                        valueTimeSplits?: {
-                            startTime: number;
-                            duration: number;
-                            remoteStartTime?: number;
-                            remotePercentage?: number;
-                            remoteItem?: {
-                                feedGuid: string;
-                                /** Format: uri */
-                                feedUrl?: string;
-                                itemGuid?: string;
-                                medium?: string;
-                            };
-                            valueRecipients?: {
-                                name?: string;
-                                customKey?: string;
-                                customValue?: string;
-                                type: string;
-                                address: string;
-                                split: number;
-                                fee?: boolean;
-                            }[];
-                        }[];
-                    };
-                    images?: {
-                        srcset?: string;
-                    };
-                    socialInteracts?: {
-                        /** Format: uri */
-                        uri?: string;
-                        protocol: string;
-                        accountId?: string;
-                        accountUrl?: string;
-                        priority?: number;
-                    }[];
-                    txts?: {
-                        display: string;
-                        purpose?: string;
-                    }[];
-                } | null;
-                thread: {
-                    total?: number;
-                    inReplyTos?: {
-                        ref: string;
-                        /** Format: uri */
-                        href?: string;
-                        type?: string;
-                        source?: string;
-                    }[];
-                } | null;
-                /** Format: date-time */
-                published: string;
-                updated: string | null;
-                guid: {
-                    /** @default false */
-                    isPermalink: boolean;
-                    value: string;
-                } | null;
-                enclosures: {
-                    id: number;
-                    entry_id: number;
-                    /** Format: uri */
-                    url: string;
-                    mime_type: string;
-                    size: number;
-                    /** @default 0 */
-                    media_progression: number;
-                }[] | null;
-                itunes: {
-                    duration?: number;
-                    /** Format: uri */
-                    image?: string;
-                    explicit?: boolean;
-                    title?: string;
-                    episode?: number;
-                    season?: number;
-                    episodeType?: string;
-                    block?: boolean;
-                } | null;
-                isRead: boolean | null;
-                isStarred: (boolean | null) | null;
-                isBlurred: boolean | null;
-                isHidden: boolean | null;
-                /** @default [] */
-                contentWarning: string[] | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
-            }[];
-        };
-        ArticleStatusDto_Output: {
-            userId: string;
-            /** Format: uuid */
-            articleId: string;
-            isRead?: boolean;
-            isStarred?: boolean;
-            isBlurred?: boolean;
-            isHidden?: boolean;
-            /** @default [] */
-            contentWarning: string[] | null;
-        };
-        ArticleSearchDto_Output: {
-            articles: {
-                /** Format: uuid */
-                id: string;
-                minifluxId: number;
-                title: string;
-                url?: string | null;
-                /** @default [] */
-                authors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                /** @default [] */
-                contributors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                subject: string | null;
-                publisher: string | null;
-                contributor: string | null;
-                format: string | null;
-                language: string | null;
-                rights: string | null;
-                categories: {
-                    term?: string;
-                    scheme?: string;
-                    label?: string;
-                }[];
-                description: string | null;
-                comments: string | null;
-                commentRss: string | null;
-                geo: {
-                    point?: {
-                        lat: number;
-                        lng: number;
-                    };
-                    line?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    polygon?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    box?: {
-                        lowerCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                        upperCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                    };
-                    featureTypeTag?: string;
-                    relationshipTag?: string;
-                    featureName?: string;
-                    elev?: number;
-                    floor?: number;
-                    radius?: number;
-                } | null;
-                hash: string | null;
-                rawContent: string | null;
-                readableHtml: string | null;
-                readableText: string | null;
-                fullArticleHtml: string | null;
-                fullArticleText: string | null;
-                encoded: string | null;
-                /** @default [] */
-                keywords: string[];
-                image: string | null;
-                imageAlt: string | null;
-                media: {
-                    contents?: {
-                        /** Format: uri */
-                        url: string;
-                        fileSize?: number;
-                        type?: string;
-                        medium?: string;
-                        isDefault?: boolean;
-                        expression?: string;
-                        bitrate?: number;
-                        framerate?: number;
-                        samplingrate?: number;
-                        channels?: number;
-                        duration?: number;
-                        height?: number;
-                        width?: number;
-                        lang?: string;
-                    }[];
-                } | null;
-                youtube: {
-                    videoId?: string;
-                    channelId?: string;
-                } | null;
-                podcast: {
-                    transcripts?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                        language?: string;
-                        rel?: string;
-                    }[];
-                    chapters?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                    };
-                    soundbites?: {
-                        startTime: number;
-                        duration: number;
-                        display?: string;
-                    }[];
-                    persons?: {
-                        display: string;
-                        role?: string;
-                        group?: string;
-                        /** Format: uri */
-                        img?: string;
-                        /** Format: uri */
-                        href?: string;
-                    }[];
-                    location?: {
-                        display: string;
-                        geo?: string;
-                        osm?: string;
-                    };
-                    episode?: {
-                        number: number;
-                        display?: string;
-                    };
-                    license?: {
-                        display: string;
-                        /** Format: uri */
-                        url?: string;
-                    };
-                    alternateEnclosures?: {
-                        type: string;
-                        length?: number;
-                        bitrate?: number;
-                        height?: number;
-                        lang?: string;
-                        title?: string;
-                        rel?: string;
-                        codecs?: string;
-                        default?: boolean;
-                        sources?: {
-                            /** Format: uri */
-                            uri: string;
-                            contentType?: string;
-                        }[];
-                        integrity?: {
-                            type: string;
-                            value: string;
-                        };
-                    }[];
-                    value?: {
-                        type: string;
-                        method: string;
-                        suggested?: number;
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                        valueTimeSplits?: {
-                            startTime: number;
-                            duration: number;
-                            remoteStartTime?: number;
-                            remotePercentage?: number;
-                            remoteItem?: {
-                                feedGuid: string;
-                                /** Format: uri */
-                                feedUrl?: string;
-                                itemGuid?: string;
-                                medium?: string;
-                            };
-                            valueRecipients?: {
-                                name?: string;
-                                customKey?: string;
-                                customValue?: string;
-                                type: string;
-                                address: string;
-                                split: number;
-                                fee?: boolean;
-                            }[];
-                        }[];
-                    };
-                    images?: {
-                        srcset?: string;
-                    };
-                    socialInteracts?: {
-                        /** Format: uri */
-                        uri?: string;
-                        protocol: string;
-                        accountId?: string;
-                        accountUrl?: string;
-                        priority?: number;
-                    }[];
-                    txts?: {
-                        display: string;
-                        purpose?: string;
-                    }[];
-                } | null;
-                thread: {
-                    total?: number;
-                    inReplyTos?: {
-                        ref: string;
-                        /** Format: uri */
-                        href?: string;
-                        type?: string;
-                        source?: string;
-                    }[];
-                } | null;
-                /** Format: date-time */
-                published: string;
-                updated: string | null;
-                guid: {
-                    /** @default false */
-                    isPermalink: boolean;
-                    value: string;
-                } | null;
-                enclosures: {
-                    id: number;
-                    entry_id: number;
-                    /** Format: uri */
-                    url: string;
-                    mime_type: string;
-                    size: number;
-                    /** @default 0 */
-                    media_progression: number;
-                }[] | null;
-                itunes: {
-                    duration?: number;
-                    /** Format: uri */
-                    image?: string;
-                    explicit?: boolean;
-                    title?: string;
-                    episode?: number;
-                    season?: number;
-                    episodeType?: string;
-                    block?: boolean;
-                } | null;
-                feedTitle: string | null;
-                feedId: string | null;
-                /** @default false */
-                isRead: boolean | null;
-                /** @default false */
-                isStarred: boolean | null;
-                /** @default false */
-                isBlurred: boolean | null;
-                /** @default false */
-                isHidden: boolean | null;
-                /** @default [] */
-                contentWarning: string[] | null;
-            }[];
-        };
-        HiddenArticleListDto_Output: {
-            cursor: string | null;
-            articles: {
-                /** Format: uuid */
-                id: string;
-                minifluxId: number;
-                title: string;
-                url?: string | null;
-                /** @default [] */
-                authors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                /** @default [] */
-                contributors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                subject: string | null;
-                publisher: string | null;
-                contributor: string | null;
-                format: string | null;
-                language: string | null;
-                rights: string | null;
-                categories: {
-                    term?: string;
-                    scheme?: string;
-                    label?: string;
-                }[];
-                description: string | null;
-                comments: string | null;
-                commentRss: string | null;
-                geo: {
-                    point?: {
-                        lat: number;
-                        lng: number;
-                    };
-                    line?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    polygon?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    box?: {
-                        lowerCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                        upperCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                    };
-                    featureTypeTag?: string;
-                    relationshipTag?: string;
-                    featureName?: string;
-                    elev?: number;
-                    floor?: number;
-                    radius?: number;
-                } | null;
-                hash: string | null;
-                rawContent: string | null;
-                readableHtml: string | null;
-                readableText: string | null;
-                fullArticleHtml: string | null;
-                fullArticleText: string | null;
-                encoded: string | null;
-                /** @default [] */
-                keywords: string[];
-                image: string | null;
-                imageAlt: string | null;
-                media: {
-                    contents?: {
-                        /** Format: uri */
-                        url: string;
-                        fileSize?: number;
-                        type?: string;
-                        medium?: string;
-                        isDefault?: boolean;
-                        expression?: string;
-                        bitrate?: number;
-                        framerate?: number;
-                        samplingrate?: number;
-                        channels?: number;
-                        duration?: number;
-                        height?: number;
-                        width?: number;
-                        lang?: string;
-                    }[];
-                } | null;
-                youtube: {
-                    videoId?: string;
-                    channelId?: string;
-                } | null;
-                podcast: {
-                    transcripts?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                        language?: string;
-                        rel?: string;
-                    }[];
-                    chapters?: {
-                        /** Format: uri */
-                        url: string;
-                        type: string;
-                    };
-                    soundbites?: {
-                        startTime: number;
-                        duration: number;
-                        display?: string;
-                    }[];
-                    persons?: {
-                        display: string;
-                        role?: string;
-                        group?: string;
-                        /** Format: uri */
-                        img?: string;
-                        /** Format: uri */
-                        href?: string;
-                    }[];
-                    location?: {
-                        display: string;
-                        geo?: string;
-                        osm?: string;
-                    };
-                    episode?: {
-                        number: number;
-                        display?: string;
-                    };
-                    license?: {
-                        display: string;
-                        /** Format: uri */
-                        url?: string;
-                    };
-                    alternateEnclosures?: {
-                        type: string;
-                        length?: number;
-                        bitrate?: number;
-                        height?: number;
-                        lang?: string;
-                        title?: string;
-                        rel?: string;
-                        codecs?: string;
-                        default?: boolean;
-                        sources?: {
-                            /** Format: uri */
-                            uri: string;
-                            contentType?: string;
-                        }[];
-                        integrity?: {
-                            type: string;
-                            value: string;
-                        };
-                    }[];
-                    value?: {
-                        type: string;
-                        method: string;
-                        suggested?: number;
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                        valueTimeSplits?: {
-                            startTime: number;
-                            duration: number;
-                            remoteStartTime?: number;
-                            remotePercentage?: number;
-                            remoteItem?: {
-                                feedGuid: string;
-                                /** Format: uri */
-                                feedUrl?: string;
-                                itemGuid?: string;
-                                medium?: string;
-                            };
-                            valueRecipients?: {
-                                name?: string;
-                                customKey?: string;
-                                customValue?: string;
-                                type: string;
-                                address: string;
-                                split: number;
-                                fee?: boolean;
-                            }[];
-                        }[];
-                    };
-                    images?: {
-                        srcset?: string;
-                    };
-                    socialInteracts?: {
-                        /** Format: uri */
-                        uri?: string;
-                        protocol: string;
-                        accountId?: string;
-                        accountUrl?: string;
-                        priority?: number;
-                    }[];
-                    txts?: {
-                        display: string;
-                        purpose?: string;
-                    }[];
-                } | null;
-                thread: {
-                    total?: number;
-                    inReplyTos?: {
-                        ref: string;
-                        /** Format: uri */
-                        href?: string;
-                        type?: string;
-                        source?: string;
-                    }[];
-                } | null;
-                /** Format: date-time */
-                published: string;
-                updated: string | null;
-                guid: {
-                    /** @default false */
-                    isPermalink: boolean;
-                    value: string;
-                } | null;
-                enclosures: {
-                    id: number;
-                    entry_id: number;
-                    /** Format: uri */
-                    url: string;
-                    mime_type: string;
-                    size: number;
-                    /** @default 0 */
-                    media_progression: number;
-                }[] | null;
-                itunes: {
-                    duration?: number;
-                    /** Format: uri */
-                    image?: string;
-                    explicit?: boolean;
-                    title?: string;
-                    episode?: number;
-                    season?: number;
-                    episodeType?: string;
-                    block?: boolean;
-                } | null;
-                isRead: boolean | null;
-                isStarred: (boolean | null) | null;
-                isBlurred: boolean | null;
-                isHidden: boolean | null;
-                /** @default [] */
-                contentWarning: string[] | null;
-                /** Format: uuid */
-                feedId: string;
-                feedTitle: string | null;
-                /** Format: uuid */
-                ruleId: string;
-            }[];
-        };
-        ArticleDetailDto_Output: {
-            /** Format: uuid */
-            id: string;
-            title: string;
-            url?: string | null;
-            /** @default [] */
-            authors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            /** @default [] */
-            contributors: {
-                name: string;
-                /** Format: email */
-                email?: string;
-                /** Format: uri */
-                uri?: string;
-            }[];
-            subject: string | null;
-            publisher: string | null;
-            contributor: string | null;
-            format: string | null;
-            language: string | null;
-            rights: string | null;
-            categories: {
-                term?: string;
-                scheme?: string;
-                label?: string;
-            }[];
-            description: string | null;
-            comments: string | null;
-            commentRss: string | null;
-            geo: {
-                point?: {
-                    lat: number;
-                    lng: number;
-                };
-                line?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                polygon?: {
-                    points: {
-                        lat: number;
-                        lng: number;
-                    }[];
-                };
-                box?: {
-                    lowerCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                    upperCorner: {
-                        lat: number;
-                        lng: number;
-                    };
-                };
-                featureTypeTag?: string;
-                relationshipTag?: string;
-                featureName?: string;
-                elev?: number;
-                floor?: number;
-                radius?: number;
-            } | null;
-            hash: string | null;
-            rawContent: string | null;
-            readableHtml: string | null;
-            readableText: string | null;
-            fullArticleHtml: string | null;
-            fullArticleText: string | null;
-            encoded: string | null;
-            /** @default [] */
-            keywords: string[];
-            image: string | null;
-            imageAlt: string | null;
-            media: {
-                contents?: {
-                    /** Format: uri */
-                    url: string;
-                    fileSize?: number;
-                    type?: string;
-                    medium?: string;
-                    isDefault?: boolean;
-                    expression?: string;
-                    bitrate?: number;
-                    framerate?: number;
-                    samplingrate?: number;
-                    channels?: number;
-                    duration?: number;
-                    height?: number;
-                    width?: number;
-                    lang?: string;
-                }[];
-            } | null;
-            youtube: {
-                videoId?: string;
-                channelId?: string;
-            } | null;
-            podcast: {
-                transcripts?: {
-                    /** Format: uri */
-                    url: string;
-                    type: string;
-                    language?: string;
-                    rel?: string;
-                }[];
-                chapters?: {
-                    /** Format: uri */
-                    url: string;
-                    type: string;
-                };
-                soundbites?: {
-                    startTime: number;
-                    duration: number;
-                    display?: string;
-                }[];
-                persons?: {
-                    display: string;
-                    role?: string;
-                    group?: string;
-                    /** Format: uri */
-                    img?: string;
-                    /** Format: uri */
-                    href?: string;
-                }[];
-                location?: {
-                    display: string;
-                    geo?: string;
-                    osm?: string;
-                };
-                episode?: {
-                    number: number;
-                    display?: string;
-                };
-                license?: {
-                    display: string;
-                    /** Format: uri */
-                    url?: string;
-                };
-                alternateEnclosures?: {
-                    type: string;
-                    length?: number;
-                    bitrate?: number;
-                    height?: number;
-                    lang?: string;
-                    title?: string;
-                    rel?: string;
-                    codecs?: string;
-                    default?: boolean;
-                    sources?: {
-                        /** Format: uri */
-                        uri: string;
-                        contentType?: string;
-                    }[];
-                    integrity?: {
-                        type: string;
-                        value: string;
-                    };
-                }[];
-                value?: {
-                    type: string;
-                    method: string;
-                    suggested?: number;
-                    valueRecipients?: {
-                        name?: string;
-                        customKey?: string;
-                        customValue?: string;
-                        type: string;
-                        address: string;
-                        split: number;
-                        fee?: boolean;
-                    }[];
-                    valueTimeSplits?: {
-                        startTime: number;
-                        duration: number;
-                        remoteStartTime?: number;
-                        remotePercentage?: number;
-                        remoteItem?: {
-                            feedGuid: string;
-                            /** Format: uri */
-                            feedUrl?: string;
-                            itemGuid?: string;
-                            medium?: string;
-                        };
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                    }[];
-                };
-                images?: {
-                    srcset?: string;
-                };
-                socialInteracts?: {
-                    /** Format: uri */
-                    uri?: string;
-                    protocol: string;
-                    accountId?: string;
-                    accountUrl?: string;
-                    priority?: number;
-                }[];
-                txts?: {
-                    display: string;
-                    purpose?: string;
-                }[];
-            } | null;
-            thread: {
-                total?: number;
-                inReplyTos?: {
-                    ref: string;
-                    /** Format: uri */
-                    href?: string;
-                    type?: string;
-                    source?: string;
-                }[];
-            } | null;
-            /** Format: date-time */
-            published: string;
-            updated: string | null;
-            guid: {
-                /** @default false */
-                isPermalink: boolean;
-                value: string;
-            } | null;
-            enclosures: {
-                id: number;
-                entry_id: number;
-                /** Format: uri */
-                url: string;
-                mime_type: string;
-                size: number;
-                /** @default 0 */
-                media_progression: number;
-            }[] | null;
-            itunes: {
-                duration?: number;
-                /** Format: uri */
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-            } | null;
-            feedTitle: string;
-            isRead: boolean | null;
-            isStarred: boolean | null;
-            isBlurred: boolean | null;
-            isHidden: boolean | null;
-            /** @default [] */
-            contentWarning: string[] | null;
-        };
-        CreateFolderDto: {
-            name: string;
-            feedIds?: string[];
-        };
-        FolderOutDto_Output: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            userId: string;
-            feedIds: string[];
-        };
-        FolderWithFeedsOutDto_Output: {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            userId: string;
-            feeds: {
-                /** Format: uuid */
-                id: string;
-                title: string;
-                subtitle: string | null;
-                /** Format: uri */
-                url: string;
-                site_url: string | null;
-                /** @default  */
-                etag_header: string;
-                last_modified_header: string | null;
-                parsingErrorMessage: string | null;
-                /** @default 0 */
-                parsingErrorCount: number;
-                userAgent: string | null;
-                crawler: boolean | null;
-                /** @default [] */
-                authors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                /** @default [] */
-                contributors: {
-                    name: string;
-                    /** Format: email */
-                    email?: string;
-                    /** Format: uri */
-                    uri?: string;
-                }[];
-                /** @default [] */
-                categories: {
-                    term?: string;
-                    scheme?: string;
-                    label?: string;
-                }[];
-                copyright: string | null;
-                image: {
-                    /** Format: uri */
-                    url: string;
-                    title?: string;
-                    /** Format: uri */
-                    link: string;
-                    description?: string;
-                    width?: number;
-                    height?: number;
-                } | null;
-                /** Format: date-time */
-                lastChecked: string;
-                updated: string | null;
-                explicit: boolean | null;
-                subject: string | null;
-                updatePeriod: string | null;
-                updateFrequency: number | null;
-                updateBase: string | null;
-                publisher: string | null;
-                rights: string | null;
-                youtube: {
-                    channelId?: string;
-                    playlistId?: string;
-                } | null;
-                podcast: {
-                    locked?: {
-                        value: boolean;
-                        owner?: string;
-                    };
-                    fundings?: {
-                        /** Format: uri */
-                        url: string;
-                        display?: string;
-                    }[];
-                    persons?: {
-                        display: string;
-                        role?: string;
-                        group?: string;
-                        /** Format: uri */
-                        img?: string;
-                        /** Format: uri */
-                        href?: string;
-                    }[];
-                    location?: {
-                        display: string;
-                        geo?: string;
-                        osm?: string;
-                    };
-                    trailers?: {
-                        display: string;
-                        /** Format: uri */
-                        url: string;
-                        pubDate: string;
-                        length?: number;
-                        type?: string;
-                        season?: number;
-                    }[];
-                    guid?: string;
-                    value?: {
-                        type: string;
-                        method: string;
-                        suggested?: number;
-                        valueRecipients?: {
-                            name?: string;
-                            customKey?: string;
-                            customValue?: string;
-                            type: string;
-                            address: string;
-                            split: number;
-                            fee?: boolean;
-                        }[];
-                        valueTimeSplits?: {
-                            startTime: number;
-                            duration: number;
-                            remoteStartTime?: number;
-                            remotePercentage?: number;
-                            remoteItem?: {
-                                feedGuid: string;
-                                /** Format: uri */
-                                feedUrl?: string;
-                                itemGuid?: string;
-                                medium?: string;
-                            };
-                            valueRecipients?: {
-                                name?: string;
-                                customKey?: string;
-                                customValue?: string;
-                                type: string;
-                                address: string;
-                                split: number;
-                                fee?: boolean;
-                            }[];
-                        }[];
-                    };
-                    medium?: string;
-                    images?: {
-                        srcset?: string;
-                    };
-                    liveItems?: {
-                        status: string;
-                        /** Format: date-time */
-                        start: string;
-                        /** Format: date-time */
-                        end?: string;
-                        contentLinks?: {
-                            /** Format: uri */
-                            href: string;
-                            display?: string;
-                        }[];
-                    }[];
-                    blocks?: {
-                        value: boolean;
-                        id?: string;
-                    }[];
-                    txts?: {
-                        display: string;
-                        purpose?: string;
-                    }[];
-                    remoteItems?: {
-                        feedGuid: string;
-                        /** Format: uri */
-                        feedUrl?: string;
-                        itemGuid?: string;
-                        medium?: string;
-                    }[];
-                    podroll?: {
-                        remoteItems?: {
-                            feedGuid: string;
-                            /** Format: uri */
-                            feedUrl?: string;
-                            itemGuid?: string;
-                            medium?: string;
-                        }[];
-                    };
-                    updateFrequency?: {
-                        display: string;
-                        complete?: boolean;
-                        dtstart?: string;
-                        rrule?: string;
-                    };
-                    podping?: {
-                        usesPodping?: boolean;
-                    };
-                } | null;
-                geo: {
-                    point?: {
-                        lat: number;
-                        lng: number;
-                    };
-                    line?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    polygon?: {
-                        points: {
-                            lat: number;
-                            lng: number;
-                        }[];
-                    };
-                    box?: {
-                        lowerCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                        upperCorner: {
-                            lat: number;
-                            lng: number;
-                        };
-                    };
-                    featureTypeTag?: string;
-                    relationshipTag?: string;
-                    featureName?: string;
-                    elev?: number;
-                    floor?: number;
-                    radius?: number;
-                } | null;
-                favicon: string | null;
-            }[];
-        };
-        UpdateFolderDto: {
-            name?: string;
-            feedIds?: string[];
-        };
-        CreateFilterDto: {
-            name: string;
-            description?: string;
-            conditions: {
-                keywords?: string[];
-                titleContains?: string[];
-                contentContains?: string[];
-                authors?: string[];
-                categories?: string[];
-                feeds?: string[];
-            };
-            /** @default true */
-            isActive: boolean;
-            action: {
-                /** @enum {string} */
-                type: "blur" | "markRead" | "hide";
-                contentWarning: string | null;
-            };
-        };
-        FilterOutDto_Output: {
-            /** Format: uuid */
-            id: string;
-            name: string | null;
-            description?: string;
-            conditions: {
-                keywords?: string[];
-                titleContains?: string[];
-                contentContains?: string[];
-                authors?: string[];
-                categories?: string[];
-                feeds?: string[];
-            };
-            /** @default true */
-            isActive: boolean;
-            action: {
-                /** @enum {string} */
-                type: "blur" | "markRead" | "hide";
-                contentWarning: string | null;
-            };
-        };
-        UpdateFilterDto: {
-            name?: string;
-            description?: string;
-            conditions: {
-                keywords?: string[];
-                titleContains?: string[];
-                contentContains?: string[];
-                authors?: string[];
-                categories?: string[];
-                feeds?: string[];
-            };
-            /** @default true */
-            isActive: boolean;
-            action: {
-                /** @enum {string} */
-                type?: "blur" | "markRead" | "hide";
-                contentWarning?: string | null;
-            };
-        };
-        CreateConfigDto: {
-            apiKey: string;
-            /** Format: uri */
-            apiURL: string;
-        };
-        CreateBookmarkDto: {
-            /** Format: uri */
-            url: string;
-        };
-        FeedMini_Output: {
-            title: string;
-            site_url: string | null;
-            /** @default  */
-            etag_header: string;
-            last_modified_header: string | null;
-            crawler: boolean | null;
-            id: number;
-            user_id: number;
-            checked_at: string;
-            parsing_error_message: string;
-            parsing_error_count: number;
-            /** Format: uri */
-            feed_url: string;
-            icon: {
-                feed_id: number;
-                icon_id: number;
-            } | null;
-            scraper_rules: string;
-            rewrite_rules: string;
-            blocklist_rules: string;
-            keeplist_rules: string;
-            user_agent: string;
-            username: string;
-            password: string;
-            /** @default false */
-            disabled: boolean;
-            /** @default false */
-            ignore_http_cache: boolean;
-            /** @default false */
-            fetch_via_proxy: boolean;
-            category: {
-                /** @default 0 */
-                id: number;
-                user_id: number;
-                /** @default  */
-                title: string;
-            };
-        };
-        CountersDto_Output: {
-            reads: {
-                [key: string]: number;
-            };
-            unreads: {
-                [key: string]: number;
-            };
-        };
-        CreateFeedDto: {
-            /** Format: uri */
-            feed_url: string;
-            category_id: number;
-        };
-        UpdateFeedMiniDto: {
-            title?: string;
-            category_id?: number;
-        };
-        EntriesListDto_Output: {
-            total: number;
-            entries: {
-                id: number;
-                title: string;
-                url?: string | null;
-                hash: string | null;
-                enclosures: {
-                    id: number;
-                    entry_id: number;
-                    /** Format: uri */
-                    url: string;
-                    mime_type: string;
-                    size: number;
-                    /** @default 0 */
-                    media_progression: number;
-                }[] | null;
-                itunes: {
-                    duration?: number;
-                    /** Format: uri */
-                    image?: string;
-                    explicit?: boolean;
-                    title?: string;
-                    episode?: number;
-                    season?: number;
-                    episodeType?: string;
-                    block?: boolean;
-                } | null;
-                user_id: number;
-                feed_id: number;
-                comments_url: string;
-                author: string | null;
-                content: string;
-                published_at: string;
-                created_at: string;
-                status: string;
-                share_code: string;
-                /** @default false */
-                starred: boolean;
-                reading_time: number;
-                feed: {
-                    title: string;
-                    site_url: string | null;
-                    /** @default  */
-                    etag_header: string;
-                    last_modified_header: string | null;
-                    crawler: boolean | null;
-                    id: number;
-                    user_id: number;
-                    checked_at: string;
-                    parsing_error_message: string;
-                    parsing_error_count: number;
-                    /** Format: uri */
-                    feed_url: string;
-                    icon: {
-                        feed_id: number;
-                        icon_id: number;
-                    } | null;
-                    scraper_rules: string;
-                    rewrite_rules: string;
-                    blocklist_rules: string;
-                    keeplist_rules: string;
-                    user_agent: string;
-                    username: string;
-                    password: string;
-                    /** @default false */
-                    disabled: boolean;
-                    /** @default false */
-                    ignore_http_cache: boolean;
-                    /** @default false */
-                    fetch_via_proxy: boolean;
-                    category: {
-                        /** @default 0 */
-                        id: number;
-                        user_id: number;
-                        /** @default  */
-                        title: string;
-                    };
-                };
-            }[];
-        };
-        EntryDto_Output: {
-            id: number;
-            title: string;
-            url?: string | null;
-            hash: string | null;
-            enclosures: {
-                id: number;
-                entry_id: number;
-                /** Format: uri */
-                url: string;
-                mime_type: string;
-                size: number;
-                /** @default 0 */
-                media_progression: number;
-            }[] | null;
-            itunes: {
-                duration?: number;
-                /** Format: uri */
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-            } | null;
-            user_id: number;
-            feed_id: number;
-            comments_url: string;
-            author: string | null;
-            content: string;
-            published_at: string;
-            created_at: string;
-            status: string;
-            share_code: string;
-            /** @default false */
-            starred: boolean;
-            reading_time: number;
-            feed: {
-                title: string;
-                site_url: string | null;
-                /** @default  */
-                etag_header: string;
-                last_modified_header: string | null;
-                crawler: boolean | null;
-                id: number;
-                user_id: number;
-                checked_at: string;
-                parsing_error_message: string;
-                parsing_error_count: number;
-                /** Format: uri */
-                feed_url: string;
-                icon: {
-                    feed_id: number;
-                    icon_id: number;
-                } | null;
-                scraper_rules: string;
-                rewrite_rules: string;
-                blocklist_rules: string;
-                keeplist_rules: string;
-                user_agent: string;
-                username: string;
-                password: string;
-                /** @default false */
-                disabled: boolean;
-                /** @default false */
-                ignore_http_cache: boolean;
-                /** @default false */
-                fetch_via_proxy: boolean;
-                category: {
-                    /** @default 0 */
-                    id: number;
-                    user_id: number;
-                    /** @default  */
-                    title: string;
-                };
-            };
-        };
-        UpdateEntriesDto: {
-            entry_ids: number[];
-            /** @enum {string} */
-            status: "read" | "unread";
-        };
-        FullEntryContent_Output: {
-            content: string;
-        };
-        CategoryOutDto_Output: {
-            id: number;
-            title: string;
-            user_id: number;
-            hide_globally: boolean;
-        };
-        CreateCategoryDto: {
-            title: string;
-        };
-        UserSchemaDto_Output: {
-            id: number;
-            username: string;
-            is_admin: boolean;
-            theme: string;
-            language: string;
-            timezone: string;
-            entry_sorting_direction: string;
-            stylesheet: string;
-            google_id: string;
-            openid_connect_id: string;
-            entries_per_page: number;
-            keyboard_shortcuts: boolean;
-            show_reading_time: boolean;
-            entry_swipe: boolean;
-            last_login_at: string;
-        };
+  schemas: {
+    SubscribeFeedDto: {
+      /** Format: uri */
+      url: string;
+      description?: string;
+      folderId: string | null;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    NewSubscriptionDto_Output: {
+      /** Format: uuid */
+      id: string;
+      minifluxId: number;
+      title: string;
+      subtitle: string | null;
+      /** Format: uri */
+      url: string;
+      site_url: string | null;
+      /** @default  */
+      etag_header: string;
+      last_modified_header: string | null;
+      parsingErrorMessage: string | null;
+      /** @default 0 */
+      parsingErrorCount: number;
+      userAgent: string | null;
+      crawler: boolean | null;
+      /** @default [] */
+      authors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      /** @default [] */
+      contributors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      /** @default [] */
+      categories: {
+        term?: string;
+        scheme?: string;
+        label?: string;
+      }[];
+      copyright: string | null;
+      image: {
+        /** Format: uri */
+        url: string;
+        title?: string;
+        /** Format: uri */
+        link: string;
+        description?: string;
+        width?: number;
+        height?: number;
+      } | null;
+      /** Format: date-time */
+      lastChecked: string;
+      updated: string | null;
+      explicit: boolean | null;
+      subject: string | null;
+      updatePeriod: string | null;
+      updateFrequency: number | null;
+      updateBase: string | null;
+      publisher: string | null;
+      rights: string | null;
+      youtube: {
+        channelId?: string;
+        playlistId?: string;
+      } | null;
+      podcast: {
+        locked?: {
+          value: boolean;
+          owner?: string;
+        };
+        fundings?: {
+          /** Format: uri */
+          url: string;
+          display?: string;
+        }[];
+        persons?: {
+          display: string;
+          role?: string;
+          group?: string;
+          /** Format: uri */
+          img?: string;
+          /** Format: uri */
+          href?: string;
+        }[];
+        location?: {
+          display: string;
+          geo?: string;
+          osm?: string;
+        };
+        trailers?: {
+          display: string;
+          /** Format: uri */
+          url: string;
+          pubDate: string;
+          length?: number;
+          type?: string;
+          season?: number;
+        }[];
+        guid?: string;
+        value?: {
+          type: string;
+          method: string;
+          suggested?: number;
+          valueRecipients?: {
+            name?: string;
+            customKey?: string;
+            customValue?: string;
+            type: string;
+            address: string;
+            split: number;
+            fee?: boolean;
+          }[];
+          valueTimeSplits?: {
+            startTime: number;
+            duration: number;
+            remoteStartTime?: number;
+            remotePercentage?: number;
+            remoteItem?: {
+              feedGuid: string;
+              /** Format: uri */
+              feedUrl?: string;
+              itemGuid?: string;
+              medium?: string;
+            };
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+          }[];
+        };
+        medium?: string;
+        images?: {
+          srcset?: string;
+        };
+        liveItems?: {
+          status: string;
+          /** Format: date-time */
+          start: string;
+          /** Format: date-time */
+          end?: string;
+          contentLinks?: {
+            /** Format: uri */
+            href: string;
+            display?: string;
+          }[];
+        }[];
+        blocks?: {
+          value: boolean;
+          id?: string;
+        }[];
+        txts?: {
+          display: string;
+          purpose?: string;
+        }[];
+        remoteItems?: {
+          feedGuid: string;
+          /** Format: uri */
+          feedUrl?: string;
+          itemGuid?: string;
+          medium?: string;
+        }[];
+        podroll?: {
+          remoteItems?: {
+            feedGuid: string;
+            /** Format: uri */
+            feedUrl?: string;
+            itemGuid?: string;
+            medium?: string;
+          }[];
+        };
+        updateFrequency?: {
+          display: string;
+          complete?: boolean;
+          dtstart?: string;
+          rrule?: string;
+        };
+        podping?: {
+          usesPodping?: boolean;
+        };
+      } | null;
+      geo: {
+        point?: {
+          lat: number;
+          lng: number;
+        };
+        line?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        polygon?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        box?: {
+          lowerCorner: {
+            lat: number;
+            lng: number;
+          };
+          upperCorner: {
+            lat: number;
+            lng: number;
+          };
+        };
+        featureTypeTag?: string;
+        relationshipTag?: string;
+        featureName?: string;
+        elev?: number;
+        floor?: number;
+        radius?: number;
+      } | null;
+      subscription: {
+        /** Format: uuid */
+        id: string;
+        userId: string;
+        /** Format: uuid */
+        feedId: string;
+        description: string | null;
+        folderId: string | null;
+      };
+    };
+    FeedOutWithCountsDto_Output: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      subtitle: string | null;
+      /** Format: uri */
+      url: string;
+      site_url: string | null;
+      /** @default  */
+      etag_header: string;
+      last_modified_header: string | null;
+      parsingErrorMessage: string | null;
+      /** @default 0 */
+      parsingErrorCount: number;
+      userAgent: string | null;
+      crawler: boolean | null;
+      /** @default [] */
+      authors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      /** @default [] */
+      contributors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      /** @default [] */
+      categories: {
+        term?: string;
+        scheme?: string;
+        label?: string;
+      }[];
+      copyright: string | null;
+      image: {
+        /** Format: uri */
+        url: string;
+        title?: string;
+        /** Format: uri */
+        link: string;
+        description?: string;
+        width?: number;
+        height?: number;
+      } | null;
+      /** Format: date-time */
+      lastChecked: string;
+      updated: string | null;
+      explicit: boolean | null;
+      subject: string | null;
+      updatePeriod: string | null;
+      updateFrequency: number | null;
+      updateBase: string | null;
+      publisher: string | null;
+      rights: string | null;
+      youtube: {
+        channelId?: string;
+        playlistId?: string;
+      } | null;
+      podcast: {
+        locked?: {
+          value: boolean;
+          owner?: string;
+        };
+        fundings?: {
+          /** Format: uri */
+          url: string;
+          display?: string;
+        }[];
+        persons?: {
+          display: string;
+          role?: string;
+          group?: string;
+          /** Format: uri */
+          img?: string;
+          /** Format: uri */
+          href?: string;
+        }[];
+        location?: {
+          display: string;
+          geo?: string;
+          osm?: string;
+        };
+        trailers?: {
+          display: string;
+          /** Format: uri */
+          url: string;
+          pubDate: string;
+          length?: number;
+          type?: string;
+          season?: number;
+        }[];
+        guid?: string;
+        value?: {
+          type: string;
+          method: string;
+          suggested?: number;
+          valueRecipients?: {
+            name?: string;
+            customKey?: string;
+            customValue?: string;
+            type: string;
+            address: string;
+            split: number;
+            fee?: boolean;
+          }[];
+          valueTimeSplits?: {
+            startTime: number;
+            duration: number;
+            remoteStartTime?: number;
+            remotePercentage?: number;
+            remoteItem?: {
+              feedGuid: string;
+              /** Format: uri */
+              feedUrl?: string;
+              itemGuid?: string;
+              medium?: string;
+            };
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+          }[];
+        };
+        medium?: string;
+        images?: {
+          srcset?: string;
+        };
+        liveItems?: {
+          status: string;
+          /** Format: date-time */
+          start: string;
+          /** Format: date-time */
+          end?: string;
+          contentLinks?: {
+            /** Format: uri */
+            href: string;
+            display?: string;
+          }[];
+        }[];
+        blocks?: {
+          value: boolean;
+          id?: string;
+        }[];
+        txts?: {
+          display: string;
+          purpose?: string;
+        }[];
+        remoteItems?: {
+          feedGuid: string;
+          /** Format: uri */
+          feedUrl?: string;
+          itemGuid?: string;
+          medium?: string;
+        }[];
+        podroll?: {
+          remoteItems?: {
+            feedGuid: string;
+            /** Format: uri */
+            feedUrl?: string;
+            itemGuid?: string;
+            medium?: string;
+          }[];
+        };
+        updateFrequency?: {
+          display: string;
+          complete?: boolean;
+          dtstart?: string;
+          rrule?: string;
+        };
+        podping?: {
+          usesPodping?: boolean;
+        };
+      } | null;
+      geo: {
+        point?: {
+          lat: number;
+          lng: number;
+        };
+        line?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        polygon?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        box?: {
+          lowerCorner: {
+            lat: number;
+            lng: number;
+          };
+          upperCorner: {
+            lat: number;
+            lng: number;
+          };
+        };
+        featureTypeTag?: string;
+        relationshipTag?: string;
+        featureName?: string;
+        elev?: number;
+        floor?: number;
+        radius?: number;
+      } | null;
+      favicon: string | null;
+      unreadCount: number | null;
+      folderId: string | null;
+    };
+    DiscoverDto: {
+      url: string;
+      username?: string;
+      password?: string;
+      user_agent?: string;
+    };
+    DiscoverOutDto_Output: {
+      format: string;
+      title: string | null;
+      /** Format: uri */
+      url: string;
+    };
+    FileDto: {
+      /**
+       * Format: binary
+       * @description OPML file to import
+       */
+      file: Record<string, never>;
+    };
+    UpdateFeedDto: {
+      description?: string;
+      folderId: string | null;
+    };
+    SubscriptionOutDto_Output: {
+      /** Format: uuid */
+      id: string;
+      userId: string;
+      /** Format: uuid */
+      feedId: string;
+      description: string | null;
+      folderId: string | null;
+    };
+    ArticleListDto_Output: {
+      cursor: string | null;
+      articles: {
+        /** Format: uuid */
+        id: string;
+        minifluxId: number;
+        title: string;
+        url?: string | null;
+        /** @default [] */
+        authors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        /** @default [] */
+        contributors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        subject: string | null;
+        publisher: string | null;
+        contributor: string | null;
+        format: string | null;
+        language: string | null;
+        rights: string | null;
+        categories: {
+          term?: string;
+          scheme?: string;
+          label?: string;
+        }[];
+        description: string | null;
+        comments: string | null;
+        commentRss: string | null;
+        geo: {
+          point?: {
+            lat: number;
+            lng: number;
+          };
+          line?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          polygon?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          box?: {
+            lowerCorner: {
+              lat: number;
+              lng: number;
+            };
+            upperCorner: {
+              lat: number;
+              lng: number;
+            };
+          };
+          featureTypeTag?: string;
+          relationshipTag?: string;
+          featureName?: string;
+          elev?: number;
+          floor?: number;
+          radius?: number;
+        } | null;
+        hash: string | null;
+        rawContent: string | null;
+        readableHtml: string | null;
+        readableText: string | null;
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        encoded: string | null;
+        /** @default [] */
+        keywords: string[];
+        image: string | null;
+        imageAlt: string | null;
+        media: {
+          contents?: {
+            /** Format: uri */
+            url: string;
+            fileSize?: number;
+            type?: string;
+            medium?: string;
+            isDefault?: boolean;
+            expression?: string;
+            bitrate?: number;
+            framerate?: number;
+            samplingrate?: number;
+            channels?: number;
+            duration?: number;
+            height?: number;
+            width?: number;
+            lang?: string;
+          }[];
+        } | null;
+        youtube: {
+          videoId?: string;
+          channelId?: string;
+        } | null;
+        podcast: {
+          transcripts?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+            language?: string;
+            rel?: string;
+          }[];
+          chapters?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+          };
+          soundbites?: {
+            startTime: number;
+            duration: number;
+            display?: string;
+          }[];
+          persons?: {
+            display: string;
+            role?: string;
+            group?: string;
+            /** Format: uri */
+            img?: string;
+            /** Format: uri */
+            href?: string;
+          }[];
+          location?: {
+            display: string;
+            geo?: string;
+            osm?: string;
+          };
+          episode?: {
+            number: number;
+            display?: string;
+          };
+          license?: {
+            display: string;
+            /** Format: uri */
+            url?: string;
+          };
+          alternateEnclosures?: {
+            type: string;
+            length?: number;
+            bitrate?: number;
+            height?: number;
+            lang?: string;
+            title?: string;
+            rel?: string;
+            codecs?: string;
+            default?: boolean;
+            sources?: {
+              /** Format: uri */
+              uri: string;
+              contentType?: string;
+            }[];
+            integrity?: {
+              type: string;
+              value: string;
+            };
+          }[];
+          value?: {
+            type: string;
+            method: string;
+            suggested?: number;
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+            valueTimeSplits?: {
+              startTime: number;
+              duration: number;
+              remoteStartTime?: number;
+              remotePercentage?: number;
+              remoteItem?: {
+                feedGuid: string;
+                /** Format: uri */
+                feedUrl?: string;
+                itemGuid?: string;
+                medium?: string;
+              };
+              valueRecipients?: {
+                name?: string;
+                customKey?: string;
+                customValue?: string;
+                type: string;
+                address: string;
+                split: number;
+                fee?: boolean;
+              }[];
+            }[];
+          };
+          images?: {
+            srcset?: string;
+          };
+          socialInteracts?: {
+            /** Format: uri */
+            uri?: string;
+            protocol: string;
+            accountId?: string;
+            accountUrl?: string;
+            priority?: number;
+          }[];
+          txts?: {
+            display: string;
+            purpose?: string;
+          }[];
+        } | null;
+        thread: {
+          total?: number;
+          inReplyTos?: {
+            ref: string;
+            /** Format: uri */
+            href?: string;
+            type?: string;
+            source?: string;
+          }[];
+        } | null;
+        /** Format: date-time */
+        published: string;
+        updated: string | null;
+        guid: {
+          /** @default false */
+          isPermalink: boolean;
+          value: string;
+        } | null;
+        enclosures:
+          | {
+              id: number;
+              entry_id: number;
+              /** Format: uri */
+              url: string;
+              mime_type: string;
+              size: number;
+              /** @default 0 */
+              media_progression: number;
+            }[]
+          | null;
+        itunes: {
+          duration?: number;
+          /** Format: uri */
+          image?: string;
+          explicit?: boolean;
+          title?: string;
+          episode?: number;
+          season?: number;
+          episodeType?: string;
+          block?: boolean;
+        } | null;
+        isRead: boolean | null;
+        isStarred: (boolean | null) | null;
+        isBlurred: boolean | null;
+        isHidden: boolean | null;
+        /** @default [] */
+        contentWarning: string[] | null;
+        /** Format: uuid */
+        feedId: string;
+        feedTitle: string | null;
+      }[];
+    };
+    ArticleStatusDto_Output: {
+      userId: string;
+      /** Format: uuid */
+      articleId: string;
+      isRead?: boolean;
+      isStarred?: boolean;
+      isBlurred?: boolean;
+      isHidden?: boolean;
+      /** @default [] */
+      contentWarning: string[] | null;
+    };
+    ArticleSearchDto_Output: {
+      articles: {
+        /** Format: uuid */
+        id: string;
+        minifluxId: number;
+        title: string;
+        url?: string | null;
+        /** @default [] */
+        authors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        /** @default [] */
+        contributors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        subject: string | null;
+        publisher: string | null;
+        contributor: string | null;
+        format: string | null;
+        language: string | null;
+        rights: string | null;
+        categories: {
+          term?: string;
+          scheme?: string;
+          label?: string;
+        }[];
+        description: string | null;
+        comments: string | null;
+        commentRss: string | null;
+        geo: {
+          point?: {
+            lat: number;
+            lng: number;
+          };
+          line?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          polygon?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          box?: {
+            lowerCorner: {
+              lat: number;
+              lng: number;
+            };
+            upperCorner: {
+              lat: number;
+              lng: number;
+            };
+          };
+          featureTypeTag?: string;
+          relationshipTag?: string;
+          featureName?: string;
+          elev?: number;
+          floor?: number;
+          radius?: number;
+        } | null;
+        hash: string | null;
+        rawContent: string | null;
+        readableHtml: string | null;
+        readableText: string | null;
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        encoded: string | null;
+        /** @default [] */
+        keywords: string[];
+        image: string | null;
+        imageAlt: string | null;
+        media: {
+          contents?: {
+            /** Format: uri */
+            url: string;
+            fileSize?: number;
+            type?: string;
+            medium?: string;
+            isDefault?: boolean;
+            expression?: string;
+            bitrate?: number;
+            framerate?: number;
+            samplingrate?: number;
+            channels?: number;
+            duration?: number;
+            height?: number;
+            width?: number;
+            lang?: string;
+          }[];
+        } | null;
+        youtube: {
+          videoId?: string;
+          channelId?: string;
+        } | null;
+        podcast: {
+          transcripts?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+            language?: string;
+            rel?: string;
+          }[];
+          chapters?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+          };
+          soundbites?: {
+            startTime: number;
+            duration: number;
+            display?: string;
+          }[];
+          persons?: {
+            display: string;
+            role?: string;
+            group?: string;
+            /** Format: uri */
+            img?: string;
+            /** Format: uri */
+            href?: string;
+          }[];
+          location?: {
+            display: string;
+            geo?: string;
+            osm?: string;
+          };
+          episode?: {
+            number: number;
+            display?: string;
+          };
+          license?: {
+            display: string;
+            /** Format: uri */
+            url?: string;
+          };
+          alternateEnclosures?: {
+            type: string;
+            length?: number;
+            bitrate?: number;
+            height?: number;
+            lang?: string;
+            title?: string;
+            rel?: string;
+            codecs?: string;
+            default?: boolean;
+            sources?: {
+              /** Format: uri */
+              uri: string;
+              contentType?: string;
+            }[];
+            integrity?: {
+              type: string;
+              value: string;
+            };
+          }[];
+          value?: {
+            type: string;
+            method: string;
+            suggested?: number;
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+            valueTimeSplits?: {
+              startTime: number;
+              duration: number;
+              remoteStartTime?: number;
+              remotePercentage?: number;
+              remoteItem?: {
+                feedGuid: string;
+                /** Format: uri */
+                feedUrl?: string;
+                itemGuid?: string;
+                medium?: string;
+              };
+              valueRecipients?: {
+                name?: string;
+                customKey?: string;
+                customValue?: string;
+                type: string;
+                address: string;
+                split: number;
+                fee?: boolean;
+              }[];
+            }[];
+          };
+          images?: {
+            srcset?: string;
+          };
+          socialInteracts?: {
+            /** Format: uri */
+            uri?: string;
+            protocol: string;
+            accountId?: string;
+            accountUrl?: string;
+            priority?: number;
+          }[];
+          txts?: {
+            display: string;
+            purpose?: string;
+          }[];
+        } | null;
+        thread: {
+          total?: number;
+          inReplyTos?: {
+            ref: string;
+            /** Format: uri */
+            href?: string;
+            type?: string;
+            source?: string;
+          }[];
+        } | null;
+        /** Format: date-time */
+        published: string;
+        updated: string | null;
+        guid: {
+          /** @default false */
+          isPermalink: boolean;
+          value: string;
+        } | null;
+        enclosures:
+          | {
+              id: number;
+              entry_id: number;
+              /** Format: uri */
+              url: string;
+              mime_type: string;
+              size: number;
+              /** @default 0 */
+              media_progression: number;
+            }[]
+          | null;
+        itunes: {
+          duration?: number;
+          /** Format: uri */
+          image?: string;
+          explicit?: boolean;
+          title?: string;
+          episode?: number;
+          season?: number;
+          episodeType?: string;
+          block?: boolean;
+        } | null;
+        feedTitle: string | null;
+        feedId: string | null;
+        /** @default false */
+        isRead: boolean | null;
+        /** @default false */
+        isStarred: boolean | null;
+        /** @default false */
+        isBlurred: boolean | null;
+        /** @default false */
+        isHidden: boolean | null;
+        /** @default [] */
+        contentWarning: string[] | null;
+      }[];
+    };
+    HiddenArticleListDto_Output: {
+      cursor: string | null;
+      articles: {
+        /** Format: uuid */
+        id: string;
+        minifluxId: number;
+        title: string;
+        url?: string | null;
+        /** @default [] */
+        authors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        /** @default [] */
+        contributors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        subject: string | null;
+        publisher: string | null;
+        contributor: string | null;
+        format: string | null;
+        language: string | null;
+        rights: string | null;
+        categories: {
+          term?: string;
+          scheme?: string;
+          label?: string;
+        }[];
+        description: string | null;
+        comments: string | null;
+        commentRss: string | null;
+        geo: {
+          point?: {
+            lat: number;
+            lng: number;
+          };
+          line?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          polygon?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          box?: {
+            lowerCorner: {
+              lat: number;
+              lng: number;
+            };
+            upperCorner: {
+              lat: number;
+              lng: number;
+            };
+          };
+          featureTypeTag?: string;
+          relationshipTag?: string;
+          featureName?: string;
+          elev?: number;
+          floor?: number;
+          radius?: number;
+        } | null;
+        hash: string | null;
+        rawContent: string | null;
+        readableHtml: string | null;
+        readableText: string | null;
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        encoded: string | null;
+        /** @default [] */
+        keywords: string[];
+        image: string | null;
+        imageAlt: string | null;
+        media: {
+          contents?: {
+            /** Format: uri */
+            url: string;
+            fileSize?: number;
+            type?: string;
+            medium?: string;
+            isDefault?: boolean;
+            expression?: string;
+            bitrate?: number;
+            framerate?: number;
+            samplingrate?: number;
+            channels?: number;
+            duration?: number;
+            height?: number;
+            width?: number;
+            lang?: string;
+          }[];
+        } | null;
+        youtube: {
+          videoId?: string;
+          channelId?: string;
+        } | null;
+        podcast: {
+          transcripts?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+            language?: string;
+            rel?: string;
+          }[];
+          chapters?: {
+            /** Format: uri */
+            url: string;
+            type: string;
+          };
+          soundbites?: {
+            startTime: number;
+            duration: number;
+            display?: string;
+          }[];
+          persons?: {
+            display: string;
+            role?: string;
+            group?: string;
+            /** Format: uri */
+            img?: string;
+            /** Format: uri */
+            href?: string;
+          }[];
+          location?: {
+            display: string;
+            geo?: string;
+            osm?: string;
+          };
+          episode?: {
+            number: number;
+            display?: string;
+          };
+          license?: {
+            display: string;
+            /** Format: uri */
+            url?: string;
+          };
+          alternateEnclosures?: {
+            type: string;
+            length?: number;
+            bitrate?: number;
+            height?: number;
+            lang?: string;
+            title?: string;
+            rel?: string;
+            codecs?: string;
+            default?: boolean;
+            sources?: {
+              /** Format: uri */
+              uri: string;
+              contentType?: string;
+            }[];
+            integrity?: {
+              type: string;
+              value: string;
+            };
+          }[];
+          value?: {
+            type: string;
+            method: string;
+            suggested?: number;
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+            valueTimeSplits?: {
+              startTime: number;
+              duration: number;
+              remoteStartTime?: number;
+              remotePercentage?: number;
+              remoteItem?: {
+                feedGuid: string;
+                /** Format: uri */
+                feedUrl?: string;
+                itemGuid?: string;
+                medium?: string;
+              };
+              valueRecipients?: {
+                name?: string;
+                customKey?: string;
+                customValue?: string;
+                type: string;
+                address: string;
+                split: number;
+                fee?: boolean;
+              }[];
+            }[];
+          };
+          images?: {
+            srcset?: string;
+          };
+          socialInteracts?: {
+            /** Format: uri */
+            uri?: string;
+            protocol: string;
+            accountId?: string;
+            accountUrl?: string;
+            priority?: number;
+          }[];
+          txts?: {
+            display: string;
+            purpose?: string;
+          }[];
+        } | null;
+        thread: {
+          total?: number;
+          inReplyTos?: {
+            ref: string;
+            /** Format: uri */
+            href?: string;
+            type?: string;
+            source?: string;
+          }[];
+        } | null;
+        /** Format: date-time */
+        published: string;
+        updated: string | null;
+        guid: {
+          /** @default false */
+          isPermalink: boolean;
+          value: string;
+        } | null;
+        enclosures:
+          | {
+              id: number;
+              entry_id: number;
+              /** Format: uri */
+              url: string;
+              mime_type: string;
+              size: number;
+              /** @default 0 */
+              media_progression: number;
+            }[]
+          | null;
+        itunes: {
+          duration?: number;
+          /** Format: uri */
+          image?: string;
+          explicit?: boolean;
+          title?: string;
+          episode?: number;
+          season?: number;
+          episodeType?: string;
+          block?: boolean;
+        } | null;
+        isRead: boolean | null;
+        isStarred: (boolean | null) | null;
+        isBlurred: boolean | null;
+        isHidden: boolean | null;
+        /** @default [] */
+        contentWarning: string[] | null;
+        /** Format: uuid */
+        feedId: string;
+        feedTitle: string | null;
+        /** Format: uuid */
+        ruleId: string;
+      }[];
+    };
+    ArticleDetailDto_Output: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      url?: string | null;
+      /** @default [] */
+      authors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      /** @default [] */
+      contributors: {
+        name: string;
+        /** Format: email */
+        email?: string;
+        /** Format: uri */
+        uri?: string;
+      }[];
+      subject: string | null;
+      publisher: string | null;
+      contributor: string | null;
+      format: string | null;
+      language: string | null;
+      rights: string | null;
+      categories: {
+        term?: string;
+        scheme?: string;
+        label?: string;
+      }[];
+      description: string | null;
+      comments: string | null;
+      commentRss: string | null;
+      geo: {
+        point?: {
+          lat: number;
+          lng: number;
+        };
+        line?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        polygon?: {
+          points: {
+            lat: number;
+            lng: number;
+          }[];
+        };
+        box?: {
+          lowerCorner: {
+            lat: number;
+            lng: number;
+          };
+          upperCorner: {
+            lat: number;
+            lng: number;
+          };
+        };
+        featureTypeTag?: string;
+        relationshipTag?: string;
+        featureName?: string;
+        elev?: number;
+        floor?: number;
+        radius?: number;
+      } | null;
+      hash: string | null;
+      rawContent: string | null;
+      readableHtml: string | null;
+      readableText: string | null;
+      fullArticleHtml: string | null;
+      fullArticleText: string | null;
+      encoded: string | null;
+      /** @default [] */
+      keywords: string[];
+      image: string | null;
+      imageAlt: string | null;
+      media: {
+        contents?: {
+          /** Format: uri */
+          url: string;
+          fileSize?: number;
+          type?: string;
+          medium?: string;
+          isDefault?: boolean;
+          expression?: string;
+          bitrate?: number;
+          framerate?: number;
+          samplingrate?: number;
+          channels?: number;
+          duration?: number;
+          height?: number;
+          width?: number;
+          lang?: string;
+        }[];
+      } | null;
+      youtube: {
+        videoId?: string;
+        channelId?: string;
+      } | null;
+      podcast: {
+        transcripts?: {
+          /** Format: uri */
+          url: string;
+          type: string;
+          language?: string;
+          rel?: string;
+        }[];
+        chapters?: {
+          /** Format: uri */
+          url: string;
+          type: string;
+        };
+        soundbites?: {
+          startTime: number;
+          duration: number;
+          display?: string;
+        }[];
+        persons?: {
+          display: string;
+          role?: string;
+          group?: string;
+          /** Format: uri */
+          img?: string;
+          /** Format: uri */
+          href?: string;
+        }[];
+        location?: {
+          display: string;
+          geo?: string;
+          osm?: string;
+        };
+        episode?: {
+          number: number;
+          display?: string;
+        };
+        license?: {
+          display: string;
+          /** Format: uri */
+          url?: string;
+        };
+        alternateEnclosures?: {
+          type: string;
+          length?: number;
+          bitrate?: number;
+          height?: number;
+          lang?: string;
+          title?: string;
+          rel?: string;
+          codecs?: string;
+          default?: boolean;
+          sources?: {
+            /** Format: uri */
+            uri: string;
+            contentType?: string;
+          }[];
+          integrity?: {
+            type: string;
+            value: string;
+          };
+        }[];
+        value?: {
+          type: string;
+          method: string;
+          suggested?: number;
+          valueRecipients?: {
+            name?: string;
+            customKey?: string;
+            customValue?: string;
+            type: string;
+            address: string;
+            split: number;
+            fee?: boolean;
+          }[];
+          valueTimeSplits?: {
+            startTime: number;
+            duration: number;
+            remoteStartTime?: number;
+            remotePercentage?: number;
+            remoteItem?: {
+              feedGuid: string;
+              /** Format: uri */
+              feedUrl?: string;
+              itemGuid?: string;
+              medium?: string;
+            };
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+          }[];
+        };
+        images?: {
+          srcset?: string;
+        };
+        socialInteracts?: {
+          /** Format: uri */
+          uri?: string;
+          protocol: string;
+          accountId?: string;
+          accountUrl?: string;
+          priority?: number;
+        }[];
+        txts?: {
+          display: string;
+          purpose?: string;
+        }[];
+      } | null;
+      thread: {
+        total?: number;
+        inReplyTos?: {
+          ref: string;
+          /** Format: uri */
+          href?: string;
+          type?: string;
+          source?: string;
+        }[];
+      } | null;
+      /** Format: date-time */
+      published: string;
+      updated: string | null;
+      guid: {
+        /** @default false */
+        isPermalink: boolean;
+        value: string;
+      } | null;
+      enclosures:
+        | {
+            id: number;
+            entry_id: number;
+            /** Format: uri */
+            url: string;
+            mime_type: string;
+            size: number;
+            /** @default 0 */
+            media_progression: number;
+          }[]
+        | null;
+      itunes: {
+        duration?: number;
+        /** Format: uri */
+        image?: string;
+        explicit?: boolean;
+        title?: string;
+        episode?: number;
+        season?: number;
+        episodeType?: string;
+        block?: boolean;
+      } | null;
+      feedTitle: string;
+      isRead: boolean | null;
+      isStarred: boolean | null;
+      isBlurred: boolean | null;
+      isHidden: boolean | null;
+      /** @default [] */
+      contentWarning: string[] | null;
+    };
+    CreateFolderDto: {
+      name: string;
+      feedIds?: string[];
+    };
+    FolderOutDto_Output: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      userId: string;
+      feedIds: string[];
+    };
+    FolderWithFeedsOutDto_Output: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      userId: string;
+      feeds: {
+        /** Format: uuid */
+        id: string;
+        title: string;
+        subtitle: string | null;
+        /** Format: uri */
+        url: string;
+        site_url: string | null;
+        /** @default  */
+        etag_header: string;
+        last_modified_header: string | null;
+        parsingErrorMessage: string | null;
+        /** @default 0 */
+        parsingErrorCount: number;
+        userAgent: string | null;
+        crawler: boolean | null;
+        /** @default [] */
+        authors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        /** @default [] */
+        contributors: {
+          name: string;
+          /** Format: email */
+          email?: string;
+          /** Format: uri */
+          uri?: string;
+        }[];
+        /** @default [] */
+        categories: {
+          term?: string;
+          scheme?: string;
+          label?: string;
+        }[];
+        copyright: string | null;
+        image: {
+          /** Format: uri */
+          url: string;
+          title?: string;
+          /** Format: uri */
+          link: string;
+          description?: string;
+          width?: number;
+          height?: number;
+        } | null;
+        /** Format: date-time */
+        lastChecked: string;
+        updated: string | null;
+        explicit: boolean | null;
+        subject: string | null;
+        updatePeriod: string | null;
+        updateFrequency: number | null;
+        updateBase: string | null;
+        publisher: string | null;
+        rights: string | null;
+        youtube: {
+          channelId?: string;
+          playlistId?: string;
+        } | null;
+        podcast: {
+          locked?: {
+            value: boolean;
+            owner?: string;
+          };
+          fundings?: {
+            /** Format: uri */
+            url: string;
+            display?: string;
+          }[];
+          persons?: {
+            display: string;
+            role?: string;
+            group?: string;
+            /** Format: uri */
+            img?: string;
+            /** Format: uri */
+            href?: string;
+          }[];
+          location?: {
+            display: string;
+            geo?: string;
+            osm?: string;
+          };
+          trailers?: {
+            display: string;
+            /** Format: uri */
+            url: string;
+            pubDate: string;
+            length?: number;
+            type?: string;
+            season?: number;
+          }[];
+          guid?: string;
+          value?: {
+            type: string;
+            method: string;
+            suggested?: number;
+            valueRecipients?: {
+              name?: string;
+              customKey?: string;
+              customValue?: string;
+              type: string;
+              address: string;
+              split: number;
+              fee?: boolean;
+            }[];
+            valueTimeSplits?: {
+              startTime: number;
+              duration: number;
+              remoteStartTime?: number;
+              remotePercentage?: number;
+              remoteItem?: {
+                feedGuid: string;
+                /** Format: uri */
+                feedUrl?: string;
+                itemGuid?: string;
+                medium?: string;
+              };
+              valueRecipients?: {
+                name?: string;
+                customKey?: string;
+                customValue?: string;
+                type: string;
+                address: string;
+                split: number;
+                fee?: boolean;
+              }[];
+            }[];
+          };
+          medium?: string;
+          images?: {
+            srcset?: string;
+          };
+          liveItems?: {
+            status: string;
+            /** Format: date-time */
+            start: string;
+            /** Format: date-time */
+            end?: string;
+            contentLinks?: {
+              /** Format: uri */
+              href: string;
+              display?: string;
+            }[];
+          }[];
+          blocks?: {
+            value: boolean;
+            id?: string;
+          }[];
+          txts?: {
+            display: string;
+            purpose?: string;
+          }[];
+          remoteItems?: {
+            feedGuid: string;
+            /** Format: uri */
+            feedUrl?: string;
+            itemGuid?: string;
+            medium?: string;
+          }[];
+          podroll?: {
+            remoteItems?: {
+              feedGuid: string;
+              /** Format: uri */
+              feedUrl?: string;
+              itemGuid?: string;
+              medium?: string;
+            }[];
+          };
+          updateFrequency?: {
+            display: string;
+            complete?: boolean;
+            dtstart?: string;
+            rrule?: string;
+          };
+          podping?: {
+            usesPodping?: boolean;
+          };
+        } | null;
+        geo: {
+          point?: {
+            lat: number;
+            lng: number;
+          };
+          line?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          polygon?: {
+            points: {
+              lat: number;
+              lng: number;
+            }[];
+          };
+          box?: {
+            lowerCorner: {
+              lat: number;
+              lng: number;
+            };
+            upperCorner: {
+              lat: number;
+              lng: number;
+            };
+          };
+          featureTypeTag?: string;
+          relationshipTag?: string;
+          featureName?: string;
+          elev?: number;
+          floor?: number;
+          radius?: number;
+        } | null;
+        favicon: string | null;
+      }[];
+    };
+    UpdateFolderDto: {
+      name?: string;
+      feedIds?: string[];
+    };
+    CreateFilterDto: {
+      name: string;
+      description?: string;
+      conditions: {
+        keywords?: string[];
+        titleContains?: string[];
+        contentContains?: string[];
+        authors?: string[];
+        categories?: string[];
+        feeds?: string[];
+      };
+      /** @default true */
+      isActive: boolean;
+      action: {
+        /** @enum {string} */
+        type: 'blur' | 'markRead' | 'hide';
+        contentWarning: string | null;
+      };
+    };
+    FilterOutDto_Output: {
+      /** Format: uuid */
+      id: string;
+      name: string | null;
+      description?: string;
+      conditions: {
+        keywords?: string[];
+        titleContains?: string[];
+        contentContains?: string[];
+        authors?: string[];
+        categories?: string[];
+        feeds?: string[];
+      };
+      /** @default true */
+      isActive: boolean;
+      action: {
+        /** @enum {string} */
+        type: 'blur' | 'markRead' | 'hide';
+        contentWarning: string | null;
+      };
+    };
+    UpdateFilterDto: {
+      name?: string;
+      description?: string;
+      conditions: {
+        keywords?: string[];
+        titleContains?: string[];
+        contentContains?: string[];
+        authors?: string[];
+        categories?: string[];
+        feeds?: string[];
+      };
+      /** @default true */
+      isActive: boolean;
+      action: {
+        /** @enum {string} */
+        type?: 'blur' | 'markRead' | 'hide';
+        contentWarning?: string | null;
+      };
+    };
+    CreateConfigDto: {
+      apiKey: string;
+      /** Format: uri */
+      apiURL: string;
+    };
+    CreateBookmarkDto: {
+      /** Format: uri */
+      url: string;
+    };
+    FeedMini_Output: {
+      title: string;
+      site_url: string | null;
+      /** @default  */
+      etag_header: string;
+      last_modified_header: string | null;
+      crawler: boolean | null;
+      id: number;
+      user_id: number;
+      checked_at: string;
+      parsing_error_message: string;
+      parsing_error_count: number;
+      /** Format: uri */
+      feed_url: string;
+      icon: {
+        feed_id: number;
+        icon_id: number;
+      } | null;
+      scraper_rules: string;
+      rewrite_rules: string;
+      blocklist_rules: string;
+      keeplist_rules: string;
+      user_agent: string;
+      username: string;
+      password: string;
+      /** @default false */
+      disabled: boolean;
+      /** @default false */
+      ignore_http_cache: boolean;
+      /** @default false */
+      fetch_via_proxy: boolean;
+      category: {
+        /** @default 0 */
+        id: number;
+        user_id: number;
+        /** @default  */
+        title: string;
+      };
+    };
+    CountersDto_Output: {
+      reads: {
+        [key: string]: number;
+      };
+      unreads: {
+        [key: string]: number;
+      };
+    };
+    CreateFeedDto: {
+      /** Format: uri */
+      feed_url: string;
+      category_id: number;
+    };
+    UpdateFeedMiniDto: {
+      title?: string;
+      category_id?: number;
+    };
+    EntriesListDto_Output: {
+      total: number;
+      entries: {
+        id: number;
+        title: string;
+        url?: string | null;
+        hash: string | null;
+        enclosures:
+          | {
+              id: number;
+              entry_id: number;
+              /** Format: uri */
+              url: string;
+              mime_type: string;
+              size: number;
+              /** @default 0 */
+              media_progression: number;
+            }[]
+          | null;
+        itunes: {
+          duration?: number;
+          /** Format: uri */
+          image?: string;
+          explicit?: boolean;
+          title?: string;
+          episode?: number;
+          season?: number;
+          episodeType?: string;
+          block?: boolean;
+        } | null;
+        user_id: number;
+        feed_id: number;
+        comments_url: string;
+        author: string | null;
+        content: string;
+        published_at: string;
+        created_at: string;
+        status: string;
+        share_code: string;
+        /** @default false */
+        starred: boolean;
+        reading_time: number;
+        feed: {
+          title: string;
+          site_url: string | null;
+          /** @default  */
+          etag_header: string;
+          last_modified_header: string | null;
+          crawler: boolean | null;
+          id: number;
+          user_id: number;
+          checked_at: string;
+          parsing_error_message: string;
+          parsing_error_count: number;
+          /** Format: uri */
+          feed_url: string;
+          icon: {
+            feed_id: number;
+            icon_id: number;
+          } | null;
+          scraper_rules: string;
+          rewrite_rules: string;
+          blocklist_rules: string;
+          keeplist_rules: string;
+          user_agent: string;
+          username: string;
+          password: string;
+          /** @default false */
+          disabled: boolean;
+          /** @default false */
+          ignore_http_cache: boolean;
+          /** @default false */
+          fetch_via_proxy: boolean;
+          category: {
+            /** @default 0 */
+            id: number;
+            user_id: number;
+            /** @default  */
+            title: string;
+          };
+        };
+      }[];
+    };
+    EntryDto_Output: {
+      id: number;
+      title: string;
+      url?: string | null;
+      hash: string | null;
+      enclosures:
+        | {
+            id: number;
+            entry_id: number;
+            /** Format: uri */
+            url: string;
+            mime_type: string;
+            size: number;
+            /** @default 0 */
+            media_progression: number;
+          }[]
+        | null;
+      itunes: {
+        duration?: number;
+        /** Format: uri */
+        image?: string;
+        explicit?: boolean;
+        title?: string;
+        episode?: number;
+        season?: number;
+        episodeType?: string;
+        block?: boolean;
+      } | null;
+      user_id: number;
+      feed_id: number;
+      comments_url: string;
+      author: string | null;
+      content: string;
+      published_at: string;
+      created_at: string;
+      status: string;
+      share_code: string;
+      /** @default false */
+      starred: boolean;
+      reading_time: number;
+      feed: {
+        title: string;
+        site_url: string | null;
+        /** @default  */
+        etag_header: string;
+        last_modified_header: string | null;
+        crawler: boolean | null;
+        id: number;
+        user_id: number;
+        checked_at: string;
+        parsing_error_message: string;
+        parsing_error_count: number;
+        /** Format: uri */
+        feed_url: string;
+        icon: {
+          feed_id: number;
+          icon_id: number;
+        } | null;
+        scraper_rules: string;
+        rewrite_rules: string;
+        blocklist_rules: string;
+        keeplist_rules: string;
+        user_agent: string;
+        username: string;
+        password: string;
+        /** @default false */
+        disabled: boolean;
+        /** @default false */
+        ignore_http_cache: boolean;
+        /** @default false */
+        fetch_via_proxy: boolean;
+        category: {
+          /** @default 0 */
+          id: number;
+          user_id: number;
+          /** @default  */
+          title: string;
+        };
+      };
+    };
+    UpdateEntriesDto: {
+      entry_ids: number[];
+      /** @enum {string} */
+      status: 'read' | 'unread';
+    };
+    FullEntryContent_Output: {
+      content: string;
+    };
+    CategoryOutDto_Output: {
+      id: number;
+      title: string;
+      user_id: number;
+      hide_globally: boolean;
+    };
+    CreateCategoryDto: {
+      title: string;
+    };
+    UserSchemaDto_Output: {
+      id: number;
+      username: string;
+      is_admin: boolean;
+      theme: string;
+      language: string;
+      timezone: string;
+      entry_sorting_direction: string;
+      stylesheet: string;
+      google_id: string;
+      openid_connect_id: string;
+      entries_per_page: number;
+      keyboard_shortcuts: boolean;
+      show_reading_time: boolean;
+      entry_swipe: boolean;
+      last_login_at: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    AppController_getProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  AppController_getProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    AppController_getLogin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FeedController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedOutWithCountsDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  AppController_getLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FeedController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SubscribeFeedDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NewSubscriptionDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    FeedController_discover: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DiscoverDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DiscoverOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  FeedController_findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FeedController_import: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        /** @description OPML file to import */
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["FileDto"];
-            };
+        content: {
+          'application/json': components['schemas']['FeedOutWithCountsDto_Output'][];
         };
-        responses: {
-            /** @description Feed imported */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Invalid OPML file */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FeedController_export: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OPML file exported */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  FeedController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FeedController_markAllRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubscribeFeedDto'];
+      };
     };
-    FeedController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedOutWithCountsDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['NewSubscriptionDto_Output'];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FeedController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Feed unsubscribed */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  FeedController_discover: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FeedController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFeedDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SubscriptionOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DiscoverDto'];
+      };
     };
-    ArticleController_getPagedArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['DiscoverOutDto_Output'][];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_updateArticleStatus: {
-        parameters: {
-            query: {
-                /** @description The status to update. Must be one of 'read', 'unread', 'starred', or 'unstarred'. */
+  };
+  FeedController_import: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description OPML file to import */
+    requestBody: {
+      content: {
+        'multipart/form-data': components['schemas']['FileDto'];
+      };
+    };
+    responses: {
+      /** @description Feed imported */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid OPML file */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_export: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OPML file exported */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_markAllRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_findOne: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeedOutWithCountsDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Feed unsubscribed */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFeedDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubscriptionOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getPagedArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_updateArticleStatus: {
+    parameters: {
+      query: {
+        /** @description The status to update. Must be one of 'read', 'unread', 'starred', or 'unstarred'. */
+        status: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleStatusDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_searchArticles: {
+    parameters: {
+      query: {
+        /** @description The search query string. */
+        query: string;
+        /** @description The page offset. Default is 0. */
+        offset?: number;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleSearchDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getPagedArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getHiddenArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+        /** @description The id of the rule to filter by. Default is all. */
+        ruleId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HiddenArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getAllArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_requestFullArticleText: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Request accepted */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getArticle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleDetailDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFolderDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_findAllWithFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderWithFeedsOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_findOne: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Folder deleted successfully. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFolderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FilterController_findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilterOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FilterController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFilterDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilterOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FilterController_findOne: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilterOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FilterController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFilterDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FilterOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FilterController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Filter deleted successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  HealthController_check: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The Health Check is successful */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example ok */
+            status?: string;
+            /**
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       }
+             *     }
+             */
+            info?: {
+              [key: string]: {
                 status: string;
+              } & {
+                [key: string]: unknown;
+              };
+            } | null;
+            /** @example {} */
+            error?: {
+              [key: string]: {
+                status: string;
+              } & {
+                [key: string]: unknown;
+              };
+            } | null;
+            /**
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       }
+             *     }
+             */
+            details?: {
+              [key: string]: {
+                status: string;
+              } & {
+                [key: string]: unknown;
+              };
             };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+          };
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleStatusDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The Health Check is not successful */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** @example error */
+            status?: string;
+            /**
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       }
+             *     }
+             */
+            info?: {
+              [key: string]: {
+                status: string;
+              } & {
+                [key: string]: unknown;
+              };
+            } | null;
+            /**
+             * @example {
+             *       "redis": {
+             *         "status": "down",
+             *         "message": "Could not connect"
+             *       }
+             *     }
+             */
+            error?: {
+              [key: string]: {
+                status: string;
+              } & {
+                [key: string]: unknown;
+              };
+            } | null;
+            /**
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       },
+             *       "redis": {
+             *         "status": "down",
+             *         "message": "Could not connect"
+             *       }
+             *     }
+             */
+            details?: {
+              [key: string]: {
+                status: string;
+              } & {
+                [key: string]: unknown;
+              };
+            };
+          };
+        };
+      };
     };
-    ArticleController_searchArticles: {
-        parameters: {
-            query: {
-                /** @description The search query string. */
-                query: string;
-                /** @description The page offset. Default is 0. */
-                offset?: number;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleSearchDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  ReadlaterController_createConfig: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    ArticleController_getPagedArticlesForFeed: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateConfigDto'];
+      };
     };
-    ArticleController_getReadArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Created readlater configuration */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_getUnReadArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  ReadlaterController_addBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    ArticleController_getStarredArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateBookmarkDto'];
+      };
     };
-    ArticleController_getHiddenArticles: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-                /** @description The id of the rule to filter by. Default is all. */
-                ruleId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Readlater item created */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HiddenArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Readlater service not configured */
+      412: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_getUnReadArticlesForFeed: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_discoverSubscriptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    ArticleController_getStarredArticlesForFeed: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DiscoverDto'];
+      };
     };
-    ArticleController_getReadArticlesForFeed: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['DiscoverOutDto_Output'][];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_getUnReadArticlesForFolder: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_export: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    ArticleController_getStarredArticlesForFolder: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description OPML file exported */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_getReadArticlesForFolder: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_import: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    ArticleController_getAllArticlesForFolder: {
-        parameters: {
-            query?: {
-                /** @description The cursor for pagination. If not provided, starts from the beginning. */
-                cursor?: string;
-                /** @description The number of articles to return. Default is 10. */
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    /** @description OPML file to import */
+    requestBody: {
+      content: {
+        'multipart/form-data': components['schemas']['FileDto'];
+      };
     };
-    ArticleController_requestFullArticleText: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Feed imported */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Request accepted */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Invalid OPML file */
+      400: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    ArticleController_getArticle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArticleDetailDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FolderController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FolderOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FolderController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFolderDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FolderOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FolderController_findAllWithFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FolderWithFeedsOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['FeedMini_Output'][];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FolderController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FolderOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_createFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FolderController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Folder deleted successfully. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFeedDto'];
+      };
     };
-    FolderController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFolderDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FolderOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    FilterController_findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FilterOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getFeedCounters: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    FilterController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFilterDto"];
-            };
+        content: {
+          'application/json': components['schemas']['CountersDto_Output'];
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FilterOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FilterController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FilterOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    FilterController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFilterDto"];
-            };
+        content: {
+          'application/json': components['schemas']['FeedMini_Output'];
         };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FilterOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    FilterController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Filter deleted successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_updateFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    HealthController_check: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The Health Check is successful */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example ok */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /** @example {} */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The Health Check is not successful */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @example error */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       },
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
-                    };
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFeedMiniDto'];
+      };
     };
-    ReadlaterController_createConfig: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateConfigDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            /** @description Created readlater configuration */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    ReadlaterController_addBookmark: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateBookmarkDto"];
-            };
-        };
-        responses: {
-            /** @description Readlater item created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Readlater service not configured */
-            412: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_removeFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_discoverSubscriptions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DiscoverDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DiscoverOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_export: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OPML file exported */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_refreshFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_import: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        /** @description OPML file to import */
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["FileDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            /** @description Feed imported */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Invalid OPML file */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getVersion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_refreshAllFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MinifluxV1Controller_getFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedMini_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_createFeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFeedDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getFeedIcon: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_getFeedCounters: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CountersDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getFeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedMini_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_markFeedAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_updateFeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFeedMiniDto"];
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_removeFeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getEntries: {
+    parameters: {
+      query: {
+        status: 'unread' | 'read';
+        limit: number;
+        offset?: number;
+        order?:
+          | 'id'
+          | 'status'
+          | 'published_at'
+          | 'category_title'
+          | 'category_id';
+        direction?: 'asc' | 'desc';
+        before?: number;
+        after?: number;
+        starred?: boolean;
+        search?: string;
+        category_id?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MinifluxV1Controller_refreshFeed: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['EntriesListDto_Output'];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_refreshAllFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_updateEntries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MinifluxV1Controller_getFeedIcon: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateEntriesDto'];
+      };
     };
-    MinifluxV1Controller_markFeedAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                feedId: number;
-            };
-            cookie?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getEntries: {
-        parameters: {
-            query: {
-                status: "unread" | "read";
-                limit: number;
-                offset?: number;
-                order?: "id" | "status" | "published_at" | "category_title" | "category_id";
-                direction?: "asc" | "desc";
-                before?: number;
-                after?: number;
-                starred?: boolean;
-                search?: string;
-                category_id?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EntriesListDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_updateEntries: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateEntriesDto"];
-            };
+        content: {
+          'application/json': components['schemas']['EntryDto_Output'];
         };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getEntry: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EntryDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_saveEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_saveEntry: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entryId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_toggleBookmark: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_toggleBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_fetchOriginalArticle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entryId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FullEntryContent_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getCategories: {
-        parameters: {
-            query: {
-                counts: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryOutDto_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_fetchOriginalArticle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_createCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCategoryDto"];
-            };
+        content: {
+          'application/json': components['schemas']['FullEntryContent_Output'];
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_updateCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                categoryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCategoryDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryOutDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_getCategories: {
+    parameters: {
+      query: {
+        counts: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MinifluxV1Controller_deleteCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                categoryId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['CategoryOutDto_Output'][];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getCategoryFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                categoryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeedMini_Output"][];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_createCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    MinifluxV1Controller_markCategoryAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                categoryId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCategoryDto'];
+      };
     };
-    MinifluxV1Controller_refreshCategoryFeeds: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                categoryId: number;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['CategoryOutDto_Output'];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    MinifluxV1Controller_getCurrentUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserSchemaDto_Output"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  MinifluxV1Controller_updateCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        categoryId: number;
+      };
+      cookie?: never;
     };
-    MinifluxV1Controller_markUserEntriesAsRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCategoryDto'];
+      };
     };
-    MinifluxV1Controller_getIcon: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                iconId: number;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['CategoryOutDto_Output'];
         };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
+  };
+  MinifluxV1Controller_deleteCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        categoryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getCategoryFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        categoryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeedMini_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_markCategoryAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        categoryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_refreshCategoryFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        categoryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getCurrentUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UserSchemaDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_markUserEntriesAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getIcon: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        iconId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
 }

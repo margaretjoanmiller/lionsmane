@@ -16,9 +16,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/callback": {
@@ -36,9 +34,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "App"
-        ]
+        "tags": ["App"]
       }
     },
     "/feed": {
@@ -75,11 +71,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -88,9 +80,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       },
       "get": {
         "operationId": "FeedController_findAll",
@@ -118,11 +108,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -131,9 +117,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/feed/discover": {
@@ -173,11 +157,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -186,9 +166,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/feed/import": {
@@ -222,11 +200,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -235,9 +209,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/feed/export": {
@@ -257,11 +229,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -270,9 +238,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/feed/mark-all-read/{id}": {
@@ -301,11 +267,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -314,9 +276,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/feed/{id}": {
@@ -352,11 +312,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -365,9 +321,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       },
       "delete": {
         "operationId": "FeedController_remove",
@@ -394,11 +348,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -407,9 +357,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       },
       "patch": {
         "operationId": "FeedController_update",
@@ -453,11 +401,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -466,9 +410,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "feeds"
-        ]
+        "tags": ["feeds"]
       }
     },
     "/article": {
@@ -514,11 +456,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -527,9 +465,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/status/{id}": {
@@ -574,11 +510,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -587,9 +519,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/search": {
@@ -644,11 +574,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -657,9 +583,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/feed/{id}": {
@@ -713,11 +637,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -726,9 +646,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/read": {
@@ -774,11 +692,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -787,9 +701,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/unread": {
@@ -835,11 +747,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -848,9 +756,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/starred": {
@@ -896,11 +802,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -909,9 +811,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/hidden": {
@@ -966,11 +866,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -979,9 +875,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/unread/feed/{id}": {
@@ -1035,11 +929,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1048,9 +938,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/starred/feed/{id}": {
@@ -1104,11 +992,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1117,9 +1001,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/read/feed/{id}": {
@@ -1173,11 +1055,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1186,9 +1064,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/unread/folder/{id}": {
@@ -1242,11 +1118,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1255,9 +1127,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/starred/folder/{id}": {
@@ -1311,11 +1181,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1324,9 +1190,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/read/folder/{id}": {
@@ -1380,11 +1244,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1393,9 +1253,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/folder/{id}": {
@@ -1449,11 +1307,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1462,9 +1316,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/readable/{id}": {
@@ -1493,11 +1345,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1506,9 +1354,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/article/{id}": {
@@ -1544,11 +1390,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1557,9 +1399,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "articles"
-        ]
+        "tags": ["articles"]
       }
     },
     "/folder": {
@@ -1596,11 +1436,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1609,9 +1445,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       },
       "get": {
         "operationId": "FolderController_findAll",
@@ -1639,11 +1473,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1652,9 +1482,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       }
     },
     "/folder/feeds": {
@@ -1684,11 +1512,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1697,9 +1521,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       }
     },
     "/folder/{id}": {
@@ -1735,11 +1557,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1748,9 +1566,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       },
       "patch": {
         "operationId": "FolderController_update",
@@ -1794,11 +1610,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1807,9 +1619,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       },
       "delete": {
         "operationId": "FolderController_remove",
@@ -1836,11 +1646,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1849,9 +1655,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "folders"
-        ]
+        "tags": ["folders"]
       }
     },
     "/filter": {
@@ -1888,11 +1692,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1901,9 +1701,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "filter"
-        ]
+        "tags": ["filter"]
       },
       "get": {
         "operationId": "FilterController_findAll",
@@ -1931,11 +1729,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1944,9 +1738,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "filter"
-        ]
+        "tags": ["filter"]
       }
     },
     "/filter/{id}": {
@@ -1982,11 +1774,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -1995,9 +1783,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "filter"
-        ]
+        "tags": ["filter"]
       },
       "put": {
         "operationId": "FilterController_update",
@@ -2041,11 +1827,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -2054,9 +1836,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "filter"
-        ]
+        "tags": ["filter"]
       },
       "delete": {
         "operationId": "FilterController_remove",
@@ -2083,11 +1863,7 @@
         },
         "security": [
           {
-            "oauth2": [
-              "openid",
-              "profile",
-              "email"
-            ]
+            "oauth2": ["openid", "profile", "email"]
           },
           {
             "bearer": []
@@ -2096,9 +1872,7 @@
             "cookie": []
           }
         ],
-        "tags": [
-          "filter"
-        ]
+        "tags": ["filter"]
       }
     },
     "/health": {
@@ -2126,9 +1900,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2143,9 +1915,7 @@
                       "example": {},
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2164,9 +1934,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2206,9 +1974,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2228,9 +1994,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2253,9 +2017,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -2270,9 +2032,7 @@
             }
           }
         },
-        "tags": [
-          "Health"
-        ]
+        "tags": ["Health"]
       }
     },
     "/readlater/configure": {
@@ -2300,9 +2060,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "readlater"
-        ]
+        "tags": ["readlater"]
       }
     },
     "/readlater": {
@@ -2333,9 +2091,7 @@
             "description": "Internal server error"
           }
         },
-        "tags": [
-          "readlater"
-        ]
+        "tags": ["readlater"]
       }
     },
     "/miniflux/v1/discover": {
@@ -2378,9 +2134,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/export": {
@@ -2403,9 +2157,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/import": {
@@ -2442,9 +2194,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/version": {
@@ -2467,9 +2217,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds": {
@@ -2502,9 +2250,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "post": {
         "operationId": "MinifluxV1Controller_createFeed",
@@ -2535,9 +2281,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/counters": {
@@ -2567,9 +2311,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/{feedId}": {
@@ -2608,9 +2350,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "put": {
         "operationId": "MinifluxV1Controller_updateFeed",
@@ -2650,9 +2390,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "delete": {
         "operationId": "MinifluxV1Controller_removeFeed",
@@ -2682,9 +2420,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/{feedId}/refresh": {
@@ -2716,9 +2452,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/refresh": {
@@ -2741,9 +2475,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/{feedId}/icon": {
@@ -2775,9 +2507,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/feeds/{feedId}/mark-all-as-read": {
@@ -2809,9 +2539,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/entries": {
@@ -2823,10 +2551,7 @@
             "required": true,
             "in": "query",
             "schema": {
-              "enum": [
-                "unread",
-                "read"
-              ],
+              "enum": ["unread", "read"],
               "type": "string"
             }
           },
@@ -2866,10 +2591,7 @@
             "required": false,
             "in": "query",
             "schema": {
-              "enum": [
-                "asc",
-                "desc"
-              ],
+              "enum": ["asc", "desc"],
               "type": "string"
             }
           },
@@ -2937,9 +2659,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "put": {
         "operationId": "MinifluxV1Controller_updateEntries",
@@ -2970,9 +2690,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/entries/{entryId}": {
@@ -3011,9 +2729,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/entries/{entryId}/save": {
@@ -3045,9 +2761,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/entries/{entryId}/bookmark": {
@@ -3079,9 +2793,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/entries/{entryId}/fetch-content": {
@@ -3120,9 +2832,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/categories": {
@@ -3164,9 +2874,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "post": {
         "operationId": "MinifluxV1Controller_createCategory",
@@ -3204,9 +2912,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/categories/{categoryId}": {
@@ -3255,9 +2961,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       },
       "delete": {
         "operationId": "MinifluxV1Controller_deleteCategory",
@@ -3287,9 +2991,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/categories/{categoryId}/feeds": {
@@ -3331,9 +3033,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/categories/{categoryId}/mark-all-as-read": {
@@ -3365,9 +3065,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/categories/{categoryId}/refresh": {
@@ -3399,9 +3097,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/me": {
@@ -3431,9 +3127,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/users/{userId}/mark-all-as-read": {
@@ -3465,9 +3159,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     },
     "/miniflux/v1/icons/{iconId}": {
@@ -3499,9 +3191,7 @@
             "basic": []
           }
         ],
-        "tags": [
-          "miniflux"
-        ]
+        "tags": ["miniflux"]
       }
     }
   },
@@ -3564,10 +3254,7 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": [
-          "url",
-          "folderId"
-        ]
+        "required": ["url", "folderId"]
       },
       "NewSubscriptionDto_Output": {
         "type": "object",
@@ -3707,9 +3394,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -3734,9 +3419,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -3804,10 +3487,7 @@
                     "minimum": 0
                   }
                 },
-                "required": [
-                  "url",
-                  "link"
-                ],
+                "required": ["url", "link"],
                 "additionalProperties": false
               },
               {
@@ -3968,9 +3648,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "value"
-                    ],
+                    "required": ["value"],
                     "additionalProperties": false
                   },
                   "fundings": {
@@ -3986,9 +3664,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "url"
-                      ],
+                      "required": ["url"],
                       "additionalProperties": false
                     }
                   },
@@ -4015,9 +3691,7 @@
                           "format": "uri"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   },
@@ -4034,9 +3708,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "trailers": {
@@ -4065,11 +3737,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "display",
-                        "url",
-                        "pubDate"
-                      ],
+                      "required": ["display", "url", "pubDate"],
                       "additionalProperties": false
                     }
                   },
@@ -4117,11 +3785,7 @@
                               "type": "boolean"
                             }
                           },
-                          "required": [
-                            "type",
-                            "address",
-                            "split"
-                          ],
+                          "required": ["type", "address", "split"],
                           "additionalProperties": false
                         }
                       },
@@ -4163,9 +3827,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "feedGuid"
-                              ],
+                              "required": ["feedGuid"],
                               "additionalProperties": false
                             },
                             "valueRecipients": {
@@ -4196,27 +3858,17 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "startTime",
-                            "duration"
-                          ],
+                          "required": ["startTime", "duration"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "type",
-                      "method"
-                    ],
+                    "required": ["type", "method"],
                     "additionalProperties": false
                   },
                   "medium": {
@@ -4262,17 +3914,12 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "href"
-                            ],
+                            "required": ["href"],
                             "additionalProperties": false
                           }
                         }
                       },
-                      "required": [
-                        "status",
-                        "start"
-                      ],
+                      "required": ["status", "start"],
                       "additionalProperties": false
                     }
                   },
@@ -4288,9 +3935,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "value"
-                      ],
+                      "required": ["value"],
                       "additionalProperties": false
                     }
                   },
@@ -4306,9 +3951,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   },
@@ -4331,9 +3974,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "feedGuid"
-                      ],
+                      "required": ["feedGuid"],
                       "additionalProperties": false
                     }
                   },
@@ -4359,9 +4000,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "feedGuid"
-                          ],
+                          "required": ["feedGuid"],
                           "additionalProperties": false
                         }
                       }
@@ -4384,9 +4023,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "podping": {
@@ -4424,10 +4061,7 @@
                         "type": "number"
                       }
                     },
-                    "required": [
-                      "lat",
-                      "lng"
-                    ],
+                    "required": ["lat", "lng"],
                     "additionalProperties": false
                   },
                   "line": {
@@ -4445,17 +4079,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "polygon": {
@@ -4473,17 +4102,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "box": {
@@ -4499,10 +4123,7 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       },
                       "upperCorner": {
@@ -4515,17 +4136,11 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       }
                     },
-                    "required": [
-                      "lowerCorner",
-                      "upperCorner"
-                    ],
+                    "required": ["lowerCorner", "upperCorner"],
                     "additionalProperties": false
                   },
                   "featureTypeTag": {
@@ -4596,13 +4211,7 @@
                 ]
               }
             },
-            "required": [
-              "id",
-              "userId",
-              "feedId",
-              "description",
-              "folderId"
-            ],
+            "required": ["id", "userId", "feedId", "description", "folderId"],
             "additionalProperties": false,
             "x-nestjs_zod-has-null": true,
             "x-nestjs_zod-parent-additional-properties": false
@@ -4773,9 +4382,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -4800,9 +4407,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -4870,10 +4475,7 @@
                     "minimum": 0
                   }
                 },
-                "required": [
-                  "url",
-                  "link"
-                ],
+                "required": ["url", "link"],
                 "additionalProperties": false
               },
               {
@@ -5034,9 +4636,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "value"
-                    ],
+                    "required": ["value"],
                     "additionalProperties": false
                   },
                   "fundings": {
@@ -5052,9 +4652,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "url"
-                      ],
+                      "required": ["url"],
                       "additionalProperties": false
                     }
                   },
@@ -5081,9 +4679,7 @@
                           "format": "uri"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   },
@@ -5100,9 +4696,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "trailers": {
@@ -5131,11 +4725,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "display",
-                        "url",
-                        "pubDate"
-                      ],
+                      "required": ["display", "url", "pubDate"],
                       "additionalProperties": false
                     }
                   },
@@ -5183,11 +4773,7 @@
                               "type": "boolean"
                             }
                           },
-                          "required": [
-                            "type",
-                            "address",
-                            "split"
-                          ],
+                          "required": ["type", "address", "split"],
                           "additionalProperties": false
                         }
                       },
@@ -5229,9 +4815,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "feedGuid"
-                              ],
+                              "required": ["feedGuid"],
                               "additionalProperties": false
                             },
                             "valueRecipients": {
@@ -5262,27 +4846,17 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "startTime",
-                            "duration"
-                          ],
+                          "required": ["startTime", "duration"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "type",
-                      "method"
-                    ],
+                    "required": ["type", "method"],
                     "additionalProperties": false
                   },
                   "medium": {
@@ -5328,17 +4902,12 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "href"
-                            ],
+                            "required": ["href"],
                             "additionalProperties": false
                           }
                         }
                       },
-                      "required": [
-                        "status",
-                        "start"
-                      ],
+                      "required": ["status", "start"],
                       "additionalProperties": false
                     }
                   },
@@ -5354,9 +4923,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "value"
-                      ],
+                      "required": ["value"],
                       "additionalProperties": false
                     }
                   },
@@ -5372,9 +4939,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   },
@@ -5397,9 +4962,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "feedGuid"
-                      ],
+                      "required": ["feedGuid"],
                       "additionalProperties": false
                     }
                   },
@@ -5425,9 +4988,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "feedGuid"
-                          ],
+                          "required": ["feedGuid"],
                           "additionalProperties": false
                         }
                       }
@@ -5450,9 +5011,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "podping": {
@@ -5490,10 +5049,7 @@
                         "type": "number"
                       }
                     },
-                    "required": [
-                      "lat",
-                      "lng"
-                    ],
+                    "required": ["lat", "lng"],
                     "additionalProperties": false
                   },
                   "line": {
@@ -5511,17 +5067,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "polygon": {
@@ -5539,17 +5090,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "box": {
@@ -5565,10 +5111,7 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       },
                       "upperCorner": {
@@ -5581,17 +5124,11 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       }
                     },
-                    "required": [
-                      "lowerCorner",
-                      "upperCorner"
-                    ],
+                    "required": ["lowerCorner", "upperCorner"],
                     "additionalProperties": false
                   },
                   "featureTypeTag": {
@@ -5725,9 +5262,7 @@
             "maxLength": 255
           }
         },
-        "required": [
-          "url"
-        ]
+        "required": ["url"]
       },
       "DiscoverOutDto_Output": {
         "type": "object",
@@ -5761,11 +5296,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "format",
-          "title",
-          "url"
-        ]
+        "required": ["format", "title", "url"]
       },
       "FileDto": {
         "type": "object",
@@ -5776,9 +5307,7 @@
             "format": "binary"
           }
         },
-        "required": [
-          "file"
-        ]
+        "required": ["file"]
       },
       "UpdateFeedDto": {
         "type": "object",
@@ -5804,9 +5333,7 @@
             "x-nestjs_zod-empty-type": true
           }
         },
-        "required": [
-          "folderId"
-        ]
+        "required": ["folderId"]
       },
       "SubscriptionOutDto_Output": {
         "type": "object",
@@ -5859,13 +5386,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "id",
-          "userId",
-          "feedId",
-          "description",
-          "folderId"
-        ]
+        "required": ["id", "userId", "feedId", "description", "folderId"]
       },
       "ArticleListDto_Output": {
         "type": "object",
@@ -5934,9 +5455,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -5961,9 +5480,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -6092,10 +5609,7 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         },
                         "line": {
@@ -6113,17 +5627,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "polygon": {
@@ -6141,17 +5650,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "box": {
@@ -6167,10 +5671,7 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             },
                             "upperCorner": {
@@ -6183,17 +5684,11 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "lowerCorner",
-                            "upperCorner"
-                          ],
+                          "required": ["lowerCorner", "upperCorner"],
                           "additionalProperties": false
                         },
                         "featureTypeTag": {
@@ -6377,9 +5872,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url"
-                            ],
+                            "required": ["url"],
                             "additionalProperties": false
                           }
                         }
@@ -6434,10 +5927,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url",
-                              "type"
-                            ],
+                            "required": ["url", "type"],
                             "additionalProperties": false
                           }
                         },
@@ -6452,10 +5942,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "url",
-                            "type"
-                          ],
+                          "required": ["url", "type"],
                           "additionalProperties": false
                         },
                         "soundbites": {
@@ -6473,10 +5960,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "startTime",
-                              "duration"
-                            ],
+                            "required": ["startTime", "duration"],
                             "additionalProperties": false
                           }
                         },
@@ -6503,9 +5987,7 @@
                                 "format": "uri"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         },
@@ -6522,9 +6004,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "episode": {
@@ -6537,9 +6017,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "number"
-                          ],
+                          "required": ["number"],
                           "additionalProperties": false
                         },
                         "license": {
@@ -6553,9 +6031,7 @@
                               "format": "uri"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "alternateEnclosures": {
@@ -6603,9 +6079,7 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "uri"
-                                  ],
+                                  "required": ["uri"],
                                   "additionalProperties": false
                                 }
                               },
@@ -6619,16 +6093,11 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "value"
-                                ],
+                                "required": ["type", "value"],
                                 "additionalProperties": false
                               }
                             },
-                            "required": [
-                              "type"
-                            ],
+                            "required": ["type"],
                             "additionalProperties": false
                           }
                         },
@@ -6673,11 +6142,7 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             },
@@ -6719,9 +6184,7 @@
                                         "type": "string"
                                       }
                                     },
-                                    "required": [
-                                      "feedGuid"
-                                    ],
+                                    "required": ["feedGuid"],
                                     "additionalProperties": false
                                   },
                                   "valueRecipients": {
@@ -6752,27 +6215,17 @@
                                           "type": "boolean"
                                         }
                                       },
-                                      "required": [
-                                        "type",
-                                        "address",
-                                        "split"
-                                      ],
+                                      "required": ["type", "address", "split"],
                                       "additionalProperties": false
                                     }
                                   }
                                 },
-                                "required": [
-                                  "startTime",
-                                  "duration"
-                                ],
+                                "required": ["startTime", "duration"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "type",
-                            "method"
-                          ],
+                          "required": ["type", "method"],
                           "additionalProperties": false
                         },
                         "images": {
@@ -6806,9 +6259,7 @@
                                 "type": "number"
                               }
                             },
-                            "required": [
-                              "protocol"
-                            ],
+                            "required": ["protocol"],
                             "additionalProperties": false
                           }
                         },
@@ -6824,9 +6275,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         }
@@ -6866,9 +6315,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "ref"
-                            ],
+                            "required": ["ref"],
                             "additionalProperties": false
                           }
                         }
@@ -6910,10 +6357,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "isPermalink",
-                        "value"
-                      ],
+                      "required": ["isPermalink", "value"],
                       "additionalProperties": false
                     },
                     {
@@ -7140,10 +6584,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "cursor",
-          "articles"
-        ]
+        "required": ["cursor", "articles"]
       },
       "ArticleStatusDto_Output": {
         "type": "object",
@@ -7198,11 +6639,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "userId",
-          "articleId",
-          "contentWarning"
-        ]
+        "required": ["userId", "articleId", "contentWarning"]
       },
       "ArticleSearchDto_Output": {
         "type": "object",
@@ -7258,9 +6695,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -7285,9 +6720,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -7416,10 +6849,7 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         },
                         "line": {
@@ -7437,17 +6867,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "polygon": {
@@ -7465,17 +6890,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "box": {
@@ -7491,10 +6911,7 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             },
                             "upperCorner": {
@@ -7507,17 +6924,11 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "lowerCorner",
-                            "upperCorner"
-                          ],
+                          "required": ["lowerCorner", "upperCorner"],
                           "additionalProperties": false
                         },
                         "featureTypeTag": {
@@ -7701,9 +7112,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url"
-                            ],
+                            "required": ["url"],
                             "additionalProperties": false
                           }
                         }
@@ -7758,10 +7167,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url",
-                              "type"
-                            ],
+                            "required": ["url", "type"],
                             "additionalProperties": false
                           }
                         },
@@ -7776,10 +7182,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "url",
-                            "type"
-                          ],
+                          "required": ["url", "type"],
                           "additionalProperties": false
                         },
                         "soundbites": {
@@ -7797,10 +7200,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "startTime",
-                              "duration"
-                            ],
+                            "required": ["startTime", "duration"],
                             "additionalProperties": false
                           }
                         },
@@ -7827,9 +7227,7 @@
                                 "format": "uri"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         },
@@ -7846,9 +7244,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "episode": {
@@ -7861,9 +7257,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "number"
-                          ],
+                          "required": ["number"],
                           "additionalProperties": false
                         },
                         "license": {
@@ -7877,9 +7271,7 @@
                               "format": "uri"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "alternateEnclosures": {
@@ -7927,9 +7319,7 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "uri"
-                                  ],
+                                  "required": ["uri"],
                                   "additionalProperties": false
                                 }
                               },
@@ -7943,16 +7333,11 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "value"
-                                ],
+                                "required": ["type", "value"],
                                 "additionalProperties": false
                               }
                             },
-                            "required": [
-                              "type"
-                            ],
+                            "required": ["type"],
                             "additionalProperties": false
                           }
                         },
@@ -7997,11 +7382,7 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             },
@@ -8043,9 +7424,7 @@
                                         "type": "string"
                                       }
                                     },
-                                    "required": [
-                                      "feedGuid"
-                                    ],
+                                    "required": ["feedGuid"],
                                     "additionalProperties": false
                                   },
                                   "valueRecipients": {
@@ -8076,27 +7455,17 @@
                                           "type": "boolean"
                                         }
                                       },
-                                      "required": [
-                                        "type",
-                                        "address",
-                                        "split"
-                                      ],
+                                      "required": ["type", "address", "split"],
                                       "additionalProperties": false
                                     }
                                   }
                                 },
-                                "required": [
-                                  "startTime",
-                                  "duration"
-                                ],
+                                "required": ["startTime", "duration"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "type",
-                            "method"
-                          ],
+                          "required": ["type", "method"],
                           "additionalProperties": false
                         },
                         "images": {
@@ -8130,9 +7499,7 @@
                                 "type": "number"
                               }
                             },
-                            "required": [
-                              "protocol"
-                            ],
+                            "required": ["protocol"],
                             "additionalProperties": false
                           }
                         },
@@ -8148,9 +7515,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         }
@@ -8190,9 +7555,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "ref"
-                            ],
+                            "required": ["ref"],
                             "additionalProperties": false
                           }
                         }
@@ -8234,10 +7597,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "isPermalink",
-                        "value"
-                      ],
+                      "required": ["isPermalink", "value"],
                       "additionalProperties": false
                     },
                     {
@@ -8464,9 +7824,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "articles"
-        ]
+        "required": ["articles"]
       },
       "HiddenArticleListDto_Output": {
         "type": "object",
@@ -8535,9 +7893,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -8562,9 +7918,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -8693,10 +8047,7 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         },
                         "line": {
@@ -8714,17 +8065,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "polygon": {
@@ -8742,17 +8088,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "box": {
@@ -8768,10 +8109,7 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             },
                             "upperCorner": {
@@ -8784,17 +8122,11 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "lowerCorner",
-                            "upperCorner"
-                          ],
+                          "required": ["lowerCorner", "upperCorner"],
                           "additionalProperties": false
                         },
                         "featureTypeTag": {
@@ -8978,9 +8310,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url"
-                            ],
+                            "required": ["url"],
                             "additionalProperties": false
                           }
                         }
@@ -9035,10 +8365,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url",
-                              "type"
-                            ],
+                            "required": ["url", "type"],
                             "additionalProperties": false
                           }
                         },
@@ -9053,10 +8380,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "url",
-                            "type"
-                          ],
+                          "required": ["url", "type"],
                           "additionalProperties": false
                         },
                         "soundbites": {
@@ -9074,10 +8398,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "startTime",
-                              "duration"
-                            ],
+                            "required": ["startTime", "duration"],
                             "additionalProperties": false
                           }
                         },
@@ -9104,9 +8425,7 @@
                                 "format": "uri"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         },
@@ -9123,9 +8442,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "episode": {
@@ -9138,9 +8455,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "number"
-                          ],
+                          "required": ["number"],
                           "additionalProperties": false
                         },
                         "license": {
@@ -9154,9 +8469,7 @@
                               "format": "uri"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "alternateEnclosures": {
@@ -9204,9 +8517,7 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "uri"
-                                  ],
+                                  "required": ["uri"],
                                   "additionalProperties": false
                                 }
                               },
@@ -9220,16 +8531,11 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "value"
-                                ],
+                                "required": ["type", "value"],
                                 "additionalProperties": false
                               }
                             },
-                            "required": [
-                              "type"
-                            ],
+                            "required": ["type"],
                             "additionalProperties": false
                           }
                         },
@@ -9274,11 +8580,7 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             },
@@ -9320,9 +8622,7 @@
                                         "type": "string"
                                       }
                                     },
-                                    "required": [
-                                      "feedGuid"
-                                    ],
+                                    "required": ["feedGuid"],
                                     "additionalProperties": false
                                   },
                                   "valueRecipients": {
@@ -9353,27 +8653,17 @@
                                           "type": "boolean"
                                         }
                                       },
-                                      "required": [
-                                        "type",
-                                        "address",
-                                        "split"
-                                      ],
+                                      "required": ["type", "address", "split"],
                                       "additionalProperties": false
                                     }
                                   }
                                 },
-                                "required": [
-                                  "startTime",
-                                  "duration"
-                                ],
+                                "required": ["startTime", "duration"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "type",
-                            "method"
-                          ],
+                          "required": ["type", "method"],
                           "additionalProperties": false
                         },
                         "images": {
@@ -9407,9 +8697,7 @@
                                 "type": "number"
                               }
                             },
-                            "required": [
-                              "protocol"
-                            ],
+                            "required": ["protocol"],
                             "additionalProperties": false
                           }
                         },
@@ -9425,9 +8713,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         }
@@ -9467,9 +8753,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "ref"
-                            ],
+                            "required": ["ref"],
                             "additionalProperties": false
                           }
                         }
@@ -9511,10 +8795,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "isPermalink",
-                        "value"
-                      ],
+                      "required": ["isPermalink", "value"],
                       "additionalProperties": false
                     },
                     {
@@ -9747,10 +9028,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "cursor",
-          "articles"
-        ]
+        "required": ["cursor", "articles"]
       },
       "ArticleDetailDto_Output": {
         "type": "object",
@@ -9804,9 +9082,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -9833,9 +9109,7 @@
                   "format": "uri"
                 }
               },
-              "required": [
-                "name"
-              ],
+              "required": ["name"],
               "additionalProperties": false
             },
             "x-nestjs_zod-has-null": true,
@@ -9995,10 +9269,7 @@
                         "type": "number"
                       }
                     },
-                    "required": [
-                      "lat",
-                      "lng"
-                    ],
+                    "required": ["lat", "lng"],
                     "additionalProperties": false
                   },
                   "line": {
@@ -10016,17 +9287,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "polygon": {
@@ -10044,17 +9310,12 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "points"
-                    ],
+                    "required": ["points"],
                     "additionalProperties": false
                   },
                   "box": {
@@ -10070,10 +9331,7 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       },
                       "upperCorner": {
@@ -10086,17 +9344,11 @@
                             "type": "number"
                           }
                         },
-                        "required": [
-                          "lat",
-                          "lng"
-                        ],
+                        "required": ["lat", "lng"],
                         "additionalProperties": false
                       }
                     },
-                    "required": [
-                      "lowerCorner",
-                      "upperCorner"
-                    ],
+                    "required": ["lowerCorner", "upperCorner"],
                     "additionalProperties": false
                   },
                   "featureTypeTag": {
@@ -10312,9 +9564,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "url"
-                      ],
+                      "required": ["url"],
                       "additionalProperties": false
                     }
                   }
@@ -10375,10 +9625,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "url",
-                        "type"
-                      ],
+                      "required": ["url", "type"],
                       "additionalProperties": false
                     }
                   },
@@ -10393,10 +9640,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "url",
-                      "type"
-                    ],
+                    "required": ["url", "type"],
                     "additionalProperties": false
                   },
                   "soundbites": {
@@ -10414,10 +9658,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "startTime",
-                        "duration"
-                      ],
+                      "required": ["startTime", "duration"],
                       "additionalProperties": false
                     }
                   },
@@ -10444,9 +9685,7 @@
                           "format": "uri"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   },
@@ -10463,9 +9702,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "episode": {
@@ -10478,9 +9715,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "number"
-                    ],
+                    "required": ["number"],
                     "additionalProperties": false
                   },
                   "license": {
@@ -10494,9 +9729,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "display"
-                    ],
+                    "required": ["display"],
                     "additionalProperties": false
                   },
                   "alternateEnclosures": {
@@ -10544,9 +9777,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "uri"
-                            ],
+                            "required": ["uri"],
                             "additionalProperties": false
                           }
                         },
@@ -10560,16 +9791,11 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "type",
-                            "value"
-                          ],
+                          "required": ["type", "value"],
                           "additionalProperties": false
                         }
                       },
-                      "required": [
-                        "type"
-                      ],
+                      "required": ["type"],
                       "additionalProperties": false
                     }
                   },
@@ -10614,11 +9840,7 @@
                               "type": "boolean"
                             }
                           },
-                          "required": [
-                            "type",
-                            "address",
-                            "split"
-                          ],
+                          "required": ["type", "address", "split"],
                           "additionalProperties": false
                         }
                       },
@@ -10660,9 +9882,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "feedGuid"
-                              ],
+                              "required": ["feedGuid"],
                               "additionalProperties": false
                             },
                             "valueRecipients": {
@@ -10693,27 +9913,17 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "startTime",
-                            "duration"
-                          ],
+                          "required": ["startTime", "duration"],
                           "additionalProperties": false
                         }
                       }
                     },
-                    "required": [
-                      "type",
-                      "method"
-                    ],
+                    "required": ["type", "method"],
                     "additionalProperties": false
                   },
                   "images": {
@@ -10747,9 +9957,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "protocol"
-                      ],
+                      "required": ["protocol"],
                       "additionalProperties": false
                     }
                   },
@@ -10765,9 +9973,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "display"
-                      ],
+                      "required": ["display"],
                       "additionalProperties": false
                     }
                   }
@@ -10810,9 +10016,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "ref"
-                      ],
+                      "required": ["ref"],
                       "additionalProperties": false
                     }
                   }
@@ -10862,10 +10066,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "isPermalink",
-                  "value"
-                ],
+                "required": ["isPermalink", "value"],
                 "additionalProperties": false
               },
               {
@@ -11111,9 +10312,7 @@
             }
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": ["name"]
       },
       "FolderOutDto_Output": {
         "type": "object",
@@ -11144,12 +10343,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "id",
-          "name",
-          "userId",
-          "feedIds"
-        ]
+        "required": ["id", "name", "userId", "feedIds"]
       },
       "FolderWithFeedsOutDto_Output": {
         "type": "object",
@@ -11279,9 +10473,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -11304,9 +10496,7 @@
                         "format": "uri"
                       }
                     },
-                    "required": [
-                      "name"
-                    ],
+                    "required": ["name"],
                     "additionalProperties": false
                   }
                 },
@@ -11367,10 +10557,7 @@
                           "minimum": 0
                         }
                       },
-                      "required": [
-                        "url",
-                        "link"
-                      ],
+                      "required": ["url", "link"],
                       "additionalProperties": false
                     },
                     {
@@ -11499,9 +10686,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "value"
-                          ],
+                          "required": ["value"],
                           "additionalProperties": false
                         },
                         "fundings": {
@@ -11517,9 +10702,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "url"
-                            ],
+                            "required": ["url"],
                             "additionalProperties": false
                           }
                         },
@@ -11546,9 +10729,7 @@
                                 "format": "uri"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         },
@@ -11565,9 +10746,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "trailers": {
@@ -11596,11 +10775,7 @@
                                 "type": "number"
                               }
                             },
-                            "required": [
-                              "display",
-                              "url",
-                              "pubDate"
-                            ],
+                            "required": ["display", "url", "pubDate"],
                             "additionalProperties": false
                           }
                         },
@@ -11648,11 +10823,7 @@
                                     "type": "boolean"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "address",
-                                  "split"
-                                ],
+                                "required": ["type", "address", "split"],
                                 "additionalProperties": false
                               }
                             },
@@ -11694,9 +10865,7 @@
                                         "type": "string"
                                       }
                                     },
-                                    "required": [
-                                      "feedGuid"
-                                    ],
+                                    "required": ["feedGuid"],
                                     "additionalProperties": false
                                   },
                                   "valueRecipients": {
@@ -11727,27 +10896,17 @@
                                           "type": "boolean"
                                         }
                                       },
-                                      "required": [
-                                        "type",
-                                        "address",
-                                        "split"
-                                      ],
+                                      "required": ["type", "address", "split"],
                                       "additionalProperties": false
                                     }
                                   }
                                 },
-                                "required": [
-                                  "startTime",
-                                  "duration"
-                                ],
+                                "required": ["startTime", "duration"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "type",
-                            "method"
-                          ],
+                          "required": ["type", "method"],
                           "additionalProperties": false
                         },
                         "medium": {
@@ -11793,17 +10952,12 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "href"
-                                  ],
+                                  "required": ["href"],
                                   "additionalProperties": false
                                 }
                               }
                             },
-                            "required": [
-                              "status",
-                              "start"
-                            ],
+                            "required": ["status", "start"],
                             "additionalProperties": false
                           }
                         },
@@ -11819,9 +10973,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "value"
-                            ],
+                            "required": ["value"],
                             "additionalProperties": false
                           }
                         },
@@ -11837,9 +10989,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "display"
-                            ],
+                            "required": ["display"],
                             "additionalProperties": false
                           }
                         },
@@ -11862,9 +11012,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "feedGuid"
-                            ],
+                            "required": ["feedGuid"],
                             "additionalProperties": false
                           }
                         },
@@ -11890,9 +11038,7 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "feedGuid"
-                                ],
+                                "required": ["feedGuid"],
                                 "additionalProperties": false
                               }
                             }
@@ -11915,9 +11061,7 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "display"
-                          ],
+                          "required": ["display"],
                           "additionalProperties": false
                         },
                         "podping": {
@@ -11952,10 +11096,7 @@
                               "type": "number"
                             }
                           },
-                          "required": [
-                            "lat",
-                            "lng"
-                          ],
+                          "required": ["lat", "lng"],
                           "additionalProperties": false
                         },
                         "line": {
@@ -11973,17 +11114,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "polygon": {
@@ -12001,17 +11137,12 @@
                                     "type": "number"
                                   }
                                 },
-                                "required": [
-                                  "lat",
-                                  "lng"
-                                ],
+                                "required": ["lat", "lng"],
                                 "additionalProperties": false
                               }
                             }
                           },
-                          "required": [
-                            "points"
-                          ],
+                          "required": ["points"],
                           "additionalProperties": false
                         },
                         "box": {
@@ -12027,10 +11158,7 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             },
                             "upperCorner": {
@@ -12043,17 +11171,11 @@
                                   "type": "number"
                                 }
                               },
-                              "required": [
-                                "lat",
-                                "lng"
-                              ],
+                              "required": ["lat", "lng"],
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "lowerCorner",
-                            "upperCorner"
-                          ],
+                          "required": ["lowerCorner", "upperCorner"],
                           "additionalProperties": false
                         },
                         "featureTypeTag": {
@@ -12131,12 +11253,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "id",
-          "name",
-          "userId",
-          "feeds"
-        ]
+        "required": ["id", "name", "userId", "feeds"]
       },
       "UpdateFolderDto": {
         "type": "object",
@@ -12222,11 +11339,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": [
-                  "blur",
-                  "markRead",
-                  "hide"
-                ]
+                "enum": ["blur", "markRead", "hide"]
               },
               "contentWarning": {
                 "anyOf": [
@@ -12240,18 +11353,11 @@
                 ]
               }
             },
-            "required": [
-              "type",
-              "contentWarning"
-            ],
+            "required": ["type", "contentWarning"],
             "x-nestjs_zod-has-null": true
           }
         },
-        "required": [
-          "name",
-          "conditions",
-          "action"
-        ]
+        "required": ["name", "conditions", "action"]
       },
       "FilterOutDto_Output": {
         "type": "object",
@@ -12338,11 +11444,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": [
-                  "blur",
-                  "markRead",
-                  "hide"
-                ]
+                "enum": ["blur", "markRead", "hide"]
               },
               "contentWarning": {
                 "anyOf": [
@@ -12356,22 +11458,13 @@
                 ]
               }
             },
-            "required": [
-              "type",
-              "contentWarning"
-            ],
+            "required": ["type", "contentWarning"],
             "additionalProperties": false,
             "x-nestjs_zod-has-null": true,
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "id",
-          "name",
-          "conditions",
-          "isActive",
-          "action"
-        ]
+        "required": ["id", "name", "conditions", "isActive", "action"]
       },
       "UpdateFilterDto": {
         "type": "object",
@@ -12439,11 +11532,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": [
-                  "blur",
-                  "markRead",
-                  "hide"
-                ]
+                "enum": ["blur", "markRead", "hide"]
               },
               "contentWarning": {
                 "anyOf": [
@@ -12460,10 +11549,7 @@
             "x-nestjs_zod-has-null": true
           }
         },
-        "required": [
-          "conditions",
-          "action"
-        ]
+        "required": ["conditions", "action"]
       },
       "CreateConfigDto": {
         "type": "object",
@@ -12476,10 +11562,7 @@
             "format": "uri"
           }
         },
-        "required": [
-          "apiKey",
-          "apiURL"
-        ]
+        "required": ["apiKey", "apiURL"]
       },
       "CreateBookmarkDto": {
         "type": "object",
@@ -12489,9 +11572,7 @@
             "format": "uri"
           }
         },
-        "required": [
-          "url"
-        ]
+        "required": ["url"]
       },
       "FeedMini_Output": {
         "type": "object",
@@ -12595,10 +11676,7 @@
                     "minimum": 0
                   }
                 },
-                "required": [
-                  "feed_id",
-                  "icon_id"
-                ],
+                "required": ["feed_id", "icon_id"],
                 "additionalProperties": false
               },
               {
@@ -12678,11 +11756,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "user_id",
-              "title"
-            ],
+            "required": ["id", "user_id", "title"],
             "additionalProperties": false,
             "x-nestjs_zod-has-null": true,
             "x-nestjs_zod-parent-additional-properties": false
@@ -12740,10 +11814,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "reads",
-          "unreads"
-        ]
+        "required": ["reads", "unreads"]
       },
       "CreateFeedDto": {
         "type": "object",
@@ -12757,10 +11828,7 @@
             "minimum": 0
           }
         },
-        "required": [
-          "feed_url",
-          "category_id"
-        ]
+        "required": ["feed_url", "category_id"]
       },
       "UpdateFeedMiniDto": {
         "type": "object",
@@ -13031,10 +12099,7 @@
                               "minimum": 0
                             }
                           },
-                          "required": [
-                            "feed_id",
-                            "icon_id"
-                          ],
+                          "required": ["feed_id", "icon_id"],
                           "additionalProperties": false
                         },
                         {
@@ -13091,11 +12156,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "id",
-                        "user_id",
-                        "title"
-                      ],
+                      "required": ["id", "user_id", "title"],
                       "additionalProperties": false
                     }
                   },
@@ -13152,10 +12213,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "total",
-          "entries"
-        ]
+        "required": ["total", "entries"]
       },
       "EntryDto_Output": {
         "type": "object",
@@ -13440,10 +12498,7 @@
                         "minimum": 0
                       }
                     },
-                    "required": [
-                      "feed_id",
-                      "icon_id"
-                    ],
+                    "required": ["feed_id", "icon_id"],
                     "additionalProperties": false
                   },
                   {
@@ -13500,11 +12555,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id",
-                  "user_id",
-                  "title"
-                ],
+                "required": ["id", "user_id", "title"],
                 "additionalProperties": false
               }
             },
@@ -13570,16 +12621,10 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "read",
-              "unread"
-            ]
+            "enum": ["read", "unread"]
           }
         },
-        "required": [
-          "entry_ids",
-          "status"
-        ]
+        "required": ["entry_ids", "status"]
       },
       "FullEntryContent_Output": {
         "type": "object",
@@ -13589,9 +12634,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "content"
-        ]
+        "required": ["content"]
       },
       "CategoryOutDto_Output": {
         "type": "object",
@@ -13613,12 +12656,7 @@
             "x-nestjs_zod-parent-additional-properties": false
           }
         },
-        "required": [
-          "id",
-          "title",
-          "user_id",
-          "hide_globally"
-        ]
+        "required": ["id", "title", "user_id", "hide_globally"]
       },
       "CreateCategoryDto": {
         "type": "object",
@@ -13627,9 +12665,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
       "UserSchemaDto_Output": {
         "type": "object",
