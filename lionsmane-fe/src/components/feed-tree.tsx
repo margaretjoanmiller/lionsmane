@@ -39,10 +39,7 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       toast.error('Failed to edit feed', { description: e.message });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
-      await queryClient.invalidateQueries({
-        queryKey: ['get', '/folder/feed'],
-      });
+      await queryClient.invalidateQueries();
     },
   });
   const { dragAndDropHooks } = useDragAndDrop({
@@ -70,13 +67,7 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       // Only allow dragging feeds, not folders
       if (parsed.type !== 'feed') return;
 
-      let target = treeData.find((i) => i.id === e.target.key);
-      if (!target) {
-        for (const parent of treeData) {
-          target = parent.children?.find((child) => child.id === e.target.key);
-          if (target) break;
-        }
-      }
+      const target = treeData.find((i) => i.id === e.target.key);
 
       if (target?.type === 'folder') {
         editFeed({
