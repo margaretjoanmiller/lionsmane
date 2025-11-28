@@ -39,7 +39,10 @@ export default function FeedTree({ treeData }: { treeData: FeedTreeData[] }) {
       toast.error('Failed to edit feed', { description: e.message });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries();
+      await queryClient.invalidateQueries({ queryKey: ['get', '/feed'] });
+      await queryClient.invalidateQueries({
+        queryKey: ['get', '/folder/feed'],
+      });
     },
   });
   const { dragAndDropHooks } = useDragAndDrop({
