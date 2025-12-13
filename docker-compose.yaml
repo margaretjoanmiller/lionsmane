@@ -33,7 +33,7 @@ services:
   vault:
     image: openbao/openbao:2.4
     environment:
-      BAO_DEV_ROOT_TOKEN_ID: ${BAO_TOKEN}
+      BAO_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN}
       BAO_DEV_LISTEN_ADDRESS: "0.0.0.0:1337"
     ports:
       - "1337:1337"

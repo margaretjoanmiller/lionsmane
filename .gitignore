@@ -123,3 +123,4 @@ count.txt
 .tanstack
 
 tsconfig.tsbuildinfo
+.pnpm-store/
