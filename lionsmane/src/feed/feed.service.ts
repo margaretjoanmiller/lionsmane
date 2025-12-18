@@ -27,7 +27,7 @@ import {
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
 import { catchError, firstValueFrom, of } from 'rxjs';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';
 import { OpmlService } from 'src/opml/opml.service';

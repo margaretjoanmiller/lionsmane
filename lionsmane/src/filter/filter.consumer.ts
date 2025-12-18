@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { eq, getTableColumns, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { Enclosure } from 'src/types/rss';
 import { FilterService } from './filter.service';
 

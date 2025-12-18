@@ -16,7 +16,7 @@ import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
 import { catchError, firstValueFrom, of } from 'rxjs';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { RedisService } from 'src/redis/redis.service';
 import { parse as parseURL } from 'tldts';
 

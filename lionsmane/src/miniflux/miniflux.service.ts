@@ -29,7 +29,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';

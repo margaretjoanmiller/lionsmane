@@ -10,7 +10,7 @@ import { isAfter, subMonths } from 'date-fns';
 import { and, eq, gte, ne, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Article } from 'src/article/article';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { UpdateFilterDto } from './dto/update-filter.dto';
 import { AppliedRules, FilterRule } from './filter';

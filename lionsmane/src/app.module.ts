@@ -31,8 +31,7 @@ import { AppController } from './app.controller';
 import { ArticleModule } from './article/article.module';
 import { auth } from './auth';
 import { CronModule } from './cron/cron.module';
-import * as authSchema from './db/schema/auth';
-import * as coreSchema from './db/schema/core';
+import * as schema from './drizzle/schema';
 import { EmailModule } from './email/email.module';
 import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
@@ -85,7 +84,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         },
       },
       config: {
-        schema: { ...authSchema, ...coreSchema },
+        schema,
       },
     }),
     CacheModule.registerAsync({

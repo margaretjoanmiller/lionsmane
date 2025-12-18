@@ -10,7 +10,7 @@ import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { catchError, firstValueFrom, map } from 'rxjs';
-import { schema } from 'src/db/schema';
+import * as schema from 'src/drizzle/schema';
 import { SecretsService } from 'src/secrets/secrets.service';
 
 @Injectable()

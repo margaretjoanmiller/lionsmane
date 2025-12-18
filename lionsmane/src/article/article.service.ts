@@ -15,10 +15,10 @@ import {
 } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
+import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
-import { schema } from '../db/schema';
 import { ArticleDetail } from './dto/article-detail.dto';
 import { NewArticle } from './dto/new-article.dto';
 
