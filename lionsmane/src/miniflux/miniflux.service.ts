@@ -29,6 +29,8 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
 import { ArticleService } from 'src/article/article.service';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { FeedService } from 'src/feed/feed.service';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -45,7 +47,8 @@ import { UserSessionMini } from './dto/user.dto';
 @Injectable()
 export class MinifluxService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private feedService: FeedService,
     private folderService: FolderService,

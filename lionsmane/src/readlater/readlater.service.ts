@@ -10,6 +10,8 @@ import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { catchError, firstValueFrom, map } from 'rxjs';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { SecretsService } from 'src/secrets/secrets.service';
 
@@ -17,7 +19,8 @@ import { SecretsService } from 'src/secrets/secrets.service';
 export class ReadlaterService {
   private readonly logger = new Logger(ReadlaterService.name);
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     private secrets: SecretsService,
     private readonly httpService: HttpService,
   ) {}

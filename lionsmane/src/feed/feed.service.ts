@@ -27,6 +27,8 @@ import {
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
 import { catchError, firstValueFrom, of } from 'rxjs';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -38,7 +40,8 @@ import { UpdateFeedDto } from './dto/update-feed.dto';
 @Injectable()
 export class FeedService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
     private folderService: FolderService,

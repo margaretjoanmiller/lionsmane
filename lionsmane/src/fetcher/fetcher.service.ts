@@ -16,6 +16,8 @@ import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
 import { catchError, firstValueFrom, of } from 'rxjs';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { RedisService } from 'src/redis/redis.service';
 import { parse as parseURL } from 'tldts';
@@ -23,7 +25,8 @@ import { parse as parseURL } from 'tldts';
 @Injectable()
 export class FetcherService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
     private httpService: HttpService,

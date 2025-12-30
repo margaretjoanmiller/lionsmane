@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
+import { DrizzleModule } from 'src/drizzle/drizzle.module';
 import { FetcherModule } from 'src/fetcher/fetcher.module';
 import { FolderModule } from 'src/folder/folder.module';
 import { OpmlModule } from 'src/opml/opml.module';
@@ -10,6 +11,7 @@ import { FeedService } from './feed.service';
 
 @Module({
   imports: [
+    DrizzleModule,
     BullModule.registerQueue({ name: 'feed' }, { name: 'article' }),
     FetcherModule,
     FolderModule,

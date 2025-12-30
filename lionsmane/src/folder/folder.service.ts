@@ -1,13 +1,18 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 
 @Injectable()
 export class FolderService {
-  constructor(@Inject('DB') private db: NodePgDatabase<typeof schema>) {}
+  constructor(
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
+  ) {}
 
   async create(createFolderDto: CreateFolderDto, userId: string) {
     const result = await this.db.transaction(async (tx) => {

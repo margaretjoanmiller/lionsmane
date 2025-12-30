@@ -31,6 +31,7 @@ import { AppController } from './app.controller';
 import { ArticleModule } from './article/article.module';
 import { auth } from './auth';
 import { CronModule } from './cron/cron.module';
+import { DrizzleModule } from './drizzle/drizzle.module';
 import * as schema from './drizzle/schema';
 import { EmailModule } from './email/email.module';
 import { FeedModule } from './feed/feed.module';
@@ -75,18 +76,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       { name: 'filter' },
     ),
     AuthModule.forRoot(auth),
-    DrizzlePGModule.register({
-      tag: 'DB',
-      pg: {
-        connection: 'pool',
-        config: {
-          connectionString: process.env.DATABASE_URL!,
-        },
-      },
-      config: {
-        schema,
-      },
-    }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: () => {
@@ -131,6 +120,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     SecretsModule,
     EmailModule,
     MinifluxModule,
+    DrizzleModule,
   ],
   controllers: [AppController],
   providers: [

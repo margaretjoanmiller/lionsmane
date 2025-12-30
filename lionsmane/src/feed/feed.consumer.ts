@@ -3,6 +3,8 @@ import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';
@@ -11,7 +13,8 @@ import { FeedService } from './feed.service';
 @Processor('feed')
 export class FeedConsumer extends WorkerHost {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     private fetcher: FetcherService,
     private feedService: FeedService,
     private folderService: FolderService,

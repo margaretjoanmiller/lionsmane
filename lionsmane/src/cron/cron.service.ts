@@ -3,6 +3,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 
 @Injectable()
@@ -11,7 +13,8 @@ export class CronService {
 
   constructor(
     @InjectQueue('feed') private feedQueue: Queue,
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
   ) {}
 
   @Cron('0/45 * * * *') // every 45th minute

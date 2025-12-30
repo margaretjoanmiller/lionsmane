@@ -15,6 +15,8 @@ import {
 } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
+import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
+import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import { Enclosure } from 'src/types/rss';
@@ -25,7 +27,8 @@ import { NewArticle } from './dto/new-article.dto';
 @Injectable()
 export class ArticleService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('article') private articlesQueue: Queue,
     private fetcher: FetcherService,
   ) {}

@@ -1,15 +1,4 @@
--- Current sql file was generated after introspecting the database
--- If you want to run this migration please uncomment this code before executing migrations
-/*
-CREATE SCHEMA "drizzle";
---> statement-breakpoint
 CREATE TYPE "user_filter_actions" AS ENUM('blur', 'markRead', 'hide');--> statement-breakpoint
-CREATE TABLE "drizzle"."__drizzle_migrations" (
-	"id" serial PRIMARY KEY,
-	"hash" text NOT NULL,
-	"created_at" bigint
-);
---> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY,
 	"account_id" text NOT NULL,
@@ -51,7 +40,7 @@ CREATE TABLE "apikey" (
 );
 --> statement-breakpoint
 CREATE TABLE "applied_rules" (
-	"id" uuid PRIMARY KEY,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
 	"userId" text NOT NULL,
 	"articleId" uuid NOT NULL,
 	"ruleId" uuid NOT NULL,
@@ -63,23 +52,24 @@ CREATE TABLE "applied_rules" (
 );
 --> statement-breakpoint
 CREATE TABLE "articles" (
-	"id" uuid CONSTRAINT "articles_id_unique" UNIQUE,
+	"id" uuid DEFAULT uuidv7() CONSTRAINT "articles_id_unique" UNIQUE,
 	"minifluxId" serial CONSTRAINT "articles_minifluxId_unique" UNIQUE,
 	"title" text DEFAULT 'No title' NOT NULL,
 	"url" text,
 	"authors" jsonb DEFAULT '[]' NOT NULL,
 	"contributors" jsonb DEFAULT '[]' NOT NULL,
-	"subject" varchar(256),
 	"publisher" varchar(256),
 	"contributor" varchar(256),
 	"format" varchar(256),
 	"language" varchar(256),
 	"rights" varchar(256),
 	"categories" jsonb DEFAULT '[]' NOT NULL,
+	"subjects" varchar(256)[],
 	"description" text,
 	"comments" text,
 	"commentRss" text,
-	"geo" jsonb,
+	"geo" jsonb DEFAULT '{}' NOT NULL,
+	"georss" jsonb DEFAULT '{}' NOT NULL,
 	"hash" varchar(64) CONSTRAINT "articles_hash_unique" UNIQUE,
 	"rawContent" text,
 	"readableHtml" text,
@@ -113,51 +103,52 @@ CREATE TABLE "enclosures" (
 );
 --> statement-breakpoint
 CREATE TABLE "feed_host" (
-	"id" uuid PRIMARY KEY,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
 	"url" text CONSTRAINT "feed_host_url_unique" UNIQUE,
 	"robotsTxt" text
 );
 --> statement-breakpoint
 CREATE TABLE "feeds" (
-	"id" uuid CONSTRAINT "feeds_id_unique" UNIQUE,
+	"id" uuid DEFAULT uuidv7() CONSTRAINT "feeds_id_unique" UNIQUE,
 	"minifluxId" serial CONSTRAINT "feeds_minifluxId_unique" UNIQUE,
 	"title" text NOT NULL,
 	"subtitle" text,
 	"url" text NOT NULL CONSTRAINT "feeds_url_unique" UNIQUE,
 	"site_url" varchar(256) NOT NULL,
+	"etag_header" varchar(256) DEFAULT '' NOT NULL,
+	"last_modified_header" varchar(256) DEFAULT '' NOT NULL,
 	"parsingErrorMessage" varchar(256),
 	"parsingErrorCount" integer DEFAULT 0 NOT NULL,
 	"userAgent" varchar(256),
 	"crawler" boolean DEFAULT false NOT NULL,
-	"authors" jsonb DEFAULT '[]' NOT NULL,
+	"authors" jsonb DEFAULT '[]',
 	"contributors" jsonb DEFAULT '[]' NOT NULL,
 	"categories" jsonb DEFAULT '[]' NOT NULL,
 	"copyright" varchar(50),
+	"rights" varchar(256)[] DEFAULT '{}'::varchar(256)[],
+	"image" jsonb,
 	"lastChecked" timestamp NOT NULL,
 	"updated" timestamp with time zone,
 	"explicit" boolean,
-	"subject" varchar(256),
+	"subjects" varchar(256)[],
 	"updatePeriod" varchar(256),
 	"updateFrequency" integer,
 	"updateBase" varchar(256),
-	"publisher" varchar(256),
-	"contributor" varchar(256),
-	"format" varchar(256),
-	"language" varchar(256),
-	"rights" varchar(256),
+	"publishers" varchar(256)[],
+	"formats" varchar(256)[],
+	"languages" varchar(256)[],
 	"youtube" jsonb,
 	"podcast" jsonb,
 	"geo" jsonb DEFAULT '{}' NOT NULL,
+	"georss" jsonb DEFAULT '{}' NOT NULL,
+	"favicon" varchar(256),
 	"icon" integer,
-	"image" jsonb,
 	"feed_host" uuid,
-	"etag_header" varchar(256) DEFAULT '' NOT NULL,
-	"last_modified_header" varchar(256) DEFAULT '' NOT NULL,
 	CONSTRAINT "feeds_id_minifluxId_pk" PRIMARY KEY("id","minifluxId")
 );
 --> statement-breakpoint
 CREATE TABLE "folders" (
-	"id" uuid CONSTRAINT "folders_id_unique" UNIQUE,
+	"id" uuid DEFAULT uuidv7() CONSTRAINT "folders_id_unique" UNIQUE,
 	"minifluxId" serial CONSTRAINT "folders_minifluxId_unique" UNIQUE,
 	"name" varchar(100) NOT NULL,
 	"userId" text NOT NULL,
@@ -237,7 +228,7 @@ CREATE TABLE "session" (
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
-	"id" uuid PRIMARY KEY,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
 	"userId" text NOT NULL,
 	"userMinifluxId" serial,
 	"feedId" uuid NOT NULL,
@@ -278,7 +269,7 @@ CREATE TABLE "user_article_states" (
 );
 --> statement-breakpoint
 CREATE TABLE "user_filters" (
-	"id" uuid PRIMARY KEY,
+	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
 	"name" varchar(256),
 	"userId" text NOT NULL,
 	"conditions" jsonb NOT NULL,
@@ -318,40 +309,39 @@ CREATE INDEX "oauthConsent_userId_idx" ON "oauth_consent" ("user_id");--> statem
 CREATE INDEX "passkey_credentialID_idx" ON "passkey" ("credential_id");--> statement-breakpoint
 CREATE INDEX "passkey_userId_idx" ON "passkey" ("user_id");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" ("user_id");--> statement-breakpoint
+CREATE INDEX "user_feeds_feed_idx" ON "subscriptions" ("feedId");--> statement-breakpoint
+CREATE INDEX "user_feeds_folder_idx" ON "subscriptions" ("folderId");--> statement-breakpoint
+CREATE INDEX "user_feeds_user_feed_idx" ON "subscriptions" ("userId","userMinifluxId","feedId");--> statement-breakpoint
 CREATE INDEX "twoFactor_secret_idx" ON "two_factor" ("secret");--> statement-breakpoint
 CREATE INDEX "twoFactor_userId_idx" ON "two_factor" ("user_id");--> statement-breakpoint
 CREATE INDEX "user_article_states_article_idx" ON "user_article_states" ("articleId");--> statement-breakpoint
 CREATE INDEX "user_article_states_user_idx" ON "user_article_states" ("userId");--> statement-breakpoint
 CREATE INDEX "user_article_states_user_read_idx" ON "user_article_states" ("userId","isRead");--> statement-breakpoint
 CREATE INDEX "user_article_states_user_starred_idx" ON "user_article_states" ("userId","isStarred");--> statement-breakpoint
-CREATE INDEX "user_feeds_feed_idx" ON "subscriptions" ("feedId");--> statement-breakpoint
-CREATE INDEX "user_feeds_folder_idx" ON "subscriptions" ("folderId");--> statement-breakpoint
-CREATE INDEX "user_feeds_user_feed_idx" ON "subscriptions" ("userId","userMinifluxId","feedId");--> statement-breakpoint
 CREATE INDEX "user_filters_actions_idx" ON "user_filters" ("userId","action");--> statement-breakpoint
 CREATE INDEX "user_filters_user_idx" ON "user_filters" ("userId","conditions");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verification" ("identifier");--> statement-breakpoint
-ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "apikey" ADD CONSTRAINT "apikey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_client_id_oauth_application_client_id_fk" FOREIGN KEY ("client_id") REFERENCES "oauth_application"("client_id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "oauth_application" ADD CONSTRAINT "oauth_application_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "oauth_consent" ADD CONSTRAINT "oauth_consent_client_id_oauth_application_client_id_fk" FOREIGN KEY ("client_id") REFERENCES "oauth_application"("client_id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "oauth_consent" ADD CONSTRAINT "oauth_consent_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "passkey" ADD CONSTRAINT "passkey_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_articleId_articles_id_fk" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_ruleId_user_filters_id_fk" FOREIGN KEY ("ruleId") REFERENCES "user_filters"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "articles" ADD CONSTRAINT "articles_feedId_feeds_id_fk" FOREIGN KEY ("feedId") REFERENCES "feeds"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "feeds" ADD CONSTRAINT "feeds_feed_host_feed_host_id_fk" FOREIGN KEY ("feed_host") REFERENCES "feed_host"("id");--> statement-breakpoint
-ALTER TABLE "feeds" ADD CONSTRAINT "feeds_icon_icons_id_fk" FOREIGN KEY ("icon") REFERENCES "icons"("id");--> statement-breakpoint
-ALTER TABLE "folders" ADD CONSTRAINT "folders_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id");--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_feedId_feeds_id_fk" FOREIGN KEY ("feedId") REFERENCES "feeds"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_folderId_folders_id_fk" FOREIGN KEY ("folderId") REFERENCES "folders"("id");--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "user_article_states" ADD CONSTRAINT "user_article_states_articleId_articles_id_fk" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "user_article_states" ADD CONSTRAINT "user_article_states_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "user_filters" ADD CONSTRAINT "user_filters_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "enclosures" ADD CONSTRAINT "enclosures_entry_id_articles_minifluxId_fk" FOREIGN KEY ("entry_id") REFERENCES "articles"("minifluxId") ON DELETE CASCADE;
-*/
+ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "apikey" ADD CONSTRAINT "apikey_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_articleId_articles_id_fkey" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_ruleId_user_filters_id_fkey" FOREIGN KEY ("ruleId") REFERENCES "user_filters"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "articles" ADD CONSTRAINT "articles_feedId_feeds_id_fkey" FOREIGN KEY ("feedId") REFERENCES "feeds"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "enclosures" ADD CONSTRAINT "enclosures_entry_id_articles_minifluxId_fkey" FOREIGN KEY ("entry_id") REFERENCES "articles"("minifluxId") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "feeds" ADD CONSTRAINT "feeds_icon_icons_id_fkey" FOREIGN KEY ("icon") REFERENCES "icons"("id");--> statement-breakpoint
+ALTER TABLE "feeds" ADD CONSTRAINT "feeds_feed_host_feed_host_id_fkey" FOREIGN KEY ("feed_host") REFERENCES "feed_host"("id");--> statement-breakpoint
+ALTER TABLE "folders" ADD CONSTRAINT "folders_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id");--> statement-breakpoint
+ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_client_id_oauth_application_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "oauth_application"("client_id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "oauth_access_token" ADD CONSTRAINT "oauth_access_token_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "oauth_application" ADD CONSTRAINT "oauth_application_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "oauth_consent" ADD CONSTRAINT "oauth_consent_client_id_oauth_application_client_id_fkey" FOREIGN KEY ("client_id") REFERENCES "oauth_application"("client_id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "oauth_consent" ADD CONSTRAINT "oauth_consent_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "passkey" ADD CONSTRAINT "passkey_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_feedId_feeds_id_fkey" FOREIGN KEY ("feedId") REFERENCES "feeds"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_folderId_folders_id_fkey" FOREIGN KEY ("folderId") REFERENCES "folders"("id");--> statement-breakpoint
+ALTER TABLE "two_factor" ADD CONSTRAINT "two_factor_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "user_article_states" ADD CONSTRAINT "user_article_states_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "user_article_states" ADD CONSTRAINT "user_article_states_articleId_articles_id_fkey" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "user_filters" ADD CONSTRAINT "user_filters_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;

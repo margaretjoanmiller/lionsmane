@@ -1,1 +1,0 @@
-ALTER TABLE "enclosures" ALTER COLUMN "mime_type" SET NOT NULL;

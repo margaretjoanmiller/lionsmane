@@ -1,1 +1,0 @@
-ALTER TABLE "enclosures" ALTER COLUMN "size" DROP NOT NULL;
