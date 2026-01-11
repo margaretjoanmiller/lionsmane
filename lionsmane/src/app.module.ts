@@ -75,7 +75,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       { name: 'article' },
       { name: 'filter' },
     ),
-    AuthModule.forRoot(auth),
+    AuthModule.forRoot({ auth }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: () => {
