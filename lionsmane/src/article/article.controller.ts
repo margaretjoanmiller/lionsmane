@@ -44,16 +44,12 @@ export class ArticleController {
     required: false,
     description: 'The number of articles to return. Default is 10.',
   })
-  async getPagedArticles(
+  getPagedArticles(
     @Session() session: UserSession,
     @Query('cursor', new DefaultValuePipe(null)) cursor?: string,
     @Query('pageSize', new DefaultValuePipe(10)) pageSize?: number,
   ) {
-    return await this.articleService.getArticles(
-      session.user.id,
-      cursor,
-      pageSize,
-    );
+    return this.articleService.getArticles(session.user.id, cursor, pageSize);
   }
 
   @Patch('status/:id')
