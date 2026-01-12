@@ -117,7 +117,11 @@ export class ArticleService {
     return { ...result?.articles, feedTitle: result?.feeds.title };
   }
 
-  async getArticles(userId: string, cursor: string | undefined, pageSize = 10) {
+  async getArticles(
+    userId: string,
+    cursor: string | undefined,
+    pageSize = 10,
+  ): Promise<ArticleDetail[]> {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
@@ -128,67 +132,54 @@ export class ArticleService {
       cursorDate = undefined;
       cursorId = undefined;
     }
-    const artPages = await this.db
-      .select({
-        ...getTableColumns(schema.articles),
-        feedTitle: schema.feeds.title,
-        isRead: schema.userArticleStates.isRead ?? false,
-        isStarred: schema.userArticleStates.isStarred ?? false,
-        isBlurred: schema.userArticleStates.isBlurred ?? false,
-        isHidden: schema.userArticleStates.isHidden ?? false,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
-      })
-      .from(schema.articles)
-      .innerJoin(
-        schema.subscriptions,
-        and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
-      .leftJoin(
-        schema.userArticleStates,
-        and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
-        ),
-      )
-      .orderBy(desc(schema.articles.published), desc(schema.articles.id)) // ordering
-      .where(
-        and(
-          cursorDate && cursorId
-            ? or(
-                lt(schema.articles.published, cursorDate),
-                and(
-                  eq(schema.articles.published, cursorDate),
-                  lt(schema.articles.id, cursorId),
-                ),
-              )
-            : undefined,
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .limit(pageSize + 1); // the number of rows to return
+
+    let artPages;
+    if (cursorDate && cursorId) {
+      artPages = await this.db.query.articles.findMany({
+        with: {
+          userArticleStates: true,
+          feed: {
+            columns: {
+              id: true,
+              title: true,
+            },
+          },
+          enclosures: true,
+        },
+        where: {
+          OR: [
+            {
+              published: { lt: cursorDate },
+            },
+            {
+              id: {
+                lt: cursorId,
+              },
+              published: { eq: cursorDate },
+            },
+          ],
+        },
+      });
+    } else {
+      artPages = await this.db.query.articles.findMany({
+        with: {
+          userArticleStates: true,
+          feed: {
+            columns: {
+              id: true,
+              title: true,
+            },
+          },
+          enclosures: true,
+        },
+      });
+    }
 
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      articles: items,
       cursor: hasNextPage
         ? createCursor(
             items[items.length - 1].published,

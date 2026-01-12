@@ -1,5 +1,5 @@
-import { defineRelations } from "drizzle-orm";
-import * as schema from "./schema";
+import { defineRelations } from 'drizzle-orm';
+import * as schema from './schema';
 
 export const relations = defineRelations(schema, (r) => ({
   account: {
@@ -20,7 +20,6 @@ export const relations = defineRelations(schema, (r) => ({
     sessions: r.many.session(),
     subscriptions: r.many.subscriptions(),
     twoFactors: r.many.twoFactor(),
-    articles: r.many.articles(),
     userFilters: r.many.userFilters(),
   },
   apikey: {
@@ -50,9 +49,9 @@ export const relations = defineRelations(schema, (r) => ({
       to: r.feeds.id,
     }),
     enclosures: r.many.enclosures(),
-    users: r.many.user({
-      from: r.articles.id.through(r.userArticleStates.articleId),
-      to: r.user.id.through(r.userArticleStates.userId),
+    userArticleStates: r.many.userArticleStates({
+      from: r.articles.id,
+      to: r.userArticleStates.articleId,
     }),
   },
   userFilters: {
@@ -137,4 +136,3 @@ export const relations = defineRelations(schema, (r) => ({
     }),
   },
 }));
-

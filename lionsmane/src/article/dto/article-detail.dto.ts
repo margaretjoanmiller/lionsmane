@@ -1,6 +1,9 @@
-import { articleDetail } from 'lionsmane-common';
+import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
+import { articles } from 'src/drizzle/schema';
 import { z } from 'zod';
+
+export const articleDetail = createSelectSchema(articles);
 
 export const articleDetailWithStatus = articleDetail
   .extend({
