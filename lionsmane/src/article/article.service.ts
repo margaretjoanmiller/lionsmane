@@ -138,6 +138,11 @@ export class ArticleService {
       artPages = await this.db.query.articles.findMany({
         with: {
           userArticleStates: true,
+          subscriptions: {
+            where: {
+              userId,
+            },
+          },
           feed: {
             columns: {
               id: true,
@@ -149,16 +154,20 @@ export class ArticleService {
         where: {
           OR: [
             {
-              published: { lt: cursorDate },
+              published: { lt: new Date(cursorDate) },
             },
             {
               id: {
                 lt: cursorId,
               },
-              published: { eq: cursorDate },
+              published: { eq: new Date(cursorDate) },
             },
           ],
         },
+        orderBy: {
+          published: 'desc',
+        },
+        limit: pageSize + 1,
       });
     } else {
       artPages = await this.db.query.articles.findMany({
@@ -172,6 +181,11 @@ export class ArticleService {
           },
           enclosures: true,
         },
+        where: {},
+        orderBy: {
+          published: 'desc',
+        },
+        limit: pageSize + 1,
       });
     }
 

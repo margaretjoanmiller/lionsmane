@@ -23,7 +23,7 @@ importers:
         version: 5.1.5(keyv@5.5.5)
       '@knaadh/nestjs-drizzle-pg':
         specifier: ^1.2.0
-        version: 1.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)
+        version: 1.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)
       '@mozilla/readability':
         specifier: ^0.6.0
         version: 0.6.0
@@ -68,7 +68,7 @@ importers:
         version: 1.0.15
       '@thallesp/nestjs-better-auth':
         specifier: ^2.2.2
-        version: 2.2.2(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(@nestjs/graphql@13.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(graphql@16.12.0)(reflect-metadata@0.2.2))(@nestjs/websockets@11.1.9)(better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16))(express@5.2.1)(graphql@16.12.0)(typescript@5.9.3)
+        version: 2.2.2(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(@nestjs/graphql@13.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(graphql@16.12.0)(reflect-metadata@0.2.2))(@nestjs/websockets@11.1.9)(better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16))(express@5.2.1)(graphql@16.12.0)(typescript@5.9.3)
       '@types/jsdom':
         specifier: ^27.0.0
         version: 27.0.0
@@ -80,7 +80,7 @@ importers:
         version: 1.13.2
       better-auth:
         specifier: ^1.4.10
-        version: 1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
+        version: 1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
       bullmq:
         specifier: ^5.66.4
         version: 5.66.4
@@ -100,11 +100,11 @@ importers:
         specifier: ^17.2.3
         version: 17.2.3
       drizzle-orm:
-        specifier: 1.0.0-beta.10-42c284e
-        version: 1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
+        specifier: 1.0.0-beta.10-4a43a22
+        version: 1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
       drizzle-zod:
-        specifier: 1.0.0-beta.10-42c284e
-        version: 1.0.0-beta.10-42c284e(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(zod@4.3.5)
+        specifier: 1.0.0-beta.10-4a43a22
+        version: 1.0.0-beta.10-4a43a22(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(zod@4.3.5)
       feedsmith:
         specifier: ^2.8.0
         version: 2.8.0
@@ -230,8 +230,8 @@ importers:
         specifier: ^4.0.16
         version: 4.0.16(@vitest/browser@4.0.16(msw@2.12.7(@types/node@25.0.1)(typescript@5.9.3))(vite@7.3.1(@types/node@25.0.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(vitest@4.0.16))(vitest@4.0.16)
       drizzle-kit:
-        specifier: 1.0.0-beta.10-42c284e
-        version: 1.0.0-beta.10-42c284e
+        specifier: 1.0.0-beta.10-4a43a22
+        version: 1.0.0-beta.10-4a43a22
       globals:
         specifier: ^17.0.0
         version: 17.0.0
@@ -384,7 +384,7 @@ importers:
         version: 1.147.2(@tanstack/react-router@1.147.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(zod@4.3.5)
       better-auth:
         specifier: ^1.4.10
-        version: 1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
+        version: 1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -6171,12 +6171,12 @@ packages:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
-  drizzle-kit@1.0.0-beta.10-42c284e:
-    resolution: {integrity: sha512-fRk0QBkl57SRnKyLBMN6UsBOeIYMzjPZ9JDaSkt1+kZH2BbVDls6TRWMg36w9Ub8M2cO+a2in4p/enxyGPbFsw==}
+  drizzle-kit@1.0.0-beta.10-4a43a22:
+    resolution: {integrity: sha512-952w6dX5alTfZQh9zJ077mqMWdCUx6QjAX3EI7UhR+1tb8Vi/A9TSTECYiJ40qPa8FFKzhMHIuck9i51esFb9g==}
     hasBin: true
 
-  drizzle-orm@1.0.0-beta.10-42c284e:
-    resolution: {integrity: sha512-/x0gvjSIyhpiLkCHBZ5YftwFN76TRw/Bwk1Zuu4KY9PMBWWiyzj4B/A7hmDRp7eIsjyVkOCZzzun4veMzbBVBg==}
+  drizzle-orm@1.0.0-beta.10-4a43a22:
+    resolution: {integrity: sha512-ipys1kZjtMwBBDMtdbIaIt/j06wZITxxPcxsU8Sh93zKIILnADnK1rACwHRrm0kVaAOpZSW19efVZs1LihFZpQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -6281,8 +6281,8 @@ packages:
       sqlite3:
         optional: true
 
-  drizzle-zod@1.0.0-beta.10-42c284e:
-    resolution: {integrity: sha512-XvSUIHkJPpS2zy8SaXgW+/CEFpvqTCusn17DvaXO5r0tnMrMBlc0qaLKXK/o9o1VXBwbEG84hvHmkPlGwv4PPQ==}
+  drizzle-zod@1.0.0-beta.10-4a43a22:
+    resolution: {integrity: sha512-EWPe/Ub1hknfTfMlY8yRlI+2mftReRt0VVyq91RVcZhkYPp3Sc9K8mv62dmyb6J2cp+9cO9Sv16t6OIk02Uduw==}
     peerDependencies:
       drizzle-orm: '>=1.0.0-beta.2'
       zod: ^3.25.0 || ^4.0.0
@@ -10949,7 +10949,7 @@ snapshots:
       '@better-fetch/fetch': 1.1.21
       '@simplewebauthn/browser': 13.2.2
       '@simplewebauthn/server': 13.2.2
-      better-auth: 1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
+      better-auth: 1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
       better-call: 1.1.7(zod@4.3.5)
       nanostores: 1.1.0
       zod: 4.3.5
@@ -11818,10 +11818,10 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@knaadh/nestjs-drizzle-pg@1.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)':
+  '@knaadh/nestjs-drizzle-pg@1.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)':
     dependencies:
       '@nestjs/common': 11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      drizzle-orm: 1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
+      drizzle-orm: 1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
       pg: 8.16.3
 
   '@levischuck/tiny-cbor@0.2.11': {}
@@ -15098,12 +15098,12 @@ snapshots:
       '@types/react': 19.2.8
       '@types/react-dom': 19.2.3(@types/react@19.2.8)
 
-  '@thallesp/nestjs-better-auth@2.2.2(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(@nestjs/graphql@13.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(graphql@16.12.0)(reflect-metadata@0.2.2))(@nestjs/websockets@11.1.9)(better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16))(express@5.2.1)(graphql@16.12.0)(typescript@5.9.3)':
+  '@thallesp/nestjs-better-auth@2.2.2(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(@nestjs/graphql@13.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(graphql@16.12.0)(reflect-metadata@0.2.2))(@nestjs/websockets@11.1.9)(better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16))(express@5.2.1)(graphql@16.12.0)(typescript@5.9.3)':
     dependencies:
       '@nestjs/common': 11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.11(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.11)(@nestjs/websockets@11.1.9)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/graphql': 13.2.0(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.11)(graphql@16.12.0)(reflect-metadata@0.2.2)
-      better-auth: 1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
+      better-auth: 1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16)
       express: 5.2.1
       graphql: 16.12.0
       typescript: 5.9.3
@@ -15971,7 +15971,7 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-42c284e)(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16):
+  better-auth@1.4.10(drizzle-kit@1.0.0-beta.10-4a43a22)(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(pg@8.16.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.9)(vitest@4.0.16):
     dependencies:
       '@better-auth/core': 1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/telemetry': 1.4.10(@better-auth/core@1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
@@ -15986,8 +15986,8 @@ snapshots:
       nanostores: 1.1.0
       zod: 4.3.5
     optionalDependencies:
-      drizzle-kit: 1.0.0-beta.10-42c284e
-      drizzle-orm: 1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
+      drizzle-kit: 1.0.0-beta.10-4a43a22
+      drizzle-orm: 1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
       pg: 8.16.3
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -16664,14 +16664,14 @@ snapshots:
 
   dotenv@17.2.3: {}
 
-  drizzle-kit@1.0.0-beta.10-42c284e:
+  drizzle-kit@1.0.0-beta.10-4a43a22:
     dependencies:
       '@drizzle-team/brocli': 0.11.0
       '@js-temporal/polyfill': 0.5.1
       esbuild: 0.25.12
       tsx: 4.21.0
 
-  drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3):
+  drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3):
     dependencies:
       '@types/mssql': 9.1.8
       mssql: 11.0.1
@@ -16681,9 +16681,9 @@ snapshots:
       '@upstash/redis': 1.36.1
       pg: 8.16.3
 
-  drizzle-zod@1.0.0-beta.10-42c284e(drizzle-orm@1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(zod@4.3.5):
+  drizzle-zod@1.0.0-beta.10-4a43a22(drizzle-orm@1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3))(zod@4.3.5):
     dependencies:
-      drizzle-orm: 1.0.0-beta.10-42c284e(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
+      drizzle-orm: 1.0.0-beta.10-4a43a22(@opentelemetry/api@1.9.0)(@types/mssql@9.1.8)(@types/pg@8.16.0)(@upstash/redis@1.36.1)(mssql@11.0.1)(pg@8.16.3)
       zod: 4.3.5
 
   dset@3.1.4: {}
