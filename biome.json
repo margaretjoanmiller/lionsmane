@@ -74,7 +74,8 @@
             "noUnreachableSuper": "off"
           },
           "style": {
-            "useConst": "error"
+            "useConst": "error",
+            "useImportType": "off"
           },
           "suspicious": {
             "noClassAssign": "off",

@@ -7,6 +7,8 @@ export const articleDetail = createSelectSchema(articles);
 
 export const articleDetailWithStatus = articleDetail
   .extend({
+    published: z.iso.datetime(),
+    updated: z.iso.datetime().nullable(),
     feedTitle: z.string().min(1).max(255),
     isRead: z.boolean().default(false).nullable(),
     isStarred: z.boolean().default(false).nullable(),

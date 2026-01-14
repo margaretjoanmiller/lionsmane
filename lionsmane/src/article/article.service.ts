@@ -1,8 +1,8 @@
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
-import { Queue } from 'bullmq';
-import createDOMPurify, { WindowLike } from 'dompurify';
+import type { Queue } from 'bullmq';
+import createDOMPurify, { type WindowLike } from 'dompurify';
 import {
   and,
   desc,
@@ -13,16 +13,16 @@ import {
   or,
   sql,
 } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { relations } from 'src/drizzle/relations';
+import type { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
-import { Enclosure } from 'src/types/rss';
+import type { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
-import { ArticleDetail } from './dto/article-detail.dto';
-import { NewArticle } from './dto/new-article.dto';
+import type { ArticleDetail } from './dto/article-detail.dto';
+import type { NewArticle } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -137,53 +137,58 @@ export class ArticleService {
     if (cursorDate && cursorId) {
       artPages = await this.db.query.articles.findMany({
         with: {
-          userArticleStates: true,
-          subscriptions: {
-            where: {
-              userId,
-            },
-          },
           feed: {
-            columns: {
-              id: true,
-              title: true,
+            with: {
+              subscriptions: {
+                where: {
+                  user: {
+                    id: userId,
+                  },
+                },
+              },
             },
           },
           enclosures: true,
+          userArticleStates: {
+            where: {
+              userId: userId,
+            },
+          },
         },
         where: {
           OR: [
             {
-              published: { lt: new Date(cursorDate) },
+              published: {
+                lt: new Date(cursorDate),
+              },
             },
             {
+              published: {
+                eq: new Date(cursorDate),
+              },
               id: {
                 lt: cursorId,
               },
-              published: { eq: new Date(cursorDate) },
             },
           ],
-        },
-        orderBy: {
-          published: 'desc',
         },
         limit: pageSize + 1,
       });
     } else {
       artPages = await this.db.query.articles.findMany({
         with: {
-          userArticleStates: true,
           feed: {
-            columns: {
-              id: true,
-              title: true,
+            with: {
+              subscriptions: {
+                where: {
+                  user: {
+                    id: userId,
+                  },
+                },
+              },
             },
           },
           enclosures: true,
-        },
-        where: {},
-        orderBy: {
-          published: 'desc',
         },
         limit: pageSize + 1,
       });
