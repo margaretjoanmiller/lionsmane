@@ -2,16 +2,10 @@
   "version": "8",
   "dialect": "postgres",
   "id": "fb2db126-39da-492d-a5bc-0c5d6f70c416",
-  "prevIds": [
-    "25d0f82f-0179-4d3f-bd54-7c81fe47a8b4"
-  ],
+  "prevIds": ["25d0f82f-0179-4d3f-bd54-7c81fe47a8b4"],
   "ddl": [
     {
-      "values": [
-        "blur",
-        "markRead",
-        "hide"
-      ],
+      "values": ["blur", "markRead", "hide"],
       "name": "user_filter_actions",
       "entityType": "enums",
       "schema": "public"
@@ -3782,14 +3776,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "account_user_id_user_id_fkey",
@@ -3799,14 +3789,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "apikey_user_id_user_id_fkey",
@@ -3816,14 +3802,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "applied_rules_userId_user_id_fkey",
@@ -3833,14 +3815,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "articleId"
-      ],
+      "columns": ["articleId"],
       "schemaTo": "public",
       "tableTo": "articles",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "applied_rules_articleId_articles_id_fkey",
@@ -3850,14 +3828,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "ruleId"
-      ],
+      "columns": ["ruleId"],
       "schemaTo": "public",
       "tableTo": "user_filters",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "applied_rules_ruleId_user_filters_id_fkey",
@@ -3867,14 +3841,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "feedId"
-      ],
+      "columns": ["feedId"],
       "schemaTo": "public",
       "tableTo": "feeds",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "articles_feedId_feeds_id_fkey",
@@ -3884,14 +3854,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "entry_id"
-      ],
+      "columns": ["entry_id"],
       "schemaTo": "public",
       "tableTo": "articles",
-      "columnsTo": [
-        "minifluxId"
-      ],
+      "columnsTo": ["minifluxId"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "enclosures_entry_id_articles_minifluxId_fkey",
@@ -3901,14 +3867,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "icon"
-      ],
+      "columns": ["icon"],
       "schemaTo": "public",
       "tableTo": "icons",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "feeds_icon_icons_id_fkey",
@@ -3918,14 +3880,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "feed_host"
-      ],
+      "columns": ["feed_host"],
       "schemaTo": "public",
       "tableTo": "feed_host",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "feeds_feed_host_feed_host_id_fkey",
@@ -3935,14 +3893,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "folders_userId_user_id_fkey",
@@ -3952,14 +3906,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "client_id"
-      ],
+      "columns": ["client_id"],
       "schemaTo": "public",
       "tableTo": "oauth_application",
-      "columnsTo": [
-        "client_id"
-      ],
+      "columnsTo": ["client_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "oauth_access_token_client_id_oauth_application_client_id_fkey",
@@ -3969,14 +3919,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "oauth_access_token_user_id_user_id_fkey",
@@ -3986,14 +3932,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "oauth_application_user_id_user_id_fkey",
@@ -4003,14 +3945,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "client_id"
-      ],
+      "columns": ["client_id"],
       "schemaTo": "public",
       "tableTo": "oauth_application",
-      "columnsTo": [
-        "client_id"
-      ],
+      "columnsTo": ["client_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "oauth_consent_client_id_oauth_application_client_id_fkey",
@@ -4020,14 +3958,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "oauth_consent_user_id_user_id_fkey",
@@ -4037,14 +3971,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "passkey_user_id_user_id_fkey",
@@ -4054,14 +3984,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "session_user_id_user_id_fkey",
@@ -4071,14 +3997,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_userId_user_id_fkey",
@@ -4088,14 +4010,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "feedId"
-      ],
+      "columns": ["feedId"],
       "schemaTo": "public",
       "tableTo": "feeds",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_feedId_feeds_id_fkey",
@@ -4105,14 +4023,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "folderId"
-      ],
+      "columns": ["folderId"],
       "schemaTo": "public",
       "tableTo": "folders",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "subscriptions_folderId_folders_id_fkey",
@@ -4122,14 +4036,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "two_factor_user_id_user_id_fkey",
@@ -4139,14 +4049,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "user_article_states_userId_user_id_fkey",
@@ -4156,14 +4062,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "articleId"
-      ],
+      "columns": ["articleId"],
       "schemaTo": "public",
       "tableTo": "articles",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "user_article_states_articleId_articles_id_fkey",
@@ -4173,14 +4075,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "user_filters_userId_user_id_fkey",
@@ -4189,10 +4087,7 @@
       "table": "user_filters"
     },
     {
-      "columns": [
-        "id",
-        "minifluxId"
-      ],
+      "columns": ["id", "minifluxId"],
       "nameExplicit": true,
       "name": "articles_id_minifluxId_pk",
       "entityType": "pks",
@@ -4200,10 +4095,7 @@
       "table": "articles"
     },
     {
-      "columns": [
-        "id",
-        "minifluxId"
-      ],
+      "columns": ["id", "minifluxId"],
       "nameExplicit": true,
       "name": "feeds_id_minifluxId_pk",
       "entityType": "pks",
@@ -4211,10 +4103,7 @@
       "table": "feeds"
     },
     {
-      "columns": [
-        "id",
-        "minifluxId"
-      ],
+      "columns": ["id", "minifluxId"],
       "nameExplicit": true,
       "name": "folders_id_minifluxId_pk",
       "entityType": "pks",
@@ -4222,10 +4111,7 @@
       "table": "folders"
     },
     {
-      "columns": [
-        "userId",
-        "articleId"
-      ],
+      "columns": ["userId", "articleId"],
       "nameExplicit": true,
       "name": "user_article_states_userId_articleId_pk",
       "entityType": "pks",
@@ -4233,9 +4119,7 @@
       "table": "user_article_states"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "account_pkey",
       "schema": "public",
@@ -4243,9 +4127,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "apikey_pkey",
       "schema": "public",
@@ -4253,9 +4135,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "applied_rules_pkey",
       "schema": "public",
@@ -4263,9 +4143,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "enclosures_pkey",
       "schema": "public",
@@ -4273,9 +4151,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "feed_host_pkey",
       "schema": "public",
@@ -4283,9 +4159,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "icons_pkey",
       "schema": "public",
@@ -4293,9 +4167,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "oauth_access_token_pkey",
       "schema": "public",
@@ -4303,9 +4175,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "oauth_application_pkey",
       "schema": "public",
@@ -4313,9 +4183,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "oauth_consent_pkey",
       "schema": "public",
@@ -4323,9 +4191,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "passkey_pkey",
       "schema": "public",
@@ -4333,9 +4199,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "session_pkey",
       "schema": "public",
@@ -4343,9 +4207,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "subscriptions_pkey",
       "schema": "public",
@@ -4353,9 +4215,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "two_factor_pkey",
       "schema": "public",
@@ -4363,9 +4223,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "user_pkey",
       "schema": "public",
@@ -4373,9 +4231,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "user_filters_pkey",
       "schema": "public",
@@ -4383,9 +4239,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "verification_pkey",
       "schema": "public",
@@ -4394,10 +4248,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "feedId",
-        "hash"
-      ],
+      "columns": ["feedId", "hash"],
       "nullsNotDistinct": false,
       "name": "articles_feed_id_hash_unique",
       "entityType": "uniques",
@@ -4406,9 +4257,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "hash"
-      ],
+      "columns": ["hash"],
       "nullsNotDistinct": false,
       "name": "articles_hash_unique",
       "entityType": "uniques",
@@ -4417,9 +4266,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nullsNotDistinct": false,
       "name": "articles_id_unique",
       "entityType": "uniques",
@@ -4428,9 +4275,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "minifluxId"
-      ],
+      "columns": ["minifluxId"],
       "nullsNotDistinct": false,
       "name": "articles_minifluxId_unique",
       "entityType": "uniques",
@@ -4439,9 +4284,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "url"
-      ],
+      "columns": ["url"],
       "nullsNotDistinct": false,
       "name": "feed_host_url_unique",
       "entityType": "uniques",
@@ -4450,9 +4293,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nullsNotDistinct": false,
       "name": "feeds_id_unique",
       "entityType": "uniques",
@@ -4461,9 +4302,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "minifluxId"
-      ],
+      "columns": ["minifluxId"],
       "nullsNotDistinct": false,
       "name": "feeds_minifluxId_unique",
       "entityType": "uniques",
@@ -4472,9 +4311,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "url"
-      ],
+      "columns": ["url"],
       "nullsNotDistinct": false,
       "name": "feeds_url_unique",
       "entityType": "uniques",
@@ -4483,9 +4320,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nullsNotDistinct": false,
       "name": "folders_id_unique",
       "entityType": "uniques",
@@ -4494,9 +4329,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "minifluxId"
-      ],
+      "columns": ["minifluxId"],
       "nullsNotDistinct": false,
       "name": "folders_minifluxId_unique",
       "entityType": "uniques",
@@ -4505,10 +4338,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "name",
-        "userId"
-      ],
+      "columns": ["name", "userId"],
       "nullsNotDistinct": false,
       "name": "folders_name_userId_unique",
       "entityType": "uniques",
@@ -4517,9 +4347,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "url"
-      ],
+      "columns": ["url"],
       "nullsNotDistinct": false,
       "name": "icons_url_unique",
       "entityType": "uniques",
@@ -4528,9 +4356,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "access_token"
-      ],
+      "columns": ["access_token"],
       "nullsNotDistinct": false,
       "name": "oauth_access_token_access_token_unique",
       "entityType": "uniques",
@@ -4539,9 +4365,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "refresh_token"
-      ],
+      "columns": ["refresh_token"],
       "nullsNotDistinct": false,
       "name": "oauth_access_token_refresh_token_unique",
       "entityType": "uniques",
@@ -4550,9 +4374,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "client_id"
-      ],
+      "columns": ["client_id"],
       "nullsNotDistinct": false,
       "name": "oauth_application_client_id_unique",
       "entityType": "uniques",
@@ -4561,9 +4383,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "token"
-      ],
+      "columns": ["token"],
       "nullsNotDistinct": false,
       "name": "session_token_unique",
       "entityType": "uniques",
@@ -4572,10 +4392,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "userId",
-        "feedId"
-      ],
+      "columns": ["userId", "feedId"],
       "nullsNotDistinct": false,
       "name": "subscriptions_userId_feedId_unique",
       "entityType": "uniques",
@@ -4584,9 +4401,7 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "user_email_unique",
       "entityType": "uniques",
