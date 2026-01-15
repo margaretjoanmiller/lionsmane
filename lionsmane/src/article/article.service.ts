@@ -7,6 +7,7 @@ import {
   and,
   desc,
   eq,
+  getColumns,
   getTableColumns,
   isNull,
   lt,
@@ -21,7 +22,7 @@ import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import type { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
-import type { ArticleDetail } from './dto/article-detail.dto';
+import type { Article, ArticleDetail } from './dto/article-detail.dto';
 import type { NewArticle } from './dto/new-article.dto';
 
 @Injectable()
@@ -121,7 +122,7 @@ export class ArticleService {
     userId: string,
     cursor: string | undefined,
     pageSize = 10,
-  ): Promise<ArticleDetail[]> {
+  ): Promise<{ articles: ArticleDetail[]; cursor: string | null }> {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
     if (cursor) {
@@ -133,9 +134,9 @@ export class ArticleService {
       cursorId = undefined;
     }
 
-    let artPages;
+    let artPages: ArticleDetail[] = [];
     if (cursorDate && cursorId) {
-      artPages = await this.db.query.articles.findMany({
+      const pages = await this.db.query.articles.findMany({
         with: {
           feed: {
             with: {
@@ -174,24 +175,55 @@ export class ArticleService {
         },
         limit: pageSize + 1,
       });
+      artPages = pages.map((page) => ({
+        ...page,
+        published: page.published.toISOString(),
+        updated: page.updated?.toISOString() || null,
+        feedTitle: page.feed!.title!,
+        feedId: page.feed!.id!,
+        isRead: page.userArticleStates.some((state) => state.isRead),
+        isStarred: page.userArticleStates.some((state) => state.isStarred),
+        isHidden: page.userArticleStates.some((state) => state.isHidden),
+        isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+        contentWarning:
+          page.userArticleStates.find((state) => state.contentWarning)
+            ?.contentWarning || null,
+      }));
     } else {
-      artPages = await this.db.query.articles.findMany({
+      const pages = await this.db.query.articles.findMany({
         with: {
           feed: {
             with: {
               subscriptions: {
                 where: {
-                  user: {
-                    id: userId,
-                  },
+                  userId: userId,
                 },
               },
             },
           },
           enclosures: true,
+          userArticleStates: {
+            where: {
+              userId: userId,
+            },
+          },
         },
         limit: pageSize + 1,
       });
+      artPages = pages.map((page) => ({
+        ...page,
+        published: page.published.toISOString(),
+        updated: page.updated?.toISOString() || null,
+        feedTitle: page.feed!.title!,
+        feedId: page.feed!.id!,
+        isRead: page.userArticleStates.some((state) => state.isRead),
+        isStarred: page.userArticleStates.some((state) => state.isStarred),
+        isHidden: page.userArticleStates.some((state) => state.isHidden),
+        isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+        contentWarning:
+          page.userArticleStates.find((state) => state.contentWarning)
+            ?.contentWarning || null,
+      }));
     }
 
     const hasNextPage = artPages.length > pageSize;
@@ -201,8 +233,8 @@ export class ArticleService {
       articles: items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)?.published || new Date().toISOString(),
+            items.at(-1)?.id || '',
           )
         : null,
     };
@@ -477,17 +509,13 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -513,9 +541,9 @@ export class ArticleService {
             sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -529,22 +557,11 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString() || new Date().toISOString(),
+              items.at(-1)?.id || '',
             )
           : null,
       };
@@ -562,9 +579,9 @@ export class ArticleService {
             eq(schema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -578,22 +595,11 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString() || new Date().toISOString(),
+              items.at(-1)?.id || '',
             )
           : null,
       };
@@ -616,9 +622,9 @@ export class ArticleService {
             stateCondition,
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -633,22 +639,11 @@ export class ArticleService {
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString() || new Date().toISOString(),
+              items.at(-1)?.id || '',
             )
           : null,
       };

@@ -1,13 +1,9 @@
 import { sql } from 'drizzle-orm';
 import {
-  bigint,
   boolean,
-  foreignKey,
   index,
   integer,
   jsonb,
-  pgEnum,
-  pgSchema,
   pgTable,
   primaryKey,
   serial,
@@ -24,12 +20,6 @@ import type { MediaGroup } from '@/syndication/types/media';
 import type { PodFeed, PodItem } from '@/syndication/types/podcast';
 import type { Geo } from '@/syndication/types/rss';
 import type { YtFeed, YtItem } from '@/syndication/types/youtube';
-
-export const userFilterActions = pgEnum('user_filter_actions', [
-  'blur',
-  'markRead',
-  'hide',
-]);
 
 export const account = pgTable(
   'account',
@@ -102,7 +92,7 @@ export const appliedRules = pgTable(
       .notNull()
       .references(() => userFilters.id, { onDelete: 'cascade' }),
     appliedAt: timestamp().default(sql`now()`).notNull(),
-    action: userFilterActions().notNull(),
+    action: varchar({ length: 256 }).notNull(),
     contentWarning: varchar({ length: 256 }),
     isUndone: boolean().default(false).notNull(),
     undoneAt: timestamp(),
@@ -131,15 +121,22 @@ export const articles = pgTable(
     minifluxId: serial().unique().notNull(),
     title: text().notNull().default('No title'),
     url: text(),
-    authors: jsonb().$type<Person[]>().notNull().default([]),
-    contributors: jsonb().$type<Person[]>().notNull().default([]),
+    authors: jsonb()
+      .$type<{ authors: Person[] }>()
+      .notNull()
+      .default({ authors: [] }),
+    contributors: jsonb()
+      .$type<{ contributors: Person[] }>()
+      .notNull()
+      .default({ contributors: [] }),
     publisher: varchar({ length: 256 }),
-    contributor: varchar({ length: 256 }),
     format: varchar({ length: 256 }),
     language: varchar({ length: 256 }),
     rights: varchar({ length: 256 }),
-    categories: jsonb().$type<Category[]>().notNull().default([]),
-    subjects: varchar({ length: 256 }).array(),
+    categories: jsonb()
+      .$type<{ categories: Category[] }>()
+      .notNull()
+      .default({ categories: [] }),
     description: text(),
     comments: text(),
     commentRss: text(),
@@ -159,8 +156,8 @@ export const articles = pgTable(
     youtube: jsonb().$type<YtItem>(),
     podcast: jsonb().$type<PodItem>(),
     thread: jsonb().$type<ThreadItem>(),
-    published: timestamp({ mode: 'date', withTimezone: true }).notNull(),
-    updated: timestamp({ mode: 'date', withTimezone: true }),
+    published: timestamp({ withTimezone: true }).notNull(),
+    updated: timestamp({ withTimezone: true }),
     guid: jsonb().$type<{ isPermalink: boolean; value: string }>(),
     itunes: jsonb().$type<Itunes>(),
     feedId: uuid()
@@ -240,20 +237,29 @@ export const feeds = pgTable(
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
     crawler: boolean().notNull().default(false),
-    authors: jsonb().$type<Person[]>().default([]),
-    contributors: jsonb().$type<Person[]>().notNull().default([]),
-    categories: jsonb().$type<Category[]>().notNull().default([]),
+    authors: jsonb()
+      .$type<{ authors: Person[] }>()
+      .notNull()
+      .default({ authors: [] }),
+    contributors: jsonb()
+      .$type<{ contributors: Person[] }>()
+      .notNull()
+      .default({ contributors: [] }),
+    categories: jsonb()
+      .$type<{ categories: Category[] }>()
+      .notNull()
+      .default({ categories: [] }),
     copyright: varchar({ length: 50 }),
     rights: varchar({ length: 256 }).array().default([]),
     image: jsonb().$type<{
-      url?: string | undefined;
-      title?: string | undefined;
-      link?: string | undefined;
-      description?: string | undefined;
-      width?: number | undefined;
-      height?: number | undefined;
+      url?: string;
+      title?: string;
+      link?: string;
+      description?: string;
+      width?: number;
+      height?: number;
     }>(),
-    lastChecked: timestamp({ mode: 'date' }).notNull(),
+    lastChecked: timestamp().notNull(),
     updated: timestamp({ withTimezone: true }),
     explicit: boolean(),
     subjects: varchar({ length: 256 }).array(),
