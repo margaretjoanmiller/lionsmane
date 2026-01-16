@@ -22,6 +22,7 @@ import * as schema from 'src/drizzle/schema';
 import { FetcherService } from 'src/fetcher/fetcher.service';
 import type { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
+import { isPresent } from 'ts-extras';
 import type { Article, ArticleDetail } from './dto/article-detail.dto';
 import type { NewArticle } from './dto/new-article.dto';
 
@@ -257,71 +258,127 @@ export class ArticleService {
       cursorId = undefined;
     }
 
-    const artPages = await this.db
-      .select({
-        ...getTableColumns(schema.articles),
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isRead: schema.userArticleStates.isRead ?? false,
-        isStarred: schema.userArticleStates.isStarred ?? false,
-        isBlurred: schema.userArticleStates.isBlurred ?? false,
-        isHidden: schema.userArticleStates.isHidden ?? false,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
-      })
-      .from(schema.articles)
-      .innerJoin(
-        schema.subscriptions,
-        and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
-      .leftJoin(
-        schema.userArticleStates,
-        and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
-        ),
-      )
-      .where(
-        and(
-          cursorDate && cursorId
-            ? or(
-                lt(schema.articles.published, cursorDate),
-                and(
-                  eq(schema.articles.published, cursorDate),
-                  lt(schema.articles.id, cursorId),
-                ),
-              )
-            : undefined,
-          eq(schema.articles.feedId, feedId),
-        ),
-      ) // if cursor is provided, get rows after it
-      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
-      .limit(pageSize + 1); // the number of rows to return
+    let artPages: ArticleDetail[] = [];
+    if (cursorDate && cursorId) {
+      const pages = await this.db.query.articles.findMany({
+        with: {
+          feed: {
+            where: {
+              id: feedId,
+            },
+            with: {
+              subscriptions: {
+                where: {
+                  user: {
+                    id: userId,
+                  },
+                },
+              },
+            },
+          },
+          enclosures: true,
+          userArticleStates: {
+            where: {
+              userId: userId,
+            },
+          },
+        },
+        where: {
+          OR: [
+            {
+              published: {
+                lt: new Date(cursorDate),
+              },
+            },
+            {
+              published: {
+                eq: new Date(cursorDate),
+              },
+              id: {
+                lt: cursorId,
+              },
+            },
+          ],
+        },
+        limit: pageSize + 1,
+      });
+      artPages = pages
+        .map((page) => {
+          if (!page.feed?.title || !page.feed?.id) {
+            return null;
+          }
+          return {
+            ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
+            feedTitle: page.feed?.title,
+            feedId: page.feed?.id,
+            isRead: page.userArticleStates.some((state) => state.isRead),
+            isStarred: page.userArticleStates.some((state) => state.isStarred),
+            isHidden: page.userArticleStates.some((state) => state.isHidden),
+            isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+            contentWarning:
+              page.userArticleStates.find((state) => state.contentWarning)
+                ?.contentWarning || null,
+          };
+        })
+        .filter(isPresent);
+    } else {
+      const pages = await this.db.query.articles.findMany({
+        with: {
+          feed: {
+            where: {
+              id: feedId,
+            },
+            with: {
+              subscriptions: {
+                where: {
+                  userId: userId,
+                },
+              },
+            },
+          },
+          enclosures: true,
+          userArticleStates: {
+            where: {
+              userId: userId,
+            },
+          },
+        },
+        limit: pageSize + 1,
+      });
+      artPages = pages
+        .map((page) => {
+          if (!page.feed?.title || !page.feed?.id) {
+            return null;
+          }
+          return {
+            ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
+            feedTitle: page.feed!.title!,
+            feedId: page.feed!.id!,
+            isRead: page.userArticleStates.some((state) => state.isRead),
+            isStarred: page.userArticleStates.some((state) => state.isStarred),
+            isHidden: page.userArticleStates.some((state) => state.isHidden),
+            isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+            contentWarning:
+              page.userArticleStates.find((state) => state.contentWarning)
+                ?.contentWarning || null,
+          };
+        })
+        .filter(isPresent);
+    }
 
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      articles: items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)?.published || new Date().toISOString(),
+            items.at(-1)?.id || '',
           )
         : null,
     };

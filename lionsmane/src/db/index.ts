@@ -3,6 +3,8 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { relations } from '../drizzle/relations';
 import * as schema from '../drizzle/schema';
 
+export const coreSchema = schema;
+
 const envUrl = process.env.DATABASE_URL;
 
 if (!envUrl) {

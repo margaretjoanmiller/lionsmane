@@ -241,9 +241,6 @@ importers:
       msw:
         specifier: ^2.12.7
         version: 2.12.7(@types/node@25.0.1)(typescript@5.9.3)
-      prettier:
-        specifier: ^3.7.4
-        version: 3.7.4
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21

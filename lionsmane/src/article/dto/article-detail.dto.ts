@@ -1,9 +1,10 @@
 import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
-import { articles } from 'src/drizzle/schema';
 import { z } from 'zod';
+import { coreSchema } from '@/db';
+import { categorySchema, personSchema } from '@/syndication/zod/atom.zod';
 
-export const articleDetail = createSelectSchema(articles);
+export const articleDetail = createSelectSchema(coreSchema.articles);
 
 export type Article = z.infer<typeof articleDetail>;
 
