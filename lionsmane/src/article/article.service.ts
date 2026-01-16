@@ -2,7 +2,7 @@ import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Queue } from 'bullmq';
-import createDOMPurify, { type WindowLike } from 'dompurify';
+import createDomPurify, { type WindowLike } from 'dompurify';
 import {
   and,
   desc,
@@ -23,8 +23,8 @@ import { FetcherService } from 'src/fetcher/fetcher.service';
 import type { Enclosure } from 'src/types/rss';
 import { createCursor, parseCursor } from 'src/utils/paging';
 import { isPresent } from 'ts-extras';
-import type { Article, ArticleDetail } from './dto/article-detail.dto';
-import type { NewArticle } from './dto/new-article.dto';
+import type { Article, ArticleDetail } from './dto/article-detail.dto.ts';
+import type { NewArticle } from './dto/new-article.dto.ts';
 
 @Injectable()
 export class ArticleService {
@@ -37,7 +37,7 @@ export class ArticleService {
 
   cleanRaw(newArt: NewArticle) {
     const window = new JSDOM('').window;
-    const purify = createDOMPurify(window as WindowLike);
+    const purify = createDomPurify(window as WindowLike);
     const cleanContent = purify.sanitize(newArt.rawContent || '');
     const cleanDescription = purify.sanitize(newArt.description || '');
     const cleanDoc = new JSDOM(cleanContent);
@@ -153,7 +153,7 @@ export class ArticleService {
           enclosures: true,
           userArticleStates: {
             where: {
-              userId: userId,
+              userId,
             },
           },
         },
@@ -176,20 +176,27 @@ export class ArticleService {
         },
         limit: pageSize + 1,
       });
-      artPages = pages.map((page) => ({
-        ...page,
-        published: page.published.toISOString(),
-        updated: page.updated?.toISOString() || null,
-        feedTitle: page.feed!.title!,
-        feedId: page.feed!.id!,
-        isRead: page.userArticleStates.some((state) => state.isRead),
-        isStarred: page.userArticleStates.some((state) => state.isStarred),
-        isHidden: page.userArticleStates.some((state) => state.isHidden),
-        isBlurred: page.userArticleStates.some((state) => state.isBlurred),
-        contentWarning:
-          page.userArticleStates.find((state) => state.contentWarning)
-            ?.contentWarning || null,
-      }));
+      artPages = pages
+        .map((page) => {
+          if (!(page.feed?.title && page.feed?.id)) {
+            return null;
+          }
+          return {
+            ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
+            feedTitle: page.feed.title,
+            feedId: page.feed.id,
+            isRead: page.userArticleStates.some((state) => state.isRead),
+            isStarred: page.userArticleStates.some((state) => state.isStarred),
+            isHidden: page.userArticleStates.some((state) => state.isHidden),
+            isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+            contentWarning:
+              page.userArticleStates.find((state) => state.contentWarning)
+                ?.contentWarning || null,
+          };
+        })
+        .filter(isPresent);
     } else {
       const pages = await this.db.query.articles.findMany({
         with: {
@@ -197,7 +204,7 @@ export class ArticleService {
             with: {
               subscriptions: {
                 where: {
-                  userId: userId,
+                  userId,
                 },
               },
             },
@@ -205,26 +212,33 @@ export class ArticleService {
           enclosures: true,
           userArticleStates: {
             where: {
-              userId: userId,
+              userId,
             },
           },
         },
         limit: pageSize + 1,
       });
-      artPages = pages.map((page) => ({
-        ...page,
-        published: page.published.toISOString(),
-        updated: page.updated?.toISOString() || null,
-        feedTitle: page.feed!.title!,
-        feedId: page.feed!.id!,
-        isRead: page.userArticleStates.some((state) => state.isRead),
-        isStarred: page.userArticleStates.some((state) => state.isStarred),
-        isHidden: page.userArticleStates.some((state) => state.isHidden),
-        isBlurred: page.userArticleStates.some((state) => state.isBlurred),
-        contentWarning:
-          page.userArticleStates.find((state) => state.contentWarning)
-            ?.contentWarning || null,
-      }));
+      artPages = pages
+        .map((page) => {
+          if (!(page.feed?.title && page.feed?.id)) {
+            return null;
+          }
+          return {
+            ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
+            feedTitle: page.feed.title,
+            feedId: page.feed.id,
+            isRead: page.userArticleStates.some((state) => state.isRead),
+            isStarred: page.userArticleStates.some((state) => state.isStarred),
+            isHidden: page.userArticleStates.some((state) => state.isHidden),
+            isBlurred: page.userArticleStates.some((state) => state.isBlurred),
+            contentWarning:
+              page.userArticleStates.find((state) => state.contentWarning)
+                ?.contentWarning || null,
+          };
+        })
+        .filter(isPresent);
     }
 
     const hasNextPage = artPages.length > pageSize;
@@ -279,7 +293,7 @@ export class ArticleService {
           enclosures: true,
           userArticleStates: {
             where: {
-              userId: userId,
+              userId,
             },
           },
         },
@@ -304,7 +318,7 @@ export class ArticleService {
       });
       artPages = pages
         .map((page) => {
-          if (!page.feed?.title || !page.feed?.id) {
+          if (!(page.feed?.title && page.feed?.id)) {
             return null;
           }
           return {
@@ -333,7 +347,7 @@ export class ArticleService {
             with: {
               subscriptions: {
                 where: {
-                  userId: userId,
+                  userId,
                 },
               },
             },
@@ -341,7 +355,7 @@ export class ArticleService {
           enclosures: true,
           userArticleStates: {
             where: {
-              userId: userId,
+              userId,
             },
           },
         },
@@ -349,7 +363,7 @@ export class ArticleService {
       });
       artPages = pages
         .map((page) => {
-          if (!page.feed?.title || !page.feed?.id) {
+          if (!(page.feed?.title && page.feed?.id)) {
             return null;
           }
           return {
@@ -548,6 +562,7 @@ export class ArticleService {
   }
 
   // Private method for common logic for starred, read, unread
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: best we can do for now
   private async getArticleByState(
     userId: string,
     stateFilter: 'starred' | 'read' | 'unread',
@@ -622,7 +637,8 @@ export class ArticleService {
             )
           : null,
       };
-    } else if (stateFilter === 'read') {
+    }
+    if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
           schema.userArticleStates,
@@ -660,57 +676,56 @@ export class ArticleService {
             )
           : null,
       };
-    } else {
-      const stateCondition =
-        stateFilter === 'starred'
-          ? eq(schema.userArticleStates.isStarred, true)
-          : eq(schema.userArticleStates.isRead, true);
-
-      const query = baseQuery
-        .leftJoin(
-          schema.userArticleStates,
-          and(
-            eq(schema.userArticleStates.articleId, schema.articles.id),
-            eq(schema.userArticleStates.userId, userId),
-          ),
-        )
-        .where(
-          and(
-            stateCondition,
-            cursorDate && cursorId
-              ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
-                  and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
-                  ),
-                )
-              : undefined,
-          ),
-        );
-
-      const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
-        .limit(pageSize + 1);
-
-      const hasNextPage = articles.length > pageSize;
-      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
-      return {
-        articles: items,
-        cursor: hasNextPage
-          ? createCursor(
-              items.at(-1)?.published.toISOString() || new Date().toISOString(),
-              items.at(-1)?.id || '',
-            )
-          : null,
-      };
     }
+    const stateCondition =
+      stateFilter === 'starred'
+        ? eq(schema.userArticleStates.isStarred, true)
+        : eq(schema.userArticleStates.isRead, true);
+
+    const query = baseQuery
+      .leftJoin(
+        schema.userArticleStates,
+        and(
+          eq(schema.userArticleStates.articleId, schema.articles.id),
+          eq(schema.userArticleStates.userId, userId),
+        ),
+      )
+      .where(
+        and(
+          stateCondition,
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, new Date(cursorDate)),
+                and(
+                  eq(schema.articles.published, new Date(cursorDate)),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+        ),
+      );
+
+    const articles = await query
+      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+      .limit(pageSize + 1);
+
+    const hasNextPage = articles.length > pageSize;
+    const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+    return {
+      articles: items,
+      cursor: hasNextPage
+        ? createCursor(
+            items.at(-1)?.published.toISOString() || new Date().toISOString(),
+            items.at(-1)?.id || '',
+          )
+        : null,
+    };
   }
   async getHiddenArticles(
     userId: string,
+    cursor?: string,
+    // ruleId?: string,
     pageSize = 10,
-    cursor: string | undefined,
-    ruleId: string | undefined,
   ) {
     let cursorDate: string | undefined;
     let cursorId: string | undefined;
@@ -926,7 +941,8 @@ export class ArticleService {
             )
           : null,
       };
-    } else if (stateFilter === 'read') {
+    }
+    if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
           schema.userArticleStates,
@@ -973,56 +989,53 @@ export class ArticleService {
             )
           : null,
       };
-    } else {
-      const query = baseQuery
-        .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-        )
-        .where(
-          and(
-            eq(schema.articles.feedId, feedId),
-            eq(schema.userArticleStates.isStarred, true),
-
-            cursorDate && cursorId
-              ? or(
-                  lt(schema.articles.published, cursorDate),
-                  and(
-                    eq(schema.articles.published, cursorDate),
-                    lt(schema.articles.id, cursorId),
-                  ),
-                )
-              : undefined,
-          ),
-        );
-
-      const articles = await query
-        .orderBy(desc(schema.articles.id))
-        .limit(pageSize + 1);
-
-      const hasNextPage = articles.length > pageSize;
-      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
-      return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
-        cursor: hasNextPage
-          ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
-            )
-          : null,
-      };
     }
+    const query = baseQuery
+      .leftJoin(
+        schema.userArticleStates,
+        eq(schema.userArticleStates.articleId, schema.articles.id),
+      )
+      .where(
+        and(
+          eq(schema.articles.feedId, feedId),
+          eq(schema.userArticleStates.isStarred, true),
+
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+        ),
+      );
+
+    const articles = await query
+      .orderBy(desc(schema.articles.id))
+      .limit(pageSize + 1);
+
+    const hasNextPage = articles.length > pageSize;
+    const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+    return {
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
+      })),
+      cursor: hasNextPage
+        ? createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
+    };
   }
 
   async getStarredArticlesForFeed(
@@ -1159,7 +1172,8 @@ export class ArticleService {
             )
           : null,
       };
-    } else if (stateFilter === 'read') {
+    }
+    if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
           schema.userArticleStates,
@@ -1205,54 +1219,51 @@ export class ArticleService {
             )
           : null,
       };
-    } else {
-      const query = baseQuery
-        .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-        )
-        .where(
-          and(
-            eq(schema.userArticleStates.isStarred, true),
-            cursorDate && cursorId
-              ? or(
-                  lt(schema.articles.published, cursorDate),
-                  and(
-                    eq(schema.articles.published, cursorDate),
-                    lt(schema.articles.id, cursorId),
-                  ),
-                )
-              : undefined,
-          ),
-        );
-
-      const articles = await query
-        .orderBy(desc(schema.articles.id))
-        .limit(pageSize + 1);
-
-      const hasNextPage = articles.length > pageSize;
-      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
-      return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
-        cursor: hasNextPage
-          ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
-            )
-          : null,
-      };
     }
+    const query = baseQuery
+      .leftJoin(
+        schema.userArticleStates,
+        eq(schema.userArticleStates.articleId, schema.articles.id),
+      )
+      .where(
+        and(
+          eq(schema.userArticleStates.isStarred, true),
+          cursorDate && cursorId
+            ? or(
+                lt(schema.articles.published, cursorDate),
+                and(
+                  eq(schema.articles.published, cursorDate),
+                  lt(schema.articles.id, cursorId),
+                ),
+              )
+            : undefined,
+        ),
+      );
+
+    const articles = await query
+      .orderBy(desc(schema.articles.id))
+      .limit(pageSize + 1);
+
+    const hasNextPage = articles.length > pageSize;
+    const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+    return {
+      articles: items.map((i) => ({
+        ...i,
+        enclosures: i.enclosures
+          ? (i.enclosures as Enclosure[]).map((e) => ({
+              ...e,
+              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
+              size: e.size ? e.size : 0,
+            }))
+          : null,
+      })),
+      cursor: hasNextPage
+        ? createCursor(
+            items[items.length - 1].published,
+            items[items.length - 1].id,
+          )
+        : null,
+    };
   }
 
   async getStarredArticlesForFolder(

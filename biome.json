@@ -23,7 +23,12 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "correctness": "on",
+      "complexity": "on",
+      "performance": "on",
+      "style": "on",
+      "security": "on"
     },
     "includes": ["**", "!eslint.config.mjs", "!**/drizzle/*.json"]
   },
@@ -61,10 +66,12 @@
       "linter": {
         "rules": {
           "complexity": {
-            "noArguments": "error"
+            "noArguments": "error",
+            "noExcessiveLinesPerFunction": "off"
           },
           "correctness": {
             "noConstAssign": "off",
+            "useImportExtensions": "off",
             "noGlobalObjectCalls": "off",
             "noInvalidBuiltinInstantiation": "off",
             "noInvalidConstructorSuper": "off",
@@ -75,7 +82,8 @@
           },
           "style": {
             "useConst": "error",
-            "useImportType": "off"
+            "useImportType": "off",
+            "useNamingConvention": "off"
           },
           "suspicious": {
             "noClassAssign": "off",
