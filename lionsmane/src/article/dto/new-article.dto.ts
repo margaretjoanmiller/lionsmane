@@ -1,9 +1,8 @@
 import { createInsertSchema } from 'drizzle-zod';
-import { createZodDto } from 'nestjs-zod';
-import { articles } from 'src/db/schema/core';
 import { z } from 'zod';
+import { coreSchema } from '@/db';
 
-export const newArticleDto = createInsertSchema(articles).extend({
+export const newArticleDto = createInsertSchema(coreSchema.articles).extend({
   enclosures: z
     .array(
       z.object({
@@ -15,7 +14,7 @@ export const newArticleDto = createInsertSchema(articles).extend({
     .nullable(),
 });
 
-const insertSchema = newArticleDto.extend({
+export const insertSchema = newArticleDto.extend({
   published: z.date(),
   updatedAt: z.date().optional(),
 });

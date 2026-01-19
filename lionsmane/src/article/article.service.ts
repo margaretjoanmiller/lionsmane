@@ -16,15 +16,15 @@ import {
 } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import type { relations } from 'src/drizzle/relations';
-import * as schema from 'src/drizzle/schema';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import type { Enclosure } from 'src/types/rss';
-import { createCursor, parseCursor } from 'src/utils/paging';
 import { isPresent } from 'ts-extras';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import type { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { FetcherService } from '@/fetcher/fetcher.service';
+import type { Enclosure } from '@/types/rss';
+import { createCursor, parseCursor } from '@/utils/paging';
 import type { Article, ArticleDetail } from './dto/article-detail.dto.ts';
-import type { NewArticle } from './dto/new-article.dto.ts';
+import { type NewArticle } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {
@@ -62,21 +62,25 @@ export class ArticleService {
           })
           .returning();
         if (insertedArt && newArt.enclosures && newArt.enclosures?.length > 0) {
-          for (const enclosure of newArt.enclosures) {
-            if (enclosure.type)
-              await tx.insert(schema.enclosures).values({
-                entry_id: insertedArt.minifluxId,
-                ...enclosure,
-                mime_type: enclosure.type,
-              });
-          }
+          await Promise.all(
+            newArt.enclosures.map((enclosure) => {
+              if (enclosure.type) {
+                return tx.insert(schema.enclosures).values({
+                  ...enclosure,
+                  entryId: insertedArt.minifluxId,
+                  mimeType: enclosure.type,
+                });
+              }
+              return Promise.resolve();
+            }),
+          );
         }
         return insertedArt;
       });
       return result;
     } catch (error) {
       console.error('Error inserting article:', error);
-      throw Error('Could not insert article', { cause: error });
+      throw new Error('Could not insert article', { cause: error });
     }
   }
 
@@ -739,7 +743,7 @@ export class ArticleService {
     }
     const query = this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         feedTitle: schema.feeds.title,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
