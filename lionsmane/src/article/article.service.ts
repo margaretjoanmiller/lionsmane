@@ -404,50 +404,46 @@ export class ArticleService {
   }
 
   async getArticle(id: string, userId: string): Promise<ArticleDetail> {
-    const [article] = await this.db
-      .select({
-        ...getTableColumns(schema.articles),
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isStarred: schema.userArticleStates.isStarred ?? false,
-        isRead: schema.userArticleStates.isRead ?? false,
-        isBlurred: schema.userArticleStates.isBlurred ?? false,
-        isHidden: schema.userArticleStates.isHidden ?? false,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
-      })
-      .from(schema.articles)
-      .innerJoin(
-        schema.subscriptions,
-        and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
-      .leftJoin(
-        schema.userArticleStates,
-        and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
-        ),
-      )
-      .where(eq(schema.articles.id, id))
-      .limit(1);
+    const article = await this.db.query.articles.findFirst({
+      where: {
+        id,
+      },
+      with: {
+        feed: {
+          with: {
+            subscriptions: {
+              where: {
+                userId,
+              },
+            },
+          },
+        },
+        enclosures: true,
+        userArticleStates: {
+          where: {
+            userId,
+          },
+        },
+      },
+    });
     if (!article) {
       throw new Error('Article not found or access denied');
     }
     return {
       ...article,
-      enclosures: article.enclosures
-        ? (article.enclosures as Enclosure[]).map((e) => ({
-            ...e,
-            mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-            size: e.size ? e.size : 0,
-          }))
-        : null,
+      published: article.published.toISOString() || new Date().toISOString(),
+      updated: article.updated?.toISOString(),
+      feedTitle: article.feed?.title || article.feed?.url,
+      isRead: article.userArticleStates.find((state) => state.isRead)?.isRead,
+      isStarred: article.userArticleStates.find((state) => state.isStarred)
+        ?.isStarred,
+      isBlurred: article.userArticleStates.find((state) => state.isBlurred)
+        ?.isBlurred,
+      isHidden: article.userArticleStates.find((state) => state.isHidden)
+        ?.isHidden,
+      contentWarning:
+        article.userArticleStates.find((state) => state.contentWarning)
+          ?.contentWarning || [],
     };
   }
 
@@ -457,54 +453,49 @@ export class ArticleService {
     offset: number,
     pageSize = 10,
   ) {
-    const searchedArticles = await this.db
-      .select({
-        ...getTableColumns(schema.articles),
-        feedId: schema.feeds.id,
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isStarred: schema.userArticleStates.isStarred ?? false,
-        isRead: schema.userArticleStates.isRead ?? false,
-        isBlurred: schema.userArticleStates.isBlurred ?? false,
-        isHidden: schema.userArticleStates.isHidden ?? false,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
-      })
-      .from(schema.articles)
-      .innerJoin(
-        schema.subscriptions,
-        and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
-      .leftJoin(
-        schema.userArticleStates,
-        and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
-        ),
-      )
-      .where(sql`${schema.articles.readableText} &@~ ${query}`)
-      .limit(pageSize)
-      .offset(offset);
-
+    const searchedArticles = await this.db.query.articles.findMany({
+      where: {
+        RAW: (table) => sql`${table.readableText} &@~ ${query}`,
+      },
+      with: {
+        feed: {
+          with: {
+            subscriptions: {
+              where: {
+                userId,
+              },
+            },
+          },
+        },
+        enclosures: true,
+        userArticleStates: {
+          where: {
+            userId,
+          },
+        },
+      },
+      limit: pageSize,
+      offset,
+    });
     if (!searchedArticles) {
       return { articles: [] };
     }
     return {
       articles: searchedArticles.map((i) => ({
         ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
+        published: i.published.toISOString(),
+        updated: i.updated?.toISOString() || null,
+        feedTitle: i.feed?.title,
+        feedId: i.feed?.id,
+        isRead: i.userArticleStates.find((state) => state.isRead)?.isRead,
+        isStarred: i.userArticleStates.find((state) => state.isStarred)
+          ?.isStarred,
+        isHidden: i.userArticleStates.find((state) => state.isHidden)?.isHidden,
+        isBlurred: i.userArticleStates.find((state) => state.isBlurred)
+          ?.isBlurred,
+        contentWarning:
+          i.userArticleStates.find((state) => state.contentWarning)
+            ?.contentWarning || null,
       })),
     };
   }
