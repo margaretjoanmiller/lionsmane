@@ -1,6 +1,6 @@
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { Queue } from 'bullmq';
 import createDomPurify, { type WindowLike } from 'dompurify';
 import {
@@ -34,6 +34,7 @@ export class ArticleService {
     @InjectQueue('article') private articlesQueue: Queue,
     private fetcher: FetcherService,
   ) {}
+  private readonly logger = new Logger(ArticleService.name);
 
   cleanRaw(newArt: NewArticle) {
     const window = new JSDOM('').window;
@@ -79,7 +80,7 @@ export class ArticleService {
       });
       return result;
     } catch (error) {
-      console.error('Error inserting article:', error);
+      this.logger.error('Error inserting article:', error);
       throw new Error('Could not insert article', { cause: error });
     }
   }
