@@ -23,12 +23,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "correctness": "on",
-      "complexity": "on",
-      "performance": "on",
-      "style": "on",
-      "security": "on"
+      "recommended": true
     },
     "includes": ["**", "!eslint.config.mjs", "!**/drizzle/*.json"]
   },

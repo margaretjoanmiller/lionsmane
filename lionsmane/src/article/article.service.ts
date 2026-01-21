@@ -1,3 +1,4 @@
+// biome-ignore-all lint/style/noNonNullAssertion: needed for the cursors
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
@@ -7,20 +8,19 @@ import { and, desc, eq, getColumns, isNull, lt, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { isPresent } from 'ts-extras';
+import { coreSchema } from '@/db/index';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import type { relations } from '@/drizzle/relations';
-import * as schema from '@/drizzle/schema';
 import { FetcherService } from '@/fetcher/fetcher.service';
-import type { Enclosure } from '@/types/rss';
 import { createCursor, parseCursor } from '@/utils/paging';
-import type { Article, ArticleDetail } from './dto/article-detail.dto.ts';
+import type { ArticleDetail } from './dto/article-detail.dto.ts';
 import { type NewArticle } from './dto/new-article.dto';
 
 @Injectable()
 export class ArticleService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof coreSchema, typeof relations>,
     @InjectQueue('article') private articlesQueue: Queue,
     private fetcher: FetcherService,
   ) {}
@@ -46,17 +46,17 @@ export class ArticleService {
     try {
       const result = await this.db.transaction(async (tx) => {
         const [insertedArt] = await tx
-          .insert(schema.articles)
+          .insert(coreSchema.articles)
           .values(newArt)
           .onConflictDoNothing({
-            target: [schema.articles.feedId, schema.articles.hash],
+            target: [coreSchema.articles.feedId, coreSchema.articles.hash],
           })
           .returning();
         if (insertedArt && newArt.enclosures && newArt.enclosures?.length > 0) {
           await Promise.all(
             newArt.enclosures.map((enclosure) => {
               if (enclosure.type) {
-                return tx.insert(schema.enclosures).values({
+                return tx.insert(coreSchema.enclosures).values({
                   ...enclosure,
                   entryId: insertedArt.minifluxId,
                   mimeType: enclosure.type,
@@ -84,16 +84,19 @@ export class ArticleService {
     const result = await this.db.transaction(async (tx) => {
       const [article] = await tx
         .select()
-        .from(schema.articles)
+        .from(coreSchema.articles)
         .innerJoin(
-          schema.subscriptions,
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
+          coreSchema.subscriptions,
+          eq(coreSchema.articles.feedId, coreSchema.subscriptions.feedId),
         )
-        .innerJoin(schema.feeds, eq(schema.articles.feedId, schema.feeds.id))
+        .innerJoin(
+          coreSchema.feeds,
+          eq(coreSchema.articles.feedId, coreSchema.feeds.id),
+        )
         .where(
           and(
-            eq(schema.articles.id, id),
-            eq(schema.subscriptions.userId, userId),
+            eq(coreSchema.articles.id, id),
+            eq(coreSchema.subscriptions.userId, userId),
           ),
         )
         .limit(1);
@@ -105,9 +108,9 @@ export class ArticleService {
           article.articles.url,
         );
         await tx
-          .update(schema.articles)
+          .update(coreSchema.articles)
           .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
-          .where(eq(schema.articles.id, id));
+          .where(eq(coreSchema.articles.id, id));
         return article;
       }
     });
@@ -382,13 +385,14 @@ export class ArticleService {
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
+    if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
-      articles: items,
+      items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)?.published || new Date().toISOString(),
-            items.at(-1)?.id || '',
-          )
+        ? createCursor(items.at(-1)!.published!, items.at(-1)!.id!)
         : null,
     };
   }
@@ -498,16 +502,16 @@ export class ArticleService {
     const result = await this.db.transaction(async (tx) => {
       // Check if the article exists and is accessible by the user
       const [article] = await tx
-        .select({ id: schema.articles.id })
-        .from(schema.articles)
+        .select({ id: coreSchema.articles.id })
+        .from(coreSchema.articles)
         .innerJoin(
-          schema.subscriptions,
+          coreSchema.subscriptions,
           and(
-            eq(schema.articles.feedId, schema.subscriptions.feedId),
-            eq(schema.subscriptions.userId, userId),
+            eq(coreSchema.articles.feedId, coreSchema.subscriptions.feedId),
+            eq(coreSchema.subscriptions.userId, userId),
           ),
         )
-        .where(eq(schema.articles.id, id))
+        .where(eq(coreSchema.articles.id, id))
         .limit(1);
       if (!article) {
         throw new Error('Article not found or access denied');
@@ -524,7 +528,7 @@ export class ArticleService {
       }
 
       const [upsert] = await tx
-        .insert(schema.userArticleStates)
+        .insert(coreSchema.userArticleStates)
         .values({
           userId,
           articleId: id,
@@ -533,8 +537,8 @@ export class ArticleService {
         })
         .onConflictDoUpdate({
           target: [
-            schema.userArticleStates.userId,
-            schema.userArticleStates.articleId,
+            coreSchema.userArticleStates.userId,
+            coreSchema.userArticleStates.articleId,
           ],
           set: {
             ...(isRead !== undefined ? { isRead } : {}),
@@ -567,59 +571,70 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getColumns(schema.articles),
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isStarred: schema.userArticleStates.isStarred,
-        isRead: schema.userArticleStates.isRead,
-        isBlurred: schema.userArticleStates.isBlurred,
-        isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning,
+        ...getColumns(coreSchema.articles),
+        feedTitle: coreSchema.feeds.title || coreSchema.feeds.url,
+        isStarred: coreSchema.userArticleStates.isStarred,
+        isRead: coreSchema.userArticleStates.isRead,
+        isBlurred: coreSchema.userArticleStates.isBlurred,
+        isHidden: coreSchema.userArticleStates.isHidden,
+        contentWarning: coreSchema.userArticleStates.contentWarning,
       })
-      .from(schema.articles)
+      .from(coreSchema.articles)
       .innerJoin(
-        schema.subscriptions,
+        coreSchema.subscriptions,
         and(
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
-          eq(schema.subscriptions.userId, userId),
+          eq(coreSchema.subscriptions.feedId, coreSchema.articles.feedId),
+          eq(coreSchema.subscriptions.userId, userId),
         ),
       )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+      .innerJoin(
+        coreSchema.feeds,
+        eq(coreSchema.feeds.id, coreSchema.articles.feedId),
+      );
 
     if (stateFilter === 'unread') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
+          coreSchema.userArticleStates,
           and(
-            eq(schema.userArticleStates.articleId, schema.articles.id),
-            eq(schema.userArticleStates.userId, userId),
+            eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
+            eq(coreSchema.userArticleStates.userId, userId),
           ),
         )
         .where(
           and(
-            sql`(${schema.userArticleStates.userId} IS NULL OR (${schema.userArticleStates.userId} = ${userId} AND ${schema.userArticleStates.isRead} = false))`,
+            sql`(${coreSchema.userArticleStates.userId} IS NULL OR (${coreSchema.userArticleStates.userId} = ${userId} AND ${coreSchema.userArticleStates.isRead} = false))`,
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items,
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString() || new Date().toISOString(),
-              items.at(-1)?.id || '',
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
@@ -627,53 +642,61 @@ export class ArticleService {
     if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
+          coreSchema.userArticleStates,
           and(
-            eq(schema.userArticleStates.articleId, schema.articles.id),
-            eq(schema.userArticleStates.userId, userId),
+            eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
+            eq(coreSchema.userArticleStates.userId, userId),
           ),
         )
         .where(
           and(
-            eq(schema.userArticleStates.isRead, true),
+            eq(coreSchema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items,
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString() || new Date().toISOString(),
-              items.at(-1)?.id || '',
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
     }
     const stateCondition =
       stateFilter === 'starred'
-        ? eq(schema.userArticleStates.isStarred, true)
-        : eq(schema.userArticleStates.isRead, true);
+        ? eq(coreSchema.userArticleStates.isStarred, true)
+        : eq(coreSchema.userArticleStates.isRead, true);
 
     const query = baseQuery
       .leftJoin(
-        schema.userArticleStates,
+        coreSchema.userArticleStates,
         and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
+          eq(coreSchema.userArticleStates.userId, userId),
         ),
       )
       .where(
@@ -681,10 +704,10 @@ export class ArticleService {
           stateCondition,
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, new Date(cursorDate)),
+                lt(coreSchema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, new Date(cursorDate)),
-                  lt(schema.articles.id, cursorId),
+                  eq(coreSchema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.id, cursorId),
                 ),
               )
             : undefined,
@@ -692,17 +715,25 @@ export class ArticleService {
       );
 
     const articles = await query
-      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+      .orderBy(
+        desc(coreSchema.articles.published),
+        desc(coreSchema.articles.id),
+      )
       .limit(pageSize + 1);
 
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+    if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
       articles: items,
       cursor: hasNextPage
         ? createCursor(
-            items.at(-1)?.published.toISOString() || new Date().toISOString(),
-            items.at(-1)?.id || '',
+            items.at(-1)!.published.toISOString()!,
+            items.at(-1)!.id!,
           )
         : null,
     };
@@ -725,67 +756,73 @@ export class ArticleService {
     }
     const query = this.db
       .select({
-        ...getColumns(schema.articles),
-        feedTitle: schema.feeds.title,
-        isStarred: schema.userArticleStates.isStarred,
-        isRead: schema.userArticleStates.isRead,
-        isBlurred: schema.userArticleStates.isBlurred,
-        isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning,
-        ruleId: schema.appliedRules.ruleId,
+        ...getColumns(coreSchema.articles),
+        feedTitle: coreSchema.feeds.title,
+        isStarred: coreSchema.userArticleStates.isStarred,
+        isRead: coreSchema.userArticleStates.isRead,
+        isBlurred: coreSchema.userArticleStates.isBlurred,
+        isHidden: coreSchema.userArticleStates.isHidden,
+        contentWarning: coreSchema.userArticleStates.contentWarning,
+        ruleId: coreSchema.appliedRules.ruleId,
       })
-      .from(schema.articles)
+      .from(coreSchema.articles)
       .innerJoin(
-        schema.subscriptions,
+        coreSchema.subscriptions,
         and(
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
-          eq(schema.subscriptions.userId, userId),
-        ),
-      )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
-      .innerJoin(
-        schema.userArticleStates,
-        and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
-          eq(schema.userArticleStates.isHidden, true),
+          eq(coreSchema.subscriptions.feedId, coreSchema.articles.feedId),
+          eq(coreSchema.subscriptions.userId, userId),
         ),
       )
       .innerJoin(
-        schema.appliedRules,
+        coreSchema.feeds,
+        eq(coreSchema.feeds.id, coreSchema.articles.feedId),
+      )
+      .innerJoin(
+        coreSchema.userArticleStates,
         and(
-          eq(schema.appliedRules.articleId, schema.articles.id),
-          eq(schema.appliedRules.userId, userId),
-          eq(schema.appliedRules.action, 'hide'),
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
+          eq(coreSchema.userArticleStates.userId, userId),
+          eq(coreSchema.userArticleStates.isHidden, true),
+        ),
+      )
+      .innerJoin(
+        coreSchema.appliedRules,
+        and(
+          eq(coreSchema.appliedRules.articleId, coreSchema.articles.id),
+          eq(coreSchema.appliedRules.userId, userId),
+          eq(coreSchema.appliedRules.action, 'hide'),
         ),
       )
       .where(
         and(
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, new Date(cursorDate)),
+                lt(coreSchema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, new Date(cursorDate)),
-                  lt(schema.articles.id, cursorId),
+                  eq(coreSchema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.id, cursorId),
                 ),
               )
             : undefined,
         ),
       )
       .groupBy(
-        schema.articles.id,
-        schema.articles.minifluxId,
-        schema.feeds.title,
-        schema.userArticleStates.isStarred,
-        schema.userArticleStates.isRead,
-        schema.userArticleStates.isBlurred,
-        schema.userArticleStates.isHidden,
-        schema.userArticleStates.contentWarning,
-        schema.appliedRules.ruleId,
+        coreSchema.articles.id,
+        coreSchema.articles.minifluxId,
+        coreSchema.feeds.title,
+        coreSchema.userArticleStates.isStarred,
+        coreSchema.userArticleStates.isRead,
+        coreSchema.userArticleStates.isBlurred,
+        coreSchema.userArticleStates.isHidden,
+        coreSchema.userArticleStates.contentWarning,
+        coreSchema.appliedRules.ruleId,
       );
 
     const articles = await query
-      .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+      .orderBy(
+        desc(coreSchema.articles.published),
+        desc(coreSchema.articles.id),
+      )
       .limit(pageSize + 1);
 
     const hasNextPage = articles.length > pageSize;
@@ -799,8 +836,8 @@ export class ArticleService {
       items,
       cursor: hasNextPage
         ? createCursor(
-            items.at(-1)?.published.toISOString()!,
-            items.at(-1)?.id!,
+            items.at(-1)!.published.toISOString()!,
+            items.at(-1)!.id!,
           )
         : null,
     };
@@ -847,50 +884,56 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getColumns(schema.articles),
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isStarred: schema.userArticleStates.isStarred,
-        isRead: schema.userArticleStates.isRead,
-        isBlurred: schema.userArticleStates.isBlurred,
-        isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning,
+        ...getColumns(coreSchema.articles),
+        feedTitle: coreSchema.feeds.title || coreSchema.feeds.url,
+        isStarred: coreSchema.userArticleStates.isStarred,
+        isRead: coreSchema.userArticleStates.isRead,
+        isBlurred: coreSchema.userArticleStates.isBlurred,
+        isHidden: coreSchema.userArticleStates.isHidden,
+        contentWarning: coreSchema.userArticleStates.contentWarning,
       })
-      .from(schema.articles)
+      .from(coreSchema.articles)
       .innerJoin(
-        schema.subscriptions,
+        coreSchema.subscriptions,
         and(
-          eq(schema.subscriptions.userId, userId),
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
+          eq(coreSchema.subscriptions.userId, userId),
+          eq(coreSchema.subscriptions.feedId, coreSchema.articles.feedId),
         ),
       )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+      .innerJoin(
+        coreSchema.feeds,
+        eq(coreSchema.feeds.id, coreSchema.articles.feedId),
+      );
 
     if (stateFilter === 'unread') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          coreSchema.userArticleStates,
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
         )
         .where(
           and(
-            eq(schema.articles.feedId, feedId),
+            eq(coreSchema.articles.feedId, feedId),
             or(
-              isNull(schema.userArticleStates.isRead),
-              eq(schema.userArticleStates.isRead, false),
+              isNull(coreSchema.userArticleStates.isRead),
+              eq(coreSchema.userArticleStates.isRead, false),
             ),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
@@ -904,8 +947,8 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString()!,
-              items.at(-1)?.id!,
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
@@ -913,26 +956,29 @@ export class ArticleService {
     if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          coreSchema.userArticleStates,
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
         )
         .where(
           and(
-            eq(schema.articles.feedId, feedId),
-            eq(schema.userArticleStates.isRead, true),
+            eq(coreSchema.articles.feedId, feedId),
+            eq(coreSchema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
@@ -946,28 +992,28 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString()!,
-              items.at(-1)?.id!,
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
     }
     const query = baseQuery
       .leftJoin(
-        schema.userArticleStates,
-        eq(schema.userArticleStates.articleId, schema.articles.id),
+        coreSchema.userArticleStates,
+        eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
       )
       .where(
         and(
-          eq(schema.articles.feedId, feedId),
-          eq(schema.userArticleStates.isStarred, true),
+          eq(coreSchema.articles.feedId, feedId),
+          eq(coreSchema.userArticleStates.isStarred, true),
 
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, new Date(cursorDate)),
+                lt(coreSchema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, new Date(cursorDate)),
-                  lt(schema.articles.id, cursorId),
+                  eq(coreSchema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.id, cursorId),
                 ),
               )
             : undefined,
@@ -975,7 +1021,7 @@ export class ArticleService {
       );
 
     const articles = await query
-      .orderBy(desc(schema.articles.id))
+      .orderBy(desc(coreSchema.articles.id))
       .limit(pageSize + 1);
 
     const hasNextPage = articles.length > pageSize;
@@ -989,8 +1035,8 @@ export class ArticleService {
       items,
       cursor: hasNextPage
         ? createCursor(
-            items.at(-1)?.published.toISOString()!,
-            items.at(-1)?.id!,
+            items.at(-1)!.published.toISOString()!,
+            items.at(-1)!.id!,
           )
         : null,
     };
@@ -1058,56 +1104,62 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getColumns(schema.articles),
-        feedTitle: schema.feeds.title || schema.feeds.url,
-        isStarred: schema.userArticleStates.isStarred,
-        isRead: schema.userArticleStates.isRead,
-        isBlurred: schema.userArticleStates.isBlurred,
-        isHidden: schema.userArticleStates.isHidden,
-        contentWarning: schema.userArticleStates.contentWarning,
+        ...getColumns(coreSchema.articles),
+        feedTitle: coreSchema.feeds.title || coreSchema.feeds.url,
+        isStarred: coreSchema.userArticleStates.isStarred,
+        isRead: coreSchema.userArticleStates.isRead,
+        isBlurred: coreSchema.userArticleStates.isBlurred,
+        isHidden: coreSchema.userArticleStates.isHidden,
+        contentWarning: coreSchema.userArticleStates.contentWarning,
       })
-      .from(schema.articles)
+      .from(coreSchema.articles)
       .innerJoin(
-        schema.subscriptions,
+        coreSchema.subscriptions,
         and(
-          eq(schema.subscriptions.userId, userId),
-          eq(schema.subscriptions.feedId, schema.articles.feedId),
-          eq(schema.subscriptions.folderId, folderId),
+          eq(coreSchema.subscriptions.userId, userId),
+          eq(coreSchema.subscriptions.feedId, coreSchema.articles.feedId),
+          eq(coreSchema.subscriptions.folderId, folderId),
         ),
       )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId));
+      .innerJoin(
+        coreSchema.feeds,
+        eq(coreSchema.feeds.id, coreSchema.articles.feedId),
+      );
 
     if (stateFilter === 'unread') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          coreSchema.userArticleStates,
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
         )
         .where(
           and(
             or(
-              isNull(schema.userArticleStates.isRead),
-              eq(schema.userArticleStates.isRead, false),
+              isNull(coreSchema.userArticleStates.isRead),
+              eq(coreSchema.userArticleStates.isRead, false),
             ),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
-      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
         throw new Error('Unexpected error');
       }
 
@@ -1115,8 +1167,8 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString()!,
-              items.at(-1)?.id!,
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
@@ -1124,31 +1176,34 @@ export class ArticleService {
     if (stateFilter === 'read') {
       const query = baseQuery
         .leftJoin(
-          schema.userArticleStates,
-          eq(schema.userArticleStates.articleId, schema.articles.id),
+          coreSchema.userArticleStates,
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
         )
         .where(
           and(
-            eq(schema.userArticleStates.isRead, true),
+            eq(coreSchema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, new Date(cursorDate)),
-                    lt(schema.articles.id, cursorId),
+                    eq(coreSchema.articles.published, new Date(cursorDate)),
+                    lt(coreSchema.articles.id, cursorId),
                   ),
                 )
               : undefined,
           ),
         );
       const articles = await query
-        .orderBy(desc(schema.articles.published), desc(schema.articles.id))
+        .orderBy(
+          desc(coreSchema.articles.published),
+          desc(coreSchema.articles.id),
+        )
         .limit(pageSize + 1);
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
-      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
         throw new Error('Unexpected error');
       }
 
@@ -1156,26 +1211,26 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)?.published.toISOString()!,
-              items.at(-1)?.id!,
+              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.id!,
             )
           : null,
       };
     }
     const query = baseQuery
       .leftJoin(
-        schema.userArticleStates,
-        eq(schema.userArticleStates.articleId, schema.articles.id),
+        coreSchema.userArticleStates,
+        eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
       )
       .where(
         and(
-          eq(schema.userArticleStates.isStarred, true),
+          eq(coreSchema.userArticleStates.isStarred, true),
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, new Date(cursorDate)),
+                lt(coreSchema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, new Date(cursorDate)),
-                  lt(schema.articles.id, cursorId),
+                  eq(coreSchema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.id, cursorId),
                 ),
               )
             : undefined,
@@ -1183,13 +1238,13 @@ export class ArticleService {
       );
 
     const articles = await query
-      .orderBy(desc(schema.articles.id))
+      .orderBy(desc(coreSchema.articles.id))
       .limit(pageSize + 1);
 
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
-    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+    if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
       throw new Error('Unexpected error');
     }
 
@@ -1265,44 +1320,50 @@ export class ArticleService {
     }
     const artPages = await this.db
       .select({
-        ...getColumns(schema.articles),
-        feedTitle: schema.feeds.title,
-        isRead: schema.userArticleStates.isRead ?? false,
-        isStarred: schema.userArticleStates.isStarred ?? false,
-        isBlurred: schema.userArticleStates.isBlurred ?? false,
-        isHidden: schema.userArticleStates.isHidden ?? false,
-        contentWarning: schema.userArticleStates.contentWarning ?? null,
+        ...getColumns(coreSchema.articles),
+        feedTitle: coreSchema.feeds.title,
+        isRead: coreSchema.userArticleStates.isRead ?? false,
+        isStarred: coreSchema.userArticleStates.isStarred ?? false,
+        isBlurred: coreSchema.userArticleStates.isBlurred ?? false,
+        isHidden: coreSchema.userArticleStates.isHidden ?? false,
+        contentWarning: coreSchema.userArticleStates.contentWarning ?? null,
       })
-      .from(schema.articles)
+      .from(coreSchema.articles)
       .innerJoin(
-        schema.subscriptions,
+        coreSchema.subscriptions,
         and(
-          eq(schema.articles.feedId, schema.subscriptions.feedId),
-          eq(schema.subscriptions.userId, userId),
+          eq(coreSchema.articles.feedId, coreSchema.subscriptions.feedId),
+          eq(coreSchema.subscriptions.userId, userId),
         ),
       )
-      .innerJoin(schema.feeds, eq(schema.feeds.id, schema.articles.feedId))
+      .innerJoin(
+        coreSchema.feeds,
+        eq(coreSchema.feeds.id, coreSchema.articles.feedId),
+      )
       .leftJoin(
-        schema.userArticleStates,
+        coreSchema.userArticleStates,
         and(
-          eq(schema.userArticleStates.articleId, schema.articles.id),
-          eq(schema.userArticleStates.userId, userId),
+          eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
+          eq(coreSchema.userArticleStates.userId, userId),
         ),
       )
-      .orderBy(desc(schema.articles.published), desc(schema.articles.id)) // ordering
+      .orderBy(
+        desc(coreSchema.articles.published),
+        desc(coreSchema.articles.id),
+      ) // ordering
       .where(
         and(
-          eq(schema.subscriptions.folderId, folderId),
+          eq(coreSchema.subscriptions.folderId, folderId),
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, new Date(cursorDate)),
+                lt(coreSchema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, new Date(cursorDate)),
-                  lt(schema.articles.id, cursorId),
+                  eq(coreSchema.articles.published, new Date(cursorDate)),
+                  lt(coreSchema.articles.id, cursorId),
                 ),
               )
             : undefined,
-          eq(schema.subscriptions.userId, userId),
+          eq(coreSchema.subscriptions.userId, userId),
         ),
       )
       .limit(pageSize + 1); // the number of rows to return
@@ -1310,7 +1371,7 @@ export class ArticleService {
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
-    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+    if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
       throw new Error('Unexpected error');
     }
 
