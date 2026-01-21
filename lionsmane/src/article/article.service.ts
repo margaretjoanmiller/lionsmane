@@ -3,17 +3,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { Queue } from 'bullmq';
 import createDomPurify, { type WindowLike } from 'dompurify';
-import {
-  and,
-  desc,
-  eq,
-  getColumns,
-  getTableColumns,
-  isNull,
-  lt,
-  or,
-  sql,
-} from 'drizzle-orm';
+import { and, desc, eq, getColumns, isNull, lt, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { isPresent } from 'ts-extras';
@@ -443,7 +433,7 @@ export class ArticleService {
         ?.isHidden,
       contentWarning:
         article.userArticleStates.find((state) => state.contentWarning)
-          ?.contentWarning || [],
+          ?.contentWarning || null,
     };
   }
 
@@ -743,10 +733,6 @@ export class ArticleService {
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
         ruleId: schema.appliedRules.ruleId,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -777,9 +763,9 @@ export class ArticleService {
         and(
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, cursorDate),
+                  eq(schema.articles.published, new Date(cursorDate)),
                   lt(schema.articles.id, cursorId),
                 ),
               )
@@ -804,21 +790,17 @@ export class ArticleService {
 
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)?.published.toISOString()!,
+            items.at(-1)?.id!,
           )
         : null,
     };
@@ -865,17 +847,13 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -902,9 +880,9 @@ export class ArticleService {
             ),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -917,23 +895,17 @@ export class ArticleService {
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString()!,
+              items.at(-1)?.id!,
             )
           : null,
       };
@@ -950,9 +922,9 @@ export class ArticleService {
             eq(schema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -965,23 +937,17 @@ export class ArticleService {
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString()!,
+              items.at(-1)?.id!,
             )
           : null,
       };
@@ -998,9 +964,9 @@ export class ArticleService {
 
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, cursorDate),
+                  eq(schema.articles.published, new Date(cursorDate)),
                   lt(schema.articles.id, cursorId),
                 ),
               )
@@ -1014,21 +980,17 @@ export class ArticleService {
 
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)?.published.toISOString()!,
+            items.at(-1)?.id!,
           )
         : null,
     };
@@ -1096,17 +1058,13 @@ export class ArticleService {
     }
     const baseQuery = this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         feedTitle: schema.feeds.title || schema.feeds.url,
         isStarred: schema.userArticleStates.isStarred,
         isRead: schema.userArticleStates.isRead,
         isBlurred: schema.userArticleStates.isBlurred,
         isHidden: schema.userArticleStates.isHidden,
         contentWarning: schema.userArticleStates.contentWarning,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -1133,9 +1091,9 @@ export class ArticleService {
             ),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -1148,23 +1106,17 @@ export class ArticleService {
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString()!,
+              items.at(-1)?.id!,
             )
           : null,
       };
@@ -1180,9 +1132,9 @@ export class ArticleService {
             eq(schema.userArticleStates.isRead, true),
             cursorDate && cursorId
               ? or(
-                  lt(schema.articles.published, cursorDate),
+                  lt(schema.articles.published, new Date(cursorDate)),
                   and(
-                    eq(schema.articles.published, cursorDate),
+                    eq(schema.articles.published, new Date(cursorDate)),
                     lt(schema.articles.id, cursorId),
                   ),
                 )
@@ -1195,23 +1147,17 @@ export class ArticleService {
 
       const hasNextPage = articles.length > pageSize;
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+      if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+        throw new Error('Unexpected error');
+      }
+
       return {
-        articles: items.map((i) => ({
-          ...i,
-          enclosures: i.enclosures
-            ? (i.enclosures as Enclosure[]).map((e) => ({
-                ...e,
-                mime_type: e.mime_type
-                  ? e.mime_type
-                  : 'application/octet-stream',
-                size: e.size ? e.size : 0,
-              }))
-            : null,
-        })),
+        items,
         cursor: hasNextPage
           ? createCursor(
-              items[items.length - 1].published,
-              items[items.length - 1].id,
+              items.at(-1)?.published.toISOString()!,
+              items.at(-1)?.id!,
             )
           : null,
       };
@@ -1226,9 +1172,9 @@ export class ArticleService {
           eq(schema.userArticleStates.isStarred, true),
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, cursorDate),
+                  eq(schema.articles.published, new Date(cursorDate)),
                   lt(schema.articles.id, cursorId),
                 ),
               )
@@ -1242,21 +1188,17 @@ export class ArticleService {
 
     const hasNextPage = articles.length > pageSize;
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
+
+    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)!.published.toISOString()!,
+            items.at(-1)!.id!,
           )
         : null,
     };
@@ -1323,17 +1265,13 @@ export class ArticleService {
     }
     const artPages = await this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         feedTitle: schema.feeds.title,
         isRead: schema.userArticleStates.isRead ?? false,
         isStarred: schema.userArticleStates.isStarred ?? false,
         isBlurred: schema.userArticleStates.isBlurred ?? false,
         isHidden: schema.userArticleStates.isHidden ?? false,
         contentWarning: schema.userArticleStates.contentWarning ?? null,
-        enclosures:
-          sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
-            'enclosures',
-          ),
       })
       .from(schema.articles)
       .innerJoin(
@@ -1357,9 +1295,9 @@ export class ArticleService {
           eq(schema.subscriptions.folderId, folderId),
           cursorDate && cursorId
             ? or(
-                lt(schema.articles.published, cursorDate),
+                lt(schema.articles.published, new Date(cursorDate)),
                 and(
-                  eq(schema.articles.published, cursorDate),
+                  eq(schema.articles.published, new Date(cursorDate)),
                   lt(schema.articles.id, cursorId),
                 ),
               )
@@ -1372,21 +1310,16 @@ export class ArticleService {
     const hasNextPage = artPages.length > pageSize;
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
+    if (!(items.at(-1)?.id && items.at(-1)?.published)) {
+      throw new Error('Unexpected error');
+    }
+
     return {
-      articles: items.map((i) => ({
-        ...i,
-        enclosures: i.enclosures
-          ? (i.enclosures as Enclosure[]).map((e) => ({
-              ...e,
-              mime_type: e.mime_type ? e.mime_type : 'application/octet-stream',
-              size: e.size ? e.size : 0,
-            }))
-          : null,
-      })),
+      items,
       cursor: hasNextPage
         ? createCursor(
-            items[items.length - 1].published,
-            items[items.length - 1].id,
+            items.at(-1)!.published.toISOString()!,
+            items.at(-1)!.id!,
           )
         : null,
     };
