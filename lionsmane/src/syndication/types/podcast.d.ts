@@ -202,13 +202,13 @@ export type PodFeed<TDate extends DateLike> = {
   locked?: Locked;
   fundings?: Array<Funding>;
   persons?: Array<Person>;
-  location?: Location;
+  locations?: Array<Location>;
   trailers?: Array<Trailer<TDate>>;
   license?: License;
   guid?: string;
   value?: Value;
   medium?: string;
-  images?: Images;
+  images?: Array<Image>;
   liveItems?: Array<LiveItem<TDate>>;
   blocks?: Array<Block>;
   txts?: Array<Txt>;

@@ -18,8 +18,8 @@ import type { GeoRss } from '@/syndication/types/geo';
 import type { Itunes } from '@/syndication/types/itunes';
 import type { MediaGroup } from '@/syndication/types/media';
 import type { PodFeed, PodItem } from '@/syndication/types/podcast';
-import type { Geo } from '@/syndication/types/rss';
 import type { YtFeed, YtItem } from '@/syndication/types/youtube';
+import type { Geo } from '@/syndication/zod/rss.zod';
 
 export const account = pgTable(
   'account',

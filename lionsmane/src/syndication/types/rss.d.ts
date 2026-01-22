@@ -6,9 +6,3 @@ export type Enclosure = {
   mime_type: string;
   media_progression: number;
 };
-
-export type Geo = {
-  lat?: number;
-  long?: number;
-  alt?: number;
-};

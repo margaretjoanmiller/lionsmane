@@ -184,3 +184,60 @@ export const basePodItem = z.object({
 });
 
 export const podItem = basePodItem;
+
+export const podLocked = z.object({
+  value: z.boolean().optional(),
+  owner: z.string().optional(),
+});
+
+export const podFunding = z.object({
+  url: z.url().optional(),
+  display: z.string().optional(),
+});
+
+export const podLicense = z.object({
+  url: z.url().optional(),
+  display: z.string().optional(),
+});
+
+export const podTrailer = z.object({
+  display: z.string().optional(),
+  url: z.url().optional(),
+  pubDate: z
+    .preprocess((arg: Date | string) => {
+      // If the input is a string, try to parse it into a Date object.
+      // This handles the '2025-09-01 21:54:33' format.
+      if (typeof arg === 'string') {
+        return new Date(arg).toISOString();
+      }
+      if (arg instanceof Date) {
+        return arg.toISOString();
+      }
+    }, z.iso.datetime())
+    .nullish(),
+  length: z.number().optional(),
+  type: z.string().optional(),
+  season: z.number().optional(),
+});
+
+export const podFeed = z.object({
+  locked: podLocked.optional(),
+  fundings: z.array(podFunding).optional(),
+  persons: z.array(podPerson).optional(),
+  locations: z.array(podLocation).optional(),
+  trailers: z.array(podTrailer).optional(),
+  license: podLicense.optional(),
+  guid: z.string().optional(),
+  values: z.array(podValue).optional(),
+  medium: z.string().optional(),
+  images: z.array(podImage).optional(),
+  socialInteracts: z.array(socialInteract).optional(),
+  txts: z
+    .array(
+      z.object({
+        display: z.string().optional(),
+        purpose: z.string().optional(),
+      }),
+    )
+    .optional(),
+});

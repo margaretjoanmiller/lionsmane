@@ -1,6 +1,6 @@
 import { createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { coreSchema } from '@/lib/db';
+import { coreSchema } from '@/db/index';
 
 export const enclosureSchema = createSelectSchema(coreSchema.enclosures);
 

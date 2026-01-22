@@ -5,7 +5,7 @@ const geoPoint = z.object({
   lng: z.number().optional(),
 });
 
-export const geoSchema = z.object({
+export const geoRssSchema = z.object({
   point: geoPoint.optional(),
   line: z
     .object({

@@ -19,6 +19,7 @@ import {
   count,
   desc,
   eq,
+  getColumns,
   getTableColumns,
   inArray,
   isNull,
@@ -267,7 +268,7 @@ export class FeedService {
               icon,
               updated: updated ? parseDate(updated) : null,
               lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers['etag'] || '',
+              etag_header: response?.headers.etag || '',
               last_modified_header: response?.headers['last-modified'] || '',
               authors: parsedFeed.authors,
               contributors: parsedFeed.contributors,
@@ -411,7 +412,7 @@ export class FeedService {
     );
     const feeds = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         feed_url: schema.feeds.url,
         favicon: schema.icons.url,
@@ -436,7 +437,7 @@ export class FeedService {
 
     return feeds.map((feed) => ({
       ...feed,
-      lastChecked: parseDate(feed.lastChecked).toISOString(),
+      lastChecked: feed.lastChecked.toISOString(),
       etag_header: feed.etag_header || '',
       last_modified_header: feed.last_modified_header || '',
       scraper_rules: null,
@@ -524,7 +525,7 @@ export class FeedService {
 
     const [userFeed] = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         favicon: schema.icons.url,
         description: schema.subscriptions.description,
@@ -552,7 +553,7 @@ export class FeedService {
     }
     return {
       ...userFeed,
-      lastChecked: parseDate(userFeed.lastChecked).toISOString(),
+      lastChecked: userFeed.lastChecked.toISOString(),
       scraper_rules: null,
       rewrite_rules: null,
       blocklist_rules: null,
@@ -569,7 +570,7 @@ export class FeedService {
   async findByUrl(url: string, userId: string) {
     const [userFeed] = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
