@@ -20,7 +20,6 @@ import {
   desc,
   eq,
   getColumns,
-  getTableColumns,
   inArray,
   isNull,
   or,

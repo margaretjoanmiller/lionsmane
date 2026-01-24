@@ -2,6 +2,8 @@ import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { coreSchema } from '@/db/index';
+import { categorySchema } from '@/miniflux/dto/category.dto';
+import { personSchema } from '@/syndication/zod/atom.zod';
 
 export const articleDetail = createSelectSchema(coreSchema.articles);
 
@@ -39,6 +41,15 @@ export const articleDetailWithStatus = articleDetail.extend({
   isBlurred: z.boolean().default(false).optional(),
   isHidden: z.boolean().default(false).optional(),
   contentWarning: z.array(z.string()).nullish().default([]),
+  authors: z.object({
+    authors: personSchema,
+  }),
+  contributors: z.object({
+    contributors: personSchema,
+  }),
+  categories: z.object({
+    categories: categorySchema,
+  }),
 });
 
 export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;
