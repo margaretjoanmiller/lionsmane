@@ -1,4 +1,3 @@
-CREATE TYPE "user_filter_actions" AS ENUM('blur', 'markRead', 'hide');--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY,
 	"account_id" text NOT NULL,
@@ -17,11 +16,12 @@ CREATE TABLE "account" (
 --> statement-breakpoint
 CREATE TABLE "apikey" (
 	"id" text PRIMARY KEY,
+	"config_id" text DEFAULT 'default' NOT NULL,
 	"name" text,
 	"start" text,
+	"reference_id" text NOT NULL,
 	"prefix" text,
 	"key" text NOT NULL,
-	"user_id" text NOT NULL,
 	"refill_interval" integer,
 	"refill_amount" integer,
 	"last_refill_at" timestamp,
@@ -45,7 +45,7 @@ CREATE TABLE "applied_rules" (
 	"articleId" uuid NOT NULL,
 	"ruleId" uuid NOT NULL,
 	"appliedAt" timestamp DEFAULT now() NOT NULL,
-	"action" "user_filter_actions" NOT NULL,
+	"action" varchar(256) NOT NULL,
 	"contentWarning" varchar(256),
 	"isUndone" boolean DEFAULT false NOT NULL,
 	"undoneAt" timestamp
@@ -56,15 +56,13 @@ CREATE TABLE "articles" (
 	"minifluxId" serial CONSTRAINT "articles_minifluxId_unique" UNIQUE,
 	"title" text DEFAULT 'No title' NOT NULL,
 	"url" text,
-	"authors" jsonb DEFAULT '[]' NOT NULL,
-	"contributors" jsonb DEFAULT '[]' NOT NULL,
+	"authors" jsonb DEFAULT '{"authors":[]}' NOT NULL,
+	"contributors" jsonb DEFAULT '{"contributors":[]}' NOT NULL,
 	"publisher" varchar(256),
-	"contributor" varchar(256),
 	"format" varchar(256),
 	"language" varchar(256),
 	"rights" varchar(256),
-	"categories" jsonb DEFAULT '[]' NOT NULL,
-	"subjects" varchar(256)[],
+	"categories" jsonb DEFAULT '{"categories":[]}' NOT NULL,
 	"description" text,
 	"comments" text,
 	"commentRss" text,
@@ -121,9 +119,9 @@ CREATE TABLE "feeds" (
 	"parsingErrorCount" integer DEFAULT 0 NOT NULL,
 	"userAgent" varchar(256),
 	"crawler" boolean DEFAULT false NOT NULL,
-	"authors" jsonb DEFAULT '[]',
-	"contributors" jsonb DEFAULT '[]' NOT NULL,
-	"categories" jsonb DEFAULT '[]' NOT NULL,
+	"authors" jsonb DEFAULT '{"authors":[]}' NOT NULL,
+	"contributors" jsonb DEFAULT '{"contributors":[]}' NOT NULL,
+	"categories" jsonb DEFAULT '{"categories":[]}' NOT NULL,
 	"copyright" varchar(50),
 	"rights" varchar(256)[] DEFAULT '{}'::varchar(256)[],
 	"image" jsonb,
@@ -166,8 +164,8 @@ CREATE TABLE "icons" (
 --> statement-breakpoint
 CREATE TABLE "oauth_access_token" (
 	"id" text PRIMARY KEY,
-	"access_token" text CONSTRAINT "oauth_access_token_access_token_unique" UNIQUE,
-	"refresh_token" text CONSTRAINT "oauth_access_token_refresh_token_unique" UNIQUE,
+	"access_token" text UNIQUE,
+	"refresh_token" text UNIQUE,
 	"access_token_expires_at" timestamp,
 	"refresh_token_expires_at" timestamp,
 	"client_id" text,
@@ -182,7 +180,7 @@ CREATE TABLE "oauth_application" (
 	"name" text,
 	"icon" text,
 	"metadata" text,
-	"client_id" text CONSTRAINT "oauth_application_client_id_unique" UNIQUE,
+	"client_id" text UNIQUE,
 	"client_secret" text,
 	"redirect_urls" text,
 	"type" text,
@@ -219,7 +217,7 @@ CREATE TABLE "passkey" (
 CREATE TABLE "session" (
 	"id" text PRIMARY KEY,
 	"expires_at" timestamp NOT NULL,
-	"token" text NOT NULL CONSTRAINT "session_token_unique" UNIQUE,
+	"token" text NOT NULL UNIQUE,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"ip_address" text,
@@ -246,15 +244,15 @@ CREATE TABLE "two_factor" (
 --> statement-breakpoint
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY,
-	"miniflux_id" serial,
 	"name" text NOT NULL,
-	"email" text NOT NULL CONSTRAINT "user_email_unique" UNIQUE,
+	"email" text NOT NULL UNIQUE,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"image" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"two_factor_enabled" boolean DEFAULT false,
-	"has_readeck_key" boolean DEFAULT false
+	"has_readeck_key" boolean DEFAULT false,
+	"miniflux_id" integer
 );
 --> statement-breakpoint
 CREATE TABLE "user_article_states" (
@@ -287,8 +285,9 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" ("user_id");--> statement-breakpoint
+CREATE INDEX "apikey_configId_idx" ON "apikey" ("config_id");--> statement-breakpoint
+CREATE INDEX "apikey_referenceId_idx" ON "apikey" ("reference_id");--> statement-breakpoint
 CREATE INDEX "apikey_key_idx" ON "apikey" ("key");--> statement-breakpoint
-CREATE INDEX "apikey_userId_idx" ON "apikey" ("user_id");--> statement-breakpoint
 CREATE INDEX "applied_rules_applied_at_idx" ON "applied_rules" ("appliedAt");--> statement-breakpoint
 CREATE INDEX "applied_rules_rule_idx" ON "applied_rules" ("ruleId");--> statement-breakpoint
 CREATE INDEX "applied_rules_user_article_idx" ON "applied_rules" ("userId","articleId");--> statement-breakpoint
@@ -306,8 +305,8 @@ CREATE INDEX "oauthAccessToken_userId_idx" ON "oauth_access_token" ("user_id");-
 CREATE INDEX "oauthApplication_userId_idx" ON "oauth_application" ("user_id");--> statement-breakpoint
 CREATE INDEX "oauthConsent_clientId_idx" ON "oauth_consent" ("client_id");--> statement-breakpoint
 CREATE INDEX "oauthConsent_userId_idx" ON "oauth_consent" ("user_id");--> statement-breakpoint
-CREATE INDEX "passkey_credentialID_idx" ON "passkey" ("credential_id");--> statement-breakpoint
 CREATE INDEX "passkey_userId_idx" ON "passkey" ("user_id");--> statement-breakpoint
+CREATE INDEX "passkey_credentialID_idx" ON "passkey" ("credential_id");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" ("user_id");--> statement-breakpoint
 CREATE INDEX "user_feeds_feed_idx" ON "subscriptions" ("feedId");--> statement-breakpoint
 CREATE INDEX "user_feeds_folder_idx" ON "subscriptions" ("folderId");--> statement-breakpoint
@@ -322,7 +321,6 @@ CREATE INDEX "user_filters_actions_idx" ON "user_filters" ("userId","action");--
 CREATE INDEX "user_filters_user_idx" ON "user_filters" ("userId","conditions");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verification" ("identifier");--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
-ALTER TABLE "apikey" ADD CONSTRAINT "apikey_user_id_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_userId_user_id_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_articleId_articles_id_fkey" FOREIGN KEY ("articleId") REFERENCES "articles"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "applied_rules" ADD CONSTRAINT "applied_rules_ruleId_user_filters_id_fkey" FOREIGN KEY ("ruleId") REFERENCES "user_filters"("id") ON DELETE CASCADE;--> statement-breakpoint

@@ -1,7 +1,8 @@
+import { apiKey } from '@better-auth/api-key';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
+import { oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
 import { db } from './db';
 import { sendAuthEmail } from './utils/email-auth';
 

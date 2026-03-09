@@ -21,10 +21,46 @@ import type { PodFeed, PodItem } from '@/syndication/types/podcast';
 import type { YtFeed, YtItem } from '@/syndication/types/youtube';
 import type { Geo } from '@/syndication/zod/rss.zod';
 
+// auth tables
+export const user = pgTable('user', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  twoFactorEnabled: boolean('two_factor_enabled').default(false),
+  hasReadeckKey: boolean('has_readeck_key').default(false),
+  minifluxId: integer('miniflux_id'),
+});
+
+export const session = pgTable(
+  'session',
+  {
+    id: text('id').primaryKey(),
+    expiresAt: timestamp('expires_at').notNull(),
+    token: text('token').notNull().unique(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+  },
+  (table) => [index('session_userId_idx').on(table.userId)],
+);
+
 export const account = pgTable(
   'account',
   {
-    id: text().primaryKey(),
+    id: text('id').primaryKey(),
     accountId: text('account_id').notNull(),
     providerId: text('provider_id').notNull(),
     userId: text('user_id')
@@ -35,48 +71,165 @@ export const account = pgTable(
     idToken: text('id_token'),
     accessTokenExpiresAt: timestamp('access_token_expires_at'),
     refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
-    scope: text(),
-    password: text(),
-    createdAt: timestamp('created_at').default(sql`now()`).notNull(),
-    updatedAt: timestamp('updated_at').notNull(),
+    scope: text('scope'),
+    password: text('password'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
   },
-  (table) => [
-    index('account_userId_idx').using('btree', table.userId.asc().nullsLast()),
-  ],
+  (table) => [index('account_userId_idx').on(table.userId)],
+);
+
+export const verification = pgTable(
+  'verification',
+  {
+    id: text('id').primaryKey(),
+    identifier: text('identifier').notNull(),
+    value: text('value').notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [index('verification_identifier_idx').on(table.identifier)],
 );
 
 export const apikey = pgTable(
   'apikey',
   {
-    id: text().primaryKey(),
-    name: text(),
-    start: text(),
-    prefix: text(),
-    key: text().notNull(),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+    id: text('id').primaryKey(),
+    configId: text('config_id').default('default').notNull(),
+    name: text('name'),
+    start: text('start'),
+    referenceId: text('reference_id').notNull(),
+    prefix: text('prefix'),
+    key: text('key').notNull(),
     refillInterval: integer('refill_interval'),
     refillAmount: integer('refill_amount'),
     lastRefillAt: timestamp('last_refill_at'),
-    enabled: boolean().default(true),
+    enabled: boolean('enabled').default(true),
     rateLimitEnabled: boolean('rate_limit_enabled').default(true),
-    rateLimitTimeWindow: integer('rate_limit_time_window').default(86_400_000),
+    rateLimitTimeWindow: integer('rate_limit_time_window').default(86400000),
     rateLimitMax: integer('rate_limit_max').default(500),
     requestCount: integer('request_count').default(0),
-    remaining: integer(),
+    remaining: integer('remaining'),
     lastRequest: timestamp('last_request'),
     expiresAt: timestamp('expires_at'),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
-    permissions: text(),
-    metadata: text(),
+    permissions: text('permissions'),
+    metadata: text('metadata'),
   },
   (table) => [
-    index('apikey_key_idx').using('btree', table.key.asc().nullsLast()),
-    index('apikey_userId_idx').using('btree', table.userId.asc().nullsLast()),
+    index('apikey_configId_idx').on(table.configId),
+    index('apikey_referenceId_idx').on(table.referenceId),
+    index('apikey_key_idx').on(table.key),
   ],
 );
+
+export const passkey = pgTable(
+  'passkey',
+  {
+    id: text('id').primaryKey(),
+    name: text('name'),
+    publicKey: text('public_key').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    credentialID: text('credential_id').notNull(),
+    counter: integer('counter').notNull(),
+    deviceType: text('device_type').notNull(),
+    backedUp: boolean('backed_up').notNull(),
+    transports: text('transports'),
+    createdAt: timestamp('created_at'),
+    aaguid: text('aaguid'),
+  },
+  (table) => [
+    index('passkey_userId_idx').on(table.userId),
+    index('passkey_credentialID_idx').on(table.credentialID),
+  ],
+);
+
+export const twoFactor = pgTable(
+  'two_factor',
+  {
+    id: text('id').primaryKey(),
+    secret: text('secret').notNull(),
+    backupCodes: text('backup_codes').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+  },
+  (table) => [
+    index('twoFactor_secret_idx').on(table.secret),
+    index('twoFactor_userId_idx').on(table.userId),
+  ],
+);
+
+export const oauthApplication = pgTable(
+  'oauth_application',
+  {
+    id: text('id').primaryKey(),
+    name: text('name'),
+    icon: text('icon'),
+    metadata: text('metadata'),
+    clientId: text('client_id').unique(),
+    clientSecret: text('client_secret'),
+    redirectUrls: text('redirect_urls'),
+    type: text('type'),
+    disabled: boolean('disabled').default(false),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+  },
+  (table) => [index('oauthApplication_userId_idx').on(table.userId)],
+);
+
+export const oauthAccessToken = pgTable(
+  'oauth_access_token',
+  {
+    id: text('id').primaryKey(),
+    accessToken: text('access_token').unique(),
+    refreshToken: text('refresh_token').unique(),
+    accessTokenExpiresAt: timestamp('access_token_expires_at'),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+    clientId: text('client_id').references(() => oauthApplication.clientId, {
+      onDelete: 'cascade',
+    }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+    scopes: text('scopes'),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+  },
+  (table) => [
+    index('oauthAccessToken_clientId_idx').on(table.clientId),
+    index('oauthAccessToken_userId_idx').on(table.userId),
+  ],
+);
+
+export const oauthConsent = pgTable(
+  'oauth_consent',
+  {
+    id: text('id').primaryKey(),
+    clientId: text('client_id').references(() => oauthApplication.clientId, {
+      onDelete: 'cascade',
+    }),
+    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
+    scopes: text('scopes'),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
+    consentGiven: boolean('consent_given'),
+  },
+  (table) => [
+    index('oauthConsent_clientId_idx').on(table.clientId),
+    index('oauthConsent_userId_idx').on(table.userId),
+  ],
+);
+
+// core tables
 
 export const appliedRules = pgTable(
   'applied_rules',
@@ -323,132 +476,6 @@ export const icons = pgTable(
   (table) => [unique('icons_url_unique').on(table.url)],
 );
 
-export const oauthAccessToken = pgTable(
-  'oauth_access_token',
-  {
-    id: text().primaryKey(),
-    accessToken: text('access_token'),
-    refreshToken: text('refresh_token'),
-    accessTokenExpiresAt: timestamp('access_token_expires_at'),
-    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
-    clientId: text('client_id').references(() => oauthApplication.clientId, {
-      onDelete: 'cascade',
-    }),
-    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
-    scopes: text(),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
-  },
-  (table) => [
-    index('oauthAccessToken_clientId_idx').using(
-      'btree',
-      table.clientId.asc().nullsLast(),
-    ),
-    index('oauthAccessToken_userId_idx').using(
-      'btree',
-      table.userId.asc().nullsLast(),
-    ),
-    unique('oauth_access_token_access_token_unique').on(table.accessToken),
-    unique('oauth_access_token_refresh_token_unique').on(table.refreshToken),
-  ],
-);
-
-export const oauthApplication = pgTable(
-  'oauth_application',
-  {
-    id: text().primaryKey(),
-    name: text(),
-    icon: text(),
-    metadata: text(),
-    clientId: text('client_id'),
-    clientSecret: text('client_secret'),
-    redirectUrls: text('redirect_urls'),
-    type: text(),
-    disabled: boolean().default(false),
-    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
-  },
-  (table) => [
-    index('oauthApplication_userId_idx').using(
-      'btree',
-      table.userId.asc().nullsLast(),
-    ),
-    unique('oauth_application_client_id_unique').on(table.clientId),
-  ],
-);
-
-export const oauthConsent = pgTable(
-  'oauth_consent',
-  {
-    id: text().primaryKey(),
-    clientId: text('client_id').references(() => oauthApplication.clientId, {
-      onDelete: 'cascade',
-    }),
-    userId: text('user_id').references(() => user.id, { onDelete: 'cascade' }),
-    scopes: text(),
-    createdAt: timestamp('created_at'),
-    updatedAt: timestamp('updated_at'),
-    consentGiven: boolean('consent_given'),
-  },
-  (table) => [
-    index('oauthConsent_clientId_idx').using(
-      'btree',
-      table.clientId.asc().nullsLast(),
-    ),
-    index('oauthConsent_userId_idx').using(
-      'btree',
-      table.userId.asc().nullsLast(),
-    ),
-  ],
-);
-
-export const passkey = pgTable(
-  'passkey',
-  {
-    id: text().primaryKey(),
-    name: text(),
-    publicKey: text('public_key').notNull(),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-    credentialId: text('credential_id').notNull(),
-    counter: integer().notNull(),
-    deviceType: text('device_type').notNull(),
-    backedUp: boolean('backed_up').notNull(),
-    transports: text(),
-    createdAt: timestamp('created_at'),
-    aaguid: text(),
-  },
-  (table) => [
-    index('passkey_credentialID_idx').using(
-      'btree',
-      table.credentialId.asc().nullsLast(),
-    ),
-    index('passkey_userId_idx').using('btree', table.userId.asc().nullsLast()),
-  ],
-);
-
-export const session = pgTable(
-  'session',
-  {
-    id: text().primaryKey(),
-    expiresAt: timestamp('expires_at').notNull(),
-    token: text().notNull(),
-    createdAt: timestamp('created_at').default(sql`now()`).notNull(),
-    updatedAt: timestamp('updated_at').notNull(),
-    ipAddress: text('ip_address'),
-    userAgent: text('user_agent'),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-  },
-  (table) => [
-    index('session_userId_idx').using('btree', table.userId.asc().nullsLast()),
-    unique('session_token_unique').on(table.token),
-  ],
-);
-
 export const subscriptions = pgTable(
   'subscriptions',
   {
@@ -477,45 +504,6 @@ export const subscriptions = pgTable(
     ),
     unique('subscriptions_userId_feedId_unique').on(table.userId, table.feedId),
   ],
-);
-
-export const twoFactor = pgTable(
-  'two_factor',
-  {
-    id: text().primaryKey(),
-    secret: text().notNull(),
-    backupCodes: text('backup_codes').notNull(),
-    userId: text('user_id')
-      .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
-  },
-  (table) => [
-    index('twoFactor_secret_idx').using(
-      'btree',
-      table.secret.asc().nullsLast(),
-    ),
-    index('twoFactor_userId_idx').using(
-      'btree',
-      table.userId.asc().nullsLast(),
-    ),
-  ],
-);
-
-export const user = pgTable(
-  'user',
-  {
-    id: text().primaryKey(),
-    minifluxId: serial('miniflux_id').notNull(),
-    name: text().notNull(),
-    email: text().notNull(),
-    emailVerified: boolean('email_verified').default(false).notNull(),
-    image: text(),
-    createdAt: timestamp('created_at').default(sql`now()`).notNull(),
-    updatedAt: timestamp('updated_at').default(sql`now()`).notNull(),
-    twoFactorEnabled: boolean('two_factor_enabled').default(false),
-    hasReadeckKey: boolean('has_readeck_key').default(false),
-  },
-  (table) => [unique('user_email_unique').on(table.email)],
 );
 
 export const userArticleStates = pgTable(
@@ -581,24 +569,6 @@ export const userFilters = pgTable(
       'btree',
       table.userId.asc().nullsLast(),
       table.conditions.asc().nullsLast(),
-    ),
-  ],
-);
-
-export const verification = pgTable(
-  'verification',
-  {
-    id: text().primaryKey(),
-    identifier: text().notNull(),
-    value: text().notNull(),
-    expiresAt: timestamp('expires_at').notNull(),
-    createdAt: timestamp('created_at').default(sql`now()`).notNull(),
-    updatedAt: timestamp('updated_at').default(sql`now()`).notNull(),
-  },
-  (table) => [
-    index('verification_identifier_idx').using(
-      'btree',
-      table.identifier.asc().nullsLast(),
     ),
   ],
 );

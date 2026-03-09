@@ -7,6 +7,7 @@ injectWorkspacePackages: true
 
 onlyBuiltDependencies:
   - '@nestjs/core'
+  - '@prisma/engines'
   - '@scarf/scarf'
   - '@suites/di.nestjs'
   - '@suites/doubles.vitest'
@@ -17,6 +18,7 @@ onlyBuiltDependencies:
   - keccak
   - msgpackr-extract
   - msw
+  - prisma
   - scrypt
   - secp256k1
   - sha3

@@ -2,29 +2,95 @@ import { defineRelations } from 'drizzle-orm';
 import * as schema from './schema';
 
 export const relations = defineRelations(schema, (r) => ({
+  user: {
+    sessions: r.many.session({
+      from: r.user.id,
+      to: r.session.userId,
+    }),
+    accounts: r.many.account({
+      from: r.user.id,
+      to: r.account.userId,
+    }),
+    passkeys: r.many.passkey({
+      from: r.user.id,
+      to: r.passkey.userId,
+    }),
+    twoFactors: r.many.twoFactor({
+      from: r.user.id,
+      to: r.twoFactor.userId,
+    }),
+    oauthApplications: r.many.oauthApplication({
+      from: r.user.id,
+      to: r.oauthApplication.userId,
+    }),
+    oauthAccessTokens: r.many.oauthAccessToken({
+      from: r.user.id,
+      to: r.oauthAccessToken.userId,
+    }),
+    oauthConsents: r.many.oauthConsent({
+      from: r.user.id,
+      to: r.oauthConsent.userId,
+    }),
+    appliedRules: r.many.appliedRules(),
+    folders: r.many.folders(),
+    subscriptions: r.many.subscriptions(),
+    userFilters: r.many.userFilters(),
+  },
+  session: {
+    user: r.one.user({
+      from: r.session.userId,
+      to: r.user.id,
+    }),
+  },
   account: {
     user: r.one.user({
       from: r.account.userId,
       to: r.user.id,
     }),
   },
-  user: {
-    accounts: r.many.account(),
-    apikeys: r.many.apikey(),
-    appliedRules: r.many.appliedRules(),
-    folders: r.many.folders(),
-    oauthApplicationsViaOauthAccessToken: r.many.oauthApplication(),
-    oauthApplicationsUserId: r.many.oauthApplication(),
-    oauthApplicationsViaOauthConsent: r.many.oauthApplication(),
-    passkeys: r.many.passkey(),
-    sessions: r.many.session(),
-    subscriptions: r.many.subscriptions(),
-    twoFactors: r.many.twoFactor(),
-    userFilters: r.many.userFilters(),
-  },
-  apikey: {
+  passkey: {
     user: r.one.user({
-      from: r.apikey.userId,
+      from: r.passkey.userId,
+      to: r.user.id,
+    }),
+  },
+  twoFactor: {
+    user: r.one.user({
+      from: r.twoFactor.userId,
+      to: r.user.id,
+    }),
+  },
+  oauthApplication: {
+    user: r.one.user({
+      from: r.oauthApplication.userId,
+      to: r.user.id,
+    }),
+    oauthAccessTokens: r.many.oauthAccessToken({
+      from: r.oauthApplication.id,
+      to: r.oauthAccessToken.clientId,
+    }),
+    oauthConsents: r.many.oauthConsent({
+      from: r.oauthApplication.id,
+      to: r.oauthConsent.clientId,
+    }),
+  },
+  oauthAccessToken: {
+    oauthApplication: r.one.oauthApplication({
+      from: r.oauthAccessToken.clientId,
+      to: r.oauthApplication.clientId,
+    }),
+    user: r.one.user({
+      from: r.oauthAccessToken.userId,
+      to: r.user.id,
+    }),
+  },
+  oauthConsent: {
+    oauthApplication: r.one.oauthApplication({
+      from: r.oauthConsent.clientId,
+      to: r.oauthApplication.clientId,
+    }),
+    user: r.one.user({
+      from: r.oauthConsent.userId,
       to: r.user.id,
     }),
   },
@@ -85,36 +151,6 @@ export const relations = defineRelations(schema, (r) => ({
     }),
     subscriptions: r.many.subscriptions(),
   },
-  oauthAccessToken: {
-    users: r.many.user({
-      from: r.oauthAccessToken.userId,
-      to: r.user.id,
-    }),
-  },
-  oauthConsent: {
-    users: r.many.user({
-      from: r.oauthConsent.userId,
-      to: r.user.id,
-    }),
-  },
-  oauthApplication: {
-    user: r.one.user({
-      from: r.oauthApplication.userId,
-      to: r.user.id,
-    }),
-  },
-  passkey: {
-    user: r.one.user({
-      from: r.passkey.userId,
-      to: r.user.id,
-    }),
-  },
-  session: {
-    user: r.one.user({
-      from: r.session.userId,
-      to: r.user.id,
-    }),
-  },
   subscriptions: {
     feed: r.one.feeds({
       from: r.subscriptions.feedId,
@@ -126,12 +162,6 @@ export const relations = defineRelations(schema, (r) => ({
     }),
     user: r.one.user({
       from: r.subscriptions.userId,
-      to: r.user.id,
-    }),
-  },
-  twoFactor: {
-    user: r.one.user({
-      from: r.twoFactor.userId,
       to: r.user.id,
     }),
   },
