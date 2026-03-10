@@ -161,7 +161,11 @@ export class FetcherService {
       throw new Error('Failed to fetch feed');
     }
     const { feed } = parseFeed(feedXML.data);
-    return feed.title || feedUrl;
+    if (feed.title instanceof Object) {
+      return feed.title?.value || feedUrl;
+    } else {
+      return feed.title || feedUrl;
+    }
   }
 
   async extractKeywords(textContent: string): Promise<string[]> {
@@ -291,43 +295,25 @@ export class FetcherService {
               throw new Error('Item is missing required fields');
             }
 
+            const {
+              title,
+              link,
+              description,
+              content,
+              pubDate,
+              source,
+              ...metaData
+            } = item;
+
             return {
               name: 'new-article',
               data: {
-                title: item.title,
-                url: item.link ? item.link : item.source?.url,
-                authors: item.authors?.map((a) => ({
-                  name: a,
-                })),
-                categories: item.categories?.map((category) => ({
-                  term: category.name,
-                })),
-                comments: item.wfw ? item.wfw.comment : item.comments,
-                commentrss: item.wfw?.commentRss,
-                enclosures: item.enclosures?.map((i) => ({
-                  url: i.url,
-                  type: i.type || 'application/octet-stream',
-                  size: i.length || 0,
-                })),
-                itunes: item.itunes,
-                podcast: item.podcast,
-                geo: item.georss,
-                thread: item.thr,
-                description: item.description || '',
-                rawContent:
-                  item.content?.encoded || item.description || 'no content',
-                image: item.media?.thumbnails
-                  ? item.media.thumbnails.at(0)?.url
-                  : item.media?.contents
-                    ? item.media.contents.at(0)?.url
-                    : '',
-                imageAlt: item.media?.contents
-                  ? item.media.contents.at(0)?.texts
-                    ? item.media.contents.at(0)?.texts?.at(0)?.value
-                    : ''
-                  : '',
-                media: item.media,
-                published: item.pubDate,
+                title: title,
+                url: link ? link : source?.url,
+                description: description || '',
+                rawContent: content?.encoded || description || 'no content',
+                published: pubDate,
+                metaData,
                 feedId: feedId,
               },
               opts: {
@@ -365,7 +351,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              lastChecked: new Date().toISOString(),
+              lastChecked: new Date(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;
@@ -403,41 +389,25 @@ export class FetcherService {
               throw new Error('Item is missing required fields');
             }
 
+            const {
+              title,
+              links,
+              content,
+              published,
+              summary,
+              updated,
+              ...metaData
+            } = item;
+
             return {
               name: 'new-article',
               data: {
-                title: item.title,
-                url: item.links ? item.links[0].href : '',
-                authors: item.authors,
-                categories: item.categories,
-                description: item.summary || '',
-                publisher: item.dc?.publisher,
-                contributors: item.contributors,
-                format: item.dc?.format,
-                language: item.dc?.language,
-                rights: item.rights,
-                comments: item.wfw?.comment,
-                commentRss: item.wfw?.commentRss,
-                geo: item.georss,
-                youtube: item.yt,
-                thread: item.thr,
-                rawContent: item.content || item.summary || 'no content',
-                itunes: item.itunes,
-                image: item.media
-                  ? item.media.thumbnails
-                    ? item.media.thumbnails[0].url
-                    : item.media.contents
-                      ? item.media.contents[0].url
-                      : ''
-                  : '',
-                imageAlt: item.media
-                  ? item.media.contents
-                    ? item.media.contents[0].title
-                    : ''
-                  : '',
-                media: item.media,
-                published: item.published ? item.published : item.updated,
-                updated: item.updated,
+                title: title,
+                url: links ? links[0].href : '',
+                rawContent: content || summary?.value || 'no content',
+                published: published ? published : updated,
+                updated: updated,
+                metaData,
                 feedId: feedId,
               },
               opts: {
@@ -475,7 +445,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              lastChecked: new Date().toISOString(),
+              lastChecked: new Date(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;
@@ -507,20 +477,27 @@ export class FetcherService {
               throw new Error('Item is missing required fields');
             }
 
+            const {
+              title,
+              url,
+              summary,
+              content_html,
+              content_text,
+              date_published,
+              date_modified,
+              ...metaData
+            } = item;
+
             return {
               name: 'new-article',
               data: {
-                title: item.title,
-                url: item.url || '',
-                authors: item.authors,
-                categories: item.tags,
-                description: item.summary || '',
-                language: item.language,
-                rawContent:
-                  item.content_html || item.content_text || 'No content',
-                image: item.image,
-                published: item.date_published,
-                updated: item.date_modified,
+                title: title,
+                url: url || '',
+                description: summary || '',
+                rawContent: content_html || content_text || 'No content',
+                published: date_published,
+                updated: date_modified,
+                metaData,
                 feedId: feedId,
               },
               opts: {
@@ -558,7 +535,7 @@ export class FetcherService {
           await this.db
             .update(schema.feeds)
             .set({
-              lastChecked: new Date().toISOString(),
+              lastChecked: new Date(),
             })
             .where(eq(schema.feeds.id, feedId));
           return jobs;

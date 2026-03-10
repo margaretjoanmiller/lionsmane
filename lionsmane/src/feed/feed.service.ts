@@ -163,11 +163,20 @@ export class FeedService {
             const data = await this.fetcher.respectfulFetch(f);
             try {
               const { format, feed } = parseFeed(data?.data);
-              return {
-                format,
-                url: f,
-                title: feed.title || null,
-              };
+
+              if (feed.title instanceof Object) {
+                return {
+                  format,
+                  url: f,
+                  title: feed.title.value || null,
+                };
+              } else {
+                return {
+                  format,
+                  url: f,
+                  title: feed.title || null,
+                };
+              }
             } catch {
               return null;
             }
@@ -225,43 +234,12 @@ export class FeedService {
           icon = iconInserted.id;
         }
         if (format === 'rss') {
+          const { title, items, ...metaData } = parsedFeed;
+
           const [newFeed] = await tx
             .insert(schema.feeds)
             .values({
-              // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || url,
-              url,
-              site_url: urlObj.origin,
-              icon,
-              updated: updated ? parseDate(updated) : null,
-              lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers['etag'] || '',
-              last_modified_header: response?.headers['last-modified'] || '',
-              copyright: parsedFeed.copyright,
-              image: parsedFeed.image || null,
-              language: parsedFeed.language,
-              podcast: parsedFeed.podcast,
-              geo: parsedFeed.georss,
-              subject: parsedFeed.dc?.subject,
-              contributor: parsedFeed.dc?.contributor,
-              publisher: parsedFeed.dc?.publisher,
-              format: parsedFeed.dc?.format,
-              rights: parsedFeed.dc?.rights,
-              updatePeriod: parsedFeed.sy?.updatePeriod,
-              updateFrequency: parsedFeed.sy?.updateFrequency,
-              updateBase: parsedFeed.sy?.updateBase,
-            })
-            .returning();
-          if (!newFeed) {
-            throw new Error('Failed to create feed');
-          }
-          feed = newFeed;
-        } else if (format === 'atom') {
-          const [newFeed] = await tx
-            .insert(schema.feeds)
-            .values({
-              // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || url,
+              title: title || url,
               url,
               site_url: urlObj.origin,
               icon,
@@ -269,20 +247,28 @@ export class FeedService {
               lastChecked: subMonths(new Date(), 6),
               etag_header: response?.headers.etag || '',
               last_modified_header: response?.headers['last-modified'] || '',
-              authors: parsedFeed.authors,
-              contributors: parsedFeed.contributors,
-              categories: parsedFeed.categories,
-              explicit: parsedFeed.itunes?.explicit,
-              language: parsedFeed.dc?.language,
-              subject: parsedFeed.dc?.subject,
-              contributor: parsedFeed.dc?.contributor,
-              publisher: parsedFeed.dc?.publisher,
-              format: parsedFeed.dc?.format,
-              rights: parsedFeed.dc?.rights,
-              updatePeriod: parsedFeed.sy?.updatePeriod,
-              updateFrequency: parsedFeed.sy?.updateFrequency,
-              updateBase: parsedFeed.sy?.updateBase,
-              youtube: parsedFeed.yt,
+              metaData,
+            })
+            .returning();
+          if (!newFeed) {
+            throw new Error('Failed to create feed');
+          }
+          feed = newFeed;
+        } else if (format === 'atom') {
+          const { title, entries, ...metaData } = parsedFeed;
+
+          const [newFeed] = await tx
+            .insert(schema.feeds)
+            .values({
+              title: title?.value || url,
+              url,
+              site_url: urlObj.origin,
+              icon,
+              updated: updated ? parseDate(updated) : null,
+              lastChecked: subMonths(new Date(), 6),
+              etag_header: response?.headers.etag || '',
+              last_modified_header: response?.headers['last-modified'] || '',
+              metaData,
             })
             .returning();
           if (!newFeed) {
@@ -437,6 +423,7 @@ export class FeedService {
     return feeds.map((feed) => ({
       ...feed,
       lastChecked: feed.lastChecked.toISOString(),
+      updated: feed.updated?.toISOString(),
       etag_header: feed.etag_header || '',
       last_modified_header: feed.last_modified_header || '',
       scraper_rules: null,
@@ -553,6 +540,7 @@ export class FeedService {
     return {
       ...userFeed,
       lastChecked: userFeed.lastChecked.toISOString(),
+      updated: userFeed.updated?.toISOString(),
       scraper_rules: null,
       rewrite_rules: null,
       blocklist_rules: null,

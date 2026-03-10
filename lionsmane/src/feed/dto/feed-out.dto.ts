@@ -2,60 +2,32 @@ import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { coreSchema } from '@/db';
-import { categorySchema, personSchema } from '@/syndication/zod/atom.zod';
-import { geoRssSchema } from '@/syndication/zod/geo.zod';
-import { podFeed } from '@/syndication/zod/podcast.zod';
-import { geoSchema } from '@/syndication/zod/rss.zod';
-import { ytFeed } from '@/syndication/zod/youtube.zod';
+import { FeedMetaData } from '../feed';
 
 export const feedSchema = createSelectSchema(coreSchema.feeds, {
-  authors: z.object({
-    authors: personSchema,
-  }),
-  contributors: z.object({
-    contributors: personSchema,
-  }),
-  categories: z.object({
-    categories: categorySchema,
-  }),
-  geo: geoSchema,
-  georss: geoRssSchema,
-  youtube: ytFeed.nullable(),
-  podcast: podFeed.nullable(),
-  lastChecked: z
-    .preprocess((arg: Date | string) => {
-      // If the input is a string, try to parse it into a Date object.
-      // This handles the '2025-09-01 21:54:33' format.
-      if (typeof arg === 'string') {
-        return new Date(arg).toISOString();
-      }
-      if (arg instanceof Date) {
-        return arg.toISOString();
-      }
-    }, z.iso.datetime())
-    .nullish(), // Then, validate that the result is a valid ISO datetime string.
+  metaData: z.custom<FeedMetaData>().nullish(),
+  lastChecked: z.preprocess((arg: Date | string) => {
+    // If the input is a string, try to parse it into a Date object.
+    // This handles the '2025-09-01 21:54:33' format.
+    if (typeof arg === 'string') {
+      return new Date(arg).toISOString();
+    } else if (arg instanceof Date) {
+      return arg.toISOString();
+    }
+  }, z.iso.datetime()), // Then, validate that the result is a valid ISO datetime string.
   updated: z
-    .preprocess((arg: Date | string) => {
+    .preprocess((arg: Date | string | undefined) => {
       // If the input is a string, try to parse it into a Date object.
       // This handles the '2025-09-01 21:54:33' format.
       if (typeof arg === 'string') {
         return new Date(arg).toISOString();
-      }
-      if (arg instanceof Date) {
+      } else if (arg instanceof Date) {
         return arg.toISOString();
+      } else {
+        return null;
       }
     }, z.iso.datetime())
-    .nullish(), // Then, validate that the result is a valid ISO datetime string.
-  image: z
-    .object({
-      url: z.url().optional(),
-      title: z.string().optional(),
-      link: z.url().optional(),
-      description: z.string().optional(),
-      width: z.number().min(0).optional(),
-      height: z.number().min(0).optional(),
-    })
-    .nullable(),
+    .nullable(), // Then, validate that the result is a valid ISO datetime string.
 });
 
 export const feedSchemaWithCounts = feedSchema

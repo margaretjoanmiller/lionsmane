@@ -2,8 +2,6 @@ import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { coreSchema } from '@/db/index';
-import { categorySchema } from '@/miniflux/dto/category.dto';
-import { personSchema } from '@/syndication/zod/atom.zod';
 
 export const articleDetail = createSelectSchema(coreSchema.articles);
 

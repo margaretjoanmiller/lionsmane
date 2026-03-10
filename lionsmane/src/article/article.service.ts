@@ -246,7 +246,7 @@ export class ArticleService {
       articles: items,
       cursor: hasNextPage
         ? createCursor(
-            new Date(items.at(-1)?.published) || new Date(),
+            new Date(items.at(-1)?.published || new Date()),
             items.at(-1)?.id || '',
           )
         : null,
@@ -321,6 +321,8 @@ export class ArticleService {
           }
           return {
             ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
             feedTitle: page.feed?.title,
             feedId: page.feed?.id,
             isRead: page.userArticleStates.some((state) => state.isRead),
@@ -364,6 +366,8 @@ export class ArticleService {
           }
           return {
             ...page,
+            published: page.published.toISOString(),
+            updated: page.updated?.toISOString() || null,
             feedTitle: page.feed?.title,
             feedId: page.feed?.id,
             isRead: page.userArticleStates.some((state) => state.isRead),
@@ -388,7 +392,7 @@ export class ArticleService {
     return {
       items,
       cursor: hasNextPage
-        ? createCursor(items.at(-1)!.published!, items.at(-1)!.id!)
+        ? createCursor(new Date(items.at(-1)!.published!), items.at(-1)!.id!)
         : null,
     };
   }
@@ -421,6 +425,8 @@ export class ArticleService {
     }
     return {
       ...article,
+      published: article.published.toISOString(),
+      updated: article.updated?.toISOString(),
       feedTitle: article.feed?.title || article.feed?.url,
       isRead: article.userArticleStates.find((state) => state.isRead)?.isRead,
       isStarred: article.userArticleStates.find((state) => state.isStarred)
