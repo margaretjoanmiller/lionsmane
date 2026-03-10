@@ -1,0 +1,1 @@
+CREATE INDEX "feeds_metaData_idx" ON "feeds" USING gin ("metaData");

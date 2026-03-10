@@ -13,6 +13,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { ArticleMetaData } from '@/article/article';
+import { FeedMetaData } from '@/feed/feed';
 import type { Category, Person, ThreadItem } from '@/syndication/types/atom';
 import type { GeoRss } from '@/syndication/types/geo';
 import type { Itunes } from '@/syndication/types/itunes';
@@ -274,45 +276,17 @@ export const articles = pgTable(
     minifluxId: serial().unique().notNull(),
     title: text().notNull().default('No title'),
     url: text(),
-    authors: jsonb()
-      .$type<{ authors: Person[] }>()
-      .notNull()
-      .default({ authors: [] }),
-    contributors: jsonb()
-      .$type<{ contributors: Person[] }>()
-      .notNull()
-      .default({ contributors: [] }),
-    publisher: varchar({ length: 256 }),
-    format: varchar({ length: 256 }),
-    language: varchar({ length: 256 }),
-    rights: varchar({ length: 256 }),
-    categories: jsonb()
-      .$type<{ categories: Category[] }>()
-      .notNull()
-      .default({ categories: [] }),
-    description: text(),
-    comments: text(),
-    commentRss: text(),
-    geo: jsonb().$type<Geo>().notNull().default({}),
-    georss: jsonb().$type<GeoRss>().notNull().default({}),
     hash: varchar({ length: 64 }).unique(),
+    description: text(),
     rawContent: text(),
     readableHtml: text(),
     readableText: text(),
     fullArticleHtml: text(),
     fullArticleText: text(),
-    encoded: text(),
     keywords: varchar({ length: 256 }).array().notNull().default([]),
-    image: varchar({ length: 512 }),
-    imageAlt: varchar({ length: 512 }),
-    media: jsonb().$type<MediaGroup>(),
-    youtube: jsonb().$type<YtItem>(),
-    podcast: jsonb().$type<PodItem>(),
-    thread: jsonb().$type<ThreadItem>(),
     published: timestamp({ withTimezone: true }).notNull(),
     updated: timestamp({ withTimezone: true }),
-    guid: jsonb().$type<{ isPermalink: boolean; value: string }>(),
-    itunes: jsonb().$type<Itunes>(),
+    metaData: jsonb().$type<ArticleMetaData>(),
     feedId: uuid()
       .notNull()
       .references(() => feeds.id, { onDelete: 'cascade' }),
@@ -322,19 +296,7 @@ export const articles = pgTable(
       columns: [table.id, table.minifluxId],
       name: 'articles_id_minifluxId_pk',
     }),
-    index('articles_category_idx').using(
-      'pgroonga',
-      table.categories.asc().nullsLast(),
-    ),
     index('articles_feed_idx').using('btree', table.feedId.asc().nullsLast()),
-    index('articles_media_idx').using(
-      'pgroonga',
-      table.media.asc().nullsLast(),
-    ),
-    index('articles_podcast_idx').using(
-      'pgroonga',
-      table.podcast.asc().nullsLast(),
-    ),
     index('articles_published_idx').using(
       'btree',
       table.published.asc().nullsLast(),
@@ -343,10 +305,7 @@ export const articles = pgTable(
       'pgroonga',
       table.readableText.asc().nullsLast(),
     ),
-    index('articles_youtube_idx').using(
-      'pgroonga',
-      table.youtube.asc().nullsLast(),
-    ),
+    index('articles_jsonb_metaData_idx').using('gin', table.metaData),
     unique('articles_feed_id_hash_unique').on(table.feedId, table.hash),
     unique('articles_hash_unique').on(table.hash),
     unique('articles_id_unique').on(table.id),
@@ -390,42 +349,9 @@ export const feeds = pgTable(
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
     crawler: boolean().notNull().default(false),
-    authors: jsonb()
-      .$type<{ authors: Person[] }>()
-      .notNull()
-      .default({ authors: [] }),
-    contributors: jsonb()
-      .$type<{ contributors: Person[] }>()
-      .notNull()
-      .default({ contributors: [] }),
-    categories: jsonb()
-      .$type<{ categories: Category[] }>()
-      .notNull()
-      .default({ categories: [] }),
-    copyright: varchar({ length: 50 }),
-    rights: varchar({ length: 256 }).array().default([]),
-    image: jsonb().$type<{
-      url?: string;
-      title?: string;
-      link?: string;
-      description?: string;
-      width?: number;
-      height?: number;
-    }>(),
     lastChecked: timestamp().notNull(),
     updated: timestamp({ withTimezone: true }),
-    explicit: boolean(),
-    subjects: varchar({ length: 256 }).array(),
-    updatePeriod: varchar({ length: 256 }),
-    updateFrequency: integer(),
-    updateBase: varchar({ length: 256 }),
-    publishers: varchar({ length: 256 }).array(),
-    formats: varchar({ length: 256 }).array(),
-    languages: varchar({ length: 256 }).array(),
-    youtube: jsonb().$type<YtFeed>(),
-    podcast: jsonb().$type<PodFeed<string>>(),
-    geo: jsonb().$type<Geo>().notNull().default({}),
-    georss: jsonb().$type<GeoRss>().notNull().default({}),
+    metaData: jsonb().$type<FeedMetaData>(),
     favicon: varchar({ length: 256 }),
     icon: integer().references(() => icons.id),
     feed_host: uuid().references(() => feedHost.id),
@@ -436,6 +362,7 @@ export const feeds = pgTable(
       name: 'feeds_id_minifluxId_pk',
     }),
     index('feeds_url_idx').using('btree', table.url.asc().nullsLast()),
+    index('feeds_metaData_idx').using('gin', table.metaData),
     unique('feeds_id_unique').on(table.id),
     unique('feeds_minifluxId_unique').on(table.minifluxId),
     unique('feeds_url_unique').on(table.url),

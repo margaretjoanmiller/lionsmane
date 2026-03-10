@@ -122,7 +122,7 @@ export class ArticleService {
     cursor: string | undefined,
     pageSize = 10,
   ): Promise<{ articles: ArticleDetail[]; cursor: string | null }> {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -224,7 +224,7 @@ export class ArticleService {
           return {
             ...page,
             published: page.published.toISOString(),
-            updated: page.updated?.toISOString() || null,
+            updated: page.updated?.toISOString(),
             feedTitle: page.feed.title,
             feedId: page.feed.id,
             isRead: page.userArticleStates.some((state) => state.isRead),
@@ -246,7 +246,7 @@ export class ArticleService {
       articles: items,
       cursor: hasNextPage
         ? createCursor(
-            items.at(-1)?.published || new Date().toISOString(),
+            new Date(items.at(-1)?.published) || new Date(),
             items.at(-1)?.id || '',
           )
         : null,
@@ -259,7 +259,7 @@ export class ArticleService {
     cursor: string | undefined,
     pageSize = 10,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -321,8 +321,6 @@ export class ArticleService {
           }
           return {
             ...page,
-            published: page.published.toISOString(),
-            updated: page.updated?.toISOString() || null,
             feedTitle: page.feed?.title,
             feedId: page.feed?.id,
             isRead: page.userArticleStates.some((state) => state.isRead),
@@ -366,8 +364,6 @@ export class ArticleService {
           }
           return {
             ...page,
-            published: page.published.toISOString(),
-            updated: page.updated?.toISOString() || null,
             feedTitle: page.feed?.title,
             feedId: page.feed?.id,
             isRead: page.userArticleStates.some((state) => state.isRead),
@@ -425,8 +421,6 @@ export class ArticleService {
     }
     return {
       ...article,
-      published: article.published.toISOString() || new Date().toISOString(),
-      updated: article.updated?.toISOString(),
       feedTitle: article.feed?.title || article.feed?.url,
       isRead: article.userArticleStates.find((state) => state.isRead)?.isRead,
       isStarred: article.userArticleStates.find((state) => state.isStarred)
@@ -559,7 +553,7 @@ export class ArticleService {
     pageSize = 10,
     cursor?: string,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -633,7 +627,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -680,7 +674,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -731,10 +725,7 @@ export class ArticleService {
     return {
       articles: items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)!.published.toISOString()!,
-            items.at(-1)!.id!,
-          )
+        ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
     };
   }
@@ -744,7 +735,7 @@ export class ArticleService {
     // ruleId?: string,
     pageSize = 10,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -835,10 +826,7 @@ export class ArticleService {
     return {
       items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)!.published.toISOString()!,
-            items.at(-1)!.id!,
-          )
+        ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
     };
   }
@@ -872,7 +860,7 @@ export class ArticleService {
     pageSize = 10,
     cursor?: string,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -947,7 +935,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -992,7 +980,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -1034,10 +1022,7 @@ export class ArticleService {
     return {
       items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)!.published.toISOString()!,
-            items.at(-1)!.id!,
-          )
+        ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
     };
   }
@@ -1092,7 +1077,7 @@ export class ArticleService {
     pageSize = 10,
     cursor?: string,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -1167,7 +1152,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -1211,7 +1196,7 @@ export class ArticleService {
         items,
         cursor: hasNextPage
           ? createCursor(
-              items.at(-1)!.published.toISOString()!,
+              items.at(-1)!.published || new Date(),
               items.at(-1)!.id!,
             )
           : null,
@@ -1251,10 +1236,7 @@ export class ArticleService {
     return {
       items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)!.published.toISOString()!,
-            items.at(-1)!.id!,
-          )
+        ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
     };
   }
@@ -1308,7 +1290,7 @@ export class ArticleService {
     pageSize = 10,
     cursor: string | undefined,
   ) {
-    let cursorDate: string | undefined;
+    let cursorDate: Date | undefined;
     let cursorId: string | undefined;
     if (cursor) {
       const { published, id } = parseCursor(cursor);
@@ -1378,10 +1360,7 @@ export class ArticleService {
     return {
       items,
       cursor: hasNextPage
-        ? createCursor(
-            items.at(-1)!.published.toISOString()!,
-            items.at(-1)!.id!,
-          )
+        ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
     };
   }

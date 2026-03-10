@@ -57,7 +57,9 @@ export class FolderService {
 
   async findAll(userId: string) {
     const folders = await this.db.query.folders.findMany({
-      where: eq(schema.folders.userId, userId),
+      where: {
+        userId,
+      },
       with: {
         subscriptions: true,
       },
@@ -74,13 +76,15 @@ export class FolderService {
 
   async findAllWithFeeds(userId: string) {
     const folders = await this.db.query.folders.findMany({
-      where: and(eq(schema.folders.userId, userId)),
+      where: {
+        userId,
+      },
       with: {
         subscriptions: {
           with: {
             feed: {
               with: {
-                icon: true,
+                icons: true,
               },
             },
           },
@@ -95,10 +99,10 @@ export class FolderService {
         feeds:
           f.subscriptions.map((sub) => ({
             ...sub.feed,
-            feed_url: sub.feed.url,
+            feed_url: sub.feed?.url,
             user_agent: '',
-            user_id: f.subscriptions.find((s) => s.feedId === sub.feedId)
-              ?.userMinifluxId!,
+            user_id: f.subscriptions?.find((s) => s.feedId === sub.feedId)
+              ?.userMinifluxId,
             scraper_rules: null,
             rewrite_rules: null,
             blocklist_rules: null,
@@ -108,9 +112,9 @@ export class FolderService {
             disabled: false,
             ignore_http_cache: false,
             fetch_via_proxy: false,
-            parsing_error_count: sub.feed.parsingErrorCount,
-            parsing_error_message: sub.feed.parsingErrorMessage,
-            favicon: sub.feed.icon?.url || null,
+            parsing_error_count: sub.feed?.parsingErrorCount,
+            parsing_error_message: sub.feed?.parsingErrorMessage,
+            favicon: sub.feed?.icons?.url,
           })) || [],
       };
     });
@@ -118,10 +122,10 @@ export class FolderService {
 
   async findByName(name: string, userId: string) {
     const folder = await this.db.query.folders.findFirst({
-      where: and(
-        eq(schema.folders.name, name),
-        eq(schema.folders.userId, userId),
-      ),
+      where: {
+        name,
+        userId,
+      },
       with: {
         subscriptions: true,
       },
@@ -134,7 +138,10 @@ export class FolderService {
 
   async findOne(id: string, userId: string) {
     const folder = await this.db.query.folders.findFirst({
-      where: and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),
+      where: {
+        id,
+        userId,
+      },
       with: {
         subscriptions: true,
       },
