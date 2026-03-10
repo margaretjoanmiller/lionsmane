@@ -1,6 +1,6 @@
-import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { feedSchema } from '@/feed/dto/feed-out.dto';
 
 const FolderOutSchema = z.object({
   id: z.uuid(),
