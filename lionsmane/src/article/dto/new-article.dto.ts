@@ -12,7 +12,7 @@ export const newArticleDto = createInsertSchema(coreSchema.articles, {
       return arg.toISOString();
     }
   }, z.iso.datetime()), // Then, validate that the result is a valid ISO datetime string.
-  updatedAt: z
+  updated: z
     .preprocess((arg: Date | string | undefined) => {
       // If the input is a string, try to parse it into a Date object.
       // This handles the '2025-09-01 21:54:33' format.
