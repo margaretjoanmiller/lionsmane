@@ -360,7 +360,7 @@ export class FeedService {
       }
     });
     await this.feedQueue.add('fetch', { feedId: result.id });
-    return result;
+    return result.subscription;
   }
 
   async findAll(userId: string) {

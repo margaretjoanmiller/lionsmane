@@ -29,7 +29,6 @@ import { ZodResponse } from 'nestjs-zod';
 import { DiscoverDto, DiscoverOutDto } from '../zod/discover.dto';
 import { FeedOutWithCountsDto } from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
-import { NewSubscriptionDto } from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
@@ -44,7 +43,7 @@ export class FeedController {
   constructor(private readonly feedService: FeedService) {}
 
   @Post()
-  @ZodResponse({ type: NewSubscriptionDto, status: 201 })
+  @ZodResponse({ type: SubscriptionOutDto, status: 201 })
   async create(
     @Body() newSubscription: SubscribeFeedDto,
     @Session() session: UserSession,

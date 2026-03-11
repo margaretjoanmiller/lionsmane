@@ -32,7 +32,6 @@ import { ArticleModule } from './article/article.module';
 import { auth } from './auth';
 import { CronModule } from './cron/cron.module';
 import { DrizzleModule } from './drizzle/drizzle.module';
-import * as schema from './drizzle/schema';
 import { EmailModule } from './email/email.module';
 import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
