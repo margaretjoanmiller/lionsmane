@@ -162,7 +162,7 @@ export class FeedService {
           feedsRaw.map(async (f) => {
             const data = await this.fetcher.respectfulFetch(f);
             try {
-              const { format, feed } = parseFeed(data?.data);
+              const { format, feed } = parseFeed(await data?.text());
 
               if (feed.title instanceof Object) {
                 return {
@@ -207,7 +207,7 @@ export class FeedService {
 
       const response = await this.fetcher.respectfulFetch(url);
 
-      const { feed: parsedFeed, format } = parseFeed(response?.data);
+      const { feed: parsedFeed, format } = parseFeed(await response?.text());
 
       let favicon: string | null = null;
       let updated: string | null = null;
@@ -245,7 +245,7 @@ export class FeedService {
               icon,
               updated: updated ? parseDate(updated) : null,
               lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers.etag || '',
+              etag_header: response?.headers.get('etag') || '',
               last_modified_header: response?.headers['last-modified'] || '',
               metaData,
             })
@@ -266,7 +266,7 @@ export class FeedService {
               icon,
               updated: updated ? parseDate(updated) : null,
               lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers.etag || '',
+              etag_header: response?.headers.get('etag') || '',
               last_modified_header: response?.headers['last-modified'] || '',
               metaData,
             })

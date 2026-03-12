@@ -1,6 +1,8 @@
 import 'dotenv/config';
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullBoardModule } from '@bull-board/nestjs';
 import { createKeyv } from '@keyv/redis';
-import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { BullModule } from '@nestjs/bullmq';
 import { CacheModule } from '@nestjs/cache-manager';
 import {
@@ -74,6 +76,18 @@ class HttpExceptionFilter extends BaseExceptionFilter {
       { name: 'article' },
       { name: 'filter' },
     ),
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter, // Or FastifyAdapter from `@bull-board/fastify`
+    }),
+    BullBoardModule.forFeature({
+      name: 'feed',
+      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
+    }),
+    BullBoardModule.forFeature({
+      name: 'article',
+      adapter: BullMQAdapter, //or use BullAdapter if you're using bull instead of bullMQ
+    }),
     AuthModule.forRoot({ auth }),
     CacheModule.registerAsync({
       isGlobal: true,

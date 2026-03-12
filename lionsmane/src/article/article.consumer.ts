@@ -29,17 +29,6 @@ export class ArticleConsumer extends WorkerHost {
         keywords = await this.fetcherService.extractKeywords(textContent);
       }
 
-      const $ = cheerio.load(htmlContent || cleanDescription);
-
-      const $image = $('img');
-      const href = $image.attr('src');
-      const altText = $image.attr('alt');
-
-      let image = data.image;
-      if (href && image?.length === 0) image = href;
-      let alt = data.imageAlt;
-      if (altText && alt?.length === 0) alt = altText;
-
       let hash: string | null;
       if (textContent && data.url) {
         hash = createHash('sha256')
@@ -80,8 +69,6 @@ export class ArticleConsumer extends WorkerHost {
         url: artUrl,
         published: parseDate(data.published).toISOString(),
         updated: data.updated ? parseDate(data.updated).toISOString() : null,
-        image,
-        imageAlt: alt,
         hash,
         description: cleanDescription,
         rawContent: content,
@@ -90,7 +77,7 @@ export class ArticleConsumer extends WorkerHost {
         keywords,
       });
 
-      if (!article) {
+      if (!article?.id) {
         throw new Error('Article could not be created');
       }
 

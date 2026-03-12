@@ -21,6 +21,7 @@ import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
 import { RedisService } from 'src/redis/redis.service';
 import { parse as parseURL } from 'tldts';
+import { match, P } from 'ts-pattern';
 
 @Injectable()
 export class FetcherService {
@@ -57,9 +58,9 @@ export class FetcherService {
       //       });
       //     }),
       //   ),
-      const { text, status } = await ky.get(robotsUrl);
+      const resp = await ky.get(robotsUrl);
 
-      if (status !== 200) {
+      if (resp.status !== 200) {
         return {
           isAllowed: (url: string, ua: string) => {
             return true;
@@ -70,7 +71,7 @@ export class FetcherService {
         };
       }
 
-      const robotsTxt = await text();
+      const robotsTxt = await resp.text();
       const parsedRobots = robotsParser(robotsUrl, robotsTxt);
 
       await this.db
@@ -86,10 +87,10 @@ export class FetcherService {
   }
 
   async respectfulFetch(url: string, etag?: string) {
-    const robots = await this.robots(url);
+    const robotsOut = await this.robots(url);
     const urlObj = new URL(url);
     if (
-      !robots.isAllowed(
+      !robotsOut.isAllowed(
         url,
         'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
       ) &&
@@ -205,40 +206,27 @@ export class FetcherService {
       throw new Error('Malformed feed in database');
     }
 
-    try {
-      const feedXML = await this.respectfulFetch(
-        feedUrl,
-        feedfromDb[0].etag_header,
-      );
-      if (feedXML === null) {
-        this.logger.log('Feed not modified, skipping'); // etag matched
-        return [];
-      }
+    const feedXML = await this.respectfulFetch(
+      feedUrl,
+      // feedfromDb[0].etag_header,
+    );
+    if (feedXML === null) {
+      this.logger.log('Feed not modified, skipping'); // etag matched
+      return [];
+    }
 
-      if (feedXML.headers['etag']) {
-        await this.db
-          .update(schema.feeds)
-          .set({ etag_header: feedXML.headers['etag'] })
-          .where(eq(schema.feeds.id, feedId));
-      }
+    if (feedXML.headers['etag']) {
+      await this.db
+        .update(schema.feeds)
+        .set({ etag_header: feedXML.headers['etag'] })
+        .where(eq(schema.feeds.id, feedId));
+    }
 
-      const { feed, format } = parseFeed(await feedXML.text());
-      if (format === 'rss') {
-        if (!feed || !feed.items) {
-          throw new Error('No items found in the feed');
-        }
-      } else if (format === 'atom') {
-        if (!feed || !feed.entries) {
-          throw new Error('No items found in the feed');
-        }
-      } else if (format === 'json') {
-        if (!feed || !feed.items) {
-          throw new Error('No items found in the feed');
-        }
-      }
+    const parsedFeed = parseFeed(await feedXML.text());
 
-      if (format === 'rss') {
-        const feedProcess = feed.items
+    const feedProcess = await match(parsedFeed)
+      .with({ format: 'rss', feed: P.select() }, async (feed) => {
+        return feed.items
           ?.filter((i) => {
             if (!i.pubDate) {
               throw new Error('Item is missing required fields');
@@ -290,43 +278,9 @@ export class FetcherService {
               },
             };
           });
-        if (feedProcess?.length === 0) {
-          this.logger.log('No new articles to process');
-          return [];
-        } else {
-          this.logger.log(`Processing ${feedProcess?.length} new articles`);
-        }
-
-        // Rate limiting logic
-        const host = new URL(feedUrl).host;
-        const lockKey = `feed-time-slot:${host}`;
-        const robots = await this.robots(feedUrl);
-        const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
-
-        if (feedProcess) {
-          const startingPoint = await redis.getNextTimeSlot(
-            lockKey,
-            crawlDelay,
-            feedProcess?.length,
-          );
-          for (let job = 0; job < feedProcess.length; job++) {
-            const job_delay =
-              parseInt(startingPoint) + job * crawlDelay - Date.now();
-
-            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 5;
-          }
-
-          const jobs = await this.articleQueue.addBulk(feedProcess);
-          await this.db
-            .update(schema.feeds)
-            .set({
-              lastChecked: new Date(),
-            })
-            .where(eq(schema.feeds.id, feedId));
-          return jobs;
-        }
-      } else if (format === 'atom') {
-        const feedProcess = feed.entries
+      })
+      .with({ format: 'atom', feed: P.select() }, async (feed) => {
+        return feed.entries
           ?.filter((i) => {
             if (!i.published && i.updated) {
               return isAfter(
@@ -384,43 +338,9 @@ export class FetcherService {
               },
             };
           });
-        if (feedProcess) {
-          if (feedProcess.length === 0) {
-            this.logger.log('No new articles to process');
-            return [];
-          } else {
-            this.logger.log(`Processing ${feedProcess.length} new articles`);
-          }
-
-          // Rate limiting logic
-          const host = new URL(feedUrl).host;
-          const lockKey = `feed-time-slot:${host}`;
-          const robots = await this.robots(feedUrl);
-          const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
-
-          const startingPoint = await redis.getNextTimeSlot(
-            lockKey,
-            crawlDelay,
-            feedProcess.length,
-          );
-          for (let job = 0; job < feedProcess.length; job++) {
-            const job_delay =
-              parseInt(startingPoint) + job * crawlDelay - Date.now();
-
-            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
-          }
-
-          const jobs = await this.articleQueue.addBulk(feedProcess);
-          await this.db
-            .update(schema.feeds)
-            .set({
-              lastChecked: new Date(),
-            })
-            .where(eq(schema.feeds.id, feedId));
-          return jobs;
-        }
-      } else if (format === 'json') {
-        const feedProcess = feed.items
+      })
+      .with({ format: 'json', feed: P.select() }, async (feed) => {
+        return feed.items
           ?.filter((i) => {
             if (!i.date_published) {
               throw new Error('Item is missing required fields');
@@ -474,45 +394,46 @@ export class FetcherService {
               },
             };
           });
-        if (feedProcess) {
-          if (feedProcess.length === 0) {
-            this.logger.log('No new articles to process');
-            return [];
-          } else {
-            this.logger.log(`Processing ${feedProcess.length} new articles`);
-          }
+      })
+      .with({ format: 'rdf', feed: P.select() }, async (feed) => {
+        // TODO: support rdf feeds
+      })
+      .exhaustive();
 
-          // Rate limiting logic
-          const host = new URL(feedUrl).host;
-          const lockKey = `feed-time-slot:${host}`;
-          const robots = await this.robots(feedUrl);
-          const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
-
-          const startingPoint = await redis.getNextTimeSlot(
-            lockKey,
-            crawlDelay,
-            feedProcess.length,
-          );
-          for (let job = 0; job < feedProcess.length; job++) {
-            const job_delay =
-              parseInt(startingPoint) + job * crawlDelay - Date.now();
-
-            feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
-          }
-
-          const jobs = await this.articleQueue.addBulk(feedProcess);
-          await this.db
-            .update(schema.feeds)
-            .set({
-              lastChecked: new Date(),
-            })
-            .where(eq(schema.feeds.id, feedId));
-          return jobs;
-        }
+    if (feedProcess) {
+      if (feedProcess.length === 0) {
+        this.logger.log('No new articles to process');
+        return [];
+      } else {
+        this.logger.log(`Processing ${feedProcess.length} new articles`);
       }
-    } catch (error) {
-      console.error('Error parsing feed:', error);
-      throw new Error('Failed to parse feed');
+
+      // Rate limiting logic
+      const host = new URL(feedUrl).host;
+      const lockKey = `feed-time-slot:${host}`;
+      const robots = await this.robots(feedUrl);
+      const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
+
+      const startingPoint = await redis.getNextTimeSlot(
+        lockKey,
+        crawlDelay,
+        feedProcess.length,
+      );
+      for (let job = 0; job < feedProcess.length; job++) {
+        const job_delay =
+          parseInt(startingPoint) + job * crawlDelay - Date.now();
+
+        feedProcess[job].opts.delay = job_delay > 0 ? job_delay : 0;
+      }
+
+      const jobs = await this.articleQueue.addBulk(feedProcess);
+      await this.db
+        .update(schema.feeds)
+        .set({
+          lastChecked: new Date(),
+        })
+        .where(eq(schema.feeds.id, feedId));
+      return jobs;
     }
   }
 
@@ -526,13 +447,18 @@ export class FetcherService {
     const tryFavi = `https://${domain}/favicon.ico`;
 
     let favicon: string | null = null;
-    const resp = await ky.get(tryFavi);
 
-    if (resp.status === 200) {
-      favicon = tryFavi;
-    } else {
-      favicon = null;
+    try {
+      const resp = await ky.get(tryFavi);
+
+      if (resp.status === 200) {
+        favicon = tryFavi;
+      } else {
+        favicon = null;
+      }
+      return favicon;
+    } catch {
+      return null;
     }
-    return favicon;
   }
 }
