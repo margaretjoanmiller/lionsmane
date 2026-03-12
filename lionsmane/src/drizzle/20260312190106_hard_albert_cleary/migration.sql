@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ADD COLUMN "authors" varchar(256)[] DEFAULT '{}'::varchar(256)[] NOT NULL;

@@ -280,6 +280,7 @@ export const articles = pgTable(
     published: timestamp({ withTimezone: true }).notNull(),
     updated: timestamp({ withTimezone: true }),
     categories: varchar({ length: 256 }).array().notNull().default([]),
+    authors: varchar({ length: 256 }).array().notNull().default([]),
     metaData: jsonb().$type<ArticleMetaData>(),
     feedId: uuid()
       .notNull()
