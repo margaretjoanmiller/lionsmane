@@ -67,8 +67,6 @@ export class ArticleConsumer extends WorkerHost {
       const article = await this.articleService.newArticle({
         ...data,
         url: artUrl,
-        published: parseDate(data.published).toISOString(),
-        updated: data.updated ? parseDate(data.updated).toISOString() : null,
         hash,
         description: cleanDescription,
         rawContent: content,
@@ -82,10 +80,10 @@ export class ArticleConsumer extends WorkerHost {
       }
 
       await this.filterQueue.add('filter-article', {
-        articleId: article[0].id,
+        articleId: article.id,
       });
 
-      return { result: 'ok', articleId: article[0].id };
+      return { result: 'ok', articleId: article.id };
     } else if (job.name === 'readable-article' && 'userId' in job.data) {
       const { id, userId } = job.data;
       return await this.articleService.requestFullArticleText(id, userId);
