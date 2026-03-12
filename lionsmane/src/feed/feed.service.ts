@@ -34,6 +34,8 @@ import { FetcherService } from 'src/fetcher/fetcher.service';
 import { FolderService } from 'src/folder/folder.service';
 import { OpmlService } from 'src/opml/opml.service';
 import { parseDate } from 'src/utils/date-parse';
+import { isDefined } from 'ts-extras';
+import { match, P } from 'ts-pattern';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 
@@ -233,49 +235,132 @@ export class FeedService {
             .returning();
           icon = iconInserted.id;
         }
-        if (format === 'rss') {
-          const { title, items, ...metaData } = parsedFeed;
 
-          const [newFeed] = await tx
-            .insert(schema.feeds)
-            .values({
-              title: title || url,
-              url,
-              site_url: urlObj.origin,
-              icon,
-              updated: updated ? parseDate(updated) : null,
-              lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers.get('etag') || '',
-              last_modified_header: response?.headers['last-modified'] || '',
-              metaData,
-            })
-            .returning();
-          if (!newFeed) {
-            throw new Error('Failed to create feed');
-          }
-          feed = newFeed;
-        } else if (format === 'atom') {
-          const { title, entries, ...metaData } = parsedFeed;
+        const resp = await this.fetcher.respectfulFetch(url);
+        const parsed = parseFeed(await resp?.text());
 
-          const [newFeed] = await tx
-            .insert(schema.feeds)
-            .values({
-              title: title?.value || url,
-              url,
-              site_url: urlObj.origin,
-              icon,
-              updated: updated ? parseDate(updated) : null,
-              lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers.get('etag') || '',
-              last_modified_header: response?.headers['last-modified'] || '',
-              metaData,
-            })
-            .returning();
-          if (!newFeed) {
-            throw new Error('Failed to create feed');
-          }
-          feed = newFeed;
-        }
+        feed = await match(parsed)
+          .with(
+            {
+              format: 'rss',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, items, categories, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  categories: categories?.map((i) => i.name).filter(isDefined),
+                  lastChecked: subMonths(new Date(), 6),
+                  etag_header: response?.headers.get('etag') || '',
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new Error('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'atom',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, entries, categories, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title?.value || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  etag_header: response?.headers.get('etag') || '',
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: categories?.map((i) => i.label).filter(isDefined),
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new Error('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'json',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, items, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  etag_header: response?.headers.get('etag') || '',
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: [],
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new Error('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'rdf',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, dc, items, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  etag_header: response?.headers.get('etag') || '',
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: dc?.subjects,
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new Error('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .exhaustive();
       }
       if (!feed.id) {
         throw new Error('Failed to find or create feed');
