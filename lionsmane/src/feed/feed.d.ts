@@ -3,5 +3,11 @@ import type { OmitDeep } from 'type-fest';
 
 export type FeedMetaData = OmitDeep<
   Atom.Feed<Date> | Rss.Feed<Date> | Json.Feed<Date> | Rdf.Feed<Date>,
-  'url' | 'site_url' | 'lastChecked' | 'updated' | 'items' | 'entries'
+  | 'url'
+  | 'site_url'
+  | 'lastChecked'
+  | 'updated'
+  | 'items'
+  | 'entries'
+  | 'categories'
 >;

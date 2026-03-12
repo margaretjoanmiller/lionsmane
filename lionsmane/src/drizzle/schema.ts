@@ -15,13 +15,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ArticleMetaData } from '@/article/article';
 import { FeedMetaData } from '@/feed/feed';
-import type { Category, Person, ThreadItem } from '@/syndication/types/atom';
-import type { GeoRss } from '@/syndication/types/geo';
-import type { Itunes } from '@/syndication/types/itunes';
-import type { MediaGroup } from '@/syndication/types/media';
-import type { PodFeed, PodItem } from '@/syndication/types/podcast';
-import type { YtFeed, YtItem } from '@/syndication/types/youtube';
-import type { Geo } from '@/syndication/zod/rss.zod';
 
 // auth tables
 export const user = pgTable('user', {
@@ -286,6 +279,7 @@ export const articles = pgTable(
     keywords: varchar({ length: 256 }).array().notNull().default([]),
     published: timestamp({ withTimezone: true }).notNull(),
     updated: timestamp({ withTimezone: true }),
+    categories: varchar({ length: 256 }).array().notNull().default([]),
     metaData: jsonb().$type<ArticleMetaData>(),
     feedId: uuid()
       .notNull()
@@ -305,6 +299,7 @@ export const articles = pgTable(
       'pgroonga',
       table.readableText.asc().nullsLast(),
     ),
+    index('articles_category_idx').using('pgroonga', table.categories),
     index('articles_jsonb_metaData_idx').using('gin', table.metaData),
     unique('articles_feed_id_hash_unique').on(table.feedId, table.hash),
     unique('articles_hash_unique').on(table.hash),
@@ -351,6 +346,7 @@ export const feeds = pgTable(
     crawler: boolean().notNull().default(false),
     lastChecked: timestamp().notNull(),
     updated: timestamp({ withTimezone: true }),
+    categories: varchar({ length: 256 }).array().notNull().default([]),
     metaData: jsonb().$type<FeedMetaData>(),
     favicon: varchar({ length: 256 }),
     icon: integer().references(() => icons.id),
@@ -366,6 +362,7 @@ export const feeds = pgTable(
     unique('feeds_id_unique').on(table.id),
     unique('feeds_minifluxId_unique').on(table.minifluxId),
     unique('feeds_url_unique').on(table.url),
+    index('feeds_category_idx').using('pgroonga', table.categories),
   ],
 );
 

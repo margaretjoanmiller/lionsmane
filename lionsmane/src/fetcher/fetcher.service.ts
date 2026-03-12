@@ -44,7 +44,7 @@ export class FetcherService {
       .limit(1);
 
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-    if (feedHost && feedHost.robotsTxt) {
+    if (feedHost?.robotsTxt) {
       return robotsParser(robotsUrl, feedHost.robotsTxt);
     } else {
       const { data, status } = await firstValueFrom(
