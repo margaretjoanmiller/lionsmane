@@ -1,4 +1,4 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
@@ -20,6 +20,18 @@ export class FeedConsumer extends WorkerHost {
     private folderService: FolderService,
   ) {
     super();
+  }
+
+  private readonly logger = new Logger(FeedConsumer.name);
+
+  @OnWorkerEvent('error')
+  async logError(
+    job: Job<
+      | { feedId: string }
+      | { userId: string; url: string; title?: string; folder?: string }
+    >,
+  ) {
+    this.logger.error(`Error processing feed job: ${job.failedReason}`);
   }
 
   async process(
@@ -47,31 +59,9 @@ export class FeedConsumer extends WorkerHost {
       const { userId, url, folder } = job.data;
 
       const newFeed = await this.feedService.create(
-        { url, folderId: null },
+        { url, folderName: folder || null },
         userId,
       );
-      if (folder) {
-        try {
-          const existingFolder = await this.folderService.findByName(
-            folder,
-            userId,
-          );
-          return await this.feedService.update(newFeed.id, userId, {
-            folderId: existingFolder.id,
-          });
-        } catch {
-          const newFolder = await this.folderService.create(
-            {
-              name: folder,
-              feedIds: [newFeed.id],
-            },
-            userId,
-          );
-          return await this.feedService.update(newFeed.id, userId, {
-            folderId: newFolder.id,
-          });
-        }
-      }
       return newFeed;
     }
   }

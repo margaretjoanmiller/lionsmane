@@ -1,5 +1,11 @@
 import { createHash } from 'node:crypto';
-import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
+import {
+  InjectQueue,
+  OnWorkerEvent,
+  Processor,
+  WorkerHost,
+} from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { FetcherService } from 'src/fetcher/fetcher.service';
@@ -15,6 +21,13 @@ export class ArticleConsumer extends WorkerHost {
     @InjectQueue('filter') private filterQueue: Queue,
   ) {
     super();
+  }
+
+  private readonly logger = new Logger(ArticleConsumer.name);
+
+  @OnWorkerEvent('error')
+  async logError(job: Job<NewArticle | { id: string; userId: string }>) {
+    this.logger.error(`Error processing feed job: ${job.failedReason}`);
   }
 
   async process(job: Job<NewArticle | { id: string; userId: string }>) {
