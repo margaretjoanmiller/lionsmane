@@ -1,5 +1,4 @@
 import { Readability } from '@mozilla/readability';
-import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
@@ -10,6 +9,7 @@ import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
 import { JSDOM } from 'jsdom';
+import ky from 'ky';
 import { toString as treeToString } from 'nlcst-to-string';
 import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
@@ -29,7 +29,6 @@ export class FetcherService {
     private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
-    private httpService: HttpService,
   ) {}
   private readonly logger = new Logger(FetcherService.name);
 
@@ -47,18 +46,18 @@ export class FetcherService {
     if (feedHost?.robotsTxt) {
       return robotsParser(robotsUrl, feedHost.robotsTxt);
     } else {
-      const { data, status } = await firstValueFrom(
-        this.httpService.get(robotsUrl).pipe(
-          catchError((error) => {
-            this.logger.error('Error fetching feed URL', error);
-            return of({
-              data: null,
-              status: 404,
-              statusText: 'Error fetching robots.txt',
-            });
-          }),
-        ),
-      );
+      // const { data, status } = await firstValueFrom(
+      //   this.httpService.get(robotsUrl).pipe(
+      //     catchError((error) => {
+      //       this.logger.error('Error fetching feed URL', error);
+      //       return of({
+      //         data: null,
+      //         status: 404,
+      //         statusText: 'Error fetching robots.txt',
+      //       });
+      //     }),
+      //   ),
+      const { text, status } = await ky.get(robotsUrl);
 
       if (status !== 200) {
         return {
@@ -71,14 +70,14 @@ export class FetcherService {
         };
       }
 
-      const robotsTxt = await data;
+      const robotsTxt = await text();
       const parsedRobots = robotsParser(robotsUrl, robotsTxt);
 
       await this.db
         .insert(schema.feedHost)
         .values({
           url: urlObj.hostname,
-          robotsTxt: data,
+          robotsTxt,
         })
         .onConflictDoNothing();
 
@@ -87,71 +86,41 @@ export class FetcherService {
   }
 
   async respectfulFetch(url: string, etag?: string) {
-    try {
-      const robots = await this.robots(url);
-      const urlObj = new URL(url);
-      if (
-        !robots.isAllowed(
-          url,
-          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        ) &&
-        urlObj.hostname !== 'www.youtube.com' // youtube blocks rss for some reason while provding it?
-      ) {
-        this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
-        return null;
-      } else {
-        if (!etag) {
-          const { data, status, statusText, headers } = await firstValueFrom(
-            this.httpService.get(url),
-          );
+    const robots = await this.robots(url);
+    const urlObj = new URL(url);
+    if (
+      !robots.isAllowed(
+        url,
+        'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
+      ) &&
+      urlObj.hostname !== 'www.youtube.com' // youtube blocks rss for some reason while provding it?
+    ) {
+      this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
+      return null;
+    } else {
+      if (!etag) {
+        const resp = await ky.get(url);
 
-          if (status === 304) {
-            return null;
-          }
-
-          if (status !== 200) {
-            throw new Error(`Failed to fetch URL: ${statusText}`);
-          }
-          return {
-            data,
-            status,
-            statusText,
-            headers,
-          };
-        } else {
-          const { data, status, statusText, headers } = await firstValueFrom(
-            this.httpService.get(url, {
-              headers: {
-                'If-None-Match': etag,
-              },
-            }),
-          );
-
-          if (status !== 200) {
-            throw new Error(`Failed to fetch URL: ${statusText}`);
-          }
-          return {
-            data,
-            status,
-            statusText,
-            headers,
-          };
+        if (resp.status === 304) {
+          return null;
         }
-      }
-    } catch {
-      const { data, status, statusText, headers } = await firstValueFrom(
-        this.httpService.get(url),
-      );
 
-      if (status !== 200) {
-        throw new Error(`Failed to fetch URL: ${statusText}`);
+        if (resp.status !== 200) {
+          throw new Error(`Failed to fetch URL: ${resp.statusText}`);
+        }
+        return resp;
+      } else {
+        const resp = await ky.get(url, {
+          headers: {
+            'If-None-Match': etag,
+          },
+        });
+
+        if (resp.status !== 200) {
+          throw new Error(`Failed to fetch URL: ${resp.statusText}`);
+        }
+        return resp;
       }
-      return {
-        data,
-        status,
-        statusText,
-        headers,
-      };
     }
   }
 
@@ -160,7 +129,7 @@ export class FetcherService {
     if (feedXML === null) {
       throw new Error('Failed to fetch feed');
     }
-    const { feed } = parseFeed(feedXML.data);
+    const { feed } = parseFeed(await feedXML.text());
     if (feed.title instanceof Object) {
       return feed.title?.value || feedUrl;
     } else {
@@ -199,7 +168,7 @@ export class FetcherService {
       }
       const window = new JSDOM('').window;
       const purify = createDOMPurify(window as WindowLike);
-      const clean = purify.sanitize(text.data);
+      const clean = purify.sanitize(await text.text());
       const cleanDoc = new JSDOM(clean);
       const readableRaw = new Readability(cleanDoc.window.document).parse();
       const readableText = readableRaw?.textContent;
@@ -253,7 +222,7 @@ export class FetcherService {
           .where(eq(schema.feeds.id, feedId));
       }
 
-      const { feed, format } = parseFeed(feedXML.data);
+      const { feed, format } = parseFeed(await feedXML.text());
       if (format === 'rss') {
         if (!feed || !feed.items) {
           throw new Error('No items found in the feed');
@@ -557,19 +526,9 @@ export class FetcherService {
     const tryFavi = `https://${domain}/favicon.ico`;
 
     let favicon: string | null = null;
-    const { data, status } = await firstValueFrom(
-      this.httpService.get(tryFavi).pipe(
-        catchError((error) => {
-          this.logger.warn(
-            `No favicon found for ${url}, setting to null`,
-            error,
-          );
-          return of({ data: null, status: 404 });
-        }),
-      ),
-    );
+    const resp = await ky.get(tryFavi);
 
-    if (data && status === 200) {
+    if (resp.status === 200) {
       favicon = tryFavi;
     } else {
       favicon = null;
