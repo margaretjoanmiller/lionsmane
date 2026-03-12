@@ -1,5 +1,4 @@
 import { Readable } from 'node:stream';
-import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
@@ -26,6 +25,7 @@ import {
 } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
+import ky from 'ky';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
 import { relations } from 'src/drizzle/relations';
@@ -48,7 +48,6 @@ export class FeedService {
     private fetcher: FetcherService,
     private folderService: FolderService,
     private opmlService: OpmlService,
-    private httpService: HttpService,
   ) {}
   private readonly logger = new Logger(FeedService.name);
 
@@ -61,14 +60,8 @@ export class FeedService {
       return [new URL(cleanUrl)];
     }
     // get html body
-    const { data } = await firstValueFrom(
-      this.httpService.get(url.toString()).pipe(
-        catchError((error) => {
-          this.logger.error('Error fetching feed URL', error);
-          return of({ data: null });
-        }),
-      ),
-    );
+    const resp = await ky.get(url);
+    const data = await resp.text();
 
     // test base
     const allFeeds: URL[] = [];
@@ -126,13 +119,7 @@ export class FeedService {
 
       const allFeeds: URL[] = [];
       for (const endpoint of commonEndpoints) {
-        const { status } = await firstValueFrom(
-          this.httpService.get(endpoint).pipe(
-            catchError((error) => {
-              return of({ status: error.status });
-            }),
-          ),
-        );
+        const { status } = await ky.get(endpoint);
         if (status === 200) {
           allFeeds.push(new URL(endpoint));
         }
