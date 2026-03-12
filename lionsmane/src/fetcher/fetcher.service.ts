@@ -33,6 +33,9 @@ export class FetcherService {
   ) {}
   private readonly logger = new Logger(FetcherService.name);
 
+  private readonly userAgent =
+    'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)';
+
   async robots(url: string) {
     const urlObj = new URL(url);
     const [feedHost] = await this.db
@@ -47,18 +50,11 @@ export class FetcherService {
     if (feedHost?.robotsTxt) {
       return robotsParser(robotsUrl, feedHost.robotsTxt);
     } else {
-      // const { data, status } = await firstValueFrom(
-      //   this.httpService.get(robotsUrl).pipe(
-      //     catchError((error) => {
-      //       this.logger.error('Error fetching feed URL', error);
-      //       return of({
-      //         data: null,
-      //         status: 404,
-      //         statusText: 'Error fetching robots.txt',
-      //       });
-      //     }),
-      //   ),
-      const resp = await ky.get(robotsUrl);
+      const resp = await ky.get(robotsUrl, {
+        headers: {
+          'User-Agent': this.userAgent,
+        },
+      });
 
       if (resp.status !== 200) {
         return {
@@ -90,17 +86,18 @@ export class FetcherService {
     const robotsOut = await this.robots(url);
     const urlObj = new URL(url);
     if (
-      !robotsOut.isAllowed(
-        url,
-        'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-      ) &&
+      !robotsOut.isAllowed(url, this.userAgent) &&
       urlObj.hostname !== 'www.youtube.com' // youtube blocks rss for some reason while provding it?
     ) {
       this.logger.warn(`Fetching ${url} is disallowed by robots.txt`);
       return null;
     } else {
       if (!etag) {
-        const resp = await ky.get(url);
+        const resp = await ky.get(url, {
+          headers: {
+            'User-Agent': this.userAgent,
+          },
+        });
 
         if (resp.status === 304) {
           return null;
