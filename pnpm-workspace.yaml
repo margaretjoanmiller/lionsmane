@@ -1,18 +1,17 @@
 packages:
   - lionsmane
   - lionsmane-fe
-  - lionsmane-common
 
 injectWorkspacePackages: true
 
 onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@prisma/engines'
-  - '@scarf/scarf'
-  - '@suites/di.nestjs'
-  - '@suites/doubles.vitest'
-  - '@swc/core'
-  - '@tailwindcss/oxide'
+  - "@nestjs/core"
+  - "@prisma/engines"
+  - "@scarf/scarf"
+  - "@suites/di.nestjs"
+  - "@suites/doubles.vitest"
+  - "@swc/core"
+  - "@tailwindcss/oxide"
   - core-js
   - esbuild
   - keccak
