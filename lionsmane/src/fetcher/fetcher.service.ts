@@ -203,6 +203,9 @@ export class FetcherService {
       throw new Error('Malformed feed in database');
     }
 
+    const robots = await this.robots(feedUrl);
+    const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
+
     const feedXML = await this.respectfulFetch(
       feedUrl,
       // feedfromDb[0].etag_header,
@@ -457,8 +460,6 @@ export class FetcherService {
       // Rate limiting logic
       const host = new URL(feedUrl).host;
       const lockKey = `feed-time-slot:${host}`;
-      const robots = await this.robots(feedUrl);
-      const crawlDelay = (robots.getCrawlDelay() || 5) * 1000; // Convert to milliseconds
 
       const startingPoint = await redis.getNextTimeSlot(
         lockKey,
