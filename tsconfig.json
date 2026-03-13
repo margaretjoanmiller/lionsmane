@@ -4,5 +4,6 @@
     { "path": "./lionsmane-common" },
     { "path": "./lionsmane-fe" },
     { "path": "./lionsmane" }
-  ]
+  ],
+  "typescript.experimental.expandableHover": true
 }

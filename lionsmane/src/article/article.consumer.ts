@@ -7,11 +7,9 @@ import {
 } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
-import * as cheerio from 'cheerio';
 import { FetcherService } from 'src/fetcher/fetcher.service';
-import { parseDate } from 'src/utils/date-parse';
 import { ArticleService } from './article.service';
-import { NewArticle, NewArticleDate } from './dto/new-article.dto';
+import { NewArticle } from './dto/new-article.dto';
 
 @Processor('article')
 export class ArticleConsumer extends WorkerHost {

@@ -1,7 +1,7 @@
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Queue } from 'bullmq';
+import { Job, Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
@@ -21,6 +21,7 @@ import * as schema from 'src/drizzle/schema';
 import { RedisService } from 'src/redis/redis.service';
 import { parse as parseURL } from 'tldts';
 import { match, P } from 'ts-pattern';
+import { NewArticle } from '@/article/dto/new-article.dto';
 
 @Injectable()
 export class FetcherService {
@@ -254,6 +255,7 @@ export class FetcherService {
               description,
               content,
               authors,
+              media,
               categories,
               pubDate,
               source,
@@ -270,7 +272,7 @@ export class FetcherService {
                 published: pubDate,
                 authors,
                 categories: categories?.map((i) => i.name),
-                metaData,
+                image: media?.contents?.find((i) => i.type === 'image')?.url,
                 feedId: feedId,
               },
               opts: {
@@ -320,6 +322,7 @@ export class FetcherService {
               summary,
               categories,
               authors,
+              media,
               updated,
               ...metaData
             } = item;
@@ -333,7 +336,8 @@ export class FetcherService {
                 published: published ? published : updated,
                 updated: updated,
                 authors: authors?.map((i) => `${i.name} <${i.email}>`),
-                categories: categories?.map((i) => i.label),
+                categories: categories?.map((i) => i.term),
+                image: media?.contents?.find((i) => i.type === 'image')?.url,
                 metaData,
                 feedId: feedId,
               },
@@ -378,6 +382,7 @@ export class FetcherService {
               authors,
               content_text,
               date_published,
+              image,
               date_modified,
               ...metaData
             } = item;
@@ -393,6 +398,7 @@ export class FetcherService {
                 updated: date_modified,
                 categories: [],
                 authors: authors?.map((i) => i.name),
+                image,
                 metaData,
                 feedId: feedId,
               },
@@ -403,7 +409,38 @@ export class FetcherService {
           });
       })
       .with({ format: 'rdf', feed: P.select() }, async (feed) => {
-        // TODO: support rdf feeds
+        return feed.items
+          ?.filter((i) => {
+            if (!i.atom?.published) {
+              throw new Error('Item is missing required fields');
+            }
+            return isAfter(
+              i.atom.published!,
+              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
+            );
+          })
+          .map((item) => {
+            const { atom, content, link, title, ...metaData } = item;
+
+            return {
+              name: 'new-article',
+              data: {
+                title: title,
+                url: link || '',
+                description: '',
+                rawContent: content,
+                published: atom?.published,
+                updated: atom?.updated,
+                categories: atom?.categories?.map((i) => i.term),
+                authors: atom?.authors?.map((i) => i.name),
+                metaData,
+                feedId: feedId,
+              },
+              opts: {
+                delay: 0, // Will be set later based on rate limiting
+              },
+            };
+          });
       })
       .exhaustive();
 
