@@ -70,8 +70,8 @@ importers:
         specifier: ^6.5.0
         version: 6.5.0(@nestjs/common@11.1.16(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.16)(reflect-metadata@0.2.2)
       '@scalar/nestjs-api-reference':
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^1.1.3
+        version: 1.1.3
       '@thallesp/nestjs-better-auth':
         specifier: ^2.5.1
         version: 2.5.1(@nestjs/common@11.1.16(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.16)(@nestjs/graphql@13.2.0(@nestjs/common@11.1.16(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.16)(graphql@16.13.1)(reflect-metadata@0.2.2))(@nestjs/websockets@11.1.9)(better-auth@1.5.5(ae5c3255fd70eccded0f8e7475476255))(express@5.2.1)(graphql@16.13.1)(qs@6.15.0)(typescript@5.9.3)
@@ -139,8 +139,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       node-vault:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.11.1
+        version: 0.11.1
       nodemailer:
         specifier: ^8.0.2
         version: 8.0.2
@@ -693,16 +693,16 @@ packages:
     resolution: {integrity: sha512-fCqPIfOcLE+CGqGPd66c8bZpwAji98tZ4JI9i/mlTNTlsIWslCfpg48s/ypyLxZTump5sypjrKn2/kY7q8oAbA==}
     engines: {node: '>=20.0.0'}
 
-  '@azure/msal-browser@4.29.0':
-    resolution: {integrity: sha512-/f3eHkSNUTl6DLQHm+bKecjBKcRQxbd/XLx8lvSYp8Nl/HRyPuIPOijt9Dt0sH50/SxOwQ62RnFCmFlGK+bR/w==}
+  '@azure/msal-browser@4.29.1':
+    resolution: {integrity: sha512-1Vrt27du1cl4QHkzLc6L4aeXqliPIDIs5l/1I4hWWMXkXccY/EznJT1+pBdoVze0azTAI8sCyq5B4cBVYG1t9w==}
     engines: {node: '>=0.8.0'}
 
-  '@azure/msal-common@15.15.0':
-    resolution: {integrity: sha512-/n+bN0AKlVa+AOcETkJSKj38+bvFs78BaP4rNtv3MJCmPH0YrHiskMRe74OhyZ5DZjGISlFyxqvf9/4QVEi2tw==}
+  '@azure/msal-common@15.16.1':
+    resolution: {integrity: sha512-qxUG9TCl+TVSSX58onVDHDWrvT5CE0+NeeUAbkQqaESpSm79u5IePLnPWMMjCUnUR2zJd4+Bt9vioVRzLmJb2g==}
     engines: {node: '>=0.8.0'}
 
-  '@azure/msal-node@3.8.8':
-    resolution: {integrity: sha512-+f1VrJH1iI517t4zgmuhqORja0bL6LDQXfBqkjuMmfTYXTQQnh1EvwwxO3UbKLT05N0obF72SRHFrC1RBDv5Gg==}
+  '@azure/msal-node@3.8.9':
+    resolution: {integrity: sha512-jZ0pw/BbdEUWGhomCaAiVDfXRI/9K56m5hTNqB/CzcbZEYhXm5qpK1cDngN1iXfwSfmUMorOUQ2FC0dyuQ9uRg==}
     engines: {node: '>=16'}
 
   '@babel/code-frame@7.27.1':
@@ -4498,20 +4498,20 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@scalar/core@0.4.2':
-    resolution: {integrity: sha512-Ff+/Oad4eRsqqAxswLGhdgxBWluQYCqp8y7jLl20+U7Y7BDSRq+pE1LVwFW5AIRK5i3/uSWXtLZEVm7N0aszPA==}
+  '@scalar/core@0.4.3':
+    resolution: {integrity: sha512-Fp/J5RyajknwZrDG5/nsJRxL07cS2gJ9wvnvIWcFgsR8HWy/7qMQ+PtpYhdBmMYiBAql1JJobKTu/7ZWqnHaFA==}
     engines: {node: '>=22'}
 
-  '@scalar/helpers@0.4.0':
-    resolution: {integrity: sha512-1XOdy0jZp0Yu+lOmvDlPfG8+oLJK9MUhx7Q7OFggSS+zKG3n01xJKnTpgm9uhETgJrGy2yxG9y0cz4KPexXHng==}
+  '@scalar/helpers@0.4.1':
+    resolution: {integrity: sha512-XfyYqSUA597wfzS8lmMY1xvYv4si2WytuoBWj7JDpx3E/lVq7YEsticXF/Q30ttFVRBfgQErg8MQI6b6IkZr2Q==}
     engines: {node: '>=22'}
 
-  '@scalar/nestjs-api-reference@1.1.2':
-    resolution: {integrity: sha512-FrclX8FQFxVkGtpwCBSBxR/IbyFmMcv0pLwxRI2tOtJKP1gwRvPJqZSHfeXJgDvmhK85owaT7Cd3VWsX7AQCXQ==}
+  '@scalar/nestjs-api-reference@1.1.3':
+    resolution: {integrity: sha512-gUWWrEbi/IHLV+CtbyXUmilzVdIltfgXWdALnIAndbXkvZhejqw3yxXFSCArKhC2QU1zBI1HhZ1DT+jNiHl+Rg==}
     engines: {node: '>=22'}
 
-  '@scalar/types@0.7.2':
-    resolution: {integrity: sha512-y2qesMS43aVA2QdhLP/r6/sD2LlTeGjryoF0s6q11jU/UQV22vXD4dNGoCynF3qIFp4VuLE3d04wcsyZ5BD6HA==}
+  '@scalar/types@0.7.3':
+    resolution: {integrity: sha512-9ThydMH28aA5DMm8Q/nTKXKnAKejG7Awlj7IC99oXkq5aOJ60Sn0kS1RWaqQosaWI3ezyPJ7/sUglssAEMA6EA==}
     engines: {node: '>=22'}
 
   '@scarf/scarf@1.4.0':
@@ -8668,8 +8668,8 @@ packages:
   node-releases@2.0.27:
     resolution: {integrity: sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA==}
 
-  node-vault@0.11.0:
-    resolution: {integrity: sha512-CPkPKRn8I/5jnlPk7mHMhsVNpJ4Sw+83KDIsKaijRkj+h61Z9iDkVz4Gakjesnj8GGRnqUbAhNjrItLHIbB8Mg==}
+  node-vault@0.11.1:
+    resolution: {integrity: sha512-+Ay6gxEijvzywxt8lHuiFpFBPjcKxbxLpvTRFq4eQN4wKDVEGx1vGJTX24YP97UfRa+/oHh8GPZk8tiOb/UdUg==}
     engines: {node: '>= 18.0.0'}
 
   nodemailer@7.0.13:
@@ -10972,8 +10972,8 @@ snapshots:
       '@azure/core-tracing': 1.3.1
       '@azure/core-util': 1.13.1
       '@azure/logger': 1.3.0
-      '@azure/msal-browser': 4.29.0
-      '@azure/msal-node': 3.8.8
+      '@azure/msal-browser': 4.29.1
+      '@azure/msal-node': 3.8.9
       open: 10.2.0
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -11017,15 +11017,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/msal-browser@4.29.0':
+  '@azure/msal-browser@4.29.1':
     dependencies:
-      '@azure/msal-common': 15.15.0
+      '@azure/msal-common': 15.16.1
 
-  '@azure/msal-common@15.15.0': {}
+  '@azure/msal-common@15.16.1': {}
 
-  '@azure/msal-node@3.8.8':
+  '@azure/msal-node@3.8.9':
     dependencies:
-      '@azure/msal-common': 15.15.0
+      '@azure/msal-common': 15.16.1
       jsonwebtoken: 9.0.3
       uuid: 8.3.2
 
@@ -15207,19 +15207,19 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.55.1':
     optional: true
 
-  '@scalar/core@0.4.2':
+  '@scalar/core@0.4.3':
     dependencies:
-      '@scalar/types': 0.7.2
+      '@scalar/types': 0.7.3
 
-  '@scalar/helpers@0.4.0': {}
+  '@scalar/helpers@0.4.1': {}
 
-  '@scalar/nestjs-api-reference@1.1.2':
+  '@scalar/nestjs-api-reference@1.1.3':
     dependencies:
-      '@scalar/core': 0.4.2
+      '@scalar/core': 0.4.3
 
-  '@scalar/types@0.7.2':
+  '@scalar/types@0.7.3':
     dependencies:
-      '@scalar/helpers': 0.4.0
+      '@scalar/helpers': 0.4.1
       nanoid: 5.1.6
       type-fest: 5.4.4
       zod: 4.3.6
@@ -20027,7 +20027,7 @@ snapshots:
 
   node-releases@2.0.27: {}
 
-  node-vault@0.11.0:
+  node-vault@0.11.1:
     dependencies:
       axios: 1.13.6(debug@4.4.3)
       debug: 4.4.3(supports-color@10.2.2)
