@@ -1,8 +1,8 @@
-import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { DrizzleModule } from 'src/drizzle/drizzle.module';
 import { RedisModule } from 'src/redis/redis.module';
+import { ParserModule } from '@/parser/parser.module';
 import { FetcherService } from './fetcher.service';
 
 @Module({
@@ -10,6 +10,7 @@ import { FetcherService } from './fetcher.service';
     BullModule.registerQueue({ name: 'article' }),
     DrizzleModule,
     RedisModule,
+    ParserModule,
   ],
   providers: [FetcherService],
   exports: [FetcherService],

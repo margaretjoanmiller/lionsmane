@@ -219,7 +219,9 @@ export class FetcherService {
         .where(eq(schema.feeds.id, feedId));
     }
 
-    const parsedFeed = parseFeed(await feedXML.text());
+    const parsedFeed = parseFeed(await feedXML.text(), {
+      parseDateFn: (raw) => new Date(raw),
+    });
 
     const feedProcess = await match(parsedFeed)
       .with({ format: 'rss', feed: P.select() }, async (feed) => {

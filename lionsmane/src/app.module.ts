@@ -39,8 +39,10 @@ import { FolderModule } from './folder/folder.module';
 import { HealthModule } from './health/health.module';
 import { MinifluxModule } from './miniflux/miniflux.module';
 import { OpmlModule } from './opml/opml.module';
+import { ParserModule } from './parser/parser.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { RedisModule } from './redis/redis.module';
+import { RobotsModule } from './robots/robots.module';
 import { SecretsModule } from './secrets/secrets.module';
 
 @Catch(HttpException)
@@ -68,11 +70,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         port: 6379,
       },
     }),
-    BullModule.registerQueue(
-      { name: 'feed' },
-      { name: 'article' },
-      { name: 'filter' },
-    ),
     AuthModule.forRoot({ auth }),
     CacheModule.registerAsync({
       isGlobal: true,
@@ -119,6 +116,8 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     EmailModule,
     MinifluxModule,
     DrizzleModule,
+    RobotsModule,
+    ParserModule,
   ],
   controllers: [AppController],
   providers: [
