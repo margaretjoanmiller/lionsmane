@@ -1,7 +1,7 @@
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Job, Queue } from 'bullmq';
+import { Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
 import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
@@ -330,7 +330,7 @@ export class FetcherService {
             return {
               name: 'new-article',
               data: {
-                title: title,
+                title: title?.value,
                 url: links ? links[0].href : '',
                 rawContent: content || summary?.value || 'no content',
                 published: published ? published : updated,
