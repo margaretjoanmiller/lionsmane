@@ -23,7 +23,8 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "exclude": ["**/node_modules"]
   },
   "references": [{ "path": "../lionsmane-common" }]
 }
