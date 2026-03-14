@@ -20,6 +20,7 @@ import {
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
+import { LoggerModule } from 'nestjs-pino';
 import {
   ZodSerializationException,
   ZodSerializerInterceptor,
@@ -64,6 +65,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST || 'localhost',
