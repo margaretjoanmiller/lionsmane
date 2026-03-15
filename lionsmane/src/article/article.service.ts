@@ -390,7 +390,7 @@ export class ArticleService {
     }
 
     return {
-      items,
+      articles: items,
       cursor: hasNextPage
         ? createCursor(new Date(items.at(-1)!.published!), items.at(-1)!.id!)
         : null,
@@ -630,7 +630,11 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items.map((i) => ({
+          ...i,
+          published: i.published.toISOString(),
+          updated: i.published.toISOString(),
+        })),
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -677,7 +681,11 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items.map((i) => ({
+          ...i,
+          published: i.published.toISOString(),
+          updated: i.published.toISOString(),
+        })),
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -729,7 +737,11 @@ export class ArticleService {
     }
 
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        published: i.published.toISOString(),
+        updated: i.published.toISOString(),
+      })),
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
@@ -830,7 +842,7 @@ export class ArticleService {
     }
 
     return {
-      items,
+      articles: items,
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
@@ -938,7 +950,7 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -983,7 +995,7 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -1026,7 +1038,7 @@ export class ArticleService {
     }
 
     return {
-      items,
+      articles: items,
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
@@ -1155,7 +1167,7 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -1199,7 +1211,7 @@ export class ArticleService {
       }
 
       return {
-        items,
+        articles: items,
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -1240,7 +1252,7 @@ export class ArticleService {
     }
 
     return {
-      items,
+      articles: items,
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
@@ -1364,7 +1376,7 @@ export class ArticleService {
     }
 
     return {
-      items,
+      articles: items,
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,

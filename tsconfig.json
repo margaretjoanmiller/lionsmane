@@ -1,9 +1,5 @@
 {
   "files": [],
-  "references": [
-    { "path": "./lionsmane-common" },
-    { "path": "./lionsmane-fe" },
-    { "path": "./lionsmane" }
-  ],
+  "references": [{ "path": "./lionsmane-fe" }, { "path": "./lionsmane" }],
   "typescript.experimental.expandableHover": true
 }

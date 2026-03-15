@@ -30,16 +30,20 @@ export const articleDetail = createSelectSchema(coreSchema.articles, {
 
 export type Article = z.infer<typeof articleDetail>;
 
-export const articleDetailWithStatus = articleDetail.extend({
-  published: z.iso.datetime(),
-  updated: z.iso.datetime().nullish(),
-  feedTitle: z.string().min(1).max(255).optional(),
-  isRead: z.boolean().default(false).optional(),
-  isStarred: z.boolean().default(false).optional(),
-  isBlurred: z.boolean().default(false).optional(),
-  isHidden: z.boolean().default(false).optional(),
-  contentWarning: z.array(z.string()).nullish().default([]),
-});
+export const articleDetailWithStatus = articleDetail
+  .extend({
+    published: z.iso.datetime(),
+    updated: z.iso.datetime().nullish(),
+    feedTitle: z.string().min(1).max(255).optional(),
+    isRead: z.boolean().default(false).nullish(),
+    isStarred: z.boolean().default(false).nullish(),
+    isBlurred: z.boolean().default(false).nullish(),
+    isHidden: z.boolean().default(false).nullish(),
+    contentWarning: z.array(z.string()).nullish().default([]),
+  })
+  .omit({
+    metaData: true,
+  });
 
 export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;
 
