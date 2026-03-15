@@ -38,5 +38,6 @@
     "**/*.rpa": true,
     "**/*.rpymc": true,
     "**/cache/": true
-  }
+  },
+  "js/ts.experimental.useTsgo": true
 }
