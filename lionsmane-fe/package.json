@@ -61,6 +61,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.94.1",
     "@iconify-json/flowbite": "^1.2.7",
     "@iconify-json/fluent": "^1.2.36",
     "@iconify-json/garden": "^1.2.3",
@@ -101,6 +102,7 @@
     "dev": "vite --port 3000",
     "format": "biome format --write",
     "lint": "biome lint",
+    "openapi-ts": "openapi-ts",
     "serve": "vite preview",
     "start": "vite --port 3000",
     "test": "vitest run",
