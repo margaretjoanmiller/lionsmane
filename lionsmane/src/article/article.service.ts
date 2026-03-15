@@ -8,6 +8,7 @@ import { and, desc, eq, getColumns, isNull, lt, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { JSDOM } from 'jsdom';
 import { isPresent } from 'ts-extras';
+import { match } from 'ts-pattern';
 import { coreSchema } from '@/db/index';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import type { relations } from '@/drizzle/relations';
@@ -517,15 +518,12 @@ export class ArticleService {
         throw new Error('Article not found or access denied');
       }
       //upsert the user article state
-      let isRead: boolean | undefined;
-      let isStarred: boolean | undefined;
-      if (status === 'read' || status === 'unread') {
-        isRead = status === 'read';
-      } else if (status === 'starred' || status === 'unstarred') {
-        isStarred = status === 'starred';
-      } else {
-        throw new Error('Invalid status');
-      }
+      const { isRead, isStarred } = match(status)
+        .with('read', () => ({ isRead: true, isStarred: undefined }))
+        .with('unread', () => ({ isRead: false, isStarred: undefined }))
+        .with('starred', () => ({ isRead: undefined, isStarred: true }))
+        .with('unstarred', () => ({ isRead: undefined, isStarred: false }))
+        .exhaustive();
 
       const [upsert] = await tx
         .insert(coreSchema.userArticleStates)
@@ -592,112 +590,15 @@ export class ArticleService {
         eq(coreSchema.feeds.id, coreSchema.articles.feedId),
       );
 
-    if (stateFilter === 'unread') {
-      const query = baseQuery
-        .leftJoin(
-          coreSchema.userArticleStates,
-          and(
-            eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
-            eq(coreSchema.userArticleStates.userId, userId),
-          ),
-        )
-        .where(
-          and(
-            sql`(${coreSchema.userArticleStates.userId} IS NULL OR (${coreSchema.userArticleStates.userId} = ${userId} AND ${coreSchema.userArticleStates.isRead} = false))`,
-            cursorDate && cursorId
-              ? or(
-                  lt(coreSchema.articles.published, new Date(cursorDate)),
-                  and(
-                    eq(coreSchema.articles.published, new Date(cursorDate)),
-                    lt(coreSchema.articles.id, cursorId),
-                  ),
-                )
-              : undefined,
-          ),
-        );
-      const articles = await query
-        .orderBy(
-          desc(coreSchema.articles.published),
-          desc(coreSchema.articles.id),
-        )
-        .limit(pageSize + 1);
-
-      const hasNextPage = articles.length > pageSize;
-      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
-
-      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
-      }
-
-      return {
-        articles: items.map((i) => ({
-          ...i,
-          published: i.published.toISOString(),
-          updated: i.published.toISOString(),
-        })),
-        cursor: hasNextPage
-          ? createCursor(
-              items.at(-1)!.published || new Date(),
-              items.at(-1)!.id!,
-            )
-          : null,
-      };
-    }
-    if (stateFilter === 'read') {
-      const query = baseQuery
-        .leftJoin(
-          coreSchema.userArticleStates,
-          and(
-            eq(coreSchema.userArticleStates.articleId, coreSchema.articles.id),
-            eq(coreSchema.userArticleStates.userId, userId),
-          ),
-        )
-        .where(
-          and(
-            eq(coreSchema.userArticleStates.isRead, true),
-            cursorDate && cursorId
-              ? or(
-                  lt(coreSchema.articles.published, new Date(cursorDate)),
-                  and(
-                    eq(coreSchema.articles.published, new Date(cursorDate)),
-                    lt(coreSchema.articles.id, cursorId),
-                  ),
-                )
-              : undefined,
-          ),
-        );
-      const articles = await query
-        .orderBy(
-          desc(coreSchema.articles.published),
-          desc(coreSchema.articles.id),
-        )
-        .limit(pageSize + 1);
-
-      const hasNextPage = articles.length > pageSize;
-      const items = hasNextPage ? articles.slice(0, pageSize) : articles;
-
-      if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
-      }
-
-      return {
-        articles: items.map((i) => ({
-          ...i,
-          published: i.published.toISOString(),
-          updated: i.published.toISOString(),
-        })),
-        cursor: hasNextPage
-          ? createCursor(
-              items.at(-1)!.published || new Date(),
-              items.at(-1)!.id!,
-            )
-          : null,
-      };
-    }
-    const stateCondition =
-      stateFilter === 'starred'
-        ? eq(coreSchema.userArticleStates.isStarred, true)
-        : eq(coreSchema.userArticleStates.isRead, true);
+    const stateCondition = match(stateFilter)
+      .with(
+        'unread',
+        () =>
+          sql`(${coreSchema.userArticleStates.userId} IS NULL OR (${coreSchema.userArticleStates.userId} = ${userId} AND ${coreSchema.userArticleStates.isRead} = false))`,
+      )
+      .with('read', () => eq(coreSchema.userArticleStates.isRead, true))
+      .with('starred', () => eq(coreSchema.userArticleStates.isStarred, true))
+      .exhaustive();
 
     const query = baseQuery
       .leftJoin(
