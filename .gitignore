@@ -12,6 +12,7 @@
 *.orig
 *.rej
 
+.svelte-kit
 # Local environment
 .env
 
