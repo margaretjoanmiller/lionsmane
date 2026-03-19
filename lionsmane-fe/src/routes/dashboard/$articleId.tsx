@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { BadgeOverflow } from '@/components/ui/badge-overflow';
 import { Button } from '@/components/ui/button';
 import {
   Item,
@@ -14,6 +15,21 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item';
+import {
+  MediaPlayer,
+  MediaPlayerControls,
+  MediaPlayerControlsOverlay,
+  MediaPlayerFullscreen,
+  MediaPlayerPiP,
+  MediaPlayerPlay,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerSeek,
+  MediaPlayerSeekBackward,
+  MediaPlayerSeekForward,
+  MediaPlayerTime,
+  MediaPlayerVideo,
+  MediaPlayerVolume,
+} from '@/components/ui/media-player';
 import {
   Tooltip,
   TooltipContent,
@@ -327,9 +343,29 @@ function ArticlePage() {
           {data.enclosures?.map((e) => {
             if (e.mime_type && e.mime_type !== 'application/octet-stream')
               return (
-                <ReactPlayer controls>
-                  <source src={e.url} type={e.mime_type} />
-                </ReactPlayer>
+                <MediaPlayer>
+                  <MediaPlayerVideo>
+                    <source src={e.url} type={e.mime_type} />
+                  </MediaPlayerVideo>
+                  <MediaPlayerControls className="flex-col items-start gap-2.5">
+                    <MediaPlayerControlsOverlay />
+                    <MediaPlayerSeek />
+                    <div className="flex w-full items-center gap-2">
+                      <div className="flex flex-1 items-center gap-2">
+                        <MediaPlayerPlay />
+                        <MediaPlayerSeekBackward />
+                        <MediaPlayerSeekForward />
+                        <MediaPlayerVolume expandable />
+                        <MediaPlayerTime />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MediaPlayerPlaybackSpeed />
+                        <MediaPlayerPiP />
+                        <MediaPlayerFullscreen />
+                      </div>
+                    </div>
+                  </MediaPlayerControls>
+                </MediaPlayer>
               );
             return (
               <img
@@ -342,9 +378,29 @@ function ArticlePage() {
           {data.media?.contents?.map((m) => {
             if (m.type && m.type !== 'application/octet-stream')
               return (
-                <ReactPlayer controls>
-                  <source src={m.url} type={m.type} />
-                </ReactPlayer>
+                <MediaPlayer>
+                  <MediaPlayerVideo>
+                    <source src={m.url} type={m.type} />
+                  </MediaPlayerVideo>
+                  <MediaPlayerControls className="flex-col items-start gap-2.5">
+                    <MediaPlayerControlsOverlay />
+                    <MediaPlayerSeek />
+                    <div className="flex w-full items-center gap-2">
+                      <div className="flex flex-1 items-center gap-2">
+                        <MediaPlayerPlay />
+                        <MediaPlayerSeekBackward />
+                        <MediaPlayerSeekForward />
+                        <MediaPlayerVolume expandable />
+                        <MediaPlayerTime />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MediaPlayerPlaybackSpeed />
+                        <MediaPlayerPiP />
+                        <MediaPlayerFullscreen />
+                      </div>
+                    </div>
+                  </MediaPlayerControls>
+                </MediaPlayer>
               );
             return (
               <img
@@ -362,11 +418,13 @@ function ArticlePage() {
             Original article
           </a>
           <div className="grid-flow-row pt-2">
-            {data.categories?.map((c) => (
-              <Badge className="m-1" variant="outline">
-                {c.term}
-              </Badge>
-            ))}
+            <BadgeOverflow
+              getBadgeLabel={(item) => item.label || ''}
+              items={data.categories}
+              renderBadge={(_, label) => (
+                <Badge variant="secondary">{label}</Badge>
+              )}
+            />
           </div>
         </footer>
       </div>
