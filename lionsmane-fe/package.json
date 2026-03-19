@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@better-auth/api-key": "^1.5.5",
     "@better-auth/passkey": "^1.5.5",
     "@dnd-kit/core": "^6.3.1",
     "@faker-js/faker": "^10.3.0",
@@ -68,6 +69,7 @@
     "@iconify-json/icon-park-outline": "^1.2.4",
     "@iconify-json/iconoir": "^1.2.10",
     "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/mingcute": "^1.2.7",
     "@iconify-json/noto-v1": "^1.2.5",
     "@iconify-json/solar": "^1.2.5",
     "@iconify-json/stash": "^1.2.4",

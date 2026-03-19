@@ -9,6 +9,8 @@ import {
   SpeedDialTrigger,
 } from '@/components/ui/speed-dial';
 import FluentAdd24Filled from '~icons/fluent/add-24-filled';
+import MingcuteNewFolderLine from '~icons/mingcute/new-folder-line';
+import MingcuteRss2Fill from '~icons/mingcute/rss-2-fill';
 
 export function AppSpeedDial() {
   return (
@@ -18,21 +20,15 @@ export function AppSpeedDial() {
       </SpeedDialTrigger>
       <SpeedDialContent>
         <SpeedDialItem>
-          <SpeedDialLabel>Share</SpeedDialLabel>
+          <SpeedDialLabel>Add new feed</SpeedDialLabel>
           <SpeedDialAction onSelect={() => toast.success('Shared')}>
-            <Share2 />
+            <MingcuteRss2Fill />
           </SpeedDialAction>
         </SpeedDialItem>
         <SpeedDialItem>
-          <SpeedDialLabel>Copy</SpeedDialLabel>
+          <SpeedDialLabel>Add new folder</SpeedDialLabel>
           <SpeedDialAction onSelect={() => toast.success('Copied')}>
-            <Copy />
-          </SpeedDialAction>
-        </SpeedDialItem>
-        <SpeedDialItem>
-          <SpeedDialLabel>Like</SpeedDialLabel>
-          <SpeedDialAction onSelect={() => toast.success('Liked')}>
-            <Heart />
+            <MingcuteNewFolderLine />
           </SpeedDialAction>
         </SpeedDialItem>
       </SpeedDialContent>

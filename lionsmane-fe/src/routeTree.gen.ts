@@ -109,7 +109,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
   '/dashboard/filter/new': typeof DashboardFilterNewRoute
   '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute
-  '/dashboard/filter': typeof DashboardFilterIndexRoute
+  '/dashboard/filter/': typeof DashboardFilterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -159,7 +159,7 @@ export interface FileRouteTypes {
     | '/dashboard/filter/$filterId'
     | '/dashboard/filter/new'
     | '/dashboard/folder/$folderId'
-    | '/dashboard/filter'
+    | '/dashboard/filter/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -268,7 +268,7 @@ declare module '@tanstack/react-router' {
     '/dashboard/filter/': {
       id: '/dashboard/filter/'
       path: '/filter'
-      fullPath: '/dashboard/filter'
+      fullPath: '/dashboard/filter/'
       preLoaderRoute: typeof DashboardFilterIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }

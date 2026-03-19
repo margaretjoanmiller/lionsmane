@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { AddFeed } from '@/components/add-feed';
 import { AppSidebar } from '@/components/app-sidebar';
+import { AppSpeedDial } from '@/components/app-speeddial';
 import { ArticleFilterSelect } from '@/components/article-filter';
 import { ModeToggle } from '@/components/mode-toggle';
 import { SearchBar } from '@/components/search-bar';
@@ -53,6 +54,9 @@ function DashLayout() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />
+          <div className="right-5 bottom-5 z-99 sticky">
+            <AppSpeedDial />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

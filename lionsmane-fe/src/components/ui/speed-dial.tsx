@@ -442,7 +442,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       size="icon"
       type="button"
       {...triggerProps}
-      className={cn('size-11 rounded-full', className)}
+      className={cn('size-12 rounded-full', className)}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
