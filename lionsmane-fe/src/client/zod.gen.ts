@@ -2,893 +2,1530 @@
 
 import * as z from 'zod';
 
-export const zSpecification = z.object({
-  actor: z.string().nullable(),
-  actor_id: z.string().nullable(),
-  api_key_id: z.uuid().nullable(),
-  branch: z.string().nullable(),
-  branch_base: z.string().nullable(),
-  ci_platform: z.string().nullable(),
-  commit_sha: z.string().nullable(),
-  created_at: z.iso.datetime(),
-  creator_user_id: z.uuid().nullable(),
-  event_name: z.string().nullable(),
-  id: z.uuid(),
-  job: z.string().nullable(),
-  project_id: z.uuid(),
-  ref: z.string().nullable(),
-  ref_type: z.string().nullable(),
-  repository: z.string().nullable(),
-  run_id: z.string().nullable(),
-  run_number: z.string().nullable(),
-  tags: z.array(z.string()),
-  updated_at: z.iso.datetime(),
-  version: z.string().nullable(),
-  workflow: z.string().nullable(),
+export const zArticleDetailDtoOutput = z.object({
+  authors: z.array(z.string().max(256)),
+  categories: z.array(z.string().max(256)),
+  contentWarning: z.array(z.string()).nullable().default([]),
+  description: z.string().nullable(),
+  feedId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  feedTitle: z.string().min(1).max(255).optional(),
+  fullArticleHtml: z.string().nullable(),
+  fullArticleText: z.string().nullable(),
+  hash: z.string().max(64).nullable(),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  image: z.string().max(512).nullable(),
+  imageAlt: z.string().max(512).nullable(),
+  isBlurred: z.boolean().nullish(),
+  isHidden: z.boolean().nullish(),
+  isRead: z.boolean().nullish(),
+  isStarred: z.boolean().nullish(),
+  keywords: z.array(z.string().max(256)),
+  minifluxId: z.int().gte(-2147483648).lte(2147483647),
+  published: z.iso
+    .datetime()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+    ),
+  rawContent: z.string().nullable(),
+  readableHtml: z.string().nullable(),
+  readableText: z.string().nullable(),
+  title: z.string(),
+  updated: z.iso
+    .datetime()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+    )
+    .nullish(),
+  url: z.string().nullable(),
 });
 
-export const zCursorResponse = z.object({
-  end_cursor: z.uuid().nullable(),
-  has_next_page: z.boolean().nullable(),
-  has_previous_page: z.boolean().nullable(),
-  start_cursor: z.uuid().nullable(),
-});
-
-export const zOrganization = z.object({
-  created_at: z.iso.datetime(),
-  creator_user_id: z.uuid().nullable(),
-  id: z.uuid(),
-  name: z.string(),
-  slug: z.string(),
-  updated_at: z.iso.datetime(),
-});
-
-export const zRole = z.object({
-  created_at: z.iso.datetime(),
-  id: z.uuid(),
-  organization_id: z.uuid(),
-  status: z.enum(['active', 'invited', 'suspended']),
-  updated_at: z.iso.datetime(),
-  user_id: z.uuid(),
-});
-
-export const zUser = z.object({
-  clerk_user_id: z.string().nullable(),
-  created_at: z.iso.datetime(),
-  email: z.string().nullable(),
-  first_name: z.string().nullable(),
-  id: z.uuid(),
-  image_url: z.string().nullable(),
-  last_name: z.string().nullable(),
-  roles: z.array(zRole).optional(),
-  updated_at: z.iso.datetime(),
-});
-
-export const zProject = z.object({
-  created_at: z.iso.datetime(),
-  creator_user_id: z.uuid().nullable(),
-  default_branch: z.string().nullable(),
-  id: z.uuid(),
-  name: z.string(),
-  organization_id: z.uuid(),
-  slug: z.string(),
-  updated_at: z.iso.datetime(),
-});
-
-export const zApiKeyConcealed = z.object({
-  created_at: z.iso.datetime(),
-  creator_user_id: z.uuid().nullable(),
-  id: z.uuid(),
-  last_used_at: z.iso.datetime().nullable(),
-  updated_at: z.iso.datetime(),
-});
-
-export const zApiKey = zApiKeyConcealed.and(
-  z.object({
-    value: z.string(),
-  }),
-);
-
-export const zWebhookConcealed = z.object({
-  created_at: z.iso.datetime(),
-  creator_user_id: z.uuid().nullable(),
-  endpoint: z.string(),
-  id: z.uuid(),
-  is_enabled: z.boolean(),
-  project_id: z.uuid(),
-  updated_at: z.iso.datetime(),
-});
-
-export const zWebhook = zWebhookConcealed.and(
-  z.object({
-    secret: z.string(),
-  }),
-);
-
-export const zWaitlistFeature = z.enum([
-  'analytics',
-  'changelogs',
-  'integrations',
-  'mcp',
-  'mocks',
-  'sdks',
-  'tests',
-]);
-
-export const zWaitlist = z.object({
-  created_at: z.iso.datetime(),
-  feature: zWaitlistFeature,
-  id: z.uuid(),
-  tags: z.array(z.string()),
-  updated_at: z.iso.datetime(),
-});
-
-export const zGetData = z.object({
-  body: z.never().optional(),
-  path: z.never().optional(),
-  query: z.never().optional(),
-});
-
-/**
- * OK
- */
-export const zGetResponse = z.string();
-
-export const zGetV1GetByOrganizationSlugByProjectSlugData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    organization_slug: z.string(),
-    project_slug: z.string(),
-  }),
-  query: z
-    .object({
-      api_key: z.string().optional(),
-      branch: z.string().optional(),
-      commit_sha: z.string().optional(),
-      inline: z.boolean().optional().default(false),
-      latest: z.boolean().optional(),
-      tags: z.string().optional(),
-      version: z.string().optional(),
-    })
-    .optional(),
-});
-
-/**
- * Specification file contents
- */
-export const zGetV1GetByOrganizationSlugByProjectSlugResponse = z.record(
-  z.string(),
-  z.unknown(),
-);
-
-export const zPostV1InternalSyncUsersData = z.object({
-  body: z.never().optional(),
-  path: z.never().optional(),
-  query: z.never().optional(),
-});
-
-/**
- * OK
- */
-export const zPostV1InternalSyncUsersResponse = z.object({
-  numAffectedRows: z.string().regex(/^d+$/),
-});
-
-export const zPostV1InternalWebhooksClerkData = z.object({
-  body: z.union([
+export const zArticleListDtoOutput = z.object({
+  articles: z.array(
     z.object({
-      data: z.object({
-        created_at: z.number(),
-        email_addresses: z.array(
-          z.object({
-            created_at: z.number(),
-            email_address: z.string(),
-            id: z.string(),
-            linked_to: z.array(
-              z.object({
-                id: z.string(),
-                type: z.string(),
-              }),
-            ),
-            updated_at: z.number(),
-            verification: z.object({
-              attempts: z.number().nullable(),
-              expire_at: z.number().nullable(),
-              status: z.string(),
-              strategy: z.string(),
-            }),
-          }),
+      authors: z.array(z.string().max(256)),
+      categories: z.array(z.string().max(256)),
+      contentWarning: z.array(z.string()).nullable().default([]),
+      description: z.string().nullable(),
+      feedId: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
         ),
-        first_name: z.string().nullable(),
-        has_image: z.boolean(),
-        id: z.string(),
-        image_url: z.string().nullable(),
-        last_active_at: z.number().nullable(),
-        last_name: z.string().nullable(),
-        last_sign_in_at: z.number().nullable(),
-        mfa_disabled_at: z.number().nullable(),
-        mfa_enabled_at: z.number().nullable(),
-        passkeys: z.array(z.record(z.string(), z.unknown())),
-        password_enabled: z.boolean(),
-        phone_numbers: z.array(z.record(z.string(), z.unknown())),
-        primary_email_address_id: z.string().nullable(),
-        primary_phone_number_id: z.string().nullable(),
-        profile_image_url: z.string().nullable(),
-        two_factor_enabled: z.boolean(),
-        updated_at: z.number(),
-        username: z.string().nullable(),
-      }),
-      type: z.enum(['user.created', 'user.updated']),
+      feedTitle: z.string().min(1).max(255).optional(),
+      fullArticleHtml: z.string().nullable(),
+      fullArticleText: z.string().nullable(),
+      hash: z.string().max(64).nullable(),
+      id: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      image: z.string().max(512).nullable(),
+      imageAlt: z.string().max(512).nullable(),
+      isBlurred: z.boolean().nullish(),
+      isHidden: z.boolean().nullish(),
+      isRead: z.boolean().nullish(),
+      isStarred: z.boolean().nullish(),
+      keywords: z.array(z.string().max(256)),
+      minifluxId: z.int().gte(-2147483648).lte(2147483647),
+      published: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        ),
+      rawContent: z.string().nullable(),
+      readableHtml: z.string().nullable(),
+      readableText: z.string().nullable(),
+      title: z.string(),
+      updated: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        )
+        .nullish(),
+      url: z.string().nullable(),
     }),
-    z.object({
-      data: z.object({
-        deleted: z.boolean(),
-        id: z.string(),
-      }),
-      type: z.enum(['user.deleted']),
-    }),
-    z.object({
-      data: z.object({
-        id: z.string(),
-      }),
-      type: z.enum(['organization.created', 'organization.updated']),
-    }),
-    z.object({
-      data: z.object({
-        id: z.string(),
-      }),
-      type: z.enum(['organization.deleted']),
-    }),
-    z.object({
-      data: z.object({
-        id: z.string(),
-      }),
-      type: z.enum([
-        'organizationMembership.created',
-        'organizationMembership.updated',
-      ]),
-    }),
-    z.object({
-      data: z.object({
-        id: z.string(),
-      }),
-      type: z.enum(['organizationMembership.deleted']),
-    }),
-    z.object({
-      data: z.record(z.string(), z.unknown()),
-      type: z.enum(['role.created', 'role.updated']),
-    }),
-    z.object({
-      data: z.record(z.string(), z.unknown()),
-      type: z.enum(['role.deleted']),
-    }),
-  ]),
-  path: z.never().optional(),
-  query: z.never().optional(),
+  ),
+  cursor: z.string().nullable(),
 });
 
-/**
- * OK
- */
-export const zPostV1InternalWebhooksClerkResponse = z.object({
-  message: z.string(),
+export const zArticleSearchDtoOutput = z.object({
+  articles: z.array(
+    z.object({
+      authors: z.array(z.string().max(256)),
+      categories: z.array(z.string().max(256)),
+      contentWarning: z.array(z.string()).nullable().default([]),
+      description: z.string().nullable(),
+      feedId: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        )
+        .nullable(),
+      feedTitle: z.string().nullable(),
+      fullArticleHtml: z.string().nullable(),
+      fullArticleText: z.string().nullable(),
+      hash: z.string().max(64).nullable(),
+      id: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      image: z.string().max(512).nullable(),
+      imageAlt: z.string().max(512).nullable(),
+      isBlurred: z.boolean().nullable().default(false),
+      isHidden: z.boolean().nullable().default(false),
+      isRead: z.boolean().nullable().default(false),
+      isStarred: z.boolean().nullable().default(false),
+      keywords: z.array(z.string().max(256)),
+      metaData: z
+        .union([
+          z.union([z.string(), z.number(), z.boolean()]),
+          z.record(z.string(), z.unknown()),
+          z.array(z.unknown()),
+        ])
+        .nullable(),
+      minifluxId: z.int().gte(-2147483648).lte(2147483647),
+      published: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        ),
+      rawContent: z.string().nullable(),
+      readableHtml: z.string().nullable(),
+      readableText: z.string().nullable(),
+      title: z.string(),
+      updated: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        )
+        .nullable(),
+      url: z.string().nullable(),
+    }),
+  ),
 });
 
-export const zPostV1InternalWebhooksHeyApiData = z.object({
-  body: z.object({
-    data: zSpecification,
-    id: z.uuid(),
-    object: z.enum(['event']),
-    timestamp: z.number(),
-    type: z.enum(['specification.created', 'specification.deleted']),
+export const zArticleStatusDtoOutput = z.object({
+  articleId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  contentWarning: z.array(z.string()).nullable().default([]),
+  isBlurred: z.boolean().optional(),
+  isHidden: z.boolean().optional(),
+  isRead: z.boolean().optional(),
+  isStarred: z.boolean().optional(),
+  userId: z.string(),
+});
+
+export const zCategoryOutDtoOutput = z.object({
+  hide_globally: z.boolean(),
+  id: z.number(),
+  title: z.string(),
+  user_id: z.number(),
+});
+
+export const zCountersDtoOutput = z.object({
+  reads: z.record(z.string(), z.number().gte(0)),
+  unreads: z.record(z.string(), z.number().gte(0)),
+});
+
+export const zCreateBookmarkDto = z.object({
+  url: z.url(),
+});
+
+export const zCreateCategoryDto = z.object({
+  title: z.string(),
+});
+
+export const zCreateConfigDto = z.object({
+  apiKey: z.string(),
+  apiURL: z.url(),
+});
+
+export const zCreateFeedDto = z.object({
+  category_id: z.number().gte(0),
+  feed_url: z.url(),
+});
+
+export const zCreateFilterDto = z.object({
+  action: z.object({
+    contentWarning: z.string().max(512).nullable(),
+    type: z.enum(['blur', 'markRead', 'hide']),
   }),
-  path: z.never().optional(),
-  query: z.never().optional(),
+  conditions: z.object({
+    authors: z.array(z.string()).optional(),
+    categories: z.array(z.string()).optional(),
+    contentContains: z.array(z.string()).optional(),
+    feeds: z.array(z.string()).optional(),
+    keywords: z.array(z.string()).optional(),
+    titleContains: z.array(z.string()).optional(),
+  }),
+  description: z.string().max(1024).optional(),
+  isActive: z.boolean().optional().default(true),
+  name: z.string().min(1).max(255),
 });
 
-/**
- * OK
- */
-export const zPostV1InternalWebhooksHeyApiResponse = z.object({
-  message: z.string(),
-});
-
-export const zGetV1OrganizationsData = z.object({
-  body: z.never().optional(),
-  path: z.never().optional(),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
+export const zCreateFolderDto = z.object({
+  feedIds: z
+    .array(
+      z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+    )
     .optional(),
+  name: z.string().min(1).max(255),
 });
 
-/**
- * OK
- */
-export const zGetV1OrganizationsResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zOrganization),
+export const zDiscoverDto = z.object({
+  password: z.string().min(1).max(255).optional(),
+  url: z.string().min(1).max(2048),
+  user_agent: z.string().min(1).max(255).optional(),
+  username: z.string().min(1).max(255).optional(),
 });
 
-export const zPostV1OrganizationsData = z.object({
-  body: z.object({
-    name: z.string(),
-  }),
-  path: z.never().optional(),
-  query: z.never().optional(),
+export const zDiscoverOutDtoOutput = z.object({
+  format: z.string(),
+  title: z.string().min(1).max(255).nullable(),
+  url: z.url().min(1).max(2048),
 });
 
-/**
- * OK
- */
-export const zPostV1OrganizationsResponse = zOrganization;
-
-export const zDeleteV1OrganizationsByOrganizationSlugData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    organization_slug: z.string(),
-  }),
-  query: z.never().optional(),
-});
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugResponse = zOrganization;
-
-export const zGetV1OrganizationsByOrganizationSlugMembersData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    organization_slug: z.string(),
-  }),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
-    .optional(),
-});
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugMembersResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zUser),
-});
-
-export const zPostV1OrganizationsByOrganizationSlugMembersData = z.object({
-  body: z.object({
-    emails: z.array(z.email()),
-  }),
-  path: z.object({
-    organization_slug: z.string(),
-  }),
-  query: z.never().optional(),
-});
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugMembersResponse = z.object({
-  users: z.array(zUser),
-});
-
-export const zDeleteV1OrganizationsByOrganizationSlugMembersByUserIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      user_id: z.uuid(),
+export const zEntriesListDtoOutput = z.object({
+  entries: z.array(
+    z.object({
+      author: z.string().nullable(),
+      authors: z.array(z.string().max(256)),
+      categories: z.array(z.string().max(256)),
+      comments_url: z.string(),
+      content: z.string(),
+      created_at: z.string(),
+      feed: z.object({
+        blocklist_rules: z.string(),
+        categories: z.array(z.string().max(256)),
+        category: z.object({
+          id: z.number().default(0),
+          title: z.string().default(''),
+          user_id: z.number().gte(0),
+        }),
+        checked_at: z.string(),
+        crawler: z.boolean(),
+        disabled: z.boolean().default(false),
+        etag_header: z.string().max(256),
+        feed_host: z
+          .uuid()
+          .regex(
+            /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+          )
+          .nullable(),
+        feed_url: z.url(),
+        fetch_via_proxy: z.boolean().default(false),
+        icon: z
+          .object({
+            feed_id: z.number().gte(0),
+            icon_id: z.number().gte(0),
+          })
+          .nullable(),
+        id: z.number().gte(0),
+        ignore_http_cache: z.boolean().default(false),
+        keeplist_rules: z.string(),
+        last_modified_header: z.string().max(256),
+        metaData: z
+          .union([
+            z.union([z.string(), z.number(), z.boolean()]),
+            z.record(z.string(), z.unknown()),
+            z.array(z.unknown()),
+          ])
+          .nullable(),
+        parsing_error_count: z.number().gte(0),
+        parsing_error_message: z.string(),
+        password: z.string(),
+        rewrite_rules: z.string(),
+        scraper_rules: z.string(),
+        site_url: z.string().max(256),
+        title: z.string(),
+        user_agent: z.string(),
+        user_id: z.number().gte(0),
+        username: z.string(),
+      }),
+      feed_id: z.number().gte(0),
+      feedId: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      hash: z.string().max(64).nullable(),
+      id: z.number().gte(0),
+      image: z.string().max(512).nullable(),
+      imageAlt: z.string().max(512).nullable(),
+      metaData: z
+        .union([
+          z.union([z.string(), z.number(), z.boolean()]),
+          z.record(z.string(), z.unknown()),
+          z.array(z.unknown()),
+        ])
+        .nullable(),
+      published_at: z.string(),
+      reading_time: z.number().gte(0),
+      share_code: z.string(),
+      starred: z.boolean().default(false),
+      status: z.string(),
+      title: z.string(),
+      url: z.string().nullable(),
+      user_id: z.number().gte(0),
     }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugMembersByUserIdResponse =
-  zRole;
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    organization_slug: z.string(),
-  }),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
-    .optional(),
+  ),
+  total: z.number().gte(0),
 });
 
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zProject),
-});
-
-export const zPostV1OrganizationsByOrganizationSlugProjectsData = z.object({
-  body: z.object({
-    name: z.string(),
-  }),
-  path: z.object({
-    organization_slug: z.string(),
-  }),
-  query: z.never().optional(),
-});
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugProjectsResponse = zProject;
-
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
+export const zEntryDtoOutput = z.object({
+  author: z.string().nullable(),
+  authors: z.array(z.string().max(256)),
+  categories: z.array(z.string().max(256)),
+  comments_url: z.string(),
+  content: z.string(),
+  created_at: z.string(),
+  feed: z.object({
+    blocklist_rules: z.string(),
+    categories: z.array(z.string().max(256)),
+    category: z.object({
+      id: z.number().default(0),
+      title: z.string().default(''),
+      user_id: z.number().gte(0),
     }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugResponse =
-  zProject;
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z
+    checked_at: z.string(),
+    crawler: z.boolean(),
+    disabled: z.boolean().default(false),
+    etag_header: z.string().max(256),
+    feed_host: z
+      .uuid()
+      .regex(
+        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+      )
+      .nullable(),
+    feed_url: z.url(),
+    fetch_via_proxy: z.boolean().default(false),
+    icon: z
       .object({
-        after: z.string().optional(),
-        before: z.string().optional(),
-        limit: z.int().gt(0).lte(100).optional().default(10),
+        feed_id: z.number().gte(0),
+        icon_id: z.number().gte(0),
       })
-      .optional(),
-  });
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysResponse =
-  z.object({
-    filters: zCursorResponse,
-    items: z.array(zApiKeyConcealed),
-  });
-
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysResponse =
-  zApiKey;
-
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysByApiKeyIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      api_key_id: z.uuid(),
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysByApiKeyIdResponse =
-  zApiKey;
-
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysByApiKeyIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      api_key_id: z.uuid(),
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugApiKeysByApiKeyIdResponse =
-  zApiKey;
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z
-      .object({
-        after: z.string().optional(),
-        before: z.string().optional(),
-        limit: z.int().gt(0).lte(100).optional().default(10),
-      })
-      .optional(),
-  });
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsResponse =
-  z.object({
-    filters: zCursorResponse,
-    items: z.array(zSpecification),
-  });
-
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      specification_id: z.uuid(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdResponse =
-  zSpecification;
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      specification_id: z.uuid(),
-    }),
-    query: z
-      .object({
-        inline: z.boolean().optional().default(false),
-      })
-      .optional(),
-  });
-
-/**
- * Specification file contents
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdResponse =
-  z.record(z.string(), z.unknown());
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdUrlData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      specification_id: z.uuid(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugSpecificationsBySpecificationIdUrlResponse =
-  z.object({
-    url: z.string(),
-  });
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z
-      .object({
-        after: z.string().optional(),
-        before: z.string().optional(),
-        limit: z.int().gt(0).lte(100).optional().default(10),
-      })
-      .optional(),
-  });
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksResponse =
-  z.object({
-    filters: zCursorResponse,
-    items: z.array(zWebhookConcealed),
-  });
-
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksData =
-  z.object({
-    body: z.object({
-      endpoint: z.string(),
-    }),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksResponse =
-  zWebhook;
-
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      webhook_id: z.uuid(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zDeleteV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdResponse =
-  zApiKey;
-
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      webhook_id: z.uuid(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zGetV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdResponse =
-  zWebhookConcealed;
-
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdData =
-  z.object({
-    body: z.never().optional(),
-    path: z.object({
-      organization_slug: z.string(),
-      project_slug: z.string(),
-      webhook_id: z.uuid(),
-    }),
-    query: z.never().optional(),
-  });
-
-/**
- * OK
- */
-export const zPostV1OrganizationsByOrganizationSlugProjectsByProjectSlugWebhooksByWebhookIdResponse =
-  zWebhook;
-
-export const zPostV1SpecificationsData = z.object({
-  body: z.object({
-    actor: z.string().optional(),
-    actor_id: z.string().optional(),
-    branch: z.string().optional(),
-    branch_base: z.string().optional(),
-    ci_platform: z.string().optional(),
-    commit_sha: z.string().optional(),
-    default_branch: z.string().optional(),
-    dry_run: z.string().optional(),
-    event_name: z.string().optional(),
-    job: z.string().optional(),
-    ref: z.string().optional(),
-    ref_type: z.string().optional(),
-    repository: z.string().optional(),
-    run_id: z.string().optional(),
-    run_number: z.string().optional(),
-    specification: z.string(),
-    tags: z.string().optional(),
-    workflow: z.string().optional(),
+      .nullable(),
+    id: z.number().gte(0),
+    ignore_http_cache: z.boolean().default(false),
+    keeplist_rules: z.string(),
+    last_modified_header: z.string().max(256),
+    metaData: z
+      .union([
+        z.union([z.string(), z.number(), z.boolean()]),
+        z.record(z.string(), z.unknown()),
+        z.array(z.unknown()),
+      ])
+      .nullable(),
+    parsing_error_count: z.number().gte(0),
+    parsing_error_message: z.string(),
+    password: z.string(),
+    rewrite_rules: z.string(),
+    scraper_rules: z.string(),
+    site_url: z.string().max(256),
+    title: z.string(),
+    user_agent: z.string(),
+    user_id: z.number().gte(0),
+    username: z.string(),
   }),
+  feed_id: z.number().gte(0),
+  feedId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  hash: z.string().max(64).nullable(),
+  id: z.number().gte(0),
+  image: z.string().max(512).nullable(),
+  imageAlt: z.string().max(512).nullable(),
+  metaData: z
+    .union([
+      z.union([z.string(), z.number(), z.boolean()]),
+      z.record(z.string(), z.unknown()),
+      z.array(z.unknown()),
+    ])
+    .nullable(),
+  published_at: z.string(),
+  reading_time: z.number().gte(0),
+  share_code: z.string(),
+  starred: z.boolean().default(false),
+  status: z.string(),
+  title: z.string(),
+  url: z.string().nullable(),
+  user_id: z.number().gte(0),
+});
+
+export const zFeedMiniOutput = z.object({
+  blocklist_rules: z.string(),
+  categories: z.array(z.string().max(256)),
+  category: z.object({
+    id: z.number().default(0),
+    title: z.string().default(''),
+    user_id: z.number().gte(0),
+  }),
+  checked_at: z.string(),
+  crawler: z.boolean(),
+  disabled: z.boolean().default(false),
+  etag_header: z.string().max(256),
+  feed_host: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    )
+    .nullable(),
+  feed_url: z.url(),
+  fetch_via_proxy: z.boolean().default(false),
+  icon: z
+    .object({
+      feed_id: z.number().gte(0),
+      icon_id: z.number().gte(0),
+    })
+    .nullable(),
+  id: z.number().gte(0),
+  ignore_http_cache: z.boolean().default(false),
+  keeplist_rules: z.string(),
+  last_modified_header: z.string().max(256),
+  metaData: z
+    .union([
+      z.union([z.string(), z.number(), z.boolean()]),
+      z.record(z.string(), z.unknown()),
+      z.array(z.unknown()),
+    ])
+    .nullable(),
+  parsing_error_count: z.number().gte(0),
+  parsing_error_message: z.string(),
+  password: z.string(),
+  rewrite_rules: z.string(),
+  scraper_rules: z.string(),
+  site_url: z.string().max(256),
+  title: z.string(),
+  user_agent: z.string(),
+  user_id: z.number().gte(0),
+  username: z.string(),
+});
+
+export const zFeedOutWithCountsDtoOutput = z.object({
+  categories: z.array(z.string().max(256)),
+  crawler: z.boolean(),
+  etag_header: z.string().max(256),
+  favicon: z.url().nullable(),
+  feed_host: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    )
+    .nullable(),
+  folderId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    )
+    .nullable(),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  last_modified_header: z.string().max(256),
+  lastChecked: z.iso
+    .datetime()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+    ),
+  metaData: z
+    .union([
+      z.union([z.string(), z.number(), z.boolean()]),
+      z.record(z.string(), z.unknown()),
+      z.array(z.unknown()),
+    ])
+    .nullable(),
+  minifluxId: z.int().gte(-2147483648).lte(2147483647),
+  parsingErrorCount: z.int().gte(-2147483648).lte(2147483647),
+  parsingErrorMessage: z.string().max(256).nullable(),
+  site_url: z.string().max(256),
+  subtitle: z.string().nullable(),
+  title: z.string(),
+  unreadCount: z.number().gte(0).nullable(),
+  updated: z.iso
+    .datetime()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+    )
+    .nullish(),
+  url: z.string(),
+  userAgent: z.string().max(256).nullable(),
+});
+
+export const zFileDto = z.object({
+  file: z.record(z.string(), z.unknown()),
+});
+
+export const zFilterOutDtoOutput = z.object({
+  action: z.object({
+    contentWarning: z.string().max(512).nullable(),
+    type: z.enum(['blur', 'markRead', 'hide']),
+  }),
+  conditions: z.object({
+    authors: z.array(z.string()).optional(),
+    categories: z.array(z.string()).optional(),
+    contentContains: z.array(z.string()).optional(),
+    feeds: z.array(z.string()).optional(),
+    keywords: z.array(z.string()).optional(),
+    titleContains: z.array(z.string()).optional(),
+  }),
+  description: z.string().max(1024).optional(),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  isActive: z.boolean().default(true),
+  name: z.string().max(255).nullable(),
+});
+
+export const zFolderOutDtoOutput = z.object({
+  feedIds: z.array(
+    z
+      .uuid()
+      .regex(
+        /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+      ),
+  ),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  name: z.string().min(1).max(255),
+  userId: z.string(),
+});
+
+export const zFolderWithFeedsOutDtoOutput = z.object({
+  feeds: z.array(
+    z.object({
+      categories: z.array(z.string().max(256)),
+      crawler: z.boolean(),
+      etag_header: z.string().max(256),
+      favicon: z.url().nullable(),
+      feed_host: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        )
+        .nullable(),
+      id: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      last_modified_header: z.string().max(256),
+      lastChecked: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        ),
+      metaData: z
+        .union([
+          z.union([z.string(), z.number(), z.boolean()]),
+          z.record(z.string(), z.unknown()),
+          z.array(z.unknown()),
+        ])
+        .nullable(),
+      parsingErrorCount: z.int().gte(-2147483648).lte(2147483647),
+      parsingErrorMessage: z.string().max(256).nullable(),
+      site_url: z.string().max(256),
+      subtitle: z.string().nullable(),
+      title: z.string(),
+      updated: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        )
+        .nullish(),
+      url: z.string(),
+      userAgent: z.string().max(256).nullable(),
+    }),
+  ),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  name: z.string().min(1).max(255),
+  userId: z.string(),
+});
+
+export const zFullEntryContentOutput = z.object({
+  content: z.string(),
+});
+
+export const zHiddenArticleListDtoOutput = z.object({
+  articles: z.array(
+    z.object({
+      authors: z.array(z.string().max(256)),
+      categories: z.array(z.string().max(256)),
+      contentWarning: z.array(z.string()).nullable().default([]),
+      description: z.string().nullable(),
+      feedId: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      feedTitle: z.string().min(1).max(255).optional(),
+      fullArticleHtml: z.string().nullable(),
+      fullArticleText: z.string().nullable(),
+      hash: z.string().max(64).nullable(),
+      id: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      image: z.string().max(512).nullable(),
+      imageAlt: z.string().max(512).nullable(),
+      isBlurred: z.boolean().nullish(),
+      isHidden: z.boolean().nullish(),
+      isRead: z.boolean().nullish(),
+      isStarred: z.boolean().nullish(),
+      keywords: z.array(z.string().max(256)),
+      minifluxId: z.int().gte(-2147483648).lte(2147483647),
+      published: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        ),
+      rawContent: z.string().nullable(),
+      readableHtml: z.string().nullable(),
+      readableText: z.string().nullable(),
+      ruleId: z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+      title: z.string(),
+      updated: z.iso
+        .datetime()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/,
+        )
+        .nullish(),
+      url: z.string().nullable(),
+    }),
+  ),
+  cursor: z.string().nullable(),
+});
+
+export const zSubscribeFeedDto = z.object({
+  description: z.string().optional(),
+  folderName: z.string().min(2).nullable(),
+  url: z.url().min(1),
+});
+
+export const zSubscriptionOutDtoOutput = z.object({
+  description: z.string().nullable(),
+  feedId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  folderId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    )
+    .nullable(),
+  id: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    ),
+  userId: z.string(),
+});
+
+export const zUpdateEntriesDto = z.object({
+  entry_ids: z.array(z.number().gte(0)),
+  status: z.enum(['read', 'unread']),
+});
+
+export const zUpdateFeedDto = z.object({
+  description: z.string().min(0).max(1000).optional(),
+  folderId: z
+    .uuid()
+    .regex(
+      /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+    )
+    .nullable(),
+});
+
+export const zUpdateFeedMiniDto = z.object({
+  category_id: z.number().gte(0).optional(),
+  title: z.string().min(1).max(255).optional(),
+});
+
+export const zUpdateFilterDto = z.object({
+  action: z.object({
+    contentWarning: z.string().max(512).nullish(),
+    type: z.enum(['blur', 'markRead', 'hide']).optional(),
+  }),
+  conditions: z.object({
+    authors: z.array(z.string()).optional(),
+    categories: z.array(z.string()).optional(),
+    contentContains: z.array(z.string()).optional(),
+    feeds: z.array(z.string()).optional(),
+    keywords: z.array(z.string()).optional(),
+    titleContains: z.array(z.string()).optional(),
+  }),
+  description: z.string().max(1024).optional(),
+  isActive: z.boolean().optional().default(true),
+  name: z.string().min(1).max(255).optional(),
+});
+
+export const zUpdateFolderDto = z.object({
+  feedIds: z
+    .array(
+      z
+        .uuid()
+        .regex(
+          /^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$/,
+        ),
+    )
+    .optional(),
+  name: z.string().min(1).max(255).optional(),
+});
+
+export const zUserSchemaDtoOutput = z.object({
+  entries_per_page: z.number(),
+  entry_sorting_direction: z.string(),
+  entry_swipe: z.boolean(),
+  google_id: z.string(),
+  id: z.number(),
+  is_admin: z.boolean(),
+  keyboard_shortcuts: z.boolean(),
+  language: z.string(),
+  last_login_at: z.string(),
+  openid_connect_id: z.string(),
+  show_reading_time: z.boolean(),
+  stylesheet: z.string(),
+  theme: z.string(),
+  timezone: z.string(),
+  username: z.string(),
+});
+
+export const zArticleControllerGetPagedArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetPagedArticlesResponse = zArticleListDtoOutput;
+
+export const zArticleControllerGetArticleData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zArticleControllerGetArticleResponse = zArticleDetailDtoOutput;
+
+export const zArticleControllerGetPagedArticlesForFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetPagedArticlesForFeedResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetAllArticlesForFolderData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetAllArticlesForFolderResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetHiddenArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+      ruleId: z.string().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetHiddenArticlesResponse =
+  zHiddenArticleListDtoOutput;
+
+export const zArticleControllerGetReadArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetReadArticlesResponse = zArticleListDtoOutput;
+
+export const zArticleControllerGetReadArticlesForFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetReadArticlesForFeedResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetReadArticlesForFolderData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetReadArticlesForFolderResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerRequestFullArticleTextData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zArticleControllerSearchArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    offset: z.number().optional(),
+    pageSize: z.number().optional(),
+    query: z.string(),
+  }),
+});
+
+export const zArticleControllerSearchArticlesResponse = zArticleSearchDtoOutput;
+
+export const zArticleControllerGetStarredArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetStarredArticlesResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetStarredArticlesForFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetStarredArticlesForFeedResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetStarredArticlesForFolderData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetStarredArticlesForFolderResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerUpdateArticleStatusData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.object({
+    status: z.string(),
+  }),
+});
+
+export const zArticleControllerUpdateArticleStatusResponse =
+  zArticleStatusDtoOutput;
+
+export const zArticleControllerGetUnReadArticlesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetUnReadArticlesResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetUnReadArticlesForFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetUnReadArticlesForFeedResponse =
+  zArticleListDtoOutput;
+
+export const zArticleControllerGetUnReadArticlesForFolderData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z
+    .object({
+      cursor: z.string().optional(),
+      pageSize: z.number().optional(),
+    })
+    .optional(),
+});
+
+export const zArticleControllerGetUnReadArticlesForFolderResponse =
+  zArticleListDtoOutput;
+
+export const zAppControllerGetLoginData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerFindAllData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerFindAllResponse = z.array(
+  zFeedOutWithCountsDtoOutput,
+);
+
+export const zFeedControllerCreateData = z.object({
+  body: zSubscribeFeedDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerCreateResponse = zSubscriptionOutDtoOutput;
+
+export const zFeedControllerRemoveData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Feed unsubscribed
+ */
+export const zFeedControllerRemoveResponse = z.void();
+
+export const zFeedControllerFindOneData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerFindOneResponse = zFeedOutWithCountsDtoOutput;
+
+export const zFeedControllerUpdateData = z.object({
+  body: zUpdateFeedDto,
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerUpdateResponse = zSubscriptionOutDtoOutput;
+
+export const zFeedControllerDiscoverData = z.object({
+  body: zDiscoverDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerDiscoverResponse = z.array(zDiscoverOutDtoOutput);
+
+export const zFeedControllerExportData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerImportData = z.object({
+  body: zFileDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFeedControllerMarkAllReadData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerFindAllData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerFindAllResponse = z.array(zFilterOutDtoOutput);
+
+export const zFilterControllerCreateData = z.object({
+  body: zCreateFilterDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerCreateResponse = zFilterOutDtoOutput;
+
+export const zFilterControllerRemoveData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerFindOneData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerFindOneResponse = zFilterOutDtoOutput;
+
+export const zFilterControllerUpdateData = z.object({
+  body: zUpdateFilterDto,
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFilterControllerUpdateResponse = zFilterOutDtoOutput;
+
+export const zFolderControllerFindAllData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFolderControllerFindAllResponse = z.array(zFolderOutDtoOutput);
+
+export const zFolderControllerCreateData = z.object({
+  body: zCreateFolderDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFolderControllerCreateResponse = zFolderOutDtoOutput;
+
+export const zFolderControllerRemoveData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+/**
+ * Folder deleted successfully.
+ */
+export const zFolderControllerRemoveResponse = z.void();
+
+export const zFolderControllerFindOneData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFolderControllerFindOneResponse = zFolderOutDtoOutput;
+
+export const zFolderControllerUpdateData = z.object({
+  body: zUpdateFolderDto,
+  path: z.object({
+    id: z.string(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zFolderControllerUpdateResponse = zFolderOutDtoOutput;
+
+export const zFolderControllerFindAllWithFeedsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zFolderControllerFindAllWithFeedsResponse = z.array(
+  zFolderWithFeedsOutDtoOutput,
+);
+
+export const zHealthControllerCheckData = z.object({
+  body: z.never().optional(),
   path: z.never().optional(),
   query: z.never().optional(),
 });
 
 /**
- * OK
+ * The Health Check is successful
  */
-export const zPostV1SpecificationsResponse = zSpecification;
+export const zHealthControllerCheckResponse = z.object({
+  details: z
+    .record(
+      z.string(),
+      z.object({
+        status: z.string(),
+      }),
+    )
+    .optional(),
+  error: z
+    .record(
+      z.string(),
+      z.object({
+        status: z.string(),
+      }),
+    )
+    .optional(),
+  info: z
+    .record(
+      z.string(),
+      z.object({
+        status: z.string(),
+      }),
+    )
+    .optional(),
+  status: z.string().optional(),
+});
 
-export const zGetV1UsersMeData = z.object({
+export const zAppControllerGetProfileData = z.object({
   body: z.never().optional(),
   path: z.never().optional(),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zGetV1UsersMeResponse = zUser;
-
-export const zGetV1UsersByUserIdApiKeysData = z.object({
+export const zMinifluxV1ControllerGetCategoriesData = z.object({
   body: z.never().optional(),
-  path: z.object({
-    user_id: z.uuid(),
+  path: z.never().optional(),
+  query: z.object({
+    counts: z.boolean(),
   }),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
-    .optional(),
 });
 
-/**
- * OK
- */
-export const zGetV1UsersByUserIdApiKeysResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zApiKeyConcealed),
+export const zMinifluxV1ControllerGetCategoriesResponse = z.array(
+  zCategoryOutDtoOutput,
+);
+
+export const zMinifluxV1ControllerCreateCategoryData = z.object({
+  body: zCreateCategoryDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
 });
 
-export const zPostV1UsersByUserIdApiKeysData = z.object({
+export const zMinifluxV1ControllerCreateCategoryResponse =
+  zCategoryOutDtoOutput;
+
+export const zMinifluxV1ControllerDeleteCategoryData = z.object({
   body: z.never().optional(),
   path: z.object({
-    user_id: z.uuid(),
+    categoryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zPostV1UsersByUserIdApiKeysResponse = zApiKey;
+export const zMinifluxV1ControllerDeleteCategoryResponse = z.void();
 
-export const zDeleteV1UsersByUserIdApiKeysByApiKeyIdData = z.object({
-  body: z.never().optional(),
+export const zMinifluxV1ControllerUpdateCategoryData = z.object({
+  body: zCreateCategoryDto,
   path: z.object({
-    api_key_id: z.uuid(),
-    user_id: z.uuid(),
+    categoryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zDeleteV1UsersByUserIdApiKeysByApiKeyIdResponse = zApiKey;
+export const zMinifluxV1ControllerUpdateCategoryResponse =
+  zCategoryOutDtoOutput;
 
-export const zPostV1UsersByUserIdApiKeysByApiKeyIdData = z.object({
+export const zMinifluxV1ControllerGetCategoryFeedsData = z.object({
   body: z.never().optional(),
   path: z.object({
-    api_key_id: z.uuid(),
-    user_id: z.uuid(),
+    categoryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zPostV1UsersByUserIdApiKeysByApiKeyIdResponse = zApiKey;
+export const zMinifluxV1ControllerGetCategoryFeedsResponse =
+  z.array(zFeedMiniOutput);
 
-export const zGetV1UsersByUserIdRolesData = z.object({
+export const zMinifluxV1ControllerMarkCategoryAsReadData = z.object({
   body: z.never().optional(),
   path: z.object({
-    user_id: z.uuid(),
-  }),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
-    .optional(),
-});
-
-/**
- * OK
- */
-export const zGetV1UsersByUserIdRolesResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zRole),
-});
-
-export const zGetV1UsersByUserIdWaitlistsData = z.object({
-  body: z.never().optional(),
-  path: z.object({
-    user_id: z.uuid(),
-  }),
-  query: z
-    .object({
-      after: z.string().optional(),
-      before: z.string().optional(),
-      limit: z.int().gt(0).lte(100).optional().default(10),
-    })
-    .optional(),
-});
-
-/**
- * OK
- */
-export const zGetV1UsersByUserIdWaitlistsResponse = z.object({
-  filters: zCursorResponse,
-  items: z.array(zWaitlist),
-});
-
-export const zPostV1UsersByUserIdWaitlistsData = z.object({
-  body: z.object({
-    feature: zWaitlistFeature,
-  }),
-  path: z.object({
-    user_id: z.uuid(),
+    categoryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zPostV1UsersByUserIdWaitlistsResponse = zWaitlist;
+export const zMinifluxV1ControllerMarkCategoryAsReadResponse = z.void();
 
-export const zDeleteV1UsersByUserIdWaitlistsByWaitlistIdData = z.object({
+export const zMinifluxV1ControllerRefreshCategoryFeedsData = z.object({
   body: z.never().optional(),
   path: z.object({
-    user_id: z.uuid(),
-    waitlist_id: z.uuid(),
+    categoryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zDeleteV1UsersByUserIdWaitlistsByWaitlistIdResponse = zWaitlist;
+export const zMinifluxV1ControllerRefreshCategoryFeedsResponse = z.void();
 
-export const zPutV1UsersByUserIdWaitlistsByWaitlistIdData = z.object({
-  body: z
-    .object({
-      tags: z.array(z.string()).optional(),
-    })
-    .optional(),
+export const zMinifluxV1ControllerDiscoverSubscriptionsData = z.object({
+  body: zDiscoverDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerDiscoverSubscriptionsResponse = z.array(
+  zDiscoverOutDtoOutput,
+);
+
+export const zMinifluxV1ControllerGetEntriesData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.object({
+    after: z.number().optional(),
+    before: z.number().optional(),
+    category_id: z.number().optional(),
+    direction: z.enum(['asc', 'desc']).optional(),
+    limit: z.number(),
+    offset: z.number().optional(),
+    order: z
+      .enum(['id', 'status', 'published_at', 'category_title', 'category_id'])
+      .optional(),
+    search: z.string().optional(),
+    starred: z.boolean().optional(),
+    status: z.enum(['unread', 'read']),
+  }),
+});
+
+export const zMinifluxV1ControllerGetEntriesResponse = zEntriesListDtoOutput;
+
+export const zMinifluxV1ControllerUpdateEntriesData = z.object({
+  body: zUpdateEntriesDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerUpdateEntriesResponse = z.void();
+
+export const zMinifluxV1ControllerGetEntryData = z.object({
+  body: z.never().optional(),
   path: z.object({
-    user_id: z.uuid(),
-    waitlist_id: z.uuid(),
+    entryId: z.number(),
   }),
   query: z.never().optional(),
 });
 
-/**
- * OK
- */
-export const zPutV1UsersByUserIdWaitlistsByWaitlistIdResponse = zWaitlist;
+export const zMinifluxV1ControllerGetEntryResponse = zEntryDtoOutput;
+
+export const zMinifluxV1ControllerToggleBookmarkData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    entryId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerToggleBookmarkResponse = z.void();
+
+export const zMinifluxV1ControllerFetchOriginalArticleData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    entryId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerFetchOriginalArticleResponse =
+  zFullEntryContentOutput;
+
+export const zMinifluxV1ControllerSaveEntryData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    entryId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerExportData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetFeedsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetFeedsResponse = z.array(zFeedMiniOutput);
+
+export const zMinifluxV1ControllerCreateFeedData = z.object({
+  body: zCreateFeedDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerRemoveFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerRemoveFeedResponse = z.void();
+
+export const zMinifluxV1ControllerGetFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetFeedResponse = zFeedMiniOutput;
+
+export const zMinifluxV1ControllerUpdateFeedData = z.object({
+  body: zUpdateFeedMiniDto,
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetFeedIconData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerMarkFeedAsReadData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerMarkFeedAsReadResponse = z.void();
+
+export const zMinifluxV1ControllerRefreshFeedData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    feedId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerRefreshFeedResponse = z.void();
+
+export const zMinifluxV1ControllerGetFeedCountersData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetFeedCountersResponse = zCountersDtoOutput;
+
+export const zMinifluxV1ControllerRefreshAllFeedsData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerRefreshAllFeedsResponse = z.void();
+
+export const zMinifluxV1ControllerGetIconData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    iconId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerImportData = z.object({
+  body: zFileDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetCurrentUserData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerGetCurrentUserResponse = zUserSchemaDtoOutput;
+
+export const zMinifluxV1ControllerMarkUserEntriesAsReadData = z.object({
+  body: z.never().optional(),
+  path: z.object({
+    userId: z.number(),
+  }),
+  query: z.never().optional(),
+});
+
+export const zMinifluxV1ControllerMarkUserEntriesAsReadResponse = z.void();
+
+export const zMinifluxV1ControllerGetVersionData = z.object({
+  body: z.never().optional(),
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zReadlaterControllerAddBookmarkData = z.object({
+  body: zCreateBookmarkDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});
+
+export const zReadlaterControllerCreateConfigData = z.object({
+  body: zCreateConfigDto,
+  path: z.never().optional(),
+  query: z.never().optional(),
+});

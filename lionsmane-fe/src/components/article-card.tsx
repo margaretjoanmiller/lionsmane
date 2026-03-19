@@ -138,13 +138,13 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {article.image || article.media?.contents ? (
+        {article.image ? (
           <>
             <div className="aspect-video overflow-hidden rounded-md">
               <img
                 alt={article.imageAlt || article.title}
                 className="h-full w-full object-cover"
-                src={article.image || article.media?.contents?.at(0)?.url}
+                src={article.image}
               />
             </div>
             <div className="text-sm text-muted-foreground mt-1 line-clamp-3">

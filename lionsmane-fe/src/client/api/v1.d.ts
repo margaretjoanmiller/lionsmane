@@ -4,14 +4,270 @@
  */
 
 export interface paths {
-  '/me': {
+  '/article': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['AppController_getProfile'];
+    get: operations['ArticleController_getPagedArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getArticle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getPagedArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getAllArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/hidden': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getHiddenArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getReadArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getReadArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/read/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getReadArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/readable/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ArticleController_requestFullArticleText'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_searchArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getStarredArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getStarredArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/starred/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getStarredArticlesForFolder'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/status/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['ArticleController_updateArticleStatus'];
+    trace?: never;
+  };
+  '/article/unread': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getUnReadArticles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/unread/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getUnReadArticlesForFeed'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/article/unread/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ArticleController_getUnReadArticlesForFolder'];
     put?: never;
     post?: never;
     delete?: never;
@@ -52,6 +308,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/feed/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['FeedController_findOne'];
+    put?: never;
+    post?: never;
+    delete: operations['FeedController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['FeedController_update'];
+    trace?: never;
+  };
   '/feed/discover': {
     parameters: {
       query?: never;
@@ -62,22 +334,6 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['FeedController_discover'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/feed/import': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['FeedController_import'];
     delete?: never;
     options?: never;
     head?: never;
@@ -100,6 +356,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/feed/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['FeedController_import'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/feed/mark-all-read/{id}': {
     parameters: {
       query?: never;
@@ -110,342 +382,6 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['FeedController_markAllRead'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/feed/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['FeedController_findOne'];
-    put?: never;
-    post?: never;
-    delete: operations['FeedController_remove'];
-    options?: never;
-    head?: never;
-    patch: operations['FeedController_update'];
-    trace?: never;
-  };
-  '/folder': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['FolderController_findAll'];
-    put?: never;
-    post: operations['FolderController_create'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/folder/feeds': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['FolderController_findAllWithFeeds'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/folder/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['FolderController_findOne'];
-    put?: never;
-    post?: never;
-    delete: operations['FolderController_remove'];
-    options?: never;
-    head?: never;
-    patch: operations['FolderController_update'];
-    trace?: never;
-  };
-  '/article': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getPagedArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/status/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch: operations['ArticleController_updateArticleStatus'];
-    trace?: never;
-  };
-  '/article/search': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_searchArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/feed/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getPagedArticlesForFeed'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/read': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getReadArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/unread': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getUnReadArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/starred': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getStarredArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/hidden': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getHiddenArticles'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/unread/feed/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getUnReadArticlesForFeed'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/starred/feed/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getStarredArticlesForFeed'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/read/feed/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getReadArticlesForFeed'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/unread/folder/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getUnReadArticlesForFolder'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/starred/folder/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getStarredArticlesForFolder'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/read/folder/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getReadArticlesForFolder'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/folder/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getAllArticlesForFolder'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/readable/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['ArticleController_requestFullArticleText'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/article/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['ArticleController_getArticle'];
-    put?: never;
-    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -484,6 +420,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/folder': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['FolderController_findAll'];
+    put?: never;
+    post: operations['FolderController_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/folder/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['FolderController_findOne'];
+    put?: never;
+    post?: never;
+    delete: operations['FolderController_remove'];
+    options?: never;
+    head?: never;
+    patch: operations['FolderController_update'];
+    trace?: never;
+  };
+  '/folder/feeds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['FolderController_findAllWithFeeds'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/health': {
     parameters: {
       query?: never;
@@ -500,286 +484,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/readlater/configure': {
+  '/me': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations['ReadlaterController_createConfig'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/readlater': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['ReadlaterController_addBookmark'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/discover': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['MinifluxV1Controller_discoverSubscriptions'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/export': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_export'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/import': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['MinifluxV1Controller_import'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/version': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getVersion'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getFeeds'];
-    put?: never;
-    post: operations['MinifluxV1Controller_createFeed'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/counters': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getFeedCounters'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/{feedId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getFeed'];
-    put: operations['MinifluxV1Controller_updateFeed'];
-    post?: never;
-    delete: operations['MinifluxV1Controller_removeFeed'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/{feedId}/refresh': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put: operations['MinifluxV1Controller_refreshFeed'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/refresh': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put: operations['MinifluxV1Controller_refreshAllFeeds'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/{feedId}/icon': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getFeedIcon'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/feeds/{feedId}/mark-all-as-read': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put: operations['MinifluxV1Controller_markFeedAsRead'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/entries': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getEntries'];
-    put: operations['MinifluxV1Controller_updateEntries'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/entries/{entryId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_getEntry'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/entries/{entryId}/save': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['MinifluxV1Controller_saveEntry'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/entries/{entryId}/bookmark': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put: operations['MinifluxV1Controller_toggleBookmark'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/miniflux/v1/entries/{entryId}/fetch-content': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get: operations['MinifluxV1Controller_fetchOriginalArticle'];
+    get: operations['AppController_getProfile'];
     put?: never;
     post?: never;
     delete?: never;
@@ -868,6 +580,262 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/miniflux/v1/discover': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_discoverSubscriptions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getEntries'];
+    put: operations['MinifluxV1Controller_updateEntries'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getEntry'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/bookmark': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['MinifluxV1Controller_toggleBookmark'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/fetch-content': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_fetchOriginalArticle'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/entries/{entryId}/save': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_saveEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_export'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getFeeds'];
+    put?: never;
+    post: operations['MinifluxV1Controller_createFeed'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getFeed'];
+    put: operations['MinifluxV1Controller_updateFeed'];
+    post?: never;
+    delete: operations['MinifluxV1Controller_removeFeed'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/icon': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getFeedIcon'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/mark-all-as-read': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['MinifluxV1Controller_markFeedAsRead'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/{feedId}/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['MinifluxV1Controller_refreshFeed'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/counters': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getFeedCounters'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/feeds/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['MinifluxV1Controller_refreshAllFeeds'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/icons/{iconId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['MinifluxV1Controller_getIcon'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/miniflux/v1/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MinifluxV1Controller_import'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/miniflux/v1/me': {
     parameters: {
       query?: never;
@@ -900,16 +868,48 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/miniflux/v1/icons/{iconId}': {
+  '/miniflux/v1/version': {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    get: operations['MinifluxV1Controller_getIcon'];
+    get: operations['MinifluxV1Controller_getVersion'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/readlater': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReadlaterController_addBookmark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/readlater/configure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReadlaterController_createConfig'];
     delete?: never;
     options?: never;
     head?: never;
@@ -920,399 +920,132 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    SubscribeFeedDto: {
-      /** Format: uri */
-      url: string;
-      description?: string;
-      folderName: string | null;
-    };
-    SubscriptionOutDto_Output: {
-      /** Format: uuid */
-      id: string;
-      userId: string;
+    ArticleDetailDto_Output: {
+      authors: string[];
+      categories: string[];
+      /** @default [] */
+      contentWarning: string[] | null;
+      description: string | null;
       /** Format: uuid */
       feedId: string;
-      description: string | null;
-      folderId: string | null;
-    };
-    FeedOutWithCountsDto_Output: {
+      feedTitle?: string;
+      fullArticleHtml: string | null;
+      fullArticleText: string | null;
+      hash: string | null;
       /** Format: uuid */
       id: string;
+      image: string | null;
+      imageAlt: string | null;
+      isBlurred?: boolean | null;
+      isHidden?: boolean | null;
+      isRead?: boolean | null;
+      isStarred?: boolean | null;
+      keywords: string[];
       minifluxId: number;
-      title: string;
-      subtitle: string | null;
-      url: string;
-      site_url: string;
-      etag_header: string;
-      last_modified_header: string;
-      parsingErrorMessage: string | null;
-      parsingErrorCount: number;
-      userAgent: string | null;
-      crawler: boolean;
       /** Format: date-time */
-      lastChecked: string;
+      published: string;
+      rawContent: string | null;
+      readableHtml: string | null;
+      readableText: string | null;
+      title: string;
       updated?: string | null;
-      categories: string[];
-      metaData:
-        | (
-            | (string | number | boolean | null)
-            | {
-                [key: string]: unknown;
-              }
-            | unknown[]
-          )
-        | null;
-      favicon: string | null;
-      feed_host: string | null;
-      unreadCount: number | null;
-      folderId: string | null;
-    };
-    DiscoverDto: {
-      url: string;
-      username?: string;
-      password?: string;
-      user_agent?: string;
-    };
-    DiscoverOutDto_Output: {
-      format: string;
-      title: string | null;
-      /** Format: uri */
-      url: string;
-    };
-    FileDto: {
-      /**
-       * Format: binary
-       * @description OPML file to import
-       */
-      file: Record<string, never>;
-    };
-    UpdateFeedDto: {
-      description?: string;
-      folderId: string | null;
-    };
-    CreateFolderDto: {
-      name: string;
-      feedIds?: string[];
-    };
-    FolderOutDto_Output: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-      userId: string;
-      feedIds: string[];
-    };
-    FolderWithFeedsOutDto_Output: {
-      /** Format: uuid */
-      id: string;
-      name: string;
-      userId: string;
-      feeds: {
-        /** Format: uuid */
-        id: string;
-        title: string;
-        subtitle: string | null;
-        url: string;
-        site_url: string;
-        etag_header: string;
-        last_modified_header: string;
-        parsingErrorMessage: string | null;
-        parsingErrorCount: number;
-        userAgent: string | null;
-        crawler: boolean;
-        /** Format: date-time */
-        lastChecked: string;
-        updated?: string | null;
-        categories: string[];
-        metaData:
-          | (
-              | (string | number | boolean | null)
-              | {
-                  [key: string]: unknown;
-                }
-              | unknown[]
-            )
-          | null;
-        favicon: string | null;
-        feed_host: string | null;
-      }[];
-    };
-    UpdateFolderDto: {
-      name?: string;
-      feedIds?: string[];
+      url: string | null;
     };
     ArticleListDto_Output: {
-      cursor: string | null;
       articles: {
-        /** Format: uuid */
-        id: string;
-        minifluxId: number;
-        title: string;
-        url: string | null;
-        hash: string | null;
-        description: string | null;
-        rawContent: string | null;
-        readableHtml: string | null;
-        readableText: string | null;
-        fullArticleHtml: string | null;
-        fullArticleText: string | null;
-        keywords: string[];
-        /** Format: date-time */
-        published: string;
-        updated?: string | null;
-        categories: string[];
         authors: string[];
-        image: string | null;
-        imageAlt: string | null;
+        categories: string[];
+        /** @default [] */
+        contentWarning: string[] | null;
+        description: string | null;
         /** Format: uuid */
         feedId: string;
         feedTitle?: string;
-        isRead?: boolean | null;
-        isStarred?: boolean | null;
-        isBlurred?: boolean | null;
-        isHidden?: boolean | null;
-        /** @default [] */
-        contentWarning: string[] | null;
-      }[];
-    };
-    ArticleStatusDto_Output: {
-      userId: string;
-      /** Format: uuid */
-      articleId: string;
-      isRead?: boolean;
-      isStarred?: boolean;
-      isBlurred?: boolean;
-      isHidden?: boolean;
-      /** @default [] */
-      contentWarning: string[] | null;
-    };
-    ArticleSearchDto_Output: {
-      articles: {
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        hash: string | null;
         /** Format: uuid */
         id: string;
+        image: string | null;
+        imageAlt: string | null;
+        isBlurred?: boolean | null;
+        isHidden?: boolean | null;
+        isRead?: boolean | null;
+        isStarred?: boolean | null;
+        keywords: string[];
         minifluxId: number;
-        title: string;
-        url: string | null;
-        hash: string | null;
-        description: string | null;
+        /** Format: date-time */
+        published: string;
         rawContent: string | null;
         readableHtml: string | null;
         readableText: string | null;
-        fullArticleHtml: string | null;
-        fullArticleText: string | null;
-        keywords: string[];
-        /** Format: date-time */
-        published: string;
-        updated: string | null;
-        categories: string[];
+        title: string;
+        updated?: string | null;
+        url: string | null;
+      }[];
+      cursor: string | null;
+    };
+    ArticleSearchDto_Output: {
+      articles: {
         authors: string[];
-        image: string | null;
-        imageAlt: string | null;
-        metaData:
-          | (
-              | (string | number | boolean | null)
-              | {
-                  [key: string]: unknown;
-                }
-              | unknown[]
-            )
-          | null;
+        categories: string[];
+        /** @default [] */
+        contentWarning: string[] | null;
+        description: string | null;
         feedId: string | null;
         feedTitle: string | null;
-        /** @default false */
-        isRead: boolean | null;
-        /** @default false */
-        isStarred: boolean | null;
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        hash: string | null;
+        /** Format: uuid */
+        id: string;
+        image: string | null;
+        imageAlt: string | null;
         /** @default false */
         isBlurred: boolean | null;
         /** @default false */
         isHidden: boolean | null;
-        /** @default [] */
-        contentWarning: string[] | null;
-      }[];
-    };
-    HiddenArticleListDto_Output: {
-      cursor: string | null;
-      articles: {
-        /** Format: uuid */
-        id: string;
+        /** @default false */
+        isRead: boolean | null;
+        /** @default false */
+        isStarred: boolean | null;
+        keywords: string[];
+        metaData:
+          | (
+              | (string | number | boolean | null)
+              | {
+                  [key: string]: unknown;
+                }
+              | unknown[]
+            )
+          | null;
         minifluxId: number;
-        title: string;
-        url: string | null;
-        hash: string | null;
-        description: string | null;
+        /** Format: date-time */
+        published: string;
         rawContent: string | null;
         readableHtml: string | null;
         readableText: string | null;
-        fullArticleHtml: string | null;
-        fullArticleText: string | null;
-        keywords: string[];
-        /** Format: date-time */
-        published: string;
-        updated?: string | null;
-        categories: string[];
-        authors: string[];
-        image: string | null;
-        imageAlt: string | null;
-        /** Format: uuid */
-        feedId: string;
-        feedTitle?: string;
-        isRead?: boolean | null;
-        isStarred?: boolean | null;
-        isBlurred?: boolean | null;
-        isHidden?: boolean | null;
-        /** @default [] */
-        contentWarning: string[] | null;
-        /** Format: uuid */
-        ruleId: string;
+        title: string;
+        updated: string | null;
+        url: string | null;
       }[];
     };
-    ArticleDetailDto_Output: {
+    ArticleStatusDto_Output: {
       /** Format: uuid */
-      id: string;
-      minifluxId: number;
-      title: string;
-      url: string | null;
-      hash: string | null;
-      description: string | null;
-      rawContent: string | null;
-      readableHtml: string | null;
-      readableText: string | null;
-      fullArticleHtml: string | null;
-      fullArticleText: string | null;
-      keywords: string[];
-      /** Format: date-time */
-      published: string;
-      updated?: string | null;
-      categories: string[];
-      authors: string[];
-      image: string | null;
-      imageAlt: string | null;
-      /** Format: uuid */
-      feedId: string;
-      feedTitle?: string;
-      isRead?: boolean | null;
-      isStarred?: boolean | null;
-      isBlurred?: boolean | null;
-      isHidden?: boolean | null;
+      articleId: string;
       /** @default [] */
       contentWarning: string[] | null;
+      isBlurred?: boolean;
+      isHidden?: boolean;
+      isRead?: boolean;
+      isStarred?: boolean;
+      userId: string;
     };
-    CreateFilterDto: {
-      name: string;
-      description?: string;
-      conditions: {
-        keywords?: string[];
-        titleContains?: string[];
-        contentContains?: string[];
-        authors?: string[];
-        categories?: string[];
-        feeds?: string[];
-      };
-      /** @default true */
-      isActive: boolean;
-      action: {
-        /** @enum {string} */
-        type: 'blur' | 'markRead' | 'hide';
-        contentWarning: string | null;
-      };
-    };
-    FilterOutDto_Output: {
-      /** Format: uuid */
-      id: string;
-      name: string | null;
-      description?: string;
-      conditions: {
-        keywords?: string[];
-        titleContains?: string[];
-        contentContains?: string[];
-        authors?: string[];
-        categories?: string[];
-        feeds?: string[];
-      };
-      /** @default true */
-      isActive: boolean;
-      action: {
-        /** @enum {string} */
-        type: 'blur' | 'markRead' | 'hide';
-        contentWarning: string | null;
-      };
-    };
-    UpdateFilterDto: {
-      name?: string;
-      description?: string;
-      conditions: {
-        keywords?: string[];
-        titleContains?: string[];
-        contentContains?: string[];
-        authors?: string[];
-        categories?: string[];
-        feeds?: string[];
-      };
-      /** @default true */
-      isActive: boolean;
-      action: {
-        /** @enum {string} */
-        type?: 'blur' | 'markRead' | 'hide';
-        contentWarning?: string | null;
-      };
-    };
-    CreateConfigDto: {
-      apiKey: string;
-      /** Format: uri */
-      apiURL: string;
-    };
-    CreateBookmarkDto: {
-      /** Format: uri */
-      url: string;
-    };
-    FeedMini_Output: {
-      title: string;
-      site_url: string;
-      etag_header: string;
-      last_modified_header: string;
-      crawler: boolean;
-      categories: string[];
-      metaData:
-        | (
-            | (string | number | boolean | null)
-            | {
-                [key: string]: unknown;
-              }
-            | unknown[]
-          )
-        | null;
-      feed_host: string | null;
+    CategoryOutDto_Output: {
+      hide_globally: boolean;
       id: number;
+      title: string;
       user_id: number;
-      checked_at: string;
-      parsing_error_message: string;
-      parsing_error_count: number;
-      /** Format: uri */
-      feed_url: string;
-      icon: {
-        feed_id: number;
-        icon_id: number;
-      } | null;
-      scraper_rules: string;
-      rewrite_rules: string;
-      blocklist_rules: string;
-      keeplist_rules: string;
-      user_agent: string;
-      username: string;
-      password: string;
-      /** @default false */
-      disabled: boolean;
-      /** @default false */
-      ignore_http_cache: boolean;
-      /** @default false */
-      fetch_via_proxy: boolean;
-      category: {
-        /** @default 0 */
-        id: number;
-        user_id: number;
-        /** @default  */
-        title: string;
-      };
     };
     CountersDto_Output: {
       reads: {
@@ -1322,24 +1055,120 @@ export interface components {
         [key: string]: number;
       };
     };
+    CreateBookmarkDto: {
+      /** Format: uri */
+      url: string;
+    };
+    CreateCategoryDto: {
+      title: string;
+    };
+    CreateConfigDto: {
+      apiKey: string;
+      /** Format: uri */
+      apiURL: string;
+    };
     CreateFeedDto: {
+      category_id: number;
       /** Format: uri */
       feed_url: string;
-      category_id: number;
     };
-    UpdateFeedMiniDto: {
-      title?: string;
-      category_id?: number;
+    CreateFilterDto: {
+      action: {
+        contentWarning: string | null;
+        /** @enum {string} */
+        type: 'blur' | 'markRead' | 'hide';
+      };
+      conditions: {
+        authors?: string[];
+        categories?: string[];
+        contentContains?: string[];
+        feeds?: string[];
+        keywords?: string[];
+        titleContains?: string[];
+      };
+      description?: string;
+      /** @default true */
+      isActive: boolean;
+      name: string;
+    };
+    CreateFolderDto: {
+      feedIds?: string[];
+      name: string;
+    };
+    DiscoverDto: {
+      password?: string;
+      url: string;
+      user_agent?: string;
+      username?: string;
+    };
+    DiscoverOutDto_Output: {
+      format: string;
+      title: string | null;
+      /** Format: uri */
+      url: string;
     };
     EntriesListDto_Output: {
-      total: number;
       entries: {
-        id: number;
-        title: string;
-        url: string | null;
-        hash: string | null;
-        categories: string[];
+        author: string | null;
         authors: string[];
+        categories: string[];
+        comments_url: string;
+        content: string;
+        created_at: string;
+        feed: {
+          blocklist_rules: string;
+          categories: string[];
+          category: {
+            /** @default 0 */
+            id: number;
+            /** @default  */
+            title: string;
+            user_id: number;
+          };
+          checked_at: string;
+          crawler: boolean;
+          /** @default false */
+          disabled: boolean;
+          etag_header: string;
+          feed_host: string | null;
+          /** Format: uri */
+          feed_url: string;
+          /** @default false */
+          fetch_via_proxy: boolean;
+          icon: {
+            feed_id: number;
+            icon_id: number;
+          } | null;
+          id: number;
+          /** @default false */
+          ignore_http_cache: boolean;
+          keeplist_rules: string;
+          last_modified_header: string;
+          metaData:
+            | (
+                | (string | number | boolean | null)
+                | {
+                    [key: string]: unknown;
+                  }
+                | unknown[]
+              )
+            | null;
+          parsing_error_count: number;
+          parsing_error_message: string;
+          password: string;
+          rewrite_rules: string;
+          scraper_rules: string;
+          site_url: string;
+          title: string;
+          user_agent: string;
+          user_id: number;
+          username: string;
+        };
+        feed_id: number;
+        /** Format: uuid */
+        feedId: string;
+        hash: string | null;
+        id: number;
         image: string | null;
         imageAlt: string | null;
         metaData:
@@ -1351,78 +1180,79 @@ export interface components {
               | unknown[]
             )
           | null;
-        /** Format: uuid */
-        feedId: string;
-        user_id: number;
-        feed_id: number;
-        comments_url: string;
-        author: string | null;
-        content: string;
         published_at: string;
-        created_at: string;
-        status: string;
+        reading_time: number;
         share_code: string;
         /** @default false */
         starred: boolean;
-        reading_time: number;
-        feed: {
-          title: string;
-          site_url: string;
-          etag_header: string;
-          last_modified_header: string;
-          crawler: boolean;
-          categories: string[];
-          metaData:
-            | (
-                | (string | number | boolean | null)
-                | {
-                    [key: string]: unknown;
-                  }
-                | unknown[]
-              )
-            | null;
-          feed_host: string | null;
-          id: number;
-          user_id: number;
-          checked_at: string;
-          parsing_error_message: string;
-          parsing_error_count: number;
-          /** Format: uri */
-          feed_url: string;
-          icon: {
-            feed_id: number;
-            icon_id: number;
-          } | null;
-          scraper_rules: string;
-          rewrite_rules: string;
-          blocklist_rules: string;
-          keeplist_rules: string;
-          user_agent: string;
-          username: string;
-          password: string;
-          /** @default false */
-          disabled: boolean;
-          /** @default false */
-          ignore_http_cache: boolean;
-          /** @default false */
-          fetch_via_proxy: boolean;
-          category: {
-            /** @default 0 */
-            id: number;
-            user_id: number;
-            /** @default  */
-            title: string;
-          };
-        };
+        status: string;
+        title: string;
+        url: string | null;
+        user_id: number;
       }[];
+      total: number;
     };
     EntryDto_Output: {
-      id: number;
-      title: string;
-      url: string | null;
-      hash: string | null;
-      categories: string[];
+      author: string | null;
       authors: string[];
+      categories: string[];
+      comments_url: string;
+      content: string;
+      created_at: string;
+      feed: {
+        blocklist_rules: string;
+        categories: string[];
+        category: {
+          /** @default 0 */
+          id: number;
+          /** @default  */
+          title: string;
+          user_id: number;
+        };
+        checked_at: string;
+        crawler: boolean;
+        /** @default false */
+        disabled: boolean;
+        etag_header: string;
+        feed_host: string | null;
+        /** Format: uri */
+        feed_url: string;
+        /** @default false */
+        fetch_via_proxy: boolean;
+        icon: {
+          feed_id: number;
+          icon_id: number;
+        } | null;
+        id: number;
+        /** @default false */
+        ignore_http_cache: boolean;
+        keeplist_rules: string;
+        last_modified_header: string;
+        metaData:
+          | (
+              | (string | number | boolean | null)
+              | {
+                  [key: string]: unknown;
+                }
+              | unknown[]
+            )
+          | null;
+        parsing_error_count: number;
+        parsing_error_message: string;
+        password: string;
+        rewrite_rules: string;
+        scraper_rules: string;
+        site_url: string;
+        title: string;
+        user_agent: string;
+        user_id: number;
+        username: string;
+      };
+      feed_id: number;
+      /** Format: uuid */
+      feedId: string;
+      hash: string | null;
+      id: number;
       image: string | null;
       imageAlt: string | null;
       metaData:
@@ -1434,27 +1264,144 @@ export interface components {
             | unknown[]
           )
         | null;
-      /** Format: uuid */
-      feedId: string;
-      user_id: number;
-      feed_id: number;
-      comments_url: string;
-      author: string | null;
-      content: string;
       published_at: string;
-      created_at: string;
-      status: string;
+      reading_time: number;
       share_code: string;
       /** @default false */
       starred: boolean;
-      reading_time: number;
-      feed: {
+      status: string;
+      title: string;
+      url: string | null;
+      user_id: number;
+    };
+    FeedMini_Output: {
+      blocklist_rules: string;
+      categories: string[];
+      category: {
+        /** @default 0 */
+        id: number;
+        /** @default  */
         title: string;
-        site_url: string;
-        etag_header: string;
-        last_modified_header: string;
-        crawler: boolean;
+        user_id: number;
+      };
+      checked_at: string;
+      crawler: boolean;
+      /** @default false */
+      disabled: boolean;
+      etag_header: string;
+      feed_host: string | null;
+      /** Format: uri */
+      feed_url: string;
+      /** @default false */
+      fetch_via_proxy: boolean;
+      icon: {
+        feed_id: number;
+        icon_id: number;
+      } | null;
+      id: number;
+      /** @default false */
+      ignore_http_cache: boolean;
+      keeplist_rules: string;
+      last_modified_header: string;
+      metaData:
+        | (
+            | (string | number | boolean | null)
+            | {
+                [key: string]: unknown;
+              }
+            | unknown[]
+          )
+        | null;
+      parsing_error_count: number;
+      parsing_error_message: string;
+      password: string;
+      rewrite_rules: string;
+      scraper_rules: string;
+      site_url: string;
+      title: string;
+      user_agent: string;
+      user_id: number;
+      username: string;
+    };
+    FeedOutWithCountsDto_Output: {
+      categories: string[];
+      crawler: boolean;
+      etag_header: string;
+      favicon: string | null;
+      feed_host: string | null;
+      folderId: string | null;
+      /** Format: uuid */
+      id: string;
+      last_modified_header: string;
+      /** Format: date-time */
+      lastChecked: string;
+      metaData:
+        | (
+            | (string | number | boolean | null)
+            | {
+                [key: string]: unknown;
+              }
+            | unknown[]
+          )
+        | null;
+      minifluxId: number;
+      parsingErrorCount: number;
+      parsingErrorMessage: string | null;
+      site_url: string;
+      subtitle: string | null;
+      title: string;
+      unreadCount: number | null;
+      updated?: string | null;
+      url: string;
+      userAgent: string | null;
+    };
+    FileDto: {
+      /**
+       * Format: binary
+       * @description OPML file to import
+       */
+      file: Record<string, never>;
+    };
+    FilterOutDto_Output: {
+      action: {
+        contentWarning: string | null;
+        /** @enum {string} */
+        type: 'blur' | 'markRead' | 'hide';
+      };
+      conditions: {
+        authors?: string[];
+        categories?: string[];
+        contentContains?: string[];
+        feeds?: string[];
+        keywords?: string[];
+        titleContains?: string[];
+      };
+      description?: string;
+      /** Format: uuid */
+      id: string;
+      /** @default true */
+      isActive: boolean;
+      name: string | null;
+    };
+    FolderOutDto_Output: {
+      feedIds: string[];
+      /** Format: uuid */
+      id: string;
+      name: string;
+      userId: string;
+    };
+    FolderWithFeedsOutDto_Output: {
+      feeds: {
         categories: string[];
+        crawler: boolean;
+        etag_header: string;
+        favicon: string | null;
+        feed_host: string | null;
+        /** Format: uuid */
+        id: string;
+        last_modified_header: string;
+        /** Format: date-time */
+        lastChecked: string;
         metaData:
           | (
               | (string | number | boolean | null)
@@ -1464,73 +1411,126 @@ export interface components {
               | unknown[]
             )
           | null;
-        feed_host: string | null;
-        id: number;
-        user_id: number;
-        checked_at: string;
-        parsing_error_message: string;
-        parsing_error_count: number;
-        /** Format: uri */
-        feed_url: string;
-        icon: {
-          feed_id: number;
-          icon_id: number;
-        } | null;
-        scraper_rules: string;
-        rewrite_rules: string;
-        blocklist_rules: string;
-        keeplist_rules: string;
-        user_agent: string;
-        username: string;
-        password: string;
-        /** @default false */
-        disabled: boolean;
-        /** @default false */
-        ignore_http_cache: boolean;
-        /** @default false */
-        fetch_via_proxy: boolean;
-        category: {
-          /** @default 0 */
-          id: number;
-          user_id: number;
-          /** @default  */
-          title: string;
-        };
-      };
+        parsingErrorCount: number;
+        parsingErrorMessage: string | null;
+        site_url: string;
+        subtitle: string | null;
+        title: string;
+        updated?: string | null;
+        url: string;
+        userAgent: string | null;
+      }[];
+      /** Format: uuid */
+      id: string;
+      name: string;
+      userId: string;
+    };
+    FullEntryContent_Output: {
+      content: string;
+    };
+    HiddenArticleListDto_Output: {
+      articles: {
+        authors: string[];
+        categories: string[];
+        /** @default [] */
+        contentWarning: string[] | null;
+        description: string | null;
+        /** Format: uuid */
+        feedId: string;
+        feedTitle?: string;
+        fullArticleHtml: string | null;
+        fullArticleText: string | null;
+        hash: string | null;
+        /** Format: uuid */
+        id: string;
+        image: string | null;
+        imageAlt: string | null;
+        isBlurred?: boolean | null;
+        isHidden?: boolean | null;
+        isRead?: boolean | null;
+        isStarred?: boolean | null;
+        keywords: string[];
+        minifluxId: number;
+        /** Format: date-time */
+        published: string;
+        rawContent: string | null;
+        readableHtml: string | null;
+        readableText: string | null;
+        /** Format: uuid */
+        ruleId: string;
+        title: string;
+        updated?: string | null;
+        url: string | null;
+      }[];
+      cursor: string | null;
+    };
+    SubscribeFeedDto: {
+      description?: string;
+      folderName: string | null;
+      /** Format: uri */
+      url: string;
+    };
+    SubscriptionOutDto_Output: {
+      description: string | null;
+      /** Format: uuid */
+      feedId: string;
+      folderId: string | null;
+      /** Format: uuid */
+      id: string;
+      userId: string;
     };
     UpdateEntriesDto: {
       entry_ids: number[];
       /** @enum {string} */
       status: 'read' | 'unread';
     };
-    FullEntryContent_Output: {
-      content: string;
+    UpdateFeedDto: {
+      description?: string;
+      folderId: string | null;
     };
-    CategoryOutDto_Output: {
-      id: number;
-      title: string;
-      user_id: number;
-      hide_globally: boolean;
+    UpdateFeedMiniDto: {
+      category_id?: number;
+      title?: string;
     };
-    CreateCategoryDto: {
-      title: string;
+    UpdateFilterDto: {
+      action: {
+        contentWarning?: string | null;
+        /** @enum {string} */
+        type?: 'blur' | 'markRead' | 'hide';
+      };
+      conditions: {
+        authors?: string[];
+        categories?: string[];
+        contentContains?: string[];
+        feeds?: string[];
+        keywords?: string[];
+        titleContains?: string[];
+      };
+      description?: string;
+      /** @default true */
+      isActive: boolean;
+      name?: string;
+    };
+    UpdateFolderDto: {
+      feedIds?: string[];
+      name?: string;
     };
     UserSchemaDto_Output: {
-      id: number;
-      username: string;
-      is_admin: boolean;
-      theme: string;
-      language: string;
-      timezone: string;
-      entry_sorting_direction: string;
-      stylesheet: string;
-      google_id: string;
-      openid_connect_id: string;
       entries_per_page: number;
-      keyboard_shortcuts: boolean;
-      show_reading_time: boolean;
+      entry_sorting_direction: string;
       entry_swipe: boolean;
+      google_id: string;
+      id: number;
+      is_admin: boolean;
+      keyboard_shortcuts: boolean;
+      language: string;
       last_login_at: string;
+      openid_connect_id: string;
+      show_reading_time: boolean;
+      stylesheet: string;
+      theme: string;
+      timezone: string;
+      username: string;
     };
   };
   responses: never;
@@ -1541,9 +1541,14 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  AppController_getProfile: {
+  ArticleController_getPagedArticles: {
     parameters: {
-      query?: never;
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -1554,7 +1559,630 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
         content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getArticle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleDetailDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getPagedArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getAllArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getHiddenArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+        /** @description The id of the rule to filter by. Default is all. */
+        ruleId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HiddenArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getReadArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_requestFullArticleText: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Request accepted */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_searchArticles: {
+    parameters: {
+      query: {
+        /** @description The search query string. */
+        query: string;
+        /** @description The page offset. Default is 0. */
+        offset?: number;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleSearchDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getStarredArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_updateArticleStatus: {
+    parameters: {
+      query: {
+        /** @description The status to update. Must be one of 'read', 'unread', 'starred', or 'unstarred'. */
+        status: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleStatusDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticles: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticlesForFeed: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ArticleController_getUnReadArticlesForFolder: {
+    parameters: {
+      query?: {
+        /** @description The cursor for pagination. If not provided, starts from the beginning. */
+        cursor?: string;
+        /** @description The number of articles to return. Default is 10. */
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleListDto_Output'];
+        };
       };
       /** @description Unauthorized */
       401: {
@@ -1656,152 +2284,6 @@ export interface operations {
         content: {
           'application/json': components['schemas']['SubscriptionOutDto_Output'];
         };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FeedController_discover: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['DiscoverDto'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['DiscoverOutDto_Output'][];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FeedController_import: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description OPML file to import */
-    requestBody: {
-      content: {
-        'multipart/form-data': components['schemas']['FileDto'];
-      };
-    };
-    responses: {
-      /** @description Feed imported */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid OPML file */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FeedController_export: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OPML file exported */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FeedController_markAllRead: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
       };
       /** @description Unauthorized */
       401: {
@@ -1927,21 +2409,25 @@ export interface operations {
       };
     };
   };
-  FolderController_findAll: {
+  FeedController_discover: {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DiscoverDto'];
+      };
+    };
     responses: {
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['FolderOutDto_Output'][];
+          'application/json': components['schemas']['DiscoverOutDto_Output'][];
         };
       };
       /** @description Unauthorized */
@@ -1960,826 +2446,98 @@ export interface operations {
       };
     };
   };
-  FolderController_create: {
+  FeedController_export: {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateFolderDto'];
+    requestBody?: never;
+    responses: {
+      /** @description OPML file exported */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
     };
+  };
+  FeedController_import: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description OPML file to import */
+    requestBody: {
+      content: {
+        'multipart/form-data': components['schemas']['FileDto'];
+      };
+    };
+    responses: {
+      /** @description Feed imported */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid OPML file */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FeedController_markAllRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       201: {
         headers: {
           [name: string]: unknown;
         };
-        content: {
-          'application/json': components['schemas']['FolderOutDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
         content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FolderController_findAllWithFeeds: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FolderWithFeedsOutDto_Output'][];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FolderController_findOne: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FolderOutDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FolderController_remove: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Folder deleted successfully. */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  FolderController_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateFolderDto'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FolderOutDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getPagedArticles: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_updateArticleStatus: {
-    parameters: {
-      query: {
-        /** @description The status to update. Must be one of 'read', 'unread', 'starred', or 'unstarred'. */
-        status: string;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleStatusDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_searchArticles: {
-    parameters: {
-      query: {
-        /** @description The search query string. */
-        query: string;
-        /** @description The page offset. Default is 0. */
-        offset?: number;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleSearchDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getPagedArticlesForFeed: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getReadArticles: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getUnReadArticles: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getStarredArticles: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getHiddenArticles: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-        /** @description The id of the rule to filter by. Default is all. */
-        ruleId?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['HiddenArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getUnReadArticlesForFeed: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getStarredArticlesForFeed: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getReadArticlesForFeed: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getUnReadArticlesForFolder: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getStarredArticlesForFolder: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getReadArticlesForFolder: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getAllArticlesForFolder: {
-    parameters: {
-      query?: {
-        /** @description The cursor for pagination. If not provided, starts from the beginning. */
-        cursor?: string;
-        /** @description The number of articles to return. Default is 10. */
-        pageSize?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_requestFullArticleText: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Request accepted */
-      202: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ArticleController_getArticle: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ArticleDetailDto_Output'];
-        };
       };
       /** @description Unauthorized */
       401: {
@@ -2975,6 +2733,217 @@ export interface operations {
       };
     };
   };
+  FolderController_findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFolderDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_findOne: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Folder deleted successfully. */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFolderDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderOutDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  FolderController_findAllWithFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FolderWithFeedsOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   HealthController_check: {
     parameters: {
       query?: never;
@@ -2991,8 +2960,6 @@ export interface operations {
         };
         content: {
           'application/json': {
-            /** @example ok */
-            status?: string;
             /**
              * @example {
              *       "database": {
@@ -3000,13 +2967,13 @@ export interface operations {
              *       }
              *     }
              */
-            info?: {
+            details?: {
               [key: string]: {
                 status: string;
               } & {
                 [key: string]: unknown;
               };
-            } | null;
+            };
             /** @example {} */
             error?: {
               [key: string]: {
@@ -3022,13 +2989,15 @@ export interface operations {
              *       }
              *     }
              */
-            details?: {
+            info?: {
               [key: string]: {
                 status: string;
               } & {
                 [key: string]: unknown;
               };
-            };
+            } | null;
+            /** @example ok */
+            status?: string;
           };
         };
       };
@@ -3053,27 +3022,29 @@ export interface operations {
         };
         content: {
           'application/json': {
-            /** @example error */
-            status?: string;
             /**
              * @example {
              *       "database": {
              *         "status": "up"
+             *       },
+             *       "redis": {
+             *         "message": "Could not connect",
+             *         "status": "down"
              *       }
              *     }
              */
-            info?: {
+            details?: {
               [key: string]: {
                 status: string;
               } & {
                 [key: string]: unknown;
               };
-            } | null;
+            };
             /**
              * @example {
              *       "redis": {
-             *         "status": "down",
-             *         "message": "Could not connect"
+             *         "message": "Could not connect",
+             *         "status": "down"
              *       }
              *     }
              */
@@ -3088,218 +3059,24 @@ export interface operations {
              * @example {
              *       "database": {
              *         "status": "up"
-             *       },
-             *       "redis": {
-             *         "status": "down",
-             *         "message": "Could not connect"
              *       }
              *     }
              */
-            details?: {
+            info?: {
               [key: string]: {
                 status: string;
               } & {
                 [key: string]: unknown;
               };
-            };
+            } | null;
+            /** @example error */
+            status?: string;
           };
         };
       };
     };
   };
-  ReadlaterController_createConfig: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateConfigDto'];
-      };
-    };
-    responses: {
-      /** @description Created readlater configuration */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ReadlaterController_addBookmark: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateBookmarkDto'];
-      };
-    };
-    responses: {
-      /** @description Readlater item created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Readlater service not configured */
-      412: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_discoverSubscriptions: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['DiscoverDto'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['DiscoverOutDto_Output'][];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_export: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description OPML file exported */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_import: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description OPML file to import */
-    requestBody: {
-      content: {
-        'multipart/form-data': components['schemas']['FileDto'];
-      };
-    };
-    responses: {
-      /** @description Feed imported */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid OPML file */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getVersion: {
+  AppController_getProfile: {
     parameters: {
       query?: never;
       header?: never;
@@ -3313,562 +3090,6 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getFeeds: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FeedMini_Output'][];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_createFeed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateFeedDto'];
-      };
-    };
-    responses: {
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getFeedCounters: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CountersDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getFeed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FeedMini_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_updateFeed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateFeedMiniDto'];
-      };
-    };
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_removeFeed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_refreshFeed: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_refreshAllFeeds: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getFeedIcon: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_markFeedAsRead: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        feedId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getEntries: {
-    parameters: {
-      query: {
-        status: 'unread' | 'read';
-        limit: number;
-        offset?: number;
-        order?:
-          | 'id'
-          | 'status'
-          | 'published_at'
-          | 'category_title'
-          | 'category_id';
-        direction?: 'asc' | 'desc';
-        before?: number;
-        after?: number;
-        starred?: boolean;
-        search?: string;
-        category_id?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['EntriesListDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_updateEntries: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateEntriesDto'];
-      };
-    };
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_getEntry: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        entryId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['EntryDto_Output'];
-        };
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_saveEntry: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        entryId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      202: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_toggleBookmark: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        entryId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Unauthorized */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  MinifluxV1Controller_fetchOriginalArticle: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        entryId: number;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['FullEntryContent_Output'];
-        };
       };
       /** @description Unauthorized */
       401: {
@@ -4131,6 +3352,708 @@ export interface operations {
       };
     };
   };
+  MinifluxV1Controller_discoverSubscriptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DiscoverDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DiscoverOutDto_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getEntries: {
+    parameters: {
+      query: {
+        status: 'unread' | 'read';
+        limit: number;
+        offset?: number;
+        order?:
+          | 'id'
+          | 'status'
+          | 'published_at'
+          | 'category_title'
+          | 'category_id';
+        direction?: 'asc' | 'desc';
+        before?: number;
+        after?: number;
+        starred?: boolean;
+        search?: string;
+        category_id?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EntriesListDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_updateEntries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateEntriesDto'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EntryDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_toggleBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_fetchOriginalArticle: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FullEntryContent_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_saveEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_export: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OPML file exported */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeedMini_Output'][];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_createFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateFeedDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeedMini_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_updateFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateFeedMiniDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_removeFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getFeedIcon: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_markFeedAsRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_refreshFeed: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        feedId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getFeedCounters: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CountersDto_Output'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_refreshAllFeeds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_getIcon: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        iconId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  MinifluxV1Controller_import: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description OPML file to import */
+    requestBody: {
+      content: {
+        'multipart/form-data': components['schemas']['FileDto'];
+      };
+    };
+    responses: {
+      /** @description Feed imported */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid OPML file */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   MinifluxV1Controller_getCurrentUser: {
     parameters: {
       query?: never;
@@ -4197,18 +4120,95 @@ export interface operations {
       };
     };
   };
-  MinifluxV1Controller_getIcon: {
+  MinifluxV1Controller_getVersion: {
     parameters: {
       query?: never;
       header?: never;
-      path: {
-        iconId: number;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;
     responses: {
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ReadlaterController_addBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateBookmarkDto'];
+      };
+    };
+    responses: {
+      /** @description Readlater item created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Readlater service not configured */
+      412: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ReadlaterController_createConfig: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateConfigDto'];
+      };
+    };
+    responses: {
+      /** @description Created readlater configuration */
+      201: {
         headers: {
           [name: string]: unknown;
         };

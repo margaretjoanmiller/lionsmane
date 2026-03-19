@@ -1,5 +1,5 @@
 export default {
-  input: 'hey-api/backend', // sign up at app.heyapi.dev
+  input: './v1.json',
   output: 'src/client',
   plugins: [
     // ...other plugins

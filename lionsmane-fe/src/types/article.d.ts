@@ -1,4 +1,6 @@
 import { z } from 'zod';
-import type { articleDetailWithStatus } from '@/zod/article.zod';
+import type { zArticleControllerGetArticleResponse } from '@/client/zod.gen';
 
-export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;
+export type ArticleDetail = z.infer<
+  typeof zArticleControllerGetArticleResponse
+>;

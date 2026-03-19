@@ -30,6 +30,7 @@ import {
   MediaPlayerVideo,
   MediaPlayerVolume,
 } from '@/components/ui/media-player';
+import { ScrollProgress } from '@/components/ui/scroll-progress';
 import {
   Tooltip,
   TooltipContent,
@@ -242,18 +243,31 @@ function ArticlePage() {
             )}
           </h4>
         </header>
-        <div className="prose prose-lg prose-pink prose-headings:underline">
-          {
-            <div
-              dangerouslySetInnerHTML={{
-                __html:
-                  data.fullArticleHtml ||
-                  data.readableHtml ||
-                  data.description ||
-                  '<p>error loading</p>',
-              }} // we clean this on the backend
+        <div
+          className="h-[350px] overflow-auto px-8 pb-16 pt-16"
+          ref={containerRef}
+        >
+          <div className="pointer-events-none absolute bottom-0 left-0 h-12 w-full bg-white to-transparent backdrop-blur-xl [-webkit-mask-image:linear-gradient(to_top,white,transparent)] dark:bg-neutral-900" />
+          <div className="pointer-events-none absolute left-0 top-0 w-full">
+            <div className="absolute left-0 top-0 h-1 w-full bg-[#E6F4FE] dark:bg-[#111927]" />
+            <ScrollProgress
+              className="absolute top-0 bg-pink-400"
+              containerRef={containerRef}
             />
-          }
+          </div>
+          <div className="prose prose-lg prose-pink prose-headings:underline">
+            {
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    data.fullArticleHtml ||
+                    data.readableHtml ||
+                    data.description ||
+                    '<p>error loading</p>',
+                }} // we clean this on the backend
+              />
+            }
+          </div>
         </div>
         <div className="flex flex-col items-center">
           {data.youtube ? (
@@ -265,82 +279,8 @@ function ArticlePage() {
           ) : (
             []
           )}
-          {data.podcast && (
-            <Item variant="outline">
-              <ItemHeader>Podcast episode info</ItemHeader>
-              {data.podcast.images && data.podcast.images.srcset && (
-                <ItemMedia>
-                  <img
-                    aria-label="Podcast episode image did not provide alt text"
-                    className="rounded-md"
-                    src={data.podcast.images.srcset}
-                  ></img>
-                </ItemMedia>
-              )}
-              <ItemContent>
-                {data.podcast.episode && (
-                  <ItemTitle>
-                    {data.podcast.episode?.number} -
-                    {data.podcast.episode?.display}
-                  </ItemTitle>
-                )}
-                <ItemDescription>
-                  <ul>
-                    {data.podcast.persons?.map((p) => (
-                      <li>
-                        <a href={p.href}>{p.display}</a>
-                      </li>
-                    ))}
-                  </ul>
-                </ItemDescription>
-              </ItemContent>
-              {data.podcast.license && (
-                <ItemFooter>
-                  {data.podcast.license.url ? (
-                    <a href={data.podcast.license.url}>
-                      {data.podcast.license.display}
-                    </a>
-                  ) : (
-                    <small>{data.podcast.license.display}</small>
-                  )}
-                </ItemFooter>
-              )}
-            </Item>
-          )}
-          {data.itunes && (
-            <Item variant="outline">
-              <ItemHeader>Podcast episode info</ItemHeader>
-              {data.itunes.image && (
-                <ItemMedia>
-                  <img
-                    aria-label="Podcast episode image did not provide alt text"
-                    className="object-cover rounded-md"
-                    height={80}
-                    src={data.itunes.image}
-                    width={80}
-                  ></img>
-                </ItemMedia>
-              )}
-              <ItemContent>
-                <ItemTitle>
-                  {data.itunes.episode} - {data.itunes.title}{' '}
-                  {data.itunes.explicit && (
-                    <Badge variant="outline">Explicit</Badge>
-                  )}
-                </ItemTitle>
-                <ItemDescription>
-                  {data.itunes.duration && (
-                    <p>
-                      Duration: about {Math.round(data.itunes.duration / 60)}{' '}
-                      minutes
-                    </p>
-                  )}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          )}
 
-          {data.enclosures?.map((e) => {
+          {/*{data.enclosures?.map((e) => {
             if (e.mime_type && e.mime_type !== 'application/octet-stream')
               return (
                 <MediaPlayer>
@@ -373,42 +313,7 @@ function ArticlePage() {
                 src={e.url}
               />
             );
-          })}
-
-          {data.media?.contents?.map((m) => {
-            if (m.type && m.type !== 'application/octet-stream')
-              return (
-                <MediaPlayer>
-                  <MediaPlayerVideo>
-                    <source src={m.url} type={m.type} />
-                  </MediaPlayerVideo>
-                  <MediaPlayerControls className="flex-col items-start gap-2.5">
-                    <MediaPlayerControlsOverlay />
-                    <MediaPlayerSeek />
-                    <div className="flex w-full items-center gap-2">
-                      <div className="flex flex-1 items-center gap-2">
-                        <MediaPlayerPlay />
-                        <MediaPlayerSeekBackward />
-                        <MediaPlayerSeekForward />
-                        <MediaPlayerVolume expandable />
-                        <MediaPlayerTime />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MediaPlayerPlaybackSpeed />
-                        <MediaPlayerPiP />
-                        <MediaPlayerFullscreen />
-                      </div>
-                    </div>
-                  </MediaPlayerControls>
-                </MediaPlayer>
-              );
-            return (
-              <img
-                aria-label="enclosure image did not include alt text"
-                src={m.url}
-              />
-            );
-          })}
+          })}*/}
         </div>
         <footer className="flex flex-col items-center pt-8">
           <a
@@ -419,11 +324,9 @@ function ArticlePage() {
           </a>
           <div className="grid-flow-row pt-2">
             <BadgeOverflow
-              getBadgeLabel={(item) => item.label || ''}
               items={data.categories}
-              renderBadge={(_, label) => (
-                <Badge variant="secondary">{label}</Badge>
-              )}
+              lineCount={2}
+              renderBadge={(_, label) => <Badge>{label}</Badge>}
             />
           </div>
         </footer>
