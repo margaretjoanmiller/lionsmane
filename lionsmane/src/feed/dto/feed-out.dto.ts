@@ -16,6 +16,7 @@ export const feedSchemaWithCounts = feedSchema
   })
   .omit({
     icon: true,
+    metaData: true,
   });
 
 const feedListOutDto = z.object({ feeds: z.array(feedSchemaWithCounts) });

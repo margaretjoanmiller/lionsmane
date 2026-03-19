@@ -851,7 +851,11 @@ export class ArticleService {
       }
 
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          published: i.published.toISOString(),
+          updated: i.updated?.toISOString(),
+        })),
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -896,7 +900,11 @@ export class ArticleService {
       }
 
       return {
-        articles: items,
+        articles: items.map((i) => ({
+          ...i,
+          published: i.published.toISOString(),
+          updated: i.updated?.toISOString(),
+        })),
         cursor: hasNextPage
           ? createCursor(
               items.at(-1)!.published || new Date(),
@@ -939,7 +947,11 @@ export class ArticleService {
     }
 
     return {
-      articles: items,
+      articles: items.map((i) => ({
+        ...i,
+        published: i.published.toISOString(),
+        updated: i.updated?.toISOString(),
+      })),
       cursor: hasNextPage
         ? createCursor(items.at(-1)!.published || new Date(), items.at(-1)!.id!)
         : null,
