@@ -44,7 +44,6 @@ function DashLayout() {
               className="mr-2 data-[orientation=vertical]:h-4"
               orientation="vertical"
             />
-            {!isMobile && <AddFeed />}
             <div className="right-5 absolute flex items-center gap-2">
               {!isMobile && <SearchBar />}
               <ArticleFilterSelect />
