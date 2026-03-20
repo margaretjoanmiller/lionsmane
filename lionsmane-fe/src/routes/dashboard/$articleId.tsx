@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { format } from 'date-fns';
+import { useRef } from 'react';
 import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -114,6 +115,8 @@ function ArticlePage() {
       params: { path: { id: data.id }, query: { status: 'read' } },
     });
   }
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const articleFeed =
     data.feedTitle && data.feedTitle.length > 20
