@@ -15,6 +15,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ArticleMetaData } from '@/article/article';
 import { FeedMetaData } from '@/feed/feed';
+import { Conditions } from '@/filter/filter';
 
 // auth tables
 export const user = pgTable('user', {
@@ -482,8 +483,13 @@ export const userFilters = pgTable(
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    conditions: jsonb().notNull(),
-    action: jsonb().notNull(),
+    conditions: jsonb().$type<Conditions>().notNull(),
+    action: jsonb()
+      .$type<{
+        type: 'blur' | 'hide' | 'markRead';
+        contentWarning: string | null;
+      }>()
+      .notNull(),
     enabled: boolean().default(true).notNull(),
   },
   (table) => [
