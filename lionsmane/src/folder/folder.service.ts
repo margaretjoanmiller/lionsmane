@@ -96,10 +96,19 @@ export class FolderService {
         id: f.id,
         name: f.name,
         userId: f.userId,
-        feeds:
-          f.subscriptions.map((sub) => ({
+        feeds: f.subscriptions
+          .filter(
+            (
+              sub,
+            ): sub is typeof sub & {
+              feed: NonNullable<(typeof sub)['feed']>;
+            } => sub.feed != null,
+          )
+          .map((sub) => ({
             ...sub.feed,
-            feed_url: sub.feed?.url,
+            lastChecked: sub.feed.lastChecked.toISOString(),
+            updated: sub.feed.updated?.toISOString(),
+            feed_url: sub.feed.url,
             user_agent: '',
             user_id: f.subscriptions?.find((s) => s.feedId === sub.feedId)
               ?.userMinifluxId,
@@ -115,7 +124,7 @@ export class FolderService {
             parsing_error_count: sub.feed?.parsingErrorCount,
             parsing_error_message: sub.feed?.parsingErrorMessage,
             favicon: sub.feed?.icons?.url,
-          })) || [],
+          })),
       };
     });
   }

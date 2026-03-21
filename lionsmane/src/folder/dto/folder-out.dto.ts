@@ -14,8 +14,8 @@ const folderWithFeedsOutSchema = z.object({
   name: z.string().min(1).max(255),
   userId: z.string(),
   feeds: z.array(
-    feedSchema.omit({ minifluxId: true, icon: true }).extend({
-      favicon: z.url().nullable(),
+    feedSchema.omit({ minifluxId: true, icon: true, metaData: true }).extend({
+      favicon: z.url().nullish(),
     }),
   ),
 });
