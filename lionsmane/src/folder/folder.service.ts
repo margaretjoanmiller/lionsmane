@@ -4,6 +4,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
 import { relations } from 'src/drizzle/relations';
 import * as schema from 'src/drizzle/schema';
+import { hasDefinedProp } from '@/utils/type-utils';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 
@@ -96,35 +97,27 @@ export class FolderService {
         id: f.id,
         name: f.name,
         userId: f.userId,
-        feeds: f.subscriptions
-          .filter(
-            (
-              sub,
-            ): sub is typeof sub & {
-              feed: NonNullable<(typeof sub)['feed']>;
-            } => sub.feed != null,
-          )
-          .map((sub) => ({
-            ...sub.feed,
-            lastChecked: sub.feed.lastChecked.toISOString(),
-            updated: sub.feed.updated?.toISOString(),
-            feed_url: sub.feed.url,
-            user_agent: '',
-            user_id: f.subscriptions?.find((s) => s.feedId === sub.feedId)
-              ?.userMinifluxId,
-            scraper_rules: null,
-            rewrite_rules: null,
-            blocklist_rules: null,
-            keeplist_rules: null,
-            username: null,
-            password: null,
-            disabled: false,
-            ignore_http_cache: false,
-            fetch_via_proxy: false,
-            parsing_error_count: sub.feed?.parsingErrorCount,
-            parsing_error_message: sub.feed?.parsingErrorMessage,
-            favicon: sub.feed?.icons?.url,
-          })),
+        feeds: f.subscriptions.filter(hasDefinedProp('feed')).map((sub) => ({
+          ...sub.feed,
+          lastChecked: sub.feed.lastChecked.toISOString(),
+          updated: sub.feed.updated?.toISOString(),
+          feed_url: sub.feed.url,
+          user_agent: '',
+          user_id: f.subscriptions?.find((s) => s.feedId === sub.feedId)
+            ?.userMinifluxId,
+          scraper_rules: null,
+          rewrite_rules: null,
+          blocklist_rules: null,
+          keeplist_rules: null,
+          username: null,
+          password: null,
+          disabled: false,
+          ignore_http_cache: false,
+          fetch_via_proxy: false,
+          parsing_error_count: sub.feed?.parsingErrorCount,
+          parsing_error_message: sub.feed?.parsingErrorMessage,
+          favicon: sub.feed?.icons?.url,
+        })),
       };
     });
   }
