@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { isPropertyPresent } from 'ts-extras';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
 import * as schema from '@/drizzle/schema';
-import { hasDefinedProp } from '@/utils/type-utils';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 
@@ -97,7 +97,7 @@ export class FolderService {
         id: f.id,
         name: f.name,
         userId: f.userId,
-        feeds: f.subscriptions.filter(hasDefinedProp('feed')).map((sub) => ({
+        feeds: f.subscriptions.filter(isPropertyPresent('feed')).map((sub) => ({
           ...sub.feed,
           lastChecked: sub.feed.lastChecked.toISOString(),
           updated: sub.feed.updated?.toISOString(),
