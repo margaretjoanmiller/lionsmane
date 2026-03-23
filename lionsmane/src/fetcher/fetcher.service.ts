@@ -15,13 +15,12 @@ import { retext } from 'retext';
 import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { relations } from 'src/drizzle/relations';
-import * as schema from 'src/drizzle/schema';
-import { RedisService } from 'src/redis/redis.service';
 import { parse as parseURL } from 'tldts';
 import { match, P } from 'ts-pattern';
-import { NewArticle } from '@/article/dto/new-article.dto';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { RedisService } from '@/redis/redis.service';
 
 @Injectable()
 export class FetcherService {
@@ -155,7 +154,7 @@ export class FetcherService {
     );
   }
 
-  async readablity(url: string): Promise<{
+  async readability(url: string): Promise<{
     textContent: string;
     htmlContent: string;
   }> {

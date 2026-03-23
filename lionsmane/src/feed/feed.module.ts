@@ -1,10 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { DrizzleModule } from 'src/drizzle/drizzle.module';
-import { FetcherModule } from 'src/fetcher/fetcher.module';
-import { FolderModule } from 'src/folder/folder.module';
-import { OpmlModule } from 'src/opml/opml.module';
+import { DrizzleModule } from '@/drizzle/drizzle.module';
+import { FetcherModule } from '@/fetcher/fetcher.module';
+import { FolderModule } from '@/folder/folder.module';
+import { OpmlModule } from '@/opml/opml.module';
 import { FeedConsumer } from './feed.consumer';
 import { FeedController } from './feed.controller';
 import { FeedService } from './feed.service';

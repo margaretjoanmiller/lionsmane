@@ -1,8 +1,7 @@
 import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { Test, TestingModule } from '@nestjs/testing';
-import { enclosures } from 'src/db/schema/core';
-import { FetcherService } from 'src/fetcher/fetcher.service';
 import { vi } from 'vitest';
+import { FetcherService } from '@/fetcher/fetcher.service';
 import { ArticleService } from './article.service';
 
 describe('ArticleService', () => {

@@ -108,7 +108,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     FeedModule,
     ArticleModule,
     FolderModule,
-    RedisModule,
     CronModule,
     FilterModule,
     OpmlModule,

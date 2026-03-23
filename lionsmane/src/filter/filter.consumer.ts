@@ -1,12 +1,12 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
-import { eq, getTableColumns, sql } from 'drizzle-orm';
+import { eq, getColumns, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { relations } from 'src/drizzle/relations';
-import * as schema from 'src/drizzle/schema';
-import { Enclosure } from 'src/types/rss';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { Enclosure } from '@/types/rss';
 import { FilterService } from './filter.service';
 
 @Processor('filter')
@@ -23,7 +23,7 @@ export class FilterConsumer extends WorkerHost {
     const { articleId } = job.data;
     const [article] = await this.db
       .select({
-        ...getTableColumns(schema.articles),
+        ...getColumns(schema.articles),
         enclosures:
           sql`(SELECT json_agg(enclosures) FROM ${schema.enclosures} WHERE ${schema.enclosures.entry_id} = ${schema.articles.minifluxId})`.as(
             'enclosures',

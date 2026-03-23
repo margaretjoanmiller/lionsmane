@@ -1,6 +1,6 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { DrizzleModule } from 'src/drizzle/drizzle.module';
+import { DrizzleModule } from '@/drizzle/drizzle.module';
 import { FilterConsumer } from './filter.consumer';
 import { FilterController } from './filter.controller';
 import { FilterService } from './filter.service';

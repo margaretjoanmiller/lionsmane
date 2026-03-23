@@ -1,5 +1,3 @@
-import { Category } from 'src/types/atom';
-
 export interface Conditions {
   keywords?: string[]; // Any keyword contains any of these
   titleContains?: string[]; // Title contains any of these

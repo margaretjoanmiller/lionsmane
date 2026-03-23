@@ -1,7 +1,7 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { DrizzleModule } from 'src/drizzle/drizzle.module';
-import { FetcherModule } from 'src/fetcher/fetcher.module';
+import { DrizzleModule } from '@/drizzle/drizzle.module';
+import { FetcherModule } from '@/fetcher/fetcher.module';
 import { ArticleConsumer } from './article.consumer';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';

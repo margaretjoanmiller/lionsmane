@@ -7,8 +7,8 @@ import {
 } from '@nestjs/bullmq';
 import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
-import { FetcherService } from 'src/fetcher/fetcher.service';
 import { match, P } from 'ts-pattern';
+import { FetcherService } from '@/fetcher/fetcher.service';
 import { ArticleService } from './article.service';
 import { NewArticle } from './dto/new-article.dto';
 
@@ -81,7 +81,7 @@ export class ArticleConsumer extends WorkerHost {
           let content: string = '';
           if (data.rawContent === 'no content') content = artUrl;
           else if (data.rawContent) content = data.rawContent;
-          else throw new Error('Invalid article, missing URL or contnent');
+          else throw new Error('Invalid article, missing URL or content');
 
           const article = await this.articleService.newArticle({
             ...data,

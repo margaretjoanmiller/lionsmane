@@ -10,10 +10,10 @@ import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { catchError, firstValueFrom, map } from 'rxjs';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { relations } from 'src/drizzle/relations';
-import * as schema from 'src/drizzle/schema';
-import { SecretsService } from 'src/secrets/secrets.service';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { SecretsService } from '@/secrets/secrets.service';
 
 @Injectable()
 export class ReadlaterService {

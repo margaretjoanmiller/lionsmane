@@ -1,4 +1,4 @@
-import { fc, test } from '@fast-check/vitest';
+import { fc } from '@fast-check/vitest';
 import { describe, expect, it } from 'vitest';
 import { createCursor, parseCursor } from '../src/utils/paging';
 

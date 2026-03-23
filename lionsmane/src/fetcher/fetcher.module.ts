@@ -1,8 +1,8 @@
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { DrizzleModule } from 'src/drizzle/drizzle.module';
-import { RedisModule } from 'src/redis/redis.module';
+import { DrizzleModule } from '@/drizzle/drizzle.module';
 import { ParserModule } from '@/parser/parser.module';
+import { RedisModule } from '@/redis/redis.module';
 import { FetcherService } from './fetcher.service';
 
 @Module({

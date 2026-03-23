@@ -1,9 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DrizzleAsyncProvider } from 'src/drizzle/drizzle.provider';
-import { relations } from 'src/drizzle/relations';
-import * as schema from 'src/drizzle/schema';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
 import { hasDefinedProp } from '@/utils/type-utils';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
