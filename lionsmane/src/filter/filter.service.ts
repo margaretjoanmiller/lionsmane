@@ -83,7 +83,7 @@ export class FilterService {
       )
       .returning();
     if (!filter) {
-      throw new Error('Filter not found');
+      throw new NotFoundException('Filter not found');
     }
     const articles = await this.db
       .select({ articleId: schema.articles.id })
