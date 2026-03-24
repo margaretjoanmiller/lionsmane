@@ -1,37 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { format } from 'date-fns';
-import { useRef } from 'react';
 import ReactPlayer from 'react-player';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { BadgeOverflow } from '@/components/ui/badge-overflow';
 import { Button } from '@/components/ui/button';
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemFooter,
-  ItemHeader,
-  ItemMedia,
-  ItemTitle,
-} from '@/components/ui/item';
-import {
-  MediaPlayer,
-  MediaPlayerControls,
-  MediaPlayerControlsOverlay,
-  MediaPlayerFullscreen,
-  MediaPlayerPiP,
-  MediaPlayerPlay,
-  MediaPlayerPlaybackSpeed,
-  MediaPlayerSeek,
-  MediaPlayerSeekBackward,
-  MediaPlayerSeekForward,
-  MediaPlayerTime,
-  MediaPlayerVideo,
-  MediaPlayerVolume,
-} from '@/components/ui/media-player';
-import { ScrollProgress } from '@/components/ui/scroll-progress';
 import {
   Tooltip,
   TooltipContent,
@@ -115,8 +89,6 @@ function ArticlePage() {
       params: { path: { id: data.id }, query: { status: 'read' } },
     });
   }
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const articleFeed =
     data.feedTitle && data.feedTitle.length > 20
@@ -238,39 +210,26 @@ function ArticlePage() {
             <time dateTime={data.published}>
               {format(new Date(data.published), 'MMM d, yyyy HH:mm')}
             </time>
-            {data.geo && data.geo.point && (
+            {/*{data.geo && data.geo.point && (
               <Badge>
                 <FlowbiteMapPinAltOutline />
                 {data.geo.point.lat}, {data.geo.point.lng}
               </Badge>
-            )}
+            )}*/}
           </h4>
         </header>
-        <div
-          className="h-[350px] overflow-auto px-8 pb-16 pt-16"
-          ref={containerRef}
-        >
-          <div className="pointer-events-none absolute bottom-0 left-0 h-12 w-full bg-white to-transparent backdrop-blur-xl [-webkit-mask-image:linear-gradient(to_top,white,transparent)] dark:bg-neutral-900" />
-          <div className="pointer-events-none absolute left-0 top-0 w-full">
-            <div className="absolute left-0 top-0 h-1 w-full bg-[#E6F4FE] dark:bg-[#111927]" />
-            <ScrollProgress
-              className="absolute top-0 bg-pink-400"
-              containerRef={containerRef}
+        <div className="prose prose-lg prose-pink prose-headings:underline">
+          {
+            <div
+              dangerouslySetInnerHTML={{
+                __html:
+                  data.fullArticleHtml ||
+                  data.readableHtml ||
+                  data.description ||
+                  '<p>error loading</p>',
+              }} // we clean this on the backend
             />
-          </div>
-          <div className="prose prose-lg prose-pink prose-headings:underline">
-            {
-              <div
-                dangerouslySetInnerHTML={{
-                  __html:
-                    data.fullArticleHtml ||
-                    data.readableHtml ||
-                    data.description ||
-                    '<p>error loading</p>',
-                }} // we clean this on the backend
-              />
-            }
-          </div>
+          }
         </div>
         <div className="flex flex-col items-center">
           {data.youtube ? (

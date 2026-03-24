@@ -105,7 +105,7 @@ export class ArticleService {
         throw new Error('Article not found or access denied');
       }
       if (article.articles.url) {
-        const { textContent, htmlContent } = await this.fetcher.readablity(
+        const { textContent, htmlContent } = await this.fetcher.readability(
           article.articles.url,
         );
         await tx
