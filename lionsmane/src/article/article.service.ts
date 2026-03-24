@@ -1,7 +1,13 @@
 // biome-ignore-all lint/style/noNonNullAssertion: needed for the cursors
 import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import type { Queue } from 'bullmq';
 import createDomPurify, { type WindowLike } from 'dompurify';
 import { and, desc, eq, getColumns, isNull, lt, or, sql } from 'drizzle-orm';
@@ -72,7 +78,9 @@ export class ArticleService {
       return result;
     } catch (error) {
       this.logger.error('Error inserting article:', error);
-      throw new Error('Could not insert article', { cause: error });
+      throw new InternalServerErrorException('Could not insert article', {
+        cause: error,
+      });
     }
   }
 
@@ -102,7 +110,7 @@ export class ArticleService {
         )
         .limit(1);
       if (!article) {
-        throw new Error('Article not found or access denied');
+        throw new NotFoundException('Article not found or access denied');
       }
       if (article.articles.url) {
         const { textContent, htmlContent } = await this.fetcher.readability(
@@ -387,7 +395,7 @@ export class ArticleService {
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {
@@ -422,7 +430,7 @@ export class ArticleService {
       },
     });
     if (!article) {
-      throw new Error('Article not found or access denied');
+      throw new NotFoundException('Article not found or access denied');
     }
     return {
       ...article,
@@ -515,7 +523,7 @@ export class ArticleService {
         .where(eq(coreSchema.articles.id, id))
         .limit(1);
       if (!article) {
-        throw new Error('Article not found or access denied');
+        throw new NotFoundException('Article not found or access denied');
       }
       //upsert the user article state
       const { isRead, isStarred } = match(status)
@@ -634,7 +642,7 @@ export class ArticleService {
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
     if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {
@@ -739,7 +747,7 @@ export class ArticleService {
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
     if (!(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {
@@ -847,7 +855,7 @@ export class ArticleService {
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
       if (!(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
+        throw new InternalServerErrorException('Unexpected error');
       }
 
       return {
@@ -896,7 +904,7 @@ export class ArticleService {
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
       if (!(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
+        throw new InternalServerErrorException('Unexpected error');
       }
 
       return {
@@ -943,7 +951,7 @@ export class ArticleService {
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
     if (!(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {
@@ -1076,7 +1084,7 @@ export class ArticleService {
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
       if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
+        throw new InternalServerErrorException('Unexpected error');
       }
 
       return {
@@ -1120,7 +1128,7 @@ export class ArticleService {
       const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
       if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-        throw new Error('Unexpected error');
+        throw new InternalServerErrorException('Unexpected error');
       }
 
       return {
@@ -1161,7 +1169,7 @@ export class ArticleService {
     const items = hasNextPage ? articles.slice(0, pageSize) : articles;
 
     if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {
@@ -1285,7 +1293,7 @@ export class ArticleService {
     const items = hasNextPage ? artPages.slice(0, pageSize) : artPages;
 
     if (hasNextPage && !(items.at(-1)?.id && items.at(-1)?.published)) {
-      throw new Error('Unexpected error');
+      throw new InternalServerErrorException('Unexpected error');
     }
 
     return {

@@ -90,7 +90,6 @@
     "@vitest/browser-playwright": "^4.1.1",
     "jsdom": "^29.0.1",
     "openapi-typescript": "^7.13.0",
-    "orval": "^8.6.2",
     "playwright": "^1.58.2",
     "typescript": "^6.0.2",
     "vite": "^8.0.2",

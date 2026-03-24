@@ -28,7 +28,6 @@ import {
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import ky from 'ky';
 import mime from 'mime';
-import { firstValueFrom } from 'rxjs';
 import { ArticleService } from '@/article/article.service';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
