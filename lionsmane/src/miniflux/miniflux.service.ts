@@ -26,6 +26,7 @@ import {
   sql,
 } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import ky from 'ky';
 import mime from 'mime';
 import { firstValueFrom } from 'rxjs';
 import { ArticleService } from '@/article/article.service';
@@ -55,7 +56,6 @@ export class MinifluxService {
     private articleService: ArticleService,
     private fetcher: FetcherService,
     private readLater: ReadlaterService,
-    private httpService: HttpService,
   ) {}
 
   private readonly logger = new Logger(MinifluxService.name);
@@ -417,12 +417,17 @@ export class MinifluxService {
       .where(eq(schema.icons.id, id))
       .limit(1);
 
-    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const resp = await ky.get(icon.url);
+
+    if (!resp.ok) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+
     const contentType = mime.getType(icon.url);
     if (!contentType) {
       throw new InternalServerErrorException('Invalid icon URL');
     }
-    const base64 = Buffer.from(data).toString('base64');
+    const base64 = Buffer.from(await resp.text()).toString('base64');
     return `${contentType};base64,${base64}`;
   }
 
@@ -434,12 +439,17 @@ export class MinifluxService {
       .where(eq(schema.feeds.minifluxId, id))
       .limit(1);
 
-    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const resp = await ky.get(icon.url);
+
+    if (!resp.ok) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+
     const contentType = mime.getType(icon.url);
     if (!contentType) {
       throw new InternalServerErrorException('Invalid icon URL');
     }
-    const base64 = Buffer.from(data).toString('base64');
+    const base64 = Buffer.from(await resp.text()).toString('base64');
     return `${contentType};base64,${base64}`;
   }
 
