@@ -26,6 +26,18 @@ export class FilterService {
     @InjectQueue('filter') private filterQueue: Queue,
   ) {}
 
+  private async reQueue() {
+    const articles = await this.db
+      .select({ articleId: schema.articles.id })
+      .from(schema.articles)
+      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
+    for (const article of articles) {
+      await this.filterQueue.add('filter-article', {
+        articleId: article.articleId,
+      });
+    }
+  }
+
   async create(userId: string, createFilterDto: CreateFilterDto) {
     const [filter] = await this.db
       .insert(schema.userFilters)
@@ -37,15 +49,8 @@ export class FilterService {
     if (!filter) {
       throw new InternalServerErrorException('Filter not found');
     }
-    const articles = await this.db
-      .select({ articleId: schema.articles.id })
-      .from(schema.articles)
-      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
-    for (const article of articles) {
-      await this.filterQueue.add('filter-article', {
-        articleId: article.articleId,
-      });
-    }
+
+    await this.reQueue();
 
     return filter;
   }
@@ -85,16 +90,7 @@ export class FilterService {
     if (!filter) {
       throw new NotFoundException('Filter not found');
     }
-    const articles = await this.db
-      .select({ articleId: schema.articles.id })
-      .from(schema.articles)
-      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
-    for (const article of articles) {
-      await this.filterQueue.add('filter-article', {
-        articleId: article.articleId,
-      });
-    }
-
+    await this.reQueue();
     return filter;
   }
 
