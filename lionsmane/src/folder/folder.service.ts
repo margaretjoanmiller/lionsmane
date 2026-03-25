@@ -7,9 +7,9 @@ import {
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { isPropertyPresent } from 'ts-extras';
+import { coreSchema } from '@/db';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
-import * as schema from '@/drizzle/schema';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 
@@ -17,7 +17,7 @@ import { UpdateFolderDto } from './dto/update-folder.dto';
 export class FolderService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof coreSchema, typeof relations>,
   ) {}
 
   async create(createFolderDto: CreateFolderDto, userId: string) {
@@ -25,7 +25,7 @@ export class FolderService {
       // Create the folder without feeds
       try {
         const [folder] = await tx
-          .insert(schema.folders)
+          .insert(coreSchema.folders)
           .values({
             userId,
             name: createFolderDto.name,
@@ -39,12 +39,15 @@ export class FolderService {
         if (createFolderDto.feedIds && createFolderDto.feedIds.length > 0) {
           // Add folderId to all subscriptions that are in the new list
           await tx
-            .update(schema.subscriptions)
+            .update(coreSchema.subscriptions)
             .set({ folderId: folder.id })
             .where(
               and(
-                eq(schema.subscriptions.userId, userId),
-                inArray(schema.subscriptions.feedId, createFolderDto.feedIds),
+                eq(coreSchema.subscriptions.userId, userId),
+                inArray(
+                  coreSchema.subscriptions.feedId,
+                  createFolderDto.feedIds,
+                ),
               ),
             );
 
@@ -169,10 +172,13 @@ export class FolderService {
   async update(id: string, updateFolderDto: UpdateFolderDto, userId: string) {
     return await this.db.transaction(async (tx) => {
       const [folder] = await tx
-        .update(schema.folders)
+        .update(coreSchema.folders)
         .set({ name: updateFolderDto.name })
         .where(
-          and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),
+          and(
+            eq(coreSchema.folders.id, id),
+            eq(coreSchema.folders.userId, userId),
+          ),
         )
         .returning();
 
@@ -183,23 +189,26 @@ export class FolderService {
       if (updateFolderDto.feedIds) {
         // Remove folderId from all subscriptions that are currently in the folder
         await tx
-          .update(schema.subscriptions)
+          .update(coreSchema.subscriptions)
           .set({ folderId: null })
           .where(
             and(
-              eq(schema.subscriptions.folderId, id),
-              eq(schema.subscriptions.userId, userId),
+              eq(coreSchema.subscriptions.folderId, id),
+              eq(coreSchema.subscriptions.userId, userId),
             ),
           );
         // Add folderId to all subscriptions that are in the new list
         if (updateFolderDto.feedIds.length > 0) {
           await tx
-            .update(schema.subscriptions)
+            .update(coreSchema.subscriptions)
             .set({ folderId: folder.id })
             .where(
               and(
-                eq(schema.subscriptions.userId, userId),
-                inArray(schema.subscriptions.feedId, updateFolderDto.feedIds),
+                eq(coreSchema.subscriptions.userId, userId),
+                inArray(
+                  coreSchema.subscriptions.feedId,
+                  updateFolderDto.feedIds,
+                ),
               ),
             );
         }
@@ -215,19 +224,22 @@ export class FolderService {
     await this.db.transaction(async (tx) => {
       // Remove folderId from all subscriptions that are currently in the folder
       await tx
-        .update(schema.subscriptions)
+        .update(coreSchema.subscriptions)
         .set({ folderId: null })
         .where(
           and(
-            eq(schema.subscriptions.folderId, id),
-            eq(schema.subscriptions.userId, userId),
+            eq(coreSchema.subscriptions.folderId, id),
+            eq(coreSchema.subscriptions.userId, userId),
           ),
         );
       // Delete the folder
       await tx
-        .delete(schema.folders)
+        .delete(coreSchema.folders)
         .where(
-          and(eq(schema.folders.id, id), eq(schema.folders.userId, userId)),
+          and(
+            eq(coreSchema.folders.id, id),
+            eq(coreSchema.folders.userId, userId),
+          ),
         )
         .returning();
     });
