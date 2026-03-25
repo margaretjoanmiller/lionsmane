@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { isPropertyPresent } from 'ts-extras';
@@ -28,7 +33,7 @@ export class FolderService {
           .returning();
 
         if (!folder) {
-          throw new Error('Could not create folder');
+          throw new InternalServerErrorException('Could not create folder');
         }
 
         if (createFolderDto.feedIds && createFolderDto.feedIds.length > 0) {
@@ -47,11 +52,13 @@ export class FolderService {
         }
         return { ...folder, feedIds: [] };
       } catch (error) {
-        throw new Error('Could not create folder', { cause: error });
+        throw new InternalServerErrorException('Could not create folder', {
+          cause: error,
+        });
       }
     });
     if (!result) {
-      throw new Error('Could not create folder');
+      throw new InternalServerErrorException('Could not create folder');
     }
     return result;
   }
@@ -149,7 +156,7 @@ export class FolderService {
       },
     });
     if (!folder) {
-      throw new Error('Folder not found');
+      throw new NotFoundException('Folder not found');
     }
     return {
       id: folder.id,
@@ -170,7 +177,7 @@ export class FolderService {
         .returning();
 
       if (!folder) {
-        throw new Error('Could not update folder');
+        throw new InternalServerErrorException('Could not update folder');
       }
 
       if (updateFolderDto.feedIds) {
@@ -198,7 +205,7 @@ export class FolderService {
         }
       }
       if (!folder) {
-        throw new Error('Could not update folder');
+        throw new InternalServerErrorException('Could not update folder');
       }
       return { ...folder, feedIds: updateFolderDto.feedIds || [] };
     });
