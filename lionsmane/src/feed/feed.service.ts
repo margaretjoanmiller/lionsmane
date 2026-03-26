@@ -251,7 +251,7 @@ export class FeedService {
                 })
                 .returning();
               if (!newFeed) {
-                throw new Error('Failed to create feed');
+                throw new InternalServerErrorException('Failed to create feed');
               }
               return newFeed;
             },
@@ -281,7 +281,7 @@ export class FeedService {
                 })
                 .returning();
               if (!newFeed) {
-                throw new Error('Failed to create feed');
+                throw new InternalServerErrorException('Failed to create feed');
               }
               return newFeed;
             },
@@ -311,7 +311,7 @@ export class FeedService {
                 })
                 .returning();
               if (!newFeed) {
-                throw new Error('Failed to create feed');
+                throw new InternalServerErrorException('Failed to create feed');
               }
               return newFeed;
             },
@@ -341,7 +341,7 @@ export class FeedService {
                 })
                 .returning();
               if (!newFeed) {
-                throw new Error('Failed to create feed');
+                throw new InternalServerErrorException('Failed to create feed');
               }
               return newFeed;
             },
@@ -349,7 +349,7 @@ export class FeedService {
           .exhaustive();
       }
       if (!feed.id) {
-        throw new Error('Failed to find or create feed');
+        throw new InternalServerErrorException('Failed to find or create feed');
       }
       const [subscription] = await tx
         .select()
@@ -606,7 +606,7 @@ export class FeedService {
       )
       .limit(1);
     if (!userFeed) {
-      throw new Error('Feed not found');
+      throw new NotFoundException('Feed not found');
     }
     return {
       ...userFeed,
@@ -651,7 +651,7 @@ export class FeedService {
       )
       .limit(1);
     if (!userFeed) {
-      throw new Error('Feed not found');
+      throw new NotFoundException('Feed not found');
     }
     return userFeed;
   }
@@ -670,7 +670,7 @@ export class FeedService {
         )
         .limit(1);
       if (!feed) {
-        throw new Error('Feed not found');
+        throw new NotFoundException('Feed not found');
       }
       if (updateFeedDto.folderId) {
         const [folder] = await tx
@@ -684,7 +684,7 @@ export class FeedService {
           )
           .limit(1);
         if (!folder) {
-          throw new Error('Folder not found');
+          throw new NotFoundException('Folder not found');
         }
         const [subscription] = await tx
           .update(schema.subscriptions)
@@ -700,7 +700,7 @@ export class FeedService {
           )
           .returning();
         if (!subscription) {
-          throw new Error('Subscription not found');
+          throw new NotFoundException('Subscription not found');
         }
         return subscription;
       } else {
@@ -718,7 +718,7 @@ export class FeedService {
           )
           .returning();
         if (!subscription) {
-          throw new Error('Subscription not found');
+          throw new NotFoundException('Subscription not found');
         }
         return subscription;
       }
