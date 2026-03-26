@@ -27,7 +27,7 @@
     "@keyv/redis": "^5.1.6",
     "@knaadh/nestjs-drizzle-pg": "^1.2.0",
     "@mozilla/readability": "^0.6.0",
-    "@nestjs-modules/mailer": "^2.3.0",
+    "@nestjs-modules/mailer": "^2.3.4",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/cache-manager": "^3.1.0",
@@ -39,14 +39,14 @@
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/terminus": "^11.1.1",
     "@nestjs/throttler": "^6.5.0",
-    "@scalar/nestjs-api-reference": "^1.1.4",
+    "@scalar/nestjs-api-reference": "^1.1.5",
     "@thallesp/nestjs-better-auth": "^2.5.2",
     "@types/jsdom": "^28.0.1",
     "@types/node": "^25.5.0",
     "@upstash/redis": "^1.37.0",
     "axios": "^1.13.6",
     "better-auth": "^1.5.6",
-    "bullmq": "^5.71.0",
+    "bullmq": "^5.71.1",
     "cache-manager": "^7.2.8",
     "cheerio": "^1.2.0",
     "date-fns": "^4.1.0",
@@ -64,7 +64,7 @@
     "nestjs-zod": "^5.2.1",
     "nlcst-to-string": "^4.0.0",
     "node-vault": "^0.12.0",
-    "nodemailer": "^8.0.3",
+    "nodemailer": "^8.0.4",
     "opml": "^0.5.8",
     "pg": "^8.20.0",
     "pino-http": "^11.0.0",
@@ -114,6 +114,7 @@
     "typescript": "^6.0.2",
     "unplugin-swc": "^1.5.9",
     "vitest": "^4.1.1",
-    "vitest-mock-extended": "^3.1.0"
+    "vitest-mock-extended": "^3.1.0",
+    "zod-fast-check": "^0.10.1"
   }
 }

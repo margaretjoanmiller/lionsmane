@@ -4,6 +4,7 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   serial,
@@ -227,6 +228,12 @@ export const oauthConsent = pgTable(
 
 // core tables
 
+export const filterActionEnum = pgEnum('filterAction', [
+  'blur',
+  'hide',
+  'markRead',
+]);
+
 export const appliedRules = pgTable(
   'applied_rules',
   {
@@ -241,7 +248,7 @@ export const appliedRules = pgTable(
       .notNull()
       .references(() => userFilters.id, { onDelete: 'cascade' }),
     appliedAt: timestamp().default(sql`now()`).notNull(),
-    action: varchar({ length: 256 }).notNull(),
+    action: filterActionEnum().notNull(),
     contentWarning: varchar({ length: 256 }),
     isUndone: boolean().default(false).notNull(),
     undoneAt: timestamp(),
