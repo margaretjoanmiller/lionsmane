@@ -10,4 +10,6 @@ export type FeedMetaData = OmitDeep<
   | 'items'
   | 'entries'
   | 'categories'
+  | 'itunes'
+  | 'yt'
 >;

@@ -3,5 +3,5 @@ import type { OmitDeep } from 'type-fest';
 
 export type ArticleMetaData = OmitDeep<
   Atom.Entry<Date> | Rss.Item<Date> | Json.Item<Date> | Rdf.Item<Date>,
-  'url' | 'site_url' | 'lastChecked' | 'updated'
+  'url' | 'site_url' | 'lastChecked' | 'updated' | 'yt' | 'itunes'
 >;

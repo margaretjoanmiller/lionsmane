@@ -14,6 +14,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import type { ItunesNs, YtNs } from 'feedsmith';
 import { ArticleMetaData } from '@/article/article';
 import { FeedMetaData } from '@/feed/feed';
 import { Conditions } from '@/filter/filter';
@@ -291,6 +292,8 @@ export const articles = pgTable(
     authors: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 512 }),
     imageAlt: varchar({ length: 512 }),
+    itunes: jsonb().$type<ItunesNs.Item>(),
+    youtube: jsonb().$type<YtNs.Item>(),
     metaData: jsonb().$type<ArticleMetaData>(),
     feedId: uuid()
       .notNull()
@@ -358,6 +361,8 @@ export const feeds = pgTable(
     lastChecked: timestamp().notNull(),
     updated: timestamp({ withTimezone: true }),
     categories: varchar({ length: 256 }).array().notNull().default([]),
+    itunes: jsonb().$type<ItunesNs.Feed>(),
+    youtube: jsonb().$type<YtNs.Feed>(),
     metaData: jsonb().$type<FeedMetaData>(),
     favicon: varchar({ length: 256 }),
     icon: integer().references(() => icons.id),
