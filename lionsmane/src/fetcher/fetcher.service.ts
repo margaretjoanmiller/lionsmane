@@ -20,6 +20,7 @@ import { match, P } from 'ts-pattern';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
 import * as schema from '@/drizzle/schema';
+import { InvalidUrlError } from '@/lib/errors/url.error';
 import { RedisService } from '@/redis/redis.service';
 
 @Injectable()
@@ -207,7 +208,7 @@ export class FetcherService {
 
     const feedXML = await this.respectfulFetch(
       feedUrl,
-      // feedfromDb[0].etag_header,
+      // feedfromDb[0].etag_header, // TODO: make etags work for the first fetch after feed creation
     );
     if (feedXML === null) {
       this.logger.log('Feed not modified, skipping'); // etag matched
@@ -263,6 +264,7 @@ export class FetcherService {
               categories,
               pubDate,
               source,
+              itunes,
               ...metaData
             } = item;
 
@@ -277,6 +279,7 @@ export class FetcherService {
                 authors,
                 categories: categories?.map((i) => i.name),
                 image: media?.contents?.find((i) => i.type === 'image')?.url,
+                itunes,
                 feedId: feedId,
               },
               opts: {
@@ -328,6 +331,8 @@ export class FetcherService {
               authors,
               media,
               updated,
+              itunes,
+              yt,
               ...metaData
             } = item;
 
@@ -342,6 +347,8 @@ export class FetcherService {
                 authors: authors?.map((i) => `${i.name} <${i.email}>`),
                 categories: categories?.map((i) => i.term),
                 image: media?.contents?.find((i) => i.type === 'image')?.url,
+                youtube: yt,
+                itunes,
                 metaData,
                 feedId: feedId,
               },
@@ -487,7 +494,7 @@ export class FetcherService {
     const { domain } = parseURL(url.toString());
 
     if (!domain) {
-      throw new Error('Invalid URL');
+      throw new InvalidUrlError('Invalid URL');
     }
 
     const tryFavi = `https://${domain}/favicon.ico`;
