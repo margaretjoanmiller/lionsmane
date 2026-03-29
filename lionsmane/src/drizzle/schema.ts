@@ -314,6 +314,11 @@ export const articles = pgTable(
       name: 'articles_id_minifluxId_pk',
     }),
     index('articles_feed_idx').using('btree', table.feedId.asc().nullsLast()),
+    index('articles_feed_published_idx').using(
+      'btree',
+      table.feedId.asc().nullsLast(),
+      table.published.desc().nullsLast(),
+    ),
     index('articles_published_idx').using(
       'btree',
       table.published.asc().nullsLast(),
@@ -383,6 +388,7 @@ export const feeds = pgTable(
       name: 'feeds_id_minifluxId_pk',
     }),
     index('feeds_url_idx').using('btree', table.url.asc().nullsLast()),
+    index('feeds_lastChecked_idx').using('btree', table.lastChecked.asc().nullsLast()),
     index('feeds_metaData_idx').using('gin', table.metaData),
     unique('feeds_id_unique').on(table.id),
     unique('feeds_minifluxId_unique').on(table.minifluxId),
@@ -445,6 +451,11 @@ export const subscriptions = pgTable(
       'btree',
       table.folderId.asc().nullsLast(),
     ),
+    index('user_feeds_user_folder_idx').using(
+      'btree',
+      table.userId.asc().nullsLast(),
+      table.folderId.asc().nullsLast(),
+    ),
     index('user_feeds_user_feed_idx').using(
       'btree',
       table.userId.asc().nullsLast(),
@@ -492,6 +503,16 @@ export const userArticleStates = pgTable(
       'btree',
       table.userId.asc().nullsLast(),
       table.isStarred.asc().nullsLast(),
+    ),
+    index('user_article_states_user_hidden_idx').using(
+      'btree',
+      table.userId.asc().nullsLast(),
+      table.isHidden.asc().nullsLast(),
+    ),
+    index('user_article_states_user_blurred_idx').using(
+      'btree',
+      table.userId.asc().nullsLast(),
+      table.isBlurred.asc().nullsLast(),
     ),
   ],
 );
