@@ -1,130 +1,94 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  CipherGCMTypes,
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+} from 'node:crypto';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import vault from 'node-vault';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { coreSchema } from '@/db';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+
+const ALGORITHM: CipherGCMTypes = 'aes-256-gcm';
 
 @Injectable()
 export class SecretsService {
-  private vaultClient: vault.client;
-  private clientToken: string | null;
-  constructor(private config: ConfigService) {
-    const vaultAddress = this.config.getOrThrow<string>('VAULT_ADDR');
-    const vaultToken = this.config.getOrThrow<string>('VAULT_TOKEN').trim();
-    this.vaultClient = vault({ endpoint: vaultAddress, token: vaultToken });
-    this.clientToken = null;
-  }
-
   private readonly logger = new Logger(SecretsService.name);
+  private readonly encryptionKey: Buffer;
 
-  static mountPoint = 'approle';
-  static roleName = 'lionsmanesecretservice';
-  static policyName = 'lionsmanesecretpolicy';
-
-  private async ensureAuthenticated(): Promise<void> {
-    if (this.clientToken) {
-      this.vaultClient.token = this.clientToken;
-      return;
-    }
-
-    // Set the token to the bootstrap token for setup operations
-    this.vaultClient.token = this.config.getOrThrow<string>('VAULT_TOKEN');
-
-    const approle = await this.getRoleAndSecretId();
-
-    const result = await this.vaultClient.approleLogin({
-      role_id: approle.roleId,
-      secret_id: approle.secretIdResp.data.secret_id,
-    });
-
-    this.clientToken = result.auth.client_token;
-    // Set the token to the new client token for data operations
-    if (this.clientToken) this.vaultClient.token = this.clientToken;
-  }
-  async upsertPolicy() {
-    try {
-      const policyExists = await this.vaultClient.getPolicy({
-        name: SecretsService.policyName,
-      });
-      if (policyExists) {
-        return policyExists;
-      } else {
-        return await this.vaultClient.addPolicy({
-          name: SecretsService.policyName,
-          rules:
-            '{"path": { "secret/data/readlater/*": { "capabilities": ["create", "read", "update", "delete"] } } }',
-        });
-      }
-    } catch {
-      return await this.vaultClient.addPolicy({
-        name: SecretsService.policyName,
-        rules:
-          '{"path": { "secret/data/readlater/*": { "capabilities": ["create", "read", "update", "delete"] } } }',
-      });
-    }
+  constructor(
+    private config: ConfigService,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof coreSchema, typeof relations>,
+  ) {
+    const keyHex = this.config.getOrThrow<string>('ENCRYPTION_KEY');
+    this.encryptionKey = Buffer.from(keyHex, 'hex');
   }
 
-  async getRoleAndSecretId() {
-    const auths = await this.vaultClient.auths();
-    if (!Object.hasOwn(auths, 'approle/')) {
-      try {
-        this.logger.log('Enabling approle...');
-        await this.vaultClient.enableAuth({
-          mount_point: SecretsService.mountPoint,
-          type: 'approle',
-          description: 'Approle auth',
-        });
-      } catch (error) {
-        this.logger.error('Error enabling approle', error);
-        throw new Error('Error enabling approle', { cause: error });
-      }
-    }
-    await this.upsertPolicy();
-    try {
-      await this.vaultClient.getApproleRole({
-        role_name: SecretsService.roleName,
-      });
-    } catch {
-      await this.vaultClient.addApproleRole({
-        role_name: SecretsService.roleName,
-        policies: `default, ${SecretsService.policyName}`,
-      });
-    }
-    const roleId = await this.vaultClient.getApproleRoleId({
-      role_name: SecretsService.roleName,
-    });
-    const secretId = await this.vaultClient.getApproleRoleSecret({
-      role_name: SecretsService.roleName,
-    });
-    return { roleId: roleId.data.role_id, secretIdResp: secretId };
+  encrypt(plaintext: string): {
+    encrypted: string;
+    iv: string;
+    authTag: string;
+  } {
+    const iv = randomBytes(12).toString('base64');
+    const cipher = createCipheriv(
+      ALGORITHM,
+      this.encryptionKey,
+      Buffer.from(iv, 'base64'),
+    );
+    let encrypted = cipher.update(plaintext, 'utf-8', 'base64');
+    encrypted += cipher.final('base64');
+    const authTag = cipher.getAuthTag().toString('base64');
+    return { encrypted, iv, authTag };
   }
+
+  decrypt(encrypted: string, iv: string, authTag: string): string {
+    const decipher = createDecipheriv(
+      ALGORITHM,
+      this.encryptionKey,
+      Buffer.from(iv, 'base64'),
+    );
+    decipher.setAuthTag(Buffer.from(authTag, 'base64'));
+    let str = decipher.update(encrypted, 'base64', 'utf8');
+    str += decipher.final('utf8');
+    return str;
+  }
+
   async readSecret(
-    secretPath: string,
-  ): Promise<{ apiKey: string; apiUrl: string }> {
-    try {
-      await this.ensureAuthenticated();
-      const secretData = await this.vaultClient.read(secretPath);
-      // secretpath is the path in vault where you have stored your secrets
-      return secretData.data.data;
-    } catch {
-      this.clientToken = null;
-      await this.ensureAuthenticated();
-      const secretData = await this.vaultClient.read(secretPath);
-      // secretpath is the path in vault where you have stored your secrets
-      return secretData.data.data;
-    }
+    userId: string,
+  ): Promise<{ apiKey: string; apiUrl: string } | null> {
+    const row = await this.db.query.readeckConfig.findFirst({
+      where: {
+        userId,
+      },
+    });
+    if (!row) return null;
+
+    const payload = this.decrypt(row.encryptedPayload, row.iv, row.authTag);
+    return JSON.parse(payload) as { apiKey: string; apiUrl: string };
   }
 
   async writeSecret(
-    secretPath: string,
-    secretData: { apiUrl: string; apiKey: string },
+    userId: string,
+    data: { apiKey: string; apiUrl: string },
   ): Promise<void> {
-    try {
-      await this.ensureAuthenticated();
-      await this.vaultClient.write(secretPath, { data: secretData });
-    } catch {
-      // assume token has expired
-      this.clientToken = null;
-      await this.ensureAuthenticated();
-      await this.vaultClient.write(secretPath, { data: secretData });
-    }
+    const { encrypted, iv, authTag } = this.encrypt(JSON.stringify(data));
+
+    await this.db
+      .insert(coreSchema.readeckConfig)
+      .values({
+        userId,
+        encryptedPayload: encrypted,
+        iv,
+        authTag,
+      })
+      .onConflictDoUpdate({
+        target: coreSchema.readeckConfig.userId,
+        set: { encryptedPayload: encrypted, iv, authTag },
+      });
+
+    this.logger.log(`Wrote readeck config for user ${userId}`);
   }
 }

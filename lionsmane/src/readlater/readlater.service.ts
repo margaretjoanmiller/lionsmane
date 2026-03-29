@@ -26,9 +26,8 @@ export class ReadlaterService {
   ) {}
 
   async addApiKeyAndUrl(userId: string, apiKey: string, url: URL) {
-    const secretKeyPath = `secret/data/readlater/${userId}`;
     try {
-      await this.secrets.writeSecret(secretKeyPath, {
+      await this.secrets.writeSecret(userId, {
         apiKey,
         apiUrl: url.toString(),
       });
@@ -48,8 +47,7 @@ export class ReadlaterService {
   }
 
   async addBookmark(articleUrl: URL, userId: string) {
-    const secretKeyPath = `secret/data/readlater/${userId}`;
-    const apiKey = await this.secrets.readSecret(secretKeyPath);
+    const apiKey = await this.secrets.readSecret(userId);
     if (!apiKey) {
       throw new PreconditionFailedException('Readlater service not configured');
     }

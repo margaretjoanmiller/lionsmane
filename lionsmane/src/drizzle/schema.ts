@@ -227,6 +227,15 @@ export const oauthConsent = pgTable(
   ],
 );
 
+export const readeckConfig = pgTable('readeck_config', {
+  userId: text('user_id')
+    .primaryKey()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  encryptedPayload: text('encrypted_payload').notNull(),
+  iv: text('iv').notNull(),
+  authTag: text('auth_tag').notNull(),
+});
+
 // core tables
 
 export const filterActionEnum = pgEnum('filterAction', [

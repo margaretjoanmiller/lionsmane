@@ -1,0 +1,35 @@
+services:
+  db:
+    image: groonga/pgroonga:latest-alpine-18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: lion
+    volumes:
+      - db:/var/lib/postgresql
+    ports:
+      - "5423:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  valkey:
+    container_name: valkey
+    image: valkey/valkey:latest
+    ports:
+      - "6379:6379"
+    environment:
+      VALKEY_EXTRA_FLAGS: "--appendonly yes"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - valkey:/data
+volumes:
+  db:
+  valkey:
