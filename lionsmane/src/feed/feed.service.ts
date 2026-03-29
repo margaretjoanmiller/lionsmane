@@ -195,7 +195,8 @@ export class FeedService {
 
       const response = await this.fetcher.respectfulFetch(url);
 
-      const { feed: parsedFeed, format } = parseFeed(await response?.text());
+      const parsed = parseFeed(await response?.text());
+      const { feed: parsedFeed, format } = parsed;
 
       let favicon: string | null = null;
       let updated: string | null = null;
@@ -221,9 +222,6 @@ export class FeedService {
             .returning();
           icon = iconInserted.id;
         }
-
-        const resp = await this.fetcher.respectfulFetch(url);
-        const parsed = parseFeed(await resp?.text());
 
         feed = await match(parsed)
           .with(
@@ -658,70 +656,38 @@ export class FeedService {
 
   async update(id: string, userId: string, updateFeedDto: UpdateFeedDto) {
     return await this.db.transaction(async (tx) => {
-      const [feed] = await tx
-        .select()
-        .from(schema.feeds)
-        .innerJoin(
-          schema.subscriptions,
-          eq(schema.subscriptions.feedId, schema.feeds.id),
-        )
-        .where(
-          and(eq(schema.feeds.id, id), eq(schema.subscriptions.userId, userId)),
-        )
-        .limit(1);
-      if (!feed) {
-        throw new NotFoundException('Feed not found');
+      const subscription = await tx.query.subscriptions.findFirst({
+        where: {
+          feedId: id,
+          userId,
+        },
+      });
+
+      if (!subscription) {
+        throw new NotFoundException('Subscription not found');
       }
+
       if (updateFeedDto.folderId) {
-        const [folder] = await tx
-          .select()
-          .from(schema.folders)
-          .where(
-            and(
-              eq(schema.folders.id, updateFeedDto.folderId),
-              eq(schema.folders.userId, userId),
-            ),
-          )
-          .limit(1);
+        const folder = await tx.query.folders.findFirst({
+          where: {
+            id: updateFeedDto.folderId,
+            userId,
+          },
+        });
+
         if (!folder) {
           throw new NotFoundException('Folder not found');
         }
-        const [subscription] = await tx
-          .update(schema.subscriptions)
-          .set({
-            description: updateFeedDto.description,
-            folderId: folder.id,
-          })
-          .where(
-            and(
-              eq(schema.subscriptions.feedId, id),
-              eq(schema.subscriptions.userId, userId),
-            ),
-          )
-          .returning();
-        if (!subscription) {
-          throw new NotFoundException('Subscription not found');
-        }
-        return subscription;
-      } else {
-        const [subscription] = await tx
-          .update(schema.subscriptions)
-          .set({
-            description: updateFeedDto.description,
-            folderId: null,
-          })
-          .where(
-            and(
-              eq(schema.subscriptions.feedId, id),
-              eq(schema.subscriptions.userId, userId),
-            ),
-          )
-          .returning();
-        if (!subscription) {
-          throw new NotFoundException('Subscription not found');
-        }
-        return subscription;
       }
+
+      return await tx
+        .update(schema.subscriptions)
+        .set({
+          folderId: updateFeedDto.folderId ?? null,
+          description: updateFeedDto.description,
+        })
+        .where(eq(schema.subscriptions.id, subscription.id))
+        .returning();
     });
   }
 

@@ -113,8 +113,7 @@ export class FolderService {
           updated: sub.feed.updated?.toISOString(),
           feed_url: sub.feed.url,
           user_agent: '',
-          user_id: f.subscriptions?.find((s) => s.feedId === sub.feedId)
-            ?.userMinifluxId,
+          user_id: sub.userMinifluxId,
           scraper_rules: null,
           rewrite_rules: null,
           blocklist_rules: null,
