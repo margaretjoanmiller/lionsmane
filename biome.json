@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -25,7 +25,11 @@
     "rules": {
       "recommended": true
     },
-    "includes": ["**", "!eslint.config.mjs", "!**/drizzle/*.json"]
+    "includes": [
+      "**",
+      "!eslint.config.mjs",
+      "!**/drizzle/*.json"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -42,7 +46,9 @@
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     },
-    "globals": ["exports"]
+    "globals": [
+      "exports"
+    ]
   },
   "html": {
     "formatter": {

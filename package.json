@@ -10,9 +10,12 @@
   "license": "EUPL-1.2",
   "packageManager": "pnpm@10.32.1",
   "devDependencies": {
-    "@biomejs/biome": "2.4.8",
-    "@typescript/native-preview": "7.0.0-dev.20260323.1",
+    "@biomejs/biome": "2.4.9",
+    "@typescript/native-preview": "7.0.0-dev.20260330.1",
     "lefthook": "^2.1.4"
   },
-  "workspaces": ["lionsmane", "lionsmane-fe"]
+  "workspaces": [
+    "lionsmane",
+    "lionsmane-fe"
+  ]
 }
