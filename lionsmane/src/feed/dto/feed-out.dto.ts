@@ -2,10 +2,14 @@ import { createSelectSchema } from 'drizzle-zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { coreSchema } from '@/db';
+import { ytFeed } from '@/syndication/zod/youtube.zod';
+import { itunesSchema } from '@/types/itunes';
 
 export const feedSchema = createSelectSchema(coreSchema.feeds).extend({
   lastChecked: z.iso.datetime(),
   updated: z.iso.datetime().nullish(),
+  itunes: itunesSchema.nullish(),
+  youtube: ytFeed.nullish(),
 });
 
 export const feedSchemaWithCounts = feedSchema

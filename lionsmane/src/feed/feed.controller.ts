@@ -1,11 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
-  Logger,
   Param,
   ParseFilePipeBuilder,
   Patch,
@@ -79,6 +76,7 @@ export class FeedController {
         .addMaxSizeValidator({ maxSize: 5120 }) // 5KB
         .build({ fileIsRequired: true }),
     )
+    //@ts-expect-error: Multer's types don't work with tsgo
     file: Express.Multer.File,
     @Session() session: UserSession,
   ) {

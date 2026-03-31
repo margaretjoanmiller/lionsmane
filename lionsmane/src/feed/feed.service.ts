@@ -242,7 +242,6 @@ export class FeedService {
                   updated: updated ? parseDate(updated) : null,
                   categories: categories?.map((i) => i.name).filter(isDefined),
                   lastChecked: subMonths(new Date(), 6),
-                  etag_header: response?.headers.get('etag') || '',
                   last_modified_header:
                     response?.headers['last-modified'] || '',
                   metaData,
@@ -271,7 +270,6 @@ export class FeedService {
                   icon,
                   updated: updated ? parseDate(updated) : null,
                   lastChecked: subMonths(new Date(), 6),
-                  etag_header: response?.headers.get('etag') || '',
                   last_modified_header:
                     response?.headers['last-modified'] || '',
                   categories: categories?.map((i) => i.label).filter(isDefined),
@@ -301,7 +299,6 @@ export class FeedService {
                   icon,
                   updated: updated ? parseDate(updated) : null,
                   lastChecked: subMonths(new Date(), 6),
-                  etag_header: response?.headers.get('etag') || '',
                   last_modified_header:
                     response?.headers['last-modified'] || '',
                   categories: [],
@@ -331,7 +328,6 @@ export class FeedService {
                   icon,
                   updated: updated ? parseDate(updated) : null,
                   lastChecked: subMonths(new Date(), 6),
-                  etag_header: response?.headers.get('etag') || '',
                   last_modified_header:
                     response?.headers['last-modified'] || '',
                   categories: dc?.subjects,
@@ -464,6 +460,7 @@ export class FeedService {
     const unreadCountMap = new Map(
       unreadCounts.map(({ feedId, unreadCount }) => [feedId, unreadCount]),
     );
+
     const feeds = await this.db
       .select({
         ...getColumns(schema.feeds),
@@ -680,7 +677,7 @@ export class FeedService {
         }
       }
 
-      return await tx
+      const [sub] = await tx
         .update(schema.subscriptions)
         .set({
           folderId: updateFeedDto.folderId ?? null,
@@ -688,6 +685,7 @@ export class FeedService {
         })
         .where(eq(schema.subscriptions.id, subscription.id))
         .returning();
+      return sub;
     });
   }
 

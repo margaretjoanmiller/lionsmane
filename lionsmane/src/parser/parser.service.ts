@@ -1,10 +1,31 @@
+import { Readability } from '@mozilla/readability';
 import { Injectable, Logger } from '@nestjs/common';
 import { isAfter, subWeeks } from 'date-fns';
+import createDomPurify, { type WindowLike } from 'dompurify';
 import type { Atom, Json, Rdf, Rss } from 'feedsmith';
+import { JSDOM } from 'jsdom';
+import { isPropertyPresent } from 'ts-extras';
+import { NewArticle } from '@/article/dto/new-article.dto';
 
 @Injectable()
 export class ParserService {
   private readonly logger = new Logger(ParserService.name);
+
+  cleanRaw(newArt: NewArticle) {
+    const window = new JSDOM('').window;
+    const purify = createDomPurify(window as WindowLike);
+    const cleanContent = purify.sanitize(newArt.rawContent || '');
+    const cleanDescription = purify.sanitize(newArt.description || '');
+    const cleanDoc = new JSDOM(cleanContent);
+    const readableRaw = new Readability(cleanDoc.window.document).parse();
+    const readableText = readableRaw?.textContent;
+    const readableHtml = readableRaw?.content;
+    return {
+      textContent: readableText || null,
+      htmlContent: readableHtml || null,
+      cleanDescription,
+    };
+  }
 
   async parseAndNoralizeRss(
     f: Rss.Feed<Date>,
@@ -12,11 +33,9 @@ export class ParserService {
     feedId: string,
   ) {
     return f.items
+      ?.filter(isPropertyPresent('pubDate'))
       ?.filter((i) => {
-        if (!i.pubDate) {
-          throw new Error('Item is missing required fields');
-        }
-        return isAfter(i.pubDate!, lastChecked || subWeeks(new Date(), 6));
+        return isAfter(i.pubDate, lastChecked || subWeeks(new Date(), 6));
       })
       .map((item) => {
         if (!item.link && !item.content && !item.description && !item.pubDate) {
