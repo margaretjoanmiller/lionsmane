@@ -1,5 +1,4 @@
 // biome-ignore-all lint/style/noNonNullAssertion: needed for the cursors
-import { Readability } from '@mozilla/readability';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   Inject,
@@ -9,10 +8,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { Queue } from 'bullmq';
-import createDomPurify, { type WindowLike } from 'dompurify';
 import { and, desc, eq, getColumns, isNull, lt, or, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { JSDOM } from 'jsdom';
 import { isPresent } from 'ts-extras';
 import { match } from 'ts-pattern';
 import { coreSchema } from '@/db/index';
@@ -32,22 +29,6 @@ export class ArticleService {
     private fetcher: FetcherService,
   ) {}
   private readonly logger = new Logger(ArticleService.name);
-
-  cleanRaw(newArt: NewArticle) {
-    const window = new JSDOM('').window;
-    const purify = createDomPurify(window as WindowLike);
-    const cleanContent = purify.sanitize(newArt.rawContent || '');
-    const cleanDescription = purify.sanitize(newArt.description || '');
-    const cleanDoc = new JSDOM(cleanContent);
-    const readableRaw = new Readability(cleanDoc.window.document).parse();
-    const readableText = readableRaw?.textContent;
-    const readableHtml = readableRaw?.content;
-    return {
-      textContent: readableText || null,
-      htmlContent: readableHtml || null,
-      cleanDescription,
-    };
-  }
 
   async newArticle(newArt: NewArticle) {
     try {
@@ -558,7 +539,6 @@ export class ArticleService {
   }
 
   // Private method for common logic for starred, read, unread
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: best we can do for now
   private async getArticleByState(
     userId: string,
     stateFilter: 'starred' | 'read' | 'unread',

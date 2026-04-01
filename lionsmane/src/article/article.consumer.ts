@@ -9,6 +9,7 @@ import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
 import { match, P } from 'ts-pattern';
 import { FetcherService } from '@/fetcher/fetcher.service';
+import { ParserService } from '@/parser/parser.service';
 import { ArticleService } from './article.service';
 import { NewArticle } from './dto/new-article.dto';
 
@@ -17,6 +18,7 @@ export class ArticleConsumer extends WorkerHost {
   constructor(
     private readonly articleService: ArticleService,
     private readonly fetcherService: FetcherService,
+    private readonly parserService: ParserService,
     @InjectQueue('filter') private filterQueue: Queue,
   ) {
     super();
@@ -38,7 +40,7 @@ export class ArticleConsumer extends WorkerHost {
         },
         async ({ data }) => {
           const { textContent, htmlContent, cleanDescription } =
-            this.articleService.cleanRaw(data);
+            this.parserService.cleanRaw(data);
 
           let keywords: string[] = [];
           if (textContent) {
