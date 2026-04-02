@@ -14,8 +14,5 @@
     "@typescript/native-preview": "7.0.0-dev.20260401.1",
     "lefthook": "^2.1.4"
   },
-  "workspaces": [
-    "lionsmane",
-    "lionsmane-fe"
-  ]
+  "workspaces": ["lionsmane", "lionsmane-fe"]
 }
