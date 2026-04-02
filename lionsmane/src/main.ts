@@ -1,4 +1,8 @@
 import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
@@ -9,13 +13,13 @@ import { AppModule } from './app.module';
 import { db } from './db/index';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bodyParser: false, // better-auth will turn it back on!
-    cors: {
-      origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:3000',
-      credentials: true,
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    {
+      bodyParser: false, // better-auth will turn it back on!
     },
-  });
+  );
   app.useLogger(app.get(Logger));
   app.use(
     helmet({
@@ -64,6 +68,7 @@ async function bootstrap() {
     '/reference',
     apiReference({
       content: openApiDoc,
+      withFastify: true,
     }),
   );
 
