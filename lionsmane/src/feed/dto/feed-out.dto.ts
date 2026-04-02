@@ -1,4 +1,4 @@
-import { createSelectSchema } from 'drizzle-zod';
+import { createSelectSchema } from 'drizzle-orm/zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { coreSchema } from '@/db';

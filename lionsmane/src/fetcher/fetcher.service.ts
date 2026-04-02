@@ -16,11 +16,13 @@ import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
 import { parse as parseURL } from 'tldts';
+import { isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
 import * as schema from '@/drizzle/schema';
 import { InvalidUrlError } from '@/lib/errors/url.error';
+import { ParserService } from '@/parser/parser.service';
 import { RedisService } from '@/redis/redis.service';
 
 @Injectable()
@@ -30,6 +32,7 @@ export class FetcherService {
     private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
+    private parserService: ParserService,
   ) {}
   private readonly logger = new Logger(FetcherService.name);
 
@@ -215,10 +218,11 @@ export class FetcherService {
       return [];
     }
 
-    if (feedXML.headers['etag']) {
+    const feedEtag = feedXML.headers.get('etag');
+    if (feedEtag) {
       await this.db
         .update(schema.feeds)
-        .set({ etag_header: feedXML.headers['etag'] })
+        .set({ etag_header: feedEtag })
         .where(eq(schema.feeds.id, feedId));
     }
 
@@ -228,230 +232,32 @@ export class FetcherService {
 
     const feedProcess = await match(parsedFeed)
       .with({ format: 'rss', feed: P.select() }, async (feed) => {
-        return feed.items
-          ?.filter((i) => {
-            if (!i.pubDate) {
-              throw new Error('Item is missing required fields');
-            }
-            return isAfter(
-              i.pubDate!,
-              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
-            );
-          })
-          .map((item) => {
-            if (
-              !item.link &&
-              !item.content &&
-              !item.description &&
-              !item.pubDate
-            ) {
-              this.logger.error(
-                `Item is missing required fields: ${JSON.stringify(item)}`,
-              );
-              throw new Error('Item is missing required fields');
-            }
-            if (!item.pubDate) {
-              throw new Error('Item is missing required fields');
-            }
-
-            const {
-              title,
-              link,
-              description,
-              content,
-              authors,
-              media,
-              categories,
-              pubDate,
-              source,
-              itunes,
-              ...metaData
-            } = item;
-
-            return {
-              name: 'new-article',
-              data: {
-                title: title,
-                url: link ? link : source?.url,
-                description: description || '',
-                rawContent: content?.encoded || description || 'no content',
-                published: pubDate,
-                authors,
-                categories: categories?.map((i) => i.name),
-                image: media?.contents?.find((i) => i.type === 'image')?.url,
-                itunes,
-                feedId: feedId,
-              },
-              opts: {
-                delay: 0, // Will be set later based on rate limiting
-              },
-            };
-          });
+        return this.parserService.parseAndNoralizeRss(
+          feed,
+          feedfromDb[0].lastChecked,
+          feedId,
+        );
       })
       .with({ format: 'atom', feed: P.select() }, async (feed) => {
-        return feed.entries
-          ?.filter((i) => {
-            if (!i.published && i.updated) {
-              return isAfter(
-                i.updated,
-                feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
-              );
-            }
-            if (!i.published && !i.updated) {
-              throw new Error('Item is missing required fields');
-            }
-            return isAfter(
-              i.published!,
-              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
-            );
-          })
-          .map((item) => {
-            if (
-              !item.links &&
-              !item.content &&
-              !item.summary &&
-              !item.published
-            ) {
-              this.logger.error(
-                `Item is missing required fields: ${JSON.stringify(item)}`,
-              );
-              throw new Error('Item is missing required fields');
-            }
-            if (!item.published && !item.updated) {
-              throw new Error('Item is missing required fields');
-            }
-
-            const {
-              title,
-              links,
-              content,
-              published,
-              summary,
-              categories,
-              authors,
-              media,
-              updated,
-              itunes,
-              yt,
-              ...metaData
-            } = item;
-
-            return {
-              name: 'new-article',
-              data: {
-                title: title?.value,
-                url: links ? links[0].href : '',
-                rawContent: content || summary?.value || 'no content',
-                published: published ? published : updated,
-                updated: updated,
-                authors: authors?.map((i) => `${i.name} <${i.email}>`),
-                categories: categories?.map((i) => i.term),
-                image: media?.contents?.find((i) => i.type === 'image')?.url,
-                youtube: yt,
-                itunes,
-                metaData,
-                feedId: feedId,
-              },
-              opts: {
-                delay: 0, // Will be set later based on rate limiting
-              },
-            };
-          });
+        return this.parserService.parseAndNoralizeAtom(
+          feed,
+          feedfromDb[0].lastChecked,
+          feedId,
+        );
       })
       .with({ format: 'json', feed: P.select() }, async (feed) => {
-        return feed.items
-          ?.filter((i) => {
-            if (!i.date_published) {
-              throw new Error('Item is missing required fields');
-            }
-            return isAfter(
-              i.date_published!,
-              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
-            );
-          })
-          .map((item) => {
-            if (
-              !item.url &&
-              !item.content_html &&
-              !item.summary &&
-              !item.content_text
-            ) {
-              this.logger.error(
-                `Item is missing required fields: ${JSON.stringify(item)}`,
-              );
-              throw new Error('Item is missing required fields');
-            }
-            if (!item.date_published && !item.date_modified) {
-              throw new Error('Item is missing required fields');
-            }
-
-            const {
-              title,
-              url,
-              summary,
-              content_html,
-              authors,
-              content_text,
-              date_published,
-              image,
-              date_modified,
-              ...metaData
-            } = item;
-
-            return {
-              name: 'new-article',
-              data: {
-                title: title,
-                url: url || '',
-                description: summary || '',
-                rawContent: content_html || content_text || 'No content',
-                published: date_published,
-                updated: date_modified,
-                categories: [],
-                authors: authors?.map((i) => i.name),
-                image,
-                metaData,
-                feedId: feedId,
-              },
-              opts: {
-                delay: 0, // Will be set later based on rate limiting
-              },
-            };
-          });
+        return this.parserService.parseAndNoralizeJson(
+          feed,
+          feedfromDb[0].lastChecked,
+          feedId,
+        );
       })
       .with({ format: 'rdf', feed: P.select() }, async (feed) => {
-        return feed.items
-          ?.filter((i) => {
-            if (!i.atom?.published) {
-              throw new Error('Item is missing required fields');
-            }
-            return isAfter(
-              i.atom.published!,
-              feedfromDb[0]?.lastChecked || subWeeks(new Date(), 6),
-            );
-          })
-          .map((item) => {
-            const { atom, content, link, title, ...metaData } = item;
-
-            return {
-              name: 'new-article',
-              data: {
-                title: title,
-                url: link || '',
-                description: '',
-                rawContent: content,
-                published: atom?.published,
-                updated: atom?.updated,
-                categories: atom?.categories?.map((i) => i.term),
-                authors: atom?.authors?.map((i) => i.name),
-                metaData,
-                feedId: feedId,
-              },
-              opts: {
-                delay: 0, // Will be set later based on rate limiting
-              },
-            };
-          });
+        return this.parserService.parseAndNoralizeRdf(
+          feed,
+          feedfromDb[0].lastChecked,
+          feedId,
+        );
       })
       .exhaustive();
 

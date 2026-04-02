@@ -24,6 +24,8 @@
     "@better-auth/api-key": "^1.5.6",
     "@better-auth/drizzle-adapter": "https://pkg.pr.new/better-auth/better-auth/@better-auth/drizzle-adapter@6913",
     "@better-auth/passkey": "^1.5.6",
+    "@bull-board/api": "^6.20.6",
+    "@bull-board/nestjs": "^6.20.6",
     "@keyv/redis": "^5.1.6",
     "@mozilla/readability": "^0.6.0",
     "@nestjs-modules/mailer": "^2.3.4",
