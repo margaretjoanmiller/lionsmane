@@ -72,7 +72,7 @@ class HttpExceptionFilter extends BaseExceptionFilter {
         port: 6379,
       },
     }),
-    AuthModule.forRoot({ auth, disableTrustedOriginsCors: true }),
+    AuthModule.forRoot({ auth }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: () => {

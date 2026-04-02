@@ -5,16 +5,16 @@ import {
   HttpException,
   Logger,
 } from '@nestjs/common';
-import type { FastifyReply } from 'fastify';
+import { Request, Response } from 'express';
 
 @Catch(HttpException)
 export class MiniHttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<FastifyReply>();
+    const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
-    response.status(status).send({
+    response.status(status).json({
       error_message: exception.message,
     });
   }
