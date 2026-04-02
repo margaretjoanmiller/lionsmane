@@ -202,7 +202,7 @@ export class FetcherService {
       .from(schema.feeds)
       .where(eq(schema.feeds.id, feedId));
 
-    if (!feedfromDb || !feedfromDb.at(0)?.lastChecked) {
+    if (!feedfromDb?.at(0)?.lastChecked) {
       throw new Error('Malformed feed in database');
     }
 

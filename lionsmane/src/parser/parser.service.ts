@@ -88,10 +88,15 @@ export class ParserService {
     feedId: string,
   ) {
     return f.entries
-      ?.filter(isPropertyPresent('published'))
-      ?.filter((i) =>
-        isAfter(i.published, lastChecked || subWeeks(new Date(), 6)),
-      )
+      ?.filter((i) => {
+        if (!i.published && !i.updated) {
+          throw new Error('Item is missing required fields');
+        }
+        if (!i.published) {
+          return isAfter(i.updated!, lastChecked || subWeeks(new Date(), 6));
+        }
+        return isAfter(i.published, lastChecked || subWeeks(new Date(), 6));
+      })
       .map((item) => {
         if (!item.links && !item.content && !item.published) {
           this.logger.error(
@@ -206,11 +211,11 @@ export class ParserService {
   ) {
     return f.items
       ?.filter((i) => {
-        if (!i.atom?.published) {
+        if (!i.atom?.published || !i.atom?.updated) {
           throw new Error('Item is missing required fields');
         }
         return isAfter(
-          i.atom.published!,
+          i.atom.published || i.atom.updated,
           lastChecked || subWeeks(new Date(), 6),
         );
       })
