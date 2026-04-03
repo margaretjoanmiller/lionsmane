@@ -16,4 +16,6 @@ describe('ParserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should normalize an RSS feed item', () => {});
 });

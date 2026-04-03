@@ -62,7 +62,7 @@ export class ParserService {
     };
   }
 
-  normalizeRss(item: Rss.Item<Date>, date: Date) {
+  normalizeRss(item: Rss.Item<Date>, date: Date, feedId: string) {
     const { atom, content, link, title, ...metaData } = item;
 
     return this.buildArticleJob({
@@ -72,7 +72,7 @@ export class ParserService {
       published: date,
       authors: atom?.authors?.map((a) => `${a.name} <${a.email}>`),
       metaData,
-      feedId: '',
+      feedId,
     });
   }
 
@@ -94,7 +94,7 @@ export class ParserService {
         return [];
       }
 
-      return [this.normalizeRss(item, date!)];
+      return [this.normalizeRss(item, date!, feedId)];
     });
   }
 
@@ -137,7 +137,9 @@ export class ParserService {
       if (!date || !isAfter(date, this.cutoffDate(lastChecked))) {
         return [];
       }
-      if (!this.isViableItem(entry?.[0]?.href, entry.content?.value, date)) {
+      if (
+        !this.isViableItem(entry?.links?.[0]?.href, entry.content?.value, date)
+      ) {
         this.logger.warn(
           `Skipping non-viable item: ${entry.id ?? entry.title?.value}`,
         );
