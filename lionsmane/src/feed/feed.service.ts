@@ -186,10 +186,11 @@ export class FeedService {
       ? newSubscription.url.slice(0, -1)
       : newSubscription.url;
     const result = await this.db.transaction(async (tx) => {
-      let [feed] = await tx
-        .select()
-        .from(schema.feeds)
-        .where(eq(schema.feeds.url, url));
+      let feed = await tx.query.feeds.findFirst({
+        where: {
+          url,
+        },
+      });
 
       const urlObj = new URL(url);
 
@@ -345,15 +346,12 @@ export class FeedService {
       if (!feed.id) {
         throw new InternalServerErrorException('Failed to find or create feed');
       }
-      const [subscription] = await tx
-        .select()
-        .from(schema.subscriptions)
-        .where(
-          and(
-            eq(schema.subscriptions.feedId, feed.id),
-            eq(schema.subscriptions.userId, userId),
-          ),
-        );
+      const subscription = await tx.query.subscriptions.findFirst({
+        where: {
+          feedId: feed.id,
+          userId,
+        },
+      });
       if (subscription) {
         throw new ConflictException('Already subscribed to this feed');
       }
