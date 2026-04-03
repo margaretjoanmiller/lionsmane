@@ -2,7 +2,7 @@ import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const createDiscoverDto = z.object({
-  url: z.string().min(1).max(2048),
+  url: z.url(),
   username: z.string().min(1).max(255).optional(),
   password: z.string().min(1).max(255).optional(),
   user_agent: z.string().min(1).max(255).optional(),

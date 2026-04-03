@@ -30,6 +30,7 @@ import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 import { FeedService } from './feed.service';
+import { FeedDiscoverService } from './feed-discover.service';
 
 @ApiTags('feeds')
 @ApiCookieAuth()
@@ -37,7 +38,10 @@ import { FeedService } from './feed.service';
 @ApiOAuth2(['openid', 'profile', 'email'])
 @Controller('feed')
 export class FeedController {
-  constructor(private readonly feedService: FeedService) {}
+  constructor(
+    private readonly feedService: FeedService,
+    private readonly discoverService: FeedDiscoverService,
+  ) {}
 
   @Post()
   @ZodResponse({ type: SubscriptionOutDto, status: 201 })
@@ -57,7 +61,7 @@ export class FeedController {
   @Post('discover')
   @ZodResponse({ type: [DiscoverOutDto], status: 200 })
   async discover(@Body() url: DiscoverDto, @Session() session: UserSession) {
-    return await this.feedService.discover(url.url);
+    return await this.discoverService.discover(url.url);
   }
 
   @Post('import')

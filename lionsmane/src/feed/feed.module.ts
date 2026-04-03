@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { DrizzleModule } from '@/drizzle/drizzle.module';
@@ -8,6 +7,7 @@ import { OpmlModule } from '@/opml/opml.module';
 import { FeedConsumer } from './feed.consumer';
 import { FeedController } from './feed.controller';
 import { FeedService } from './feed.service';
+import { FeedDiscoverService } from './feed-discover.service';
 
 @Module({
   imports: [
@@ -16,18 +16,9 @@ import { FeedService } from './feed.service';
     FetcherModule,
     FolderModule,
     OpmlModule,
-    HttpModule.register({
-      timeout: 5000,
-      maxRedirects: 5,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        Accept: '*/*',
-      },
-    }),
   ],
   controllers: [FeedController],
-  providers: [FeedService, FeedConsumer],
+  providers: [FeedService, FeedConsumer, FeedDiscoverService],
   exports: [FeedService],
 })
 export class FeedModule {}
