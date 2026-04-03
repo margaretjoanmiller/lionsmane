@@ -3,7 +3,6 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import * as cheerio from 'cheerio';
-import { isAfter, subWeeks } from 'date-fns';
 import createDOMPurify, { type WindowLike } from 'dompurify';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -16,11 +15,10 @@ import retextKeywords from 'retext-keywords';
 import retextPos from 'retext-pos';
 import robotsParser from 'robots-parser';
 import { parse as parseURL } from 'tldts';
-import { isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
+import { coreSchema } from '@/db';
 import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
 import { relations } from '@/drizzle/relations';
-import * as schema from '@/drizzle/schema';
 import { InvalidUrlError } from '@/lib/errors/url.error';
 import { ParserService } from '@/parser/parser.service';
 import { RedisService } from '@/redis/redis.service';
@@ -29,7 +27,7 @@ import { RedisService } from '@/redis/redis.service';
 export class FetcherService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof coreSchema, typeof relations>,
     @InjectQueue('article') private articleQueue: Queue,
     private redisService: RedisService,
     private parserService: ParserService,
@@ -37,16 +35,16 @@ export class FetcherService {
   private readonly logger = new Logger(FetcherService.name);
 
   private readonly userAgent =
-    'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)';
+    'Mozilla/5.0 (compatible; LionsMane/0.1; +https://tangled.org/0x4d6165.synth.download/lionsmane)';
 
   async robots(url: string) {
     const urlObj = new URL(url);
     const [feedHost] = await this.db
       .select({
-        robotsTxt: schema.feedHost.robotsTxt,
+        robotsTxt: coreSchema.feedHost.robotsTxt,
       })
-      .from(schema.feedHost)
-      .where(eq(schema.feedHost.url, urlObj.hostname))
+      .from(coreSchema.feedHost)
+      .where(eq(coreSchema.feedHost.url, urlObj.hostname))
       .limit(1);
 
     const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
@@ -74,7 +72,7 @@ export class FetcherService {
       const parsedRobots = robotsParser(robotsUrl, robotsTxt);
 
       await this.db
-        .insert(schema.feedHost)
+        .insert(coreSchema.feedHost)
         .values({
           url: urlObj.hostname,
           robotsTxt,
@@ -199,8 +197,8 @@ export class FetcherService {
 
     const feedfromDb = await this.db
       .select()
-      .from(schema.feeds)
-      .where(eq(schema.feeds.id, feedId));
+      .from(coreSchema.feeds)
+      .where(eq(coreSchema.feeds.id, feedId));
 
     if (!feedfromDb?.at(0)?.lastChecked) {
       throw new Error('Malformed feed in database');
@@ -221,9 +219,9 @@ export class FetcherService {
     const feedEtag = feedXML.headers.get('etag');
     if (feedEtag) {
       await this.db
-        .update(schema.feeds)
+        .update(coreSchema.feeds)
         .set({ etag_header: feedEtag })
-        .where(eq(schema.feeds.id, feedId));
+        .where(eq(coreSchema.feeds.id, feedId));
     }
 
     const parsedFeed = parseFeed(await feedXML.text(), {
@@ -287,11 +285,11 @@ export class FetcherService {
 
       const jobs = await this.articleQueue.addBulk(feedProcess);
       await this.db
-        .update(schema.feeds)
+        .update(coreSchema.feeds)
         .set({
           lastChecked: new Date(),
         })
-        .where(eq(schema.feeds.id, feedId));
+        .where(eq(coreSchema.feeds.id, feedId));
       return jobs;
     }
   }
