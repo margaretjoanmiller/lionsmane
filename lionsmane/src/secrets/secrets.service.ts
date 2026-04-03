@@ -38,8 +38,10 @@ export class SecretsService {
       this.encryptionKey,
       Buffer.from(iv, 'base64'),
     );
-    let encrypted = cipher.update(plaintext, 'utf-8', 'base64');
-    encrypted += cipher.final('base64');
+    const encrypted = Buffer.concat([
+      cipher.update(plaintext, 'utf-8'),
+      cipher.final(),
+    ]).toString('base64');
     const authTag = cipher.getAuthTag().toString('base64');
     return { encrypted, iv, authTag };
   }
@@ -51,9 +53,11 @@ export class SecretsService {
       Buffer.from(iv, 'base64'),
     );
     decipher.setAuthTag(Buffer.from(authTag, 'base64'));
-    let str = decipher.update(encrypted, 'base64', 'utf8');
-    str += decipher.final('utf8');
-    return str;
+    const decrypted = Buffer.concat([
+      decipher.update(Buffer.from(encrypted, 'base64')),
+      decipher.final(),
+    ]).toString('utf-8');
+    return decrypted;
   }
 
   async readSecret(
