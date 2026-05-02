@@ -1,6 +1,19 @@
 packages:
   - lionsmane
   - lionsmane-fe
+allowBuilds:
+  '@nestjs/core': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  '@suites/di.nestjs': true
+  '@suites/doubles.vitest': true
+  '@swc/core': true
+  esbuild: true
+  lefthook: true
+  msgpackr-extract: true
+  msw: true
+  prisma: true
+  unrs-resolver: true
 
 injectWorkspacePackages: true
 
