@@ -26,5 +26,13 @@ describe('ParserService', () => {
       authors: ['Cool Guy', 'Cool Lady'],
       categories: [{ name: 'TIL', domain: 'https://example.com/til' }],
     } as Rss.Item<Date>;
+
+    expect(
+      service.normalizeRss(
+        item,
+        new Date('2007-12-03T10:15:30Z'),
+        '019de97d-9b4c-7c23-88d0-6426ec2a810e',
+      ),
+    ).toBeDefined();
   });
 });
