@@ -1,0 +1,2 @@
+ALTER TABLE "articles" ADD COLUMN "categories" varchar(256)[] DEFAULT '{}'::varchar(256)[] NOT NULL;--> statement-breakpoint
+ALTER TABLE "feeds" ADD COLUMN "categories" varchar(256)[] DEFAULT '{}'::varchar(256)[] NOT NULL;

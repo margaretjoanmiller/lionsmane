@@ -1,11 +1,8 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
-  Logger,
   Param,
   ParseFilePipeBuilder,
   Patch,
@@ -29,11 +26,11 @@ import { ZodResponse } from 'nestjs-zod';
 import { DiscoverDto, DiscoverOutDto } from '../zod/discover.dto';
 import { FeedOutWithCountsDto } from './dto/feed-out.dto';
 import { FileDto } from './dto/file.dto';
-import { NewSubscriptionDto } from './dto/new-subscription.dto';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { SubscriptionOutDto } from './dto/subscription-out.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 import { FeedService } from './feed.service';
+import { FeedDiscoverService } from './feed-discover.service';
 
 @ApiTags('feeds')
 @ApiCookieAuth()
@@ -41,10 +38,13 @@ import { FeedService } from './feed.service';
 @ApiOAuth2(['openid', 'profile', 'email'])
 @Controller('feed')
 export class FeedController {
-  constructor(private readonly feedService: FeedService) {}
+  constructor(
+    private readonly feedService: FeedService,
+    private readonly discoverService: FeedDiscoverService,
+  ) {}
 
   @Post()
-  @ZodResponse({ type: NewSubscriptionDto, status: 201 })
+  @ZodResponse({ type: SubscriptionOutDto, status: 201 })
   async create(
     @Body() newSubscription: SubscribeFeedDto,
     @Session() session: UserSession,
@@ -61,7 +61,7 @@ export class FeedController {
   @Post('discover')
   @ZodResponse({ type: [DiscoverOutDto], status: 200 })
   async discover(@Body() url: DiscoverDto, @Session() session: UserSession) {
-    return await this.feedService.discover(url.url);
+    return await this.discoverService.discover(url.url);
   }
 
   @Post('import')
@@ -80,6 +80,7 @@ export class FeedController {
         .addMaxSizeValidator({ maxSize: 5120 }) // 5KB
         .build({ fileIsRequired: true }),
     )
+    //@ts-expect-error: Multer's types don't work with tsgo
     file: Express.Multer.File,
     @Session() session: UserSession,
   ) {

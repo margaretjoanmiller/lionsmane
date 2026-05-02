@@ -1,11 +1,21 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as authSchema from './schema/auth';
-import * as coreSchema from './schema/core';
+import { relations } from '../drizzle/relations';
+import * as schema from '../drizzle/schema';
 
-export const db = drizzle(process.env.DATABASE_URL!, {
-  schema: {
-    ...coreSchema,
-    ...authSchema,
-  },
+export const coreSchema = schema;
+
+const envUrl = process.env.DATABASE_URL;
+
+if (!envUrl) {
+  throw new Error(
+    'DATABASE_URL is not defined in the environment. ' +
+      'Ensure your .env file is in the current working directory or set the variable explicitly.',
+  );
+}
+const connectionString = envUrl.replace('localhost', '127.0.0.1');
+
+export const db = drizzle(connectionString, {
+  schema,
+  relations,
 });

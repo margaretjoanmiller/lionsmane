@@ -1,7 +1,6 @@
-import { isSaturday } from 'date-fns';
-import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { articleDetail } from './article-detail.dto';
 
 const articleSearch = z.object({
   articles: z.array(

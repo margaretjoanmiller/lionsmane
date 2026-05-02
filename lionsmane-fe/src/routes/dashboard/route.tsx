@@ -1,6 +1,14 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router';
+import { z } from 'zod';
 import { AddFeed } from '@/components/add-feed';
+import { AddFolderDialog } from '@/components/add-folder-dialog';
 import { AppSidebar } from '@/components/app-sidebar';
+import { AppSpeedDial } from '@/components/app-speeddial';
 import { ArticleFilterSelect } from '@/components/article-filter';
 import { ModeToggle } from '@/components/mode-toggle';
 import { SearchBar } from '@/components/search-bar';
@@ -12,6 +20,11 @@ import {
 } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { authClient } from '@/lib/auth-client';
+
+type DashboardSearch = {
+  modal?: 'add-folder';
+  redirect?: string;
+};
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async ({ context, location }) => {
@@ -29,10 +42,27 @@ export const Route = createFileRoute('/dashboard')({
     }
   },
   component: DashLayout,
+  validateSearch: (search: Record<string, unknown>): DashboardSearch => {
+    return {
+      modal: search.modal === 'add-folder' ? 'add-folder' : undefined,
+      redirect:
+        typeof search.redirect === 'string' ? search.redirect : undefined,
+    };
+  },
 });
 
 function DashLayout() {
   const isMobile = useIsMobile();
+  const { modal } = Route.useSearch();
+  const navigate = useNavigate();
+
+  const handleModalClose = () => {
+    navigate({
+      replace: true,
+      search: (prev: DashboardSearch) => ({ ...prev, modal: undefined }),
+    });
+  };
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -44,7 +74,6 @@ function DashLayout() {
               className="mr-2 data-[orientation=vertical]:h-4"
               orientation="vertical"
             />
-            {!isMobile && <AddFeed />}
             <div className="right-5 absolute flex items-center gap-2">
               {!isMobile && <SearchBar />}
               <ArticleFilterSelect />
@@ -54,8 +83,15 @@ function DashLayout() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Outlet />
+          <div className="right-5 bottom-5 z-99 sticky">
+            <AppSpeedDial />
+          </div>
         </div>
       </SidebarInset>
+      <AddFolderDialog
+        onOpenChange={handleModalClose}
+        open={modal === 'add-folder'}
+      />
     </SidebarProvider>
   );
 }

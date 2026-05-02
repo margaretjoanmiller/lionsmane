@@ -1,6 +1,6 @@
-import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { articleDetail } from '@/article/dto/article-detail.dto';
 import { feedDtoMini } from './feed.dto';
 
 export const counters = z.object({
@@ -31,35 +31,15 @@ export const entry = articleDetail
   })
   .omit({
     minifluxId: true,
-    authors: true,
-    contributors: true,
-    subject: true,
-    contributor: true,
-    format: true,
-    language: true,
-    categories: true,
     description: true,
-    comments: true,
-    commentRss: true,
-    publisher: true,
-    rights: true,
-    thread: true,
-    geo: true,
     rawContent: true,
     readableHtml: true,
     readableText: true,
     fullArticleHtml: true,
     fullArticleText: true,
-    encoded: true,
     keywords: true,
-    image: true,
-    imageAlt: true,
-    media: true,
-    youtube: true,
-    podcast: true,
     published: true,
     updated: true,
-    guid: true,
   });
 
 export const entriesList = z.object({

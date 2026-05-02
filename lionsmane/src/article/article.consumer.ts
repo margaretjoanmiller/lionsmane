@@ -1,107 +1,127 @@
 import { createHash } from 'node:crypto';
-import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
+import {
+  InjectQueue,
+  OnWorkerEvent,
+  Processor,
+  WorkerHost,
+} from '@nestjs/bullmq';
+import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bullmq';
-import * as cheerio from 'cheerio';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import { parseDate } from 'src/utils/date-parse';
+import { match, P } from 'ts-pattern';
+import { FetcherService } from '@/fetcher/fetcher.service';
+import { ParserService } from '@/parser/parser.service';
 import { ArticleService } from './article.service';
-import { NewArticle, NewArticleDate } from './dto/new-article.dto';
+import { NewArticle } from './dto/new-article.dto';
 
 @Processor('article')
 export class ArticleConsumer extends WorkerHost {
   constructor(
     private readonly articleService: ArticleService,
     private readonly fetcherService: FetcherService,
+    private readonly parserService: ParserService,
     @InjectQueue('filter') private filterQueue: Queue,
   ) {
     super();
   }
 
+  private readonly logger = new Logger(ArticleConsumer.name);
+
+  @OnWorkerEvent('error')
+  async logError(job: Job<NewArticle | { id: string; userId: string }>) {
+    this.logger.error(`Error processing feed job: ${job.failedReason}`);
+  }
+
   async process(job: Job<NewArticle | { id: string; userId: string }>) {
-    if (job.name === 'new-article' && 'feedId' in job.data) {
-      const data = job.data;
+    return match(job)
+      .with(
+        {
+          name: 'new-article',
+          data: P.when((d): d is NewArticle => 'feedId' in d),
+        },
+        async ({ data }) => {
+          const { textContent, htmlContent, cleanDescription } =
+            this.parserService.cleanRaw(data);
 
-      const { textContent, htmlContent, cleanDescription } =
-        this.articleService.cleanRaw(data);
+          let keywords: string[] = [];
+          if (textContent) {
+            keywords = await this.fetcherService.extractKeywords(textContent);
+          }
 
-      let keywords: string[] = [];
-      if (textContent) {
-        keywords = await this.fetcherService.extractKeywords(textContent);
-      }
+          let hash: string | null;
+          if (textContent && data.url) {
+            hash = createHash('sha256')
+              .update(`${data.url}/${textContent}`, 'utf-8')
+              .digest('hex');
+          } else if (data.rawContent && data.url) {
+            hash = createHash('sha256')
+              .update(`${data.url}/${data.rawContent}`, 'utf-8')
+              .digest('hex');
+          } else if (data.description && data.description.length > 0) {
+            hash = createHash('sha256')
+              .update(data.description, 'utf-8')
+              .digest('hex');
+          } else if (data.title) {
+            hash = createHash('sha256')
+              .update(data.title, 'utf-8')
+              .digest('hex');
+          } else {
+            hash = null;
+          }
 
-      const $ = cheerio.load(htmlContent || cleanDescription);
+          let artUrl: string = '';
+          if (!data.url && data.enclosures) {
+            const enclosureUrl = data.enclosures.at(0)?.url;
+            if (!enclosureUrl)
+              throw new Error('Invalid article, missing URL or enclosure');
+            artUrl = enclosureUrl;
+          } else if (data.url) {
+            artUrl = data.url;
+          } else {
+            throw new Error('Invalid article, missing URL or enclosure');
+          }
 
-      const $image = $('img');
-      const href = $image.attr('src');
-      const altText = $image.attr('alt');
+          let content: string = '';
+          if (data.rawContent === 'no content') content = artUrl;
+          else if (data.rawContent) content = data.rawContent;
+          else throw new Error('Invalid article, missing URL or content');
 
-      let image = data.image;
-      if (href && image?.length === 0) image = href;
-      let alt = data.imageAlt;
-      if (altText && alt?.length === 0) alt = altText;
+          const article = await this.articleService.newArticle({
+            ...data,
+            url: artUrl,
+            hash,
+            description: cleanDescription,
+            rawContent: content,
+            readableText: textContent,
+            readableHtml: htmlContent,
+            keywords,
+          });
 
-      let hash: string | null;
-      if (textContent && data.url) {
-        hash = createHash('sha256')
-          .update(`${data.url}/${textContent}`, 'utf-8')
-          .digest('hex');
-      } else if (data.rawContent && data.url) {
-        hash = createHash('sha256')
-          .update(`${data.url}/${data.rawContent}`, 'utf-8')
-          .digest('hex');
-      } else if (data.description && data.description.length > 0) {
-        hash = createHash('sha256')
-          .update(data.description, 'utf-8')
-          .digest('hex');
-      } else if (data.title) {
-        hash = createHash('sha256').update(data.title, 'utf-8').digest('hex');
-      } else {
-        hash = null;
-      }
+          if (!article?.id) {
+            throw new Error('Article could not be created');
+          }
 
-      let artUrl: string = '';
-      if (!data.url && data.enclosures) {
-        const enclosureUrl = data.enclosures.at(0)?.url;
-        if (!enclosureUrl)
-          throw new Error('Invalid article, missing URL or enclosure');
-      } else if (data.url) {
-        artUrl = data.url;
-      } else {
-        throw new Error('Invalid article, missing URL or enclosure');
-      }
+          await this.filterQueue.add('filter-article', {
+            articleId: article.id,
+          });
 
-      let content: string = '';
-      if (data.rawContent === 'no content') content = artUrl;
-      else if (data.rawContent) content = data.rawContent;
-      else throw new Error('Invalid article, missing URL or contnent');
-
-      const article = await this.articleService.newArticle({
-        ...data,
-        url: artUrl,
-        published: parseDate(data.published).toISOString(),
-        updated: data.updated ? parseDate(data.updated).toISOString() : null,
-        image,
-        imageAlt: alt,
-        hash,
-        description: cleanDescription,
-        rawContent: content,
-        readableText: textContent,
-        readableHtml: htmlContent,
-        keywords,
+          return { result: 'ok', articleId: article.id };
+        },
+      )
+      .with(
+        {
+          name: 'readable-article',
+          data: P.when(
+            (d): d is { id: string; userId: string } => 'userId' in d,
+          ),
+        },
+        async ({ data }) => {
+          const { id, userId } = data;
+          return await this.articleService.requestFullArticleText(id, userId);
+        },
+      )
+      .otherwise(() => {
+        this.logger.warn(`Unknown job: ${job.name}`);
+        return null;
       });
-
-      if (!article) {
-        throw new Error('Article could not be created');
-      }
-
-      await this.filterQueue.add('filter-article', {
-        articleId: article[0].id,
-      });
-
-      return { result: 'ok', articleId: article[0].id };
-    } else if (job.name === 'readable-article' && 'userId' in job.data) {
-      const { id, userId } = job.data;
-      return await this.articleService.requestFullArticleText(id, userId);
-    }
   }
 }

@@ -10,22 +10,24 @@ import { AxiosError } from '@nestjs/terminus/dist/errors/axios.error';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { catchError, firstValueFrom, map } from 'rxjs';
-import { schema } from 'src/db/schema';
-import { SecretsService } from 'src/secrets/secrets.service';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { SecretsService } from '@/secrets/secrets.service';
 
 @Injectable()
 export class ReadlaterService {
   private readonly logger = new Logger(ReadlaterService.name);
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     private secrets: SecretsService,
     private readonly httpService: HttpService,
   ) {}
 
   async addApiKeyAndUrl(userId: string, apiKey: string, url: URL) {
-    const secretKeyPath = `secret/data/readlater/${userId}`;
     try {
-      await this.secrets.writeSecret(secretKeyPath, {
+      await this.secrets.writeSecret(userId, {
         apiKey,
         apiUrl: url.toString(),
       });
@@ -45,8 +47,7 @@ export class ReadlaterService {
   }
 
   async addBookmark(articleUrl: URL, userId: string) {
-    const secretKeyPath = `secret/data/readlater/${userId}`;
-    const apiKey = await this.secrets.readSecret(secretKeyPath);
+    const apiKey = await this.secrets.readSecret(userId);
     if (!apiKey) {
       throw new PreconditionFailedException('Readlater service not configured');
     }

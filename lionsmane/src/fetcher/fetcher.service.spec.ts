@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { schema } from 'src/db/schema';
-import { RedisService } from 'src/redis/redis.service';
 import { vi } from 'vitest';
+import * as schema from '@/drizzle/schema';
+import { RedisService } from '@/redis/redis.service';
 import { FetcherService } from './fetcher.service';
 
 describe('FetcherService', () => {

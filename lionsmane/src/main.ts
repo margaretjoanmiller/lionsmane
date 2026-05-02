@@ -1,9 +1,9 @@
-import { ConsoleLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import helmet from 'helmet';
+import { Logger } from 'nestjs-pino';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 import { AppModule } from './app.module';
 import { db } from './db/index';
@@ -15,10 +15,8 @@ async function bootstrap() {
       origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:3000',
       credentials: true,
     },
-    logger: new ConsoleLogger({
-      json: process.env.NODE_ENV === 'production',
-    }),
   });
+  app.useLogger(app.get(Logger));
   app.use(
     helmet({
       contentSecurityPolicy: {

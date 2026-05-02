@@ -6,7 +6,7 @@ local next_slot = tonumber(server.call('GET', key) or 0)
 
 
 local current_time = server.call('TIME')
-local current_time_ms = (tonumber(current_time[1]) * 1000) + math.floor(tonumber(current_time[2] / 1000))
+local current_time_ms = (tonumber(current_time[1]) * 1000) + math.floor(tonumber(current_time[2]) / 1000)
 
 local starting_point_ms = math.max(current_time_ms, next_slot)
 

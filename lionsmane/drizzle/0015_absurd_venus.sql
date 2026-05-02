@@ -1,2 +1,0 @@
-ALTER TABLE "feeds" ADD COLUMN "etag_header" VARCHAR(256) DEFAULT '' NOT NULL;--> statement-breakpoint
-ALTER TABLE "feeds" ADD COLUMN "last_modified_header" VARCHAR(256) DEFAULT '' NOT NULL;--> statement-breakpoint

@@ -1,22 +1,37 @@
 packages:
   - lionsmane
   - lionsmane-fe
-  - lionsmane-common
+allowBuilds:
+  '@nestjs/core': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  '@suites/di.nestjs': true
+  '@suites/doubles.vitest': true
+  '@swc/core': true
+  esbuild: true
+  lefthook: true
+  msgpackr-extract: true
+  msw: true
+  prisma: true
+  unrs-resolver: true
 
 injectWorkspacePackages: true
 
 onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@scarf/scarf'
-  - '@suites/di.nestjs'
-  - '@suites/doubles.vitest'
-  - '@swc/core'
-  - '@tailwindcss/oxide'
+  - "@nestjs/core"
+  - "@prisma/engines"
+  - "@scarf/scarf"
+  - "@suites/di.nestjs"
+  - "@suites/doubles.vitest"
+  - "@swc/core"
+  - "@tailwindcss/oxide"
   - core-js
   - esbuild
   - keccak
+  - lefthook
   - msgpackr-extract
   - msw
+  - prisma
   - scrypt
   - secp256k1
   - sha3

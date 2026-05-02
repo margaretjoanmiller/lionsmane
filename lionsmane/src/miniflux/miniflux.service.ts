@@ -26,16 +26,18 @@ import {
   sql,
 } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import ky from 'ky';
 import mime from 'mime';
-import { firstValueFrom } from 'rxjs';
-import { ArticleService } from 'src/article/article.service';
-import { schema } from 'src/db/schema';
-import { FeedService } from 'src/feed/feed.service';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import { FolderService } from 'src/folder/folder.service';
-import { ReadlaterService } from 'src/readlater/readlater.service';
-import { Enclosure } from 'src/types/rss';
-import { parseDate } from 'src/utils/date-parse';
+import { ArticleService } from '@/article/article.service';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { FeedService } from '@/feed/feed.service';
+import { FetcherService } from '@/fetcher/fetcher.service';
+import { FolderService } from '@/folder/folder.service';
+import { ReadlaterService } from '@/readlater/readlater.service';
+import { Enclosure } from '@/types/rss';
+import { parseDate } from '@/utils/date-parse';
 import { DiscoverDto } from '../zod/discover.dto';
 import { CategoryDto } from './dto/category.dto';
 import { EntriesList } from './dto/entry.dto';
@@ -45,14 +47,14 @@ import { UserSessionMini } from './dto/user.dto';
 @Injectable()
 export class MinifluxService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private feedService: FeedService,
     private folderService: FolderService,
     private articleService: ArticleService,
     private fetcher: FetcherService,
     private readLater: ReadlaterService,
-    private httpService: HttpService,
   ) {}
 
   private readonly logger = new Logger(MinifluxService.name);
@@ -414,12 +416,17 @@ export class MinifluxService {
       .where(eq(schema.icons.id, id))
       .limit(1);
 
-    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const resp = await ky.get(icon.url);
+
+    if (!resp.ok) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+
     const contentType = mime.getType(icon.url);
     if (!contentType) {
       throw new InternalServerErrorException('Invalid icon URL');
     }
-    const base64 = Buffer.from(data).toString('base64');
+    const base64 = Buffer.from(await resp.text()).toString('base64');
     return `${contentType};base64,${base64}`;
   }
 
@@ -431,12 +438,17 @@ export class MinifluxService {
       .where(eq(schema.feeds.minifluxId, id))
       .limit(1);
 
-    const { data } = await firstValueFrom(this.httpService.get(icon.url));
+    const resp = await ky.get(icon.url);
+
+    if (!resp.ok) {
+      throw new InternalServerErrorException('Invalid icon URL');
+    }
+
     const contentType = mime.getType(icon.url);
     if (!contentType) {
       throw new InternalServerErrorException('Invalid icon URL');
     }
-    const base64 = Buffer.from(data).toString('base64');
+    const base64 = Buffer.from(await resp.text()).toString('base64');
     return `${contentType};base64,${base64}`;
   }
 

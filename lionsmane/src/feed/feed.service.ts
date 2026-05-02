@@ -1,5 +1,4 @@
 import { Readable } from 'node:stream';
-import { HttpService } from '@nestjs/axios';
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,
@@ -19,183 +18,55 @@ import {
   count,
   desc,
   eq,
-  getTableColumns,
+  getColumns,
   inArray,
   isNull,
   or,
 } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { parseFeed } from 'feedsmith';
-import { catchError, firstValueFrom, of } from 'rxjs';
-import { schema } from 'src/db/schema';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import { FolderService } from 'src/folder/folder.service';
-import { OpmlService } from 'src/opml/opml.service';
-import { parseDate } from 'src/utils/date-parse';
+import ky from 'ky';
+import { isDefined } from 'ts-extras';
+import { match, P } from 'ts-pattern';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { FetcherService } from '@/fetcher/fetcher.service';
+import { FolderService } from '@/folder/folder.service';
+import { OpmlService } from '@/opml/opml.service';
+import { parseDate } from '@/utils/date-parse';
 import { SubscribeFeedDto } from './dto/subscribe-feed.dto';
 import { UpdateFeedDto } from './dto/update-feed.dto';
 
 @Injectable()
 export class FeedService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
     private folderService: FolderService,
     private opmlService: OpmlService,
-    private httpService: HttpService,
   ) {}
   private readonly logger = new Logger(FeedService.name);
-
-  private async findFeed(url: URL): Promise<URL[]> {
-    if (url.pathname === '/feed' || url.pathname.endsWith('.xml')) {
-      const urlString = url.toString();
-      const cleanUrl = urlString.endsWith('/')
-        ? urlString.slice(0, -1)
-        : urlString;
-      return [new URL(cleanUrl)];
-    }
-    // get html body
-    const { data } = await firstValueFrom(
-      this.httpService.get(url.toString()).pipe(
-        catchError((error) => {
-          this.logger.error('Error fetching feed URL', error);
-          return of({ data: null });
-        }),
-      ),
-    );
-
-    // test base
-    const allFeeds: URL[] = [];
-
-    try {
-      const { feed } = parseFeed(data);
-      this.logger.debug('Found feed', feed.title);
-      allFeeds.push(url);
-    } catch {
-      if (data !== null) {
-        // get from meta tag
-        const $ = cheerio.load(data);
-        const $link = $('link');
-
-        $link.each((index, element) => {
-          const type = $(element).attr('type');
-          if (
-            type === 'application/rss+xml' ||
-            type === 'application/atom+xml'
-          ) {
-            const href = $(element).attr('href');
-            if (!href) {
-              return;
-            }
-            try {
-              const feedUrl = new URL(href);
-              allFeeds.push(feedUrl);
-            } catch {
-              try {
-                const mergeUrl = new URL(`https://${url.hostname}${href}`);
-                allFeeds.push(mergeUrl);
-              } catch (error) {
-                this.logger.error('Error in finding url', error);
-                return;
-              }
-            }
-          }
-        });
-      }
-    }
-    if (allFeeds.length > 0) return allFeeds;
-    else {
-      // test common feed endpoints
-
-      const commonEndpoints = [
-        `https://${url.host}/feed`,
-        `https://${url.host}/feed.xml`,
-        `https://${url.host}/feed.atom`,
-        `https://${url.host}/index.rss`,
-        `https://${url.host}/index.xml`,
-        `https://${url.host}/rss`,
-        `https://${url.host}/rss/feed.xml`,
-        `https://${url.host}/atom.xml`,
-      ];
-
-      const allFeeds: URL[] = [];
-      for (const endpoint of commonEndpoints) {
-        const { status } = await firstValueFrom(
-          this.httpService.get(endpoint).pipe(
-            catchError((error) => {
-              return of({ status: error.status });
-            }),
-          ),
-        );
-        if (status === 200) {
-          allFeeds.push(new URL(endpoint));
-        }
-      }
-      if (allFeeds.length > 0) {
-        return allFeeds;
-      } else {
-        throw new BadRequestException('This url does not contain any feeds');
-      }
-    }
-  }
-
-  async discover(url: string) {
-    try {
-      let urlToSearch: URL;
-      if (URL.canParse(url)) {
-        urlToSearch = new URL(url);
-      } else if (URL.canParse(`https://${url}`)) {
-        urlToSearch = new URL(`https://${url}`);
-      } else {
-        throw new BadRequestException('Invalid URL');
-      }
-      const feedsRaw = (await this.findFeed(urlToSearch)).map((f) =>
-        f.toString(),
-      );
-
-      const feeds = (
-        await Promise.all(
-          feedsRaw.map(async (f) => {
-            const data = await this.fetcher.respectfulFetch(f);
-            try {
-              const { format, feed } = parseFeed(data?.data);
-              return {
-                format,
-                url: f,
-                title: feed.title || null,
-              };
-            } catch {
-              return null;
-            }
-          }),
-        )
-      ).filter((f) => f !== null);
-
-      return feeds;
-    } catch (error) {
-      this.logger.error('Invalid URL or URL contains no feeds', error);
-      throw new BadRequestException('Invalid URL or URL contains no feeds', {
-        cause: error,
-      });
-    }
-  }
 
   async create(newSubscription: SubscribeFeedDto, userId: string) {
     const url = newSubscription.url.endsWith('/')
       ? newSubscription.url.slice(0, -1)
       : newSubscription.url;
     const result = await this.db.transaction(async (tx) => {
-      let [feed] = await tx
-        .select()
-        .from(schema.feeds)
-        .where(eq(schema.feeds.url, url));
+      let feed = await tx.query.feeds.findFirst({
+        where: {
+          url,
+        },
+      });
 
       const urlObj = new URL(url);
 
       const response = await this.fetcher.respectfulFetch(url);
 
-      const { feed: parsedFeed, format } = parseFeed(response?.data);
+      const parsed = parseFeed(await response?.text());
+      const { feed: parsedFeed, format } = parsed;
 
       let favicon: string | null = null;
       let updated: string | null = null;
@@ -221,85 +92,135 @@ export class FeedService {
             .returning();
           icon = iconInserted.id;
         }
-        if (format === 'rss') {
-          const [newFeed] = await tx
-            .insert(schema.feeds)
-            .values({
-              // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || url,
-              url,
-              site_url: urlObj.origin,
-              icon,
-              updated: updated ? parseDate(updated) : null,
-              lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers['etag'] || '',
-              last_modified_header: response?.headers['last-modified'] || '',
-              copyright: parsedFeed.copyright,
-              image: parsedFeed.image || null,
-              language: parsedFeed.language,
-              podcast: parsedFeed.podcast,
-              geo: parsedFeed.georss,
-              subject: parsedFeed.dc?.subject,
-              contributor: parsedFeed.dc?.contributor,
-              publisher: parsedFeed.dc?.publisher,
-              format: parsedFeed.dc?.format,
-              rights: parsedFeed.dc?.rights,
-              updatePeriod: parsedFeed.sy?.updatePeriod,
-              updateFrequency: parsedFeed.sy?.updateFrequency,
-              updateBase: parsedFeed.sy?.updateBase,
-            })
-            .returning();
-          if (!newFeed) {
-            throw new Error('Failed to create feed');
-          }
-          feed = newFeed;
-        } else if (format === 'atom') {
-          const [newFeed] = await tx
-            .insert(schema.feeds)
-            .values({
-              // @ts-expect-error: Error with drizzle typing
-              title: parsedFeed.title || url,
-              url,
-              site_url: urlObj.origin,
-              icon,
-              updated: updated ? parseDate(updated) : null,
-              lastChecked: subMonths(new Date(), 6),
-              etag_header: response?.headers['etag'] || '',
-              last_modified_header: response?.headers['last-modified'] || '',
-              authors: parsedFeed.authors,
-              contributors: parsedFeed.contributors,
-              categories: parsedFeed.categories,
-              explicit: parsedFeed.itunes?.explicit,
-              language: parsedFeed.dc?.language,
-              subject: parsedFeed.dc?.subject,
-              contributor: parsedFeed.dc?.contributor,
-              publisher: parsedFeed.dc?.publisher,
-              format: parsedFeed.dc?.format,
-              rights: parsedFeed.dc?.rights,
-              updatePeriod: parsedFeed.sy?.updatePeriod,
-              updateFrequency: parsedFeed.sy?.updateFrequency,
-              updateBase: parsedFeed.sy?.updateBase,
-              youtube: parsedFeed.yt,
-            })
-            .returning();
-          if (!newFeed) {
-            throw new Error('Failed to create feed');
-          }
-          feed = newFeed;
-        }
+
+        feed = await match(parsed)
+          .with(
+            {
+              format: 'rss',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, items, categories, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  categories: categories?.map((i) => i.name).filter(isDefined),
+                  lastChecked: subMonths(new Date(), 6),
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new InternalServerErrorException('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'atom',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, entries, categories, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title?.value || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: categories?.map((i) => i.label).filter(isDefined),
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new InternalServerErrorException('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'json',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, items, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: [],
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new InternalServerErrorException('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .with(
+            {
+              format: 'rdf',
+              feed: P.select(),
+            },
+            async (f) => {
+              const { title, dc, items, ...metaData } = f;
+
+              const [newFeed] = await tx
+                .insert(schema.feeds)
+                .values({
+                  title: title || url,
+                  url,
+                  site_url: urlObj.origin,
+                  icon,
+                  updated: updated ? parseDate(updated) : null,
+                  lastChecked: subMonths(new Date(), 6),
+                  last_modified_header:
+                    response?.headers['last-modified'] || '',
+                  categories: dc?.subjects,
+                  metaData,
+                })
+                .returning();
+              if (!newFeed) {
+                throw new InternalServerErrorException('Failed to create feed');
+              }
+              return newFeed;
+            },
+          )
+          .exhaustive();
       }
       if (!feed.id) {
-        throw new Error('Failed to find or create feed');
+        throw new InternalServerErrorException('Failed to find or create feed');
       }
-      const [subscription] = await tx
-        .select()
-        .from(schema.subscriptions)
-        .where(
-          and(
-            eq(schema.subscriptions.feedId, feed.id),
-            eq(schema.subscriptions.userId, userId),
-          ),
-        );
+      const subscription = await tx.query.subscriptions.findFirst({
+        where: {
+          feedId: feed.id,
+          userId,
+        },
+      });
       if (subscription) {
         throw new ConflictException('Already subscribed to this feed');
       }
@@ -371,7 +292,7 @@ export class FeedService {
       }
     });
     await this.feedQueue.add('fetch', { feedId: result.id });
-    return result;
+    return result.subscription;
   }
 
   async findAll(userId: string) {
@@ -406,9 +327,10 @@ export class FeedService {
     const unreadCountMap = new Map(
       unreadCounts.map(({ feedId, unreadCount }) => [feedId, unreadCount]),
     );
+
     const feeds = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         feed_url: schema.feeds.url,
         favicon: schema.icons.url,
@@ -433,7 +355,8 @@ export class FeedService {
 
     return feeds.map((feed) => ({
       ...feed,
-      lastChecked: parseDate(feed.lastChecked).toISOString(),
+      lastChecked: feed.lastChecked.toISOString(),
+      updated: feed.updated?.toISOString(),
       etag_header: feed.etag_header || '',
       last_modified_header: feed.last_modified_header || '',
       scraper_rules: null,
@@ -521,7 +444,7 @@ export class FeedService {
 
     const [userFeed] = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         user_id: schema.subscriptions.userMinifluxId,
         favicon: schema.icons.url,
         description: schema.subscriptions.description,
@@ -545,11 +468,12 @@ export class FeedService {
       )
       .limit(1);
     if (!userFeed) {
-      throw new Error('Feed not found');
+      throw new NotFoundException('Feed not found');
     }
     return {
       ...userFeed,
-      lastChecked: parseDate(userFeed.lastChecked).toISOString(),
+      lastChecked: userFeed.lastChecked.toISOString(),
+      updated: userFeed.updated?.toISOString(),
       scraper_rules: null,
       rewrite_rules: null,
       blocklist_rules: null,
@@ -566,7 +490,7 @@ export class FeedService {
   async findByUrl(url: string, userId: string) {
     const [userFeed] = await this.db
       .select({
-        ...getTableColumns(schema.feeds),
+        ...getColumns(schema.feeds),
         description: schema.subscriptions.description,
         folderId: schema.subscriptions.folderId,
         subscriptionId: schema.subscriptions.id,
@@ -589,77 +513,46 @@ export class FeedService {
       )
       .limit(1);
     if (!userFeed) {
-      throw new Error('Feed not found');
+      throw new NotFoundException('Feed not found');
     }
     return userFeed;
   }
 
   async update(id: string, userId: string, updateFeedDto: UpdateFeedDto) {
     return await this.db.transaction(async (tx) => {
-      const [feed] = await tx
-        .select()
-        .from(schema.feeds)
-        .innerJoin(
-          schema.subscriptions,
-          eq(schema.subscriptions.feedId, schema.feeds.id),
-        )
-        .where(
-          and(eq(schema.feeds.id, id), eq(schema.subscriptions.userId, userId)),
-        )
-        .limit(1);
-      if (!feed) {
-        throw new Error('Feed not found');
+      const subscription = await tx.query.subscriptions.findFirst({
+        where: {
+          feedId: id,
+          userId,
+        },
+      });
+
+      if (!subscription) {
+        throw new NotFoundException('Subscription not found');
       }
+
       if (updateFeedDto.folderId) {
-        const [folder] = await tx
-          .select()
-          .from(schema.folders)
-          .where(
-            and(
-              eq(schema.folders.id, updateFeedDto.folderId),
-              eq(schema.folders.userId, userId),
-            ),
-          )
-          .limit(1);
+        const folder = await tx.query.folders.findFirst({
+          where: {
+            id: updateFeedDto.folderId,
+            userId,
+          },
+        });
+
         if (!folder) {
-          throw new Error('Folder not found');
+          throw new NotFoundException('Folder not found');
         }
-        const [subscription] = await tx
-          .update(schema.subscriptions)
-          .set({
-            description: updateFeedDto.description,
-            folderId: folder.id,
-          })
-          .where(
-            and(
-              eq(schema.subscriptions.feedId, id),
-              eq(schema.subscriptions.userId, userId),
-            ),
-          )
-          .returning();
-        if (!subscription) {
-          throw new Error('Subscription not found');
-        }
-        return subscription;
-      } else {
-        const [subscription] = await tx
-          .update(schema.subscriptions)
-          .set({
-            description: updateFeedDto.description,
-            folderId: null,
-          })
-          .where(
-            and(
-              eq(schema.subscriptions.feedId, id),
-              eq(schema.subscriptions.userId, userId),
-            ),
-          )
-          .returning();
-        if (!subscription) {
-          throw new Error('Subscription not found');
-        }
-        return subscription;
       }
+
+      const [sub] = await tx
+        .update(schema.subscriptions)
+        .set({
+          folderId: updateFeedDto.folderId ?? null,
+          description: updateFeedDto.description,
+        })
+        .where(eq(schema.subscriptions.id, subscription.id))
+        .returning();
+      return sub;
     });
   }
 

@@ -1,0 +1,4 @@
+pre-commit:
+  commands:
+    check:
+      run: pnpx @biomejs/biome check --no-errors-on-unmatched --files-ignore-unknown=true --colors=off --fix {staged_files}

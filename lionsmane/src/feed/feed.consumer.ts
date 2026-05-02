@@ -1,22 +1,35 @@
-import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { schema } from 'src/db/schema';
-import { FetcherService } from 'src/fetcher/fetcher.service';
-import { FolderService } from 'src/folder/folder.service';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
+import { FetcherService } from '@/fetcher/fetcher.service';
 import { FeedService } from './feed.service';
 
 @Processor('feed')
 export class FeedConsumer extends WorkerHost {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     private fetcher: FetcherService,
     private feedService: FeedService,
-    private folderService: FolderService,
   ) {
     super();
+  }
+
+  private readonly logger = new Logger(FeedConsumer.name);
+
+  @OnWorkerEvent('error')
+  async logError(
+    job: Job<
+      | { feedId: string }
+      | { userId: string; url: string; title?: string; folder?: string }
+    >,
+  ) {
+    this.logger.error(`Error processing feed job: ${job.failedReason}`);
   }
 
   async process(
@@ -44,31 +57,9 @@ export class FeedConsumer extends WorkerHost {
       const { userId, url, folder } = job.data;
 
       const newFeed = await this.feedService.create(
-        { url, folderId: null },
+        { url, folderName: folder || null },
         userId,
       );
-      if (folder) {
-        try {
-          const existingFolder = await this.folderService.findByName(
-            folder,
-            userId,
-          );
-          return await this.feedService.update(newFeed.id, userId, {
-            folderId: existingFolder.id,
-          });
-        } catch {
-          const newFolder = await this.folderService.create(
-            {
-              name: folder,
-              feedIds: [newFeed.id],
-            },
-            userId,
-          );
-          return await this.feedService.update(newFeed.id, userId, {
-            folderId: newFolder.id,
-          });
-        }
-      }
       return newFeed;
     }
   }

@@ -1,6 +1,16 @@
-import { feedSchema } from 'lionsmane-common';
+import { createSelectSchema } from 'drizzle-orm/zod';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { coreSchema } from '@/db';
+import { ytFeed } from '@/syndication/zod/youtube.zod';
+import { itunesSchema } from '@/types/itunes';
+
+export const feedSchema = createSelectSchema(coreSchema.feeds).extend({
+  lastChecked: z.iso.datetime(),
+  updated: z.iso.datetime().nullish(),
+  itunes: itunesSchema.nullish(),
+  youtube: ytFeed.nullish(),
+});
 
 export const feedSchemaWithCounts = feedSchema
   .extend({
@@ -9,8 +19,8 @@ export const feedSchemaWithCounts = feedSchema
     folderId: z.uuid().nullable(),
   })
   .omit({
-    minifluxId: true,
     icon: true,
+    metaData: true,
   });
 
 const feedListOutDto = z.object({ feeds: z.array(feedSchemaWithCounts) });

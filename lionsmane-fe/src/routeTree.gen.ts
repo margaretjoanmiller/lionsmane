@@ -8,143 +8,152 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
-import { Route as DashboardSearchRouteImport } from './routes/dashboard/search'
-import { Route as DashboardHiddenRouteImport } from './routes/dashboard/hidden'
-import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId'
-import { Route as DashboardFilterIndexRouteImport } from './routes/dashboard/filter.index'
-import { Route as DashboardFolderFolderIdRouteImport } from './routes/dashboard/folder.$folderId'
-import { Route as DashboardFilterNewRouteImport } from './routes/dashboard/filter.new'
-import { Route as DashboardFilterFilterIdRouteImport } from './routes/dashboard/filter.$filterId'
-import { Route as DashboardFeedFeedIdRouteImport } from './routes/dashboard/feed.$feedId'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as DashboardArticleIdRouteImport } from './routes/dashboard/$articleId';
+import { Route as DashboardFeedFeedIdRouteImport } from './routes/dashboard/feed.$feedId';
+import { Route as DashboardFeedNewRouteImport } from './routes/dashboard/feed.new';
+import { Route as DashboardFilterFilterIdRouteImport } from './routes/dashboard/filter.$filterId';
+import { Route as DashboardFilterIndexRouteImport } from './routes/dashboard/filter.index';
+import { Route as DashboardFilterNewRouteImport } from './routes/dashboard/filter.new';
+import { Route as DashboardFolderFolderIdRouteImport } from './routes/dashboard/folder.$folderId';
+import { Route as DashboardHiddenRouteImport } from './routes/dashboard/hidden';
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index';
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route';
+import { Route as DashboardSearchRouteImport } from './routes/dashboard/search';
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings';
+import { Route as IndexRouteImport } from './routes/index';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as SignupRouteImport } from './routes/signup';
 
 const SignupRoute = SignupRouteImport.update({
+  getParentRoute: () => rootRouteImport,
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
+  getParentRoute: () => rootRouteImport,
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  getParentRoute: () => rootRouteImport,
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+} as any);
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
   getParentRoute: () => DashboardRouteRoute,
-} as any)
+  id: '/',
+  path: '/',
+} as any);
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardSearchRoute = DashboardSearchRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/search',
   path: '/search',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardHiddenRoute = DashboardHiddenRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/hidden',
   path: '/hidden',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardArticleIdRoute = DashboardArticleIdRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/$articleId',
   path: '/$articleId',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardFilterIndexRoute = DashboardFilterIndexRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/filter/',
   path: '/filter/',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardFolderFolderIdRoute = DashboardFolderFolderIdRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/folder/$folderId',
   path: '/folder/$folderId',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardFilterNewRoute = DashboardFilterNewRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/filter/new',
   path: '/filter/new',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 const DashboardFilterFilterIdRoute = DashboardFilterFilterIdRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/filter/$filterId',
   path: '/filter/$filterId',
+} as any);
+const DashboardFeedNewRoute = DashboardFeedNewRouteImport.update({
   getParentRoute: () => DashboardRouteRoute,
-} as any)
+  id: '/feed/new',
+  path: '/feed/new',
+} as any);
 const DashboardFeedFeedIdRoute = DashboardFeedFeedIdRouteImport.update({
+  getParentRoute: () => DashboardRouteRoute,
   id: '/feed/$feedId',
   path: '/feed/$feedId',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
-  '/dashboard/$articleId': typeof DashboardArticleIdRoute
-  '/dashboard/hidden': typeof DashboardHiddenRoute
-  '/dashboard/search': typeof DashboardSearchRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
-  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
-  '/dashboard/filter/new': typeof DashboardFilterNewRoute
-  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute
-  '/dashboard/filter': typeof DashboardFilterIndexRoute
+  '/': typeof IndexRoute;
+  '/dashboard': typeof DashboardRouteRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/signup': typeof SignupRoute;
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute;
+  '/dashboard/hidden': typeof DashboardHiddenRoute;
+  '/dashboard/search': typeof DashboardSearchRoute;
+  '/dashboard/settings': typeof DashboardSettingsRoute;
+  '/dashboard/': typeof DashboardIndexRoute;
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute;
+  '/dashboard/feed/new': typeof DashboardFeedNewRoute;
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute;
+  '/dashboard/filter/new': typeof DashboardFilterNewRoute;
+  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute;
+  '/dashboard/filter/': typeof DashboardFilterIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
-  '/dashboard/$articleId': typeof DashboardArticleIdRoute
-  '/dashboard/hidden': typeof DashboardHiddenRoute
-  '/dashboard/search': typeof DashboardSearchRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
-  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
-  '/dashboard/filter/new': typeof DashboardFilterNewRoute
-  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute
-  '/dashboard/filter': typeof DashboardFilterIndexRoute
+  '/': typeof IndexRoute;
+  '/login': typeof LoginRoute;
+  '/signup': typeof SignupRoute;
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute;
+  '/dashboard/hidden': typeof DashboardHiddenRoute;
+  '/dashboard/search': typeof DashboardSearchRoute;
+  '/dashboard/settings': typeof DashboardSettingsRoute;
+  '/dashboard': typeof DashboardIndexRoute;
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute;
+  '/dashboard/feed/new': typeof DashboardFeedNewRoute;
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute;
+  '/dashboard/filter/new': typeof DashboardFilterNewRoute;
+  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute;
+  '/dashboard/filter': typeof DashboardFilterIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
-  '/dashboard/$articleId': typeof DashboardArticleIdRoute
-  '/dashboard/hidden': typeof DashboardHiddenRoute
-  '/dashboard/search': typeof DashboardSearchRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute
-  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute
-  '/dashboard/filter/new': typeof DashboardFilterNewRoute
-  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute
-  '/dashboard/filter/': typeof DashboardFilterIndexRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/dashboard': typeof DashboardRouteRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/signup': typeof SignupRoute;
+  '/dashboard/$articleId': typeof DashboardArticleIdRoute;
+  '/dashboard/hidden': typeof DashboardHiddenRoute;
+  '/dashboard/search': typeof DashboardSearchRoute;
+  '/dashboard/settings': typeof DashboardSettingsRoute;
+  '/dashboard/': typeof DashboardIndexRoute;
+  '/dashboard/feed/$feedId': typeof DashboardFeedFeedIdRoute;
+  '/dashboard/feed/new': typeof DashboardFeedNewRoute;
+  '/dashboard/filter/$filterId': typeof DashboardFilterFilterIdRoute;
+  '/dashboard/filter/new': typeof DashboardFilterNewRoute;
+  '/dashboard/folder/$folderId': typeof DashboardFolderFolderIdRoute;
+  '/dashboard/filter/': typeof DashboardFilterIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/dashboard'
@@ -156,11 +165,12 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/feed/new'
     | '/dashboard/filter/$filterId'
     | '/dashboard/filter/new'
     | '/dashboard/folder/$folderId'
-    | '/dashboard/filter'
-  fileRoutesByTo: FileRoutesByTo
+    | '/dashboard/filter/';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
     | '/login'
@@ -171,10 +181,11 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/feed/new'
     | '/dashboard/filter/$filterId'
     | '/dashboard/filter/new'
     | '/dashboard/folder/$folderId'
-    | '/dashboard/filter'
+    | '/dashboard/filter';
   id:
     | '__root__'
     | '/'
@@ -187,158 +198,168 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/feed/$feedId'
+    | '/dashboard/feed/new'
     | '/dashboard/filter/$filterId'
     | '/dashboard/filter/new'
     | '/dashboard/folder/$folderId'
-    | '/dashboard/filter/'
-  fileRoutesById: FileRoutesById
+    | '/dashboard/filter/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  IndexRoute: typeof IndexRoute;
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
+  SignupRoute: typeof SignupRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/signup';
+      path: '/signup';
+      fullPath: '/signup';
+      preLoaderRoute: typeof SignupRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/dashboard';
+      path: '/dashboard';
+      fullPath: '/dashboard';
+      preLoaderRoute: typeof DashboardRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/';
+      path: '/';
+      fullPath: '/dashboard/';
+      preLoaderRoute: typeof DashboardIndexRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/settings': {
-      id: '/dashboard/settings'
-      path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/settings';
+      path: '/settings';
+      fullPath: '/dashboard/settings';
+      preLoaderRoute: typeof DashboardSettingsRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/search': {
-      id: '/dashboard/search'
-      path: '/search'
-      fullPath: '/dashboard/search'
-      preLoaderRoute: typeof DashboardSearchRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/search';
+      path: '/search';
+      fullPath: '/dashboard/search';
+      preLoaderRoute: typeof DashboardSearchRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/hidden': {
-      id: '/dashboard/hidden'
-      path: '/hidden'
-      fullPath: '/dashboard/hidden'
-      preLoaderRoute: typeof DashboardHiddenRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/hidden';
+      path: '/hidden';
+      fullPath: '/dashboard/hidden';
+      preLoaderRoute: typeof DashboardHiddenRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/$articleId': {
-      id: '/dashboard/$articleId'
-      path: '/$articleId'
-      fullPath: '/dashboard/$articleId'
-      preLoaderRoute: typeof DashboardArticleIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/$articleId';
+      path: '/$articleId';
+      fullPath: '/dashboard/$articleId';
+      preLoaderRoute: typeof DashboardArticleIdRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/filter/': {
-      id: '/dashboard/filter/'
-      path: '/filter'
-      fullPath: '/dashboard/filter'
-      preLoaderRoute: typeof DashboardFilterIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/filter/';
+      path: '/filter';
+      fullPath: '/dashboard/filter/';
+      preLoaderRoute: typeof DashboardFilterIndexRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/folder/$folderId': {
-      id: '/dashboard/folder/$folderId'
-      path: '/folder/$folderId'
-      fullPath: '/dashboard/folder/$folderId'
-      preLoaderRoute: typeof DashboardFolderFolderIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/folder/$folderId';
+      path: '/folder/$folderId';
+      fullPath: '/dashboard/folder/$folderId';
+      preLoaderRoute: typeof DashboardFolderFolderIdRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/filter/new': {
-      id: '/dashboard/filter/new'
-      path: '/filter/new'
-      fullPath: '/dashboard/filter/new'
-      preLoaderRoute: typeof DashboardFilterNewRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/filter/new';
+      path: '/filter/new';
+      fullPath: '/dashboard/filter/new';
+      preLoaderRoute: typeof DashboardFilterNewRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/filter/$filterId': {
-      id: '/dashboard/filter/$filterId'
-      path: '/filter/$filterId'
-      fullPath: '/dashboard/filter/$filterId'
-      preLoaderRoute: typeof DashboardFilterFilterIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/filter/$filterId';
+      path: '/filter/$filterId';
+      fullPath: '/dashboard/filter/$filterId';
+      preLoaderRoute: typeof DashboardFilterFilterIdRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
+    '/dashboard/feed/new': {
+      id: '/dashboard/feed/new';
+      path: '/feed/new';
+      fullPath: '/dashboard/feed/new';
+      preLoaderRoute: typeof DashboardFeedNewRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
     '/dashboard/feed/$feedId': {
-      id: '/dashboard/feed/$feedId'
-      path: '/feed/$feedId'
-      fullPath: '/dashboard/feed/$feedId'
-      preLoaderRoute: typeof DashboardFeedFeedIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
+      id: '/dashboard/feed/$feedId';
+      path: '/feed/$feedId';
+      fullPath: '/dashboard/feed/$feedId';
+      preLoaderRoute: typeof DashboardFeedFeedIdRouteImport;
+      parentRoute: typeof DashboardRouteRoute;
+    };
   }
 }
 
 interface DashboardRouteRouteChildren {
-  DashboardArticleIdRoute: typeof DashboardArticleIdRoute
-  DashboardHiddenRoute: typeof DashboardHiddenRoute
-  DashboardSearchRoute: typeof DashboardSearchRoute
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardFeedFeedIdRoute: typeof DashboardFeedFeedIdRoute
-  DashboardFilterFilterIdRoute: typeof DashboardFilterFilterIdRoute
-  DashboardFilterNewRoute: typeof DashboardFilterNewRoute
-  DashboardFolderFolderIdRoute: typeof DashboardFolderFolderIdRoute
-  DashboardFilterIndexRoute: typeof DashboardFilterIndexRoute
+  DashboardArticleIdRoute: typeof DashboardArticleIdRoute;
+  DashboardHiddenRoute: typeof DashboardHiddenRoute;
+  DashboardSearchRoute: typeof DashboardSearchRoute;
+  DashboardSettingsRoute: typeof DashboardSettingsRoute;
+  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardFeedFeedIdRoute: typeof DashboardFeedFeedIdRoute;
+  DashboardFeedNewRoute: typeof DashboardFeedNewRoute;
+  DashboardFilterFilterIdRoute: typeof DashboardFilterFilterIdRoute;
+  DashboardFilterNewRoute: typeof DashboardFilterNewRoute;
+  DashboardFolderFolderIdRoute: typeof DashboardFolderFolderIdRoute;
+  DashboardFilterIndexRoute: typeof DashboardFilterIndexRoute;
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardArticleIdRoute: DashboardArticleIdRoute,
-  DashboardHiddenRoute: DashboardHiddenRoute,
-  DashboardSearchRoute: DashboardSearchRoute,
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
   DashboardFeedFeedIdRoute: DashboardFeedFeedIdRoute,
+  DashboardFeedNewRoute: DashboardFeedNewRoute,
   DashboardFilterFilterIdRoute: DashboardFilterFilterIdRoute,
+  DashboardFilterIndexRoute: DashboardFilterIndexRoute,
   DashboardFilterNewRoute: DashboardFilterNewRoute,
   DashboardFolderFolderIdRoute: DashboardFolderFolderIdRoute,
-  DashboardFilterIndexRoute: DashboardFilterIndexRoute,
-}
+  DashboardHiddenRoute: DashboardHiddenRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardSearchRoute: DashboardSearchRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+};
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
   DashboardRouteRouteChildren,
-)
+);
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

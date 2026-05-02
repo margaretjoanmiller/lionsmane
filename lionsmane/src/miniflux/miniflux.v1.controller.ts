@@ -36,10 +36,10 @@ import { AuthService, Session } from '@thallesp/nestjs-better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request as ExpressRequest } from 'express';
 import { ZodResponse } from 'nestjs-zod';
-import { auth } from 'src/auth';
-import { FileDto } from 'src/feed/dto/file.dto';
-import { FeedService } from 'src/feed/feed.service';
-import { DiscoverDto } from 'src/zod/discover.dto';
+import { auth } from '@/auth';
+import { FileDto } from '@/feed/dto/file.dto';
+import { FeedService } from '@/feed/feed.service';
+import { DiscoverDto } from '@/zod/discover.dto';
 import { DiscoverOutDto } from '../zod/discover.dto';
 import { CategoryOutDto, CreateCategoryDto } from './dto/category.dto';
 import {

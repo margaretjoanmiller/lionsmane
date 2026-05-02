@@ -9,8 +9,11 @@ import { Queue } from 'bullmq';
 import { isAfter, subMonths } from 'date-fns';
 import { and, eq, gte, ne, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { Article } from 'src/article/article';
-import { schema } from 'src/db/schema';
+import { isDefined } from 'ts-extras';
+import { Article } from '@/article/dto/article-detail.dto';
+import { DrizzleAsyncProvider } from '@/drizzle/drizzle.provider';
+import { relations } from '@/drizzle/relations';
+import * as schema from '@/drizzle/schema';
 import { CreateFilterDto } from './dto/create-filter.dto';
 import { UpdateFilterDto } from './dto/update-filter.dto';
 import { AppliedRules, FilterRule } from './filter';
@@ -18,9 +21,22 @@ import { AppliedRules, FilterRule } from './filter';
 @Injectable()
 export class FilterService {
   constructor(
-    @Inject('DB') private db: NodePgDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider)
+    private db: NodePgDatabase<typeof schema, typeof relations>,
     @InjectQueue('filter') private filterQueue: Queue,
   ) {}
+
+  private async reQueue() {
+    const articles = await this.db
+      .select({ articleId: schema.articles.id })
+      .from(schema.articles)
+      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
+    for (const article of articles) {
+      await this.filterQueue.add('filter-article', {
+        articleId: article.articleId,
+      });
+    }
+  }
 
   async create(userId: string, createFilterDto: CreateFilterDto) {
     const [filter] = await this.db
@@ -33,15 +49,8 @@ export class FilterService {
     if (!filter) {
       throw new InternalServerErrorException('Filter not found');
     }
-    const articles = await this.db
-      .select({ articleId: schema.articles.id })
-      .from(schema.articles)
-      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
-    for (const article of articles) {
-      await this.filterQueue.add('filter-article', {
-        articleId: article.articleId,
-      });
-    }
+
+    await this.reQueue();
 
     return filter;
   }
@@ -79,18 +88,9 @@ export class FilterService {
       )
       .returning();
     if (!filter) {
-      throw new Error('Filter not found');
+      throw new NotFoundException('Filter not found');
     }
-    const articles = await this.db
-      .select({ articleId: schema.articles.id })
-      .from(schema.articles)
-      .where(gte(sql`${schema.articles.published}`, subMonths(Date.now(), 1)));
-    for (const article of articles) {
-      await this.filterQueue.add('filter-article', {
-        articleId: article.articleId,
-      });
-    }
-
+    await this.reQueue();
     return filter;
   }
 
@@ -119,8 +119,7 @@ export class FilterService {
       )
       .map((filter) => {
         if (
-          filter.conditions.keywords &&
-          filter.conditions.keywords.some((keyword) =>
+          filter.conditions.keywords?.some((keyword) =>
             article.keywords?.includes(keyword),
           )
         ) {
@@ -135,13 +134,10 @@ export class FilterService {
           };
         }
         if (
-          filter.conditions.authors &&
-          filter.conditions.authors.some((author) =>
-            article.authors?.some(
-              (a) => a.name === author || a.email === author,
-            ),
+          filter.conditions.authors?.some((author) =>
+            article?.authors?.includes(author),
           )
-        ) {
+        )
           return {
             ...filter,
             userId: filter.userId,
@@ -151,10 +147,8 @@ export class FilterService {
             appliedAt: new Date(),
             ruleId: filter.id,
           };
-        }
         if (
-          filter.conditions.titleContains &&
-          filter.conditions.titleContains.some((title) =>
+          filter.conditions.titleContains?.some((title) =>
             article.title?.includes(title),
           )
         )
@@ -168,8 +162,7 @@ export class FilterService {
             ruleId: filter.id,
           };
         if (
-          filter.conditions.contentContains &&
-          filter.conditions.contentContains.some((content) =>
+          filter.conditions.contentContains?.some((content) =>
             article.readableText?.includes(content),
           )
         ) {
@@ -183,10 +176,7 @@ export class FilterService {
             ruleId: filter.id,
           };
         }
-        if (
-          filter.conditions.feeds &&
-          filter.conditions.feeds.some((feed) => article.feedId === feed)
-        ) {
+        if (filter.conditions.feeds?.some((feed) => article.feedId === feed)) {
           return {
             ...filter,
             userId: filter.userId,
@@ -198,9 +188,8 @@ export class FilterService {
           };
         }
         if (
-          filter.conditions.categories &&
-          filter.conditions.categories.some((category) =>
-            article.categories?.includes({ term: category }),
+          filter.conditions.categories?.some((category) =>
+            article.categories?.includes(category),
           )
         ) {
           return {
@@ -212,9 +201,11 @@ export class FilterService {
             contentWarning: filter.action.contentWarning,
             ruleId: filter.id,
           };
+        } else {
+          return undefined;
         }
       })
-      .filter((action) => action !== undefined);
+      .filter(isDefined);
   }
 
   // apply matching filter rules to article
@@ -325,16 +316,8 @@ export class FilterService {
           action: 'blur',
           contentWarning: matchingRuleBlur.contentWarning,
         });
-        if (
-          matchingRuleBlur.ruleId === matchingRuleBlur.ruleId &&
-          matchingRuleBlur.contentWarning
-        ) {
+        if (matchingRuleBlur.contentWarning) {
           finalState.contentWarning = [];
-          finalState.contentWarning.push(matchingRuleBlur.contentWarning);
-        } else if (
-          matchingRuleBlur.contentWarning &&
-          !finalState.contentWarning.includes(matchingRuleBlur.contentWarning)
-        ) {
           finalState.contentWarning.push(matchingRuleBlur.contentWarning);
         }
         finalState.isBlurred = true;

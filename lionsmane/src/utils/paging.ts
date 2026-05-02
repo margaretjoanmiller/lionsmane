@@ -3,7 +3,7 @@ import { z } from 'zod';
 function safeParseBase64Json(cursor: string) {
   const cursorSchema = z.object({
     id: z.uuid(),
-    published: z.string(),
+    published: z.iso.datetime(),
   });
   const parsedCursor = cursorSchema.safeParse(
     JSON.parse(Buffer.from(cursor, 'base64url').toString('ascii')),
@@ -15,7 +15,7 @@ function safeParseBase64Json(cursor: string) {
 }
 
 export function parseCursor(cursor: string): {
-  published: string;
+  published: Date;
   id: string;
 } {
   try {
@@ -23,16 +23,16 @@ export function parseCursor(cursor: string): {
     if (!decoded.published || !decoded.id) {
       throw new Error('Invalid cursor format');
     }
-    return decoded;
+    return { ...decoded, published: new Date(decoded.published) };
   } catch (error) {
     throw new Error('Invalid cursor provided', { cause: error });
   }
 }
 
-export function createCursor(published: string, id: string): string {
+export function createCursor(published: Date, id: string): string {
   return Buffer.from(
     JSON.stringify({
-      published: published,
+      published: published.toISOString(),
       id,
     }),
   ).toString('base64url');

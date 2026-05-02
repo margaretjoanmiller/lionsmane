@@ -8,6 +8,9 @@
     "utils": "@/lib/utils"
   },
   "iconLibrary": "lucide",
+  "registries": {
+    "@diceui": "https://diceui.com/r/{name}.json"
+  },
   "rsc": false,
   "style": "new-york",
   "tailwind": {

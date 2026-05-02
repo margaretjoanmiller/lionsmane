@@ -1,9 +1,7 @@
-import { NewArticle } from './dto/new-article.dto';
+import type { Atom, Json, Rdf, Rss } from 'feedsmith';
+import type { OmitDeep } from 'type-fest';
 
-export interface Article extends NewArticle {
-  id: string;
-  fullArticleText: string | null;
-  fullArticleHtml: string | null;
-  isRead?: boolean;
-  isStarred?: boolean;
-}
+export type ArticleMetaData = OmitDeep<
+  Atom.Entry<Date> | Rss.Item<Date> | Json.Item<Date> | Rdf.Item<Date>,
+  'url' | 'site_url' | 'lastChecked' | 'updated' | 'yt' | 'itunes'
+>;

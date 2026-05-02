@@ -6,7 +6,7 @@ export class OpmlService {
   getFeedsFromOpml(xml: string) {
     const opml = parseOpml(xml);
     const feeds = opml?.body?.outlines?.flatMap((outline) => {
-      if (outline.outlines instanceof Array) {
+      if (Array.isArray(outline.outlines)) {
         return outline.outlines.map((subOutline) => ({
           title: subOutline.title,
           url: subOutline.xmlUrl,

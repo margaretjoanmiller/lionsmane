@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { createKeyv } from '@keyv/redis';
-import { DrizzlePGModule } from '@knaadh/nestjs-drizzle-pg';
 import { BullModule } from '@nestjs/bullmq';
 import { CacheModule } from '@nestjs/cache-manager';
 import {
@@ -21,6 +20,7 @@ import {
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
+import { LoggerModule } from 'nestjs-pino';
 import {
   ZodSerializationException,
   ZodSerializerInterceptor,
@@ -31,8 +31,7 @@ import { AppController } from './app.controller';
 import { ArticleModule } from './article/article.module';
 import { auth } from './auth';
 import { CronModule } from './cron/cron.module';
-import * as authSchema from './db/schema/auth';
-import * as coreSchema from './db/schema/core';
+import { DrizzleModule } from './drizzle/drizzle.module';
 import { EmailModule } from './email/email.module';
 import { FeedModule } from './feed/feed.module';
 import { FetcherModule } from './fetcher/fetcher.module';
@@ -41,8 +40,10 @@ import { FolderModule } from './folder/folder.module';
 import { HealthModule } from './health/health.module';
 import { MinifluxModule } from './miniflux/miniflux.module';
 import { OpmlModule } from './opml/opml.module';
+import { ParserModule } from './parser/parser.module';
 import { ReadlaterModule } from './readlater/readlater.module';
 import { RedisModule } from './redis/redis.module';
+import { RobotsModule } from './robots/robots.module';
 import { SecretsModule } from './secrets/secrets.module';
 
 @Catch(HttpException)
@@ -64,30 +65,14 @@ class HttpExceptionFilter extends BaseExceptionFilter {
 
 @Module({
   imports: [
+    LoggerModule.forRoot(),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST || 'localhost',
         port: 6379,
       },
     }),
-    BullModule.registerQueue(
-      { name: 'feed' },
-      { name: 'article' },
-      { name: 'filter' },
-    ),
-    AuthModule.forRoot(auth),
-    DrizzlePGModule.register({
-      tag: 'DB',
-      pg: {
-        connection: 'pool',
-        config: {
-          connectionString: process.env.DATABASE_URL!,
-        },
-      },
-      config: {
-        schema: { ...authSchema, ...coreSchema },
-      },
-    }),
+    AuthModule.forRoot({ auth }),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: () => {
@@ -123,7 +108,6 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     FeedModule,
     ArticleModule,
     FolderModule,
-    RedisModule,
     CronModule,
     FilterModule,
     OpmlModule,
@@ -132,6 +116,9 @@ class HttpExceptionFilter extends BaseExceptionFilter {
     SecretsModule,
     EmailModule,
     MinifluxModule,
+    DrizzleModule,
+    RobotsModule,
+    ParserModule,
   ],
   controllers: [AppController],
   providers: [

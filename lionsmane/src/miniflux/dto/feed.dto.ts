@@ -1,34 +1,19 @@
-import { feedSchema } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { feedSchema } from '@/feed/dto/feed-out.dto';
 
 export const feedDtoMini = feedSchema
   .omit({
     id: true,
     minifluxId: true,
-    copyright: true,
-    authors: true,
-    categories: true,
-    geo: true,
-    youtube: true,
     icon: true,
-    podcast: true,
     parsingErrorCount: true,
     parsingErrorMessage: true,
-    image: true,
     subtitle: true,
     userAgent: true,
-    contributors: true,
-    explicit: true,
     url: true,
     lastChecked: true,
     updated: true,
-    subject: true,
-    publisher: true,
-    updateFrequency: true,
-    updatePeriod: true,
-    updateBase: true,
-    rights: true,
     favicon: true,
   })
   .extend({

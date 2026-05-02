@@ -1,6 +1,6 @@
+import { apiKeyClient } from '@better-auth/api-key/client';
 import { passkeyClient } from '@better-auth/passkey/client';
 import {
-  apiKeyClient,
   inferAdditionalFields,
   twoFactorClient,
 } from 'better-auth/client/plugins';

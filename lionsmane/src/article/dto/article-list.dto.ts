@@ -1,20 +1,10 @@
-import { articleDetail } from 'lionsmane-common';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { articleDetailWithStatus } from './article-detail.dto';
 
 const articleList = z.object({
   cursor: z.string().nullable(),
-  articles: z.array(
-    articleDetail.extend({
-      isRead: z.boolean().default(false).nullable(),
-      isStarred: z.boolean().default(false).nullable().nullable(),
-      isBlurred: z.boolean().default(false).nullable(),
-      isHidden: z.boolean().default(false).nullable(),
-      contentWarning: z.array(z.string()).nullable().default([]),
-      feedId: z.uuid(),
-      feedTitle: z.string().nullable(),
-    }),
-  ),
+  articles: z.array(articleDetailWithStatus),
 });
 
 const hiddenArticleList = articleList.extend({

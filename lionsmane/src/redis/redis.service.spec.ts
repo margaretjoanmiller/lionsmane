@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { vi } from 'vitest';
 import { RedisService } from './redis.service';
 
 describe('RedisService', () => {

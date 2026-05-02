@@ -1,23 +1,16 @@
-import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
-import { RedisModule } from 'src/redis/redis.module';
-import { RedisService } from 'src/redis/redis.service';
+import { DrizzleModule } from '@/drizzle/drizzle.module';
+import { ParserModule } from '@/parser/parser.module';
+import { RedisModule } from '@/redis/redis.module';
 import { FetcherService } from './fetcher.service';
 
 @Module({
   imports: [
     BullModule.registerQueue({ name: 'article' }),
+    DrizzleModule,
     RedisModule,
-    HttpModule.register({
-      timeout: 5000,
-      maxRedirects: 5,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; LionsMane/0.1; +https://codeberg.org/0x4d6165/lionsmane)',
-        Accept: '*/*',
-      },
-    }),
+    ParserModule,
   ],
   providers: [FetcherService],
   exports: [FetcherService],

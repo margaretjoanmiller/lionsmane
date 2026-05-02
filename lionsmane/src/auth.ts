@@ -1,13 +1,15 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { apiKey, oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
+import { apiKey } from '@better-auth/api-key';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { passkey } from '@better-auth/passkey';
-import { db } from './db';
+import { betterAuth } from 'better-auth';
+import { oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
+import { coreSchema, db } from './db';
 import { sendAuthEmail } from './utils/email-auth';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: coreSchema,
   }),
   emailAndPassword: {
     enabled: true,
