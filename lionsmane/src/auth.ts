@@ -3,12 +3,13 @@ import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { oidcProvider, openAPI, twoFactor } from 'better-auth/plugins';
-import { db } from './db';
+import { coreSchema, db } from './db';
 import { sendAuthEmail } from './utils/email-auth';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: coreSchema,
   }),
   emailAndPassword: {
     enabled: true,

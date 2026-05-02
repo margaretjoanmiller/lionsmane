@@ -1,6 +1,4 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Copy, Heart, Plus, Share2 } from 'lucide-react';
-import { toast } from 'sonner';
 import {
   SpeedDial,
   SpeedDialAction,
@@ -32,7 +30,13 @@ export function AppSpeedDial() {
         </SpeedDialItem>
         <SpeedDialItem>
           <SpeedDialLabel>Add new folder</SpeedDialLabel>
-          <SpeedDialAction onSelect={() => toast.success('Copied')}>
+          <SpeedDialAction
+            onSelect={() =>
+              navigate({
+                search: (prev: any) => ({ ...prev, modal: 'add-folder' }),
+              })
+            }
+          >
             <MingcuteNewFolderLine />
           </SpeedDialAction>
         </SpeedDialItem>
