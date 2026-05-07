@@ -20,7 +20,7 @@ export class ReadlaterService {
   private readonly logger = new Logger(ReadlaterService.name);
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
     private secrets: SecretsService,
     private readonly httpService: HttpService,
   ) {}

@@ -1,5 +1,5 @@
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
-import { Inject, Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -13,14 +13,12 @@ import { FeedService } from './feed.service';
 export class FeedConsumer extends WorkerHost {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
     private fetcher: FetcherService,
     private feedService: FeedService,
   ) {
     super();
   }
-
-  private readonly logger = new Logger(FeedConsumer.name);
 
   @OnWorkerEvent('error')
   async logError(
@@ -29,7 +27,7 @@ export class FeedConsumer extends WorkerHost {
       | { userId: string; url: string; title?: string; folder?: string }
     >,
   ) {
-    this.logger.error(`Error processing feed job: ${job.failedReason}`);
+    job.log(`Error processing feed job: ${job.failedReason}`);
   }
 
   async process(

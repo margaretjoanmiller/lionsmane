@@ -13,7 +13,7 @@ import { FilterService } from './filter.service';
 export class FilterConsumer extends WorkerHost {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
 
     private filterService: FilterService,
   ) {

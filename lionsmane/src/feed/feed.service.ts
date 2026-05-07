@@ -42,7 +42,7 @@ import { UpdateFeedDto } from './dto/update-feed.dto';
 export class FeedService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private fetcher: FetcherService,
     private folderService: FolderService,

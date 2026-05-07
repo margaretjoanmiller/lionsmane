@@ -22,7 +22,7 @@ import { AppliedRules, FilterRule } from './filter';
 export class FilterService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
     @InjectQueue('filter') private filterQueue: Queue,
   ) {}
 

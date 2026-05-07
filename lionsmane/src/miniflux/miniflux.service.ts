@@ -48,7 +48,7 @@ import { UserSessionMini } from './dto/user.dto';
 export class MinifluxService {
   constructor(
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
     @InjectQueue('feed') private feedQueue: Queue,
     private feedService: FeedService,
     private folderService: FolderService,

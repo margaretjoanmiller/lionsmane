@@ -14,7 +14,7 @@ export class CronService {
   constructor(
     @InjectQueue('feed') private feedQueue: Queue,
     @Inject(DrizzleAsyncProvider)
-    private db: NodePgDatabase<typeof schema, typeof relations>,
+    private db: NodePgDatabase<typeof relations>,
   ) {}
 
   @Cron('0/45 * * * *') // every 45th minute
