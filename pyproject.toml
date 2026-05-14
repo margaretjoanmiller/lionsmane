@@ -15,6 +15,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "lefthook>=2.1.6",
     "ruff>=0.15.13",
     "ty>=0.0.35",
 ]

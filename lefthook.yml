@@ -1,0 +1,5 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - run: uv run ruff check {staged_files}
+      glob: "*.{py}"
