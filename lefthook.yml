@@ -1,4 +1,6 @@
 pre-commit:
   commands:
     check:
-      run: pnpx @biomejs/biome check --no-errors-on-unmatched --files-ignore-unknown=true --colors=off --fix {staged_files}
+      run: pnpm oxlint --fix {staged_files}
+    fmt:
+      run: pnpm oxfmt --write {staged_files}

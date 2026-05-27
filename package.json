@@ -2,17 +2,21 @@
   "name": "lionsmane",
   "version": "0.4.3",
   "description": "",
+  "keywords": [],
+  "license": "EUPL-1.2",
+  "author": "Margaret Miller <mmiller@wanderingwires.net>",
+  "workspaces": [
+    "lionsmane",
+    "lionsmane-fe"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "Margaret Miller <mmiller@wanderingwires.net>",
-  "license": "EUPL-1.2",
-  "packageManager": "pnpm@11.0.0",
   "devDependencies": {
-    "@biomejs/biome": "2.4.10",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
-    "lefthook": "^2.1.6"
+    "@typescript/native-preview": "7.0.0-dev.20260525.1",
+    "lefthook": "^2.1.8",
+    "oxfmt": "^0.51.0",
+    "oxlint": "^1.66.0"
   },
-  "workspaces": ["lionsmane", "lionsmane-fe"]
+  "packageManager": "pnpm@11.0.0"
 }
