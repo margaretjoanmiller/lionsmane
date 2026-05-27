@@ -71,40 +71,40 @@ export class ArticleService {
   }
 
   async requestFullArticleText(id: string, userId: string) {
-    const result = await this.db.transaction(async (tx) => {
-      const [article] = await tx
-        .select()
-        .from(coreSchema.articles)
-        .innerJoin(
-          coreSchema.subscriptions,
-          eq(coreSchema.articles.feedId, coreSchema.subscriptions.feedId),
-        )
-        .innerJoin(
-          coreSchema.feeds,
-          eq(coreSchema.articles.feedId, coreSchema.feeds.id),
-        )
-        .where(
-          and(
-            eq(coreSchema.articles.id, id),
-            eq(coreSchema.subscriptions.userId, userId),
-          ),
-        )
-        .limit(1);
-      if (!article) {
-        throw new NotFoundException('Article not found or access denied');
-      }
-      if (article.articles.url) {
-        const { textContent, htmlContent } = await this.fetcher.readability(
-          article.articles.url,
-        );
-        await tx
-          .update(coreSchema.articles)
-          .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
-          .where(eq(coreSchema.articles.id, id));
-        return article;
-      }
-    });
-    return { ...result?.articles, feedTitle: result?.feeds.title };
+    const [article] = await this.db
+      .select()
+      .from(coreSchema.articles)
+      .innerJoin(
+        coreSchema.subscriptions,
+        eq(coreSchema.articles.feedId, coreSchema.subscriptions.feedId),
+      )
+      .innerJoin(
+        coreSchema.feeds,
+        eq(coreSchema.articles.feedId, coreSchema.feeds.id),
+      )
+      .where(
+        and(
+          eq(coreSchema.articles.id, id),
+          eq(coreSchema.subscriptions.userId, userId),
+        ),
+      )
+      .limit(1);
+
+    if (!article) {
+      throw new NotFoundException('Article not found or access denied');
+    }
+
+    if (article.articles.url) {
+      const { textContent, htmlContent } = await this.fetcher.readability(
+        article.articles.url,
+      );
+      await this.db
+        .update(coreSchema.articles)
+        .set({ fullArticleText: textContent, fullArticleHtml: htmlContent })
+        .where(eq(coreSchema.articles.id, id));
+    }
+
+    return { ...article.articles, feedTitle: article.feeds.title };
   }
 
   async getArticles(

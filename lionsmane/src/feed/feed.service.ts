@@ -54,30 +54,28 @@ export class FeedService {
     const url = newSubscription.url.endsWith('/')
       ? newSubscription.url.slice(0, -1)
       : newSubscription.url;
+    const urlObj = new URL(url);
+    const response = await this.fetcher.respectfulFetch(url);
+    const parsed = parseFeed(await response?.text());
+    const { feed: parsedFeed, format } = parsed;
+
+    let favicon: string | null = null;
+    let updated: string | null = null;
+    if (format === 'atom') {
+      if (!parsedFeed.icon) favicon = await this.fetcher.getFavicon(urlObj);
+      else favicon = parsedFeed.icon;
+
+      if (parsedFeed.updated) updated = parsedFeed.updated;
+    } else {
+      favicon = await this.fetcher.getFavicon(urlObj);
+    }
+
     const result = await this.db.transaction(async (tx) => {
       let feed = await tx.query.feeds.findFirst({
         where: {
           url,
         },
       });
-
-      const urlObj = new URL(url);
-
-      const response = await this.fetcher.respectfulFetch(url);
-
-      const parsed = parseFeed(await response?.text());
-      const { feed: parsedFeed, format } = parsed;
-
-      let favicon: string | null = null;
-      let updated: string | null = null;
-      if (format === 'atom') {
-        if (!parsedFeed.icon) favicon = await this.fetcher.getFavicon(urlObj);
-        else favicon = parsedFeed.icon;
-
-        if (parsedFeed.updated) updated = parsedFeed.updated;
-      } else {
-        favicon = await this.fetcher.getFavicon(urlObj);
-      }
 
       if (!feed) {
         let icon: number | null = null;
