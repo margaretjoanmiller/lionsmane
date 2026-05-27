@@ -14,26 +14,12 @@ allowBuilds:
   msw: true
   prisma: true
   unrs-resolver: true
+  '@tailwindcss/oxide': true
+  core-js: true
+  keccak: true
+  scrypt: true
+  secp256k1: true
+  sha3: true
+  websocket: true
 
 injectWorkspacePackages: true
-
-onlyBuiltDependencies:
-  - "@nestjs/core"
-  - "@prisma/engines"
-  - "@scarf/scarf"
-  - "@suites/di.nestjs"
-  - "@suites/doubles.vitest"
-  - "@swc/core"
-  - "@tailwindcss/oxide"
-  - core-js
-  - esbuild
-  - keccak
-  - lefthook
-  - msgpackr-extract
-  - msw
-  - prisma
-  - scrypt
-  - secp256k1
-  - sha3
-  - unrs-resolver
-  - websocket
