@@ -1,0 +1,9 @@
+{
+  "name": "postgres-project",
+  "adapter": "postgres",
+  "host": "localhost",
+  "port": 5423,
+  "user": "lion",
+  "password": "pipgandalf",
+  "database": "lion"
+}

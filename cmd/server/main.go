@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -45,14 +44,14 @@ func main() {
 	viper.SetEnvPrefix("env")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml") // Config file type
-	viper.AddConfigPath(".")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalf("Error reading config file, %s", err)
-	}
+	// viper.SetConfigName("config")
+	// viper.SetConfigType("toml") // Config file type
+	// viper.AddConfigPath(".")
+	//
+	// err := viper.ReadInConfig()
+	// if err != nil {
+	// 	log.Fatalf("Error reading config file, %s", err)
+	// }
 
 	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
