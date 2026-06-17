@@ -1,8 +1,8 @@
 -- +goose Up
 CREATE TABLE IF NOT EXISTS Users (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
-    sub VARCHAR UNIQUE,
-    dateCreated TIMESTAMPTZ
+    Id UUID PRIMARY KEY DEFAULT uuidv7(),
+    Sub VARCHAR UNIQUE,
+    Datecreated TIMESTAMPTZ
 );
 
 -- +goose Down
