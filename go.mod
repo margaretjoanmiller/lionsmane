@@ -1,10 +1,11 @@
-module git.sr.ht/~margaretmiller/lionsmane
+module codeberg.org/mjoanmiller/lionsmane
 
 go 1.26.4
 
 require (
 	github.com/danielgtaylor/huma/v2 v2.38.0
 	github.com/go-chi/chi/v5 v5.3.0
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/markbates/goth v1.82.0
 	github.com/spf13/viper v1.21.0
 )
@@ -38,6 +39,9 @@ require (
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/kaptinlin/go-i18n v0.4.8 // indirect
 	github.com/kaptinlin/jsonpointer v0.4.23 // indirect
 	github.com/kaptinlin/jsonschema v0.7.14 // indirect

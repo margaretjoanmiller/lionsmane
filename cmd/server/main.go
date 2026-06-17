@@ -13,12 +13,15 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/danielgtaylor/huma/v2/humacli"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/goth/providers/google"
 	"github.com/markbates/goth/providers/openidConnect"
 	"github.com/spf13/viper"
+
+	gendb "codeberg.org/mjoanmiller/lionsmane/db"
 
 	_ "github.com/danielgtaylor/huma/v2/formats/cbor"
 )
@@ -41,20 +44,28 @@ type ProviderIndex struct {
 }
 
 func main() {
+	ctx := context.Background()
+
+	// grab config from environment variables and/or .env file
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("env")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.SetConfigFile(".env")
 
-	// viper.SetConfigName("config")
-	// viper.SetConfigType("toml") // Config file type
-	// viper.AddConfigPath(".")
-	//
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
 
+	// Connect to PostgreSQL
+	pool, err := pgxpool.New(ctx, viper.GetString("POSTGRES_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
+
+	// Create the sqlc queries instance
+	// queries := gendb.New(pool)
 	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Create a new router & API

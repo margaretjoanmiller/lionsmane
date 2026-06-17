@@ -2,6 +2,5 @@ pre-commit:
   parallel: true
   jobs:
     - name: golangci-lint
-      files: git ls-files -m
       glob: "*.go"
       run: golangci-lint --fix {files}
