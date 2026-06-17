@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -43,15 +44,16 @@ func main() {
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("env")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetConfigFile(".env")
 
 	// viper.SetConfigName("config")
 	// viper.SetConfigType("toml") // Config file type
 	// viper.AddConfigPath(".")
 	//
-	// err := viper.ReadInConfig()
-	// if err != nil {
-	// 	log.Fatalf("Error reading config file, %s", err)
-	// }
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Error reading config file, %s", err)
+	}
 
 	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
@@ -60,8 +62,8 @@ func main() {
 		api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
 		goth.UseProviders(
-			google.New(viper.GetString("GOOGLE_KEY"), viper.GetString("GOOGLE_SECRET"), "http://localhost:3000/auth/google/callback"),
-			discord.New(viper.GetString("DISCORD_KEY"), viper.GetString("DISCORD_SECRET"), "http://localhost:3000/auth/discord/callback"),
+			google.New(viper.GetString("GOOGLE_KEY"), viper.GetString("GOOGLE_SECRET"), "http://localhost:8888/auth/google/callback"),
+			discord.New(viper.GetString("DISCORD_KEY"), viper.GetString("DISCORD_SECRET"), "http://localhost:8888/auth/discord/callback"),
 		)
 
 		// OpenID Connect is based on OpenID Connect Auto Discovery URL (https://openid.net/specs/openid-connect-discovery-1_0-17.html)
