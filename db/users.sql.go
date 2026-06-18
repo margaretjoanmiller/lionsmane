@@ -8,17 +8,27 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
+
+const createUser = `-- name: CreateUser :exec
+INSERT INTO users (sub, datecreated) VALUES ($1, now())
+ON CONFLICT (sub) DO NOTHING
+`
+
+func (q *Queries) CreateUser(ctx context.Context, sub string) error {
+	_, err := q.db.Exec(ctx, createUser, sub)
+	return err
+}
 
 const getUser = `-- name: GetUser :one
 SELECT id FROM users
 WHERE sub = $1 LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, sub pgtype.Text) (pgtype.UUID, error) {
+func (q *Queries) GetUser(ctx context.Context, sub string) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, getUser, sub)
-	var id pgtype.UUID
+	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err
 }

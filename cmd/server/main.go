@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
 	"sort"
 	"strings"
@@ -65,7 +66,7 @@ func main() {
 	defer pool.Close()
 
 	// Create the sqlc queries instance
-	// queries := gendb.New(pool)
+	queries := gendb.New(pool)
 	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Create a new router & API
@@ -105,6 +106,13 @@ func main() {
 				fmt.Fprintln(res, err)
 				return
 			}
+
+			createErr := queries.CreateUser(ctx, user.UserID)
+
+			if createErr != nil {
+				slog.Error("Error creating new user", createErr)
+			}
+
 			t, _ := template.New("foo").Parse(userTemplate)
 			t.Execute(res, user)
 		})
