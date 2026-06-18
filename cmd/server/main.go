@@ -14,6 +14,7 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/danielgtaylor/huma/v2/humacli"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
@@ -71,6 +72,10 @@ func main() {
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Create a new router & API
 		router := chi.NewMux()
+
+		router.Use(middleware.Logger)
+		router.Use(middleware.CleanPath)
+
 		api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
 		goth.UseProviders(
