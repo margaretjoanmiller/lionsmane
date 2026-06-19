@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"log/slog"
 	"net/http"
-	"os"
 	"strings"
 
+	"codeberg.org/mjoanmiller/lionsmane/internal/auth"
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/danielgtaylor/huma/v2/humacli"
@@ -16,12 +15,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/spf13/viper"
-	"github.com/zitadel/zitadel-go/v3/pkg/authorization"
-	"github.com/zitadel/zitadel-go/v3/pkg/authorization/oauth"
-	zMiddle "github.com/zitadel/zitadel-go/v3/pkg/http/middleware"
-	"github.com/zitadel/zitadel-go/v3/pkg/zitadel"
 
-	// gendb "codeberg.org/mjoanmiller/lionsmane/db"
+	gendb "codeberg.org/mjoanmiller/lionsmane/db"
 
 	_ "github.com/danielgtaylor/huma/v2/formats/cbor"
 )
@@ -52,16 +47,6 @@ func main() {
 		log.Fatalf("Error reading config file, %s", err)
 	}
 
-	zDomain := viper.GetString("ZITADEL_DOMAIN")
-	zKey := viper.GetString("ZITADEL_KEY")
-
-	// Initiate the authorization by providing a zitadel configuration and a verifier.
-	authZ, err := authorization.New(ctx, zitadel.New(zDomain), oauth.DefaultAuthorization(zKey))
-	if err != nil {
-		slog.Error("zitadel sdk could not initialize", "error", err)
-		os.Exit(1)
-	}
-
 	// Connect to PostgreSQL
 	pool, err := pgxpool.New(ctx, viper.GetString("POSTGRES_URL"))
 	if err != nil {
@@ -70,7 +55,9 @@ func main() {
 	defer pool.Close()
 
 	// Create the sqlc queries instance
-	// queries := gendb.New(pool)
+	queries := gendb.New(pool)
+
+	authService := auth.NewService(queries)
 	// Create a CLI app which takes a port option.
 	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
 		// Create a new router & API
@@ -79,9 +66,25 @@ func main() {
 		router.Use(middleware.Logger)
 		router.Use(middleware.CleanPath)
 
-		router.Use(zMiddle.New(authZ).RequireAuthorization())
+		// router.Use(zMiddle.New(authZ).RequireAuthorization())
 
-		api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
+		humaConf := huma.DefaultConfig("lionsmane", "1.0.0")
+
+		humaConf.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
+			"apiKey": {
+				Type:        "apiKey",
+				In:          "header",
+				Name:        "X-API-Key",
+				Description: "API key for authenticating protected endpoints. Pass your key in the `X-API-Key` header.",
+			},
+			"bearer": {
+				Type:         "http",
+				Scheme:       "bearer",
+				BearerFormat: "JWT",
+			},
+		}
+
+		api := humachi.New(router, humaConf)
 
 		// Register GET /greeting/{name}
 		huma.Register(api, huma.Operation{
@@ -91,6 +94,11 @@ func main() {
 			Summary:     "Get a greeting",
 			Description: "Get a greeting for a person by name.",
 			Tags:        []string{"Greetings"},
+			Security: []map[string][]string{
+				{
+					"bearer": {"email"},
+				},
+			},
 		}, func(ctx context.Context, input *struct {
 			Name string `path:"name" maxLength:"30" example:"world" doc:"Name to greet"`
 		},

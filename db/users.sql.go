@@ -9,26 +9,32 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users (sub, datecreated) VALUES ($1, now())
-ON CONFLICT (sub) DO NOTHING
+INSERT INTO users (email, hashpass, pfp, created_at) VALUES ($1, $2, $3, now())
 `
 
-func (q *Queries) CreateUser(ctx context.Context, sub string) error {
-	_, err := q.db.Exec(ctx, createUser, sub)
+type CreateUserParams struct {
+	Email    string
+	Hashpass string
+	Pfp      pgtype.Text
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
+	_, err := q.db.Exec(ctx, createUser, arg.Email, arg.Hashpass, arg.Pfp)
 	return err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id FROM users
-WHERE sub = $1 LIMIT 1
+SELECT (id, email, created_at, hashpass) FROM users
+WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, sub string) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, getUser, sub)
-	var id uuid.UUID
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (interface{}, error) {
+	row := q.db.QueryRow(ctx, getUser, id)
+	var column_1 interface{}
+	err := row.Scan(&column_1)
+	return column_1, err
 }

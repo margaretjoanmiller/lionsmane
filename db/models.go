@@ -10,7 +10,9 @@ import (
 )
 
 type User struct {
-	ID          uuid.UUID
-	Sub         string
-	Datecreated pgtype.Timestamptz
+	ID        uuid.UUID
+	Email     string
+	Hashpass  string
+	Pfp       pgtype.Text
+	CreatedAt pgtype.Timestamptz
 }
