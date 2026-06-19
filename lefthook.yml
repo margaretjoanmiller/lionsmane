@@ -3,4 +3,4 @@ pre-commit:
   jobs:
     - name: golangci-lint
       glob: "*.go"
-      run: golangci-lint --fix {files}
+      run: golangci-lint --fix {staged_files}
