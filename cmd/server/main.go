@@ -86,6 +86,30 @@ func main() {
 
 		api := humachi.New(router, humaConf)
 
+		type NewUserBody struct {
+			Body struct {
+				Email    string `json:"email" doc:"User email" format:"email"`
+				Password string `json:"password" doc:"User password" minLength:"15"`
+				Pfp      string `json:"pfp" doc:"User profile pic" format:"url"`
+			}
+		}
+
+		huma.Register(api, huma.Operation{
+			OperationID:   "signUp",
+			Method:        http.MethodPost,
+			Path:          "/auth/signup",
+			Summary:       "Sign up for lionsmane",
+			Tags:          []string{"Auth"},
+			DefaultStatus: http.StatusCreated,
+		}, func(ctx context.Context, input *NewUserBody) (*struct{}, error) {
+			err := authService.CreateUser(ctx, &auth.NewUser{
+				Email:    input.Body.Email,
+				Password: input.Body.Password,
+				Pfp:      input.Body.Pfp,
+			})
+			return nil, err
+		})
+
 		// Register GET /greeting/{name}
 		huma.Register(api, huma.Operation{
 			OperationID: "get-greeting",
