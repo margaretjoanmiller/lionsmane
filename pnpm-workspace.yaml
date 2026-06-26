@@ -1,0 +1,4 @@
+packages:
+  - "lionsmaneapi"
+allowBuilds:
+  esbuild: true

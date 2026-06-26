@@ -1,0 +1,30 @@
+{
+  "name": "lionsmaneapi",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@better-auth/api-key": "^1.6.20",
+    "@better-auth/drizzle-adapter": "https://pkg.pr.new/@better-auth/drizzle-adapter@9489",
+    "@better-auth/oauth-provider": "^1.6.20",
+    "@better-auth/passkey": "^1.6.20",
+    "@hono/node-server": "^2.0.6",
+    "better-auth": "^1.6.20",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "1.0.0-rc.3",
+    "hono": "^4.12.27",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "1.0.0-rc.3",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}
