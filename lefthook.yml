@@ -1,0 +1,8 @@
+pre-commit:
+  commands:
+    check:
+      run: pnpm oxlint --fix {staged_files}
+      stage_fixed: true
+    fmt:
+      run: pnpm oxfmt --write {staged_files}
+      stage_fixed: true

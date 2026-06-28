@@ -2,3 +2,4 @@ packages:
   - "lionsmaneapi"
 allowBuilds:
   esbuild: true
+  lefthook: true

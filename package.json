@@ -2,19 +2,24 @@
   "name": "lionsmane",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "devDependencies": {
+    "lefthook": "^2.1.9",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "^11.3.0",
       "onFail": "download"
     }
-  },
-  "type": "module"
+  }
 }
