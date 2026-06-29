@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   text,
@@ -12,20 +13,20 @@ import {
   varchar,
   serial,
   primaryKey,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
-import type { ItunesNs, YtNs } from "feedsmith";
-import type { Conditions } from "@/filter/filter";
+} from 'drizzle-orm/pg-core';
+import type { ItunesNs, YtNs } from 'feedsmith';
+
+import type { Conditions } from '@/filter/filter';
 
 export const account = pgTable(
-  "account",
+  'account',
   {
     id: text().primaryKey(),
     accountId: text().notNull(),
     providerId: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     accessToken: text(),
     refreshToken: text(),
     idToken: text(),
@@ -38,11 +39,11 @@ export const account = pgTable(
       .notNull(),
     updatedAt: timestamp({ withTimezone: true }).notNull(),
   },
-  (table) => [index("account_userId_idx").using("btree", table.userId.asc().nullsLast())],
+  (table) => [index('account_userId_idx').using('btree', table.userId.asc().nullsLast())],
 );
 
 export const apikey = pgTable(
-  "apikey",
+  'apikey',
   {
     id: text().primaryKey(),
     configId: text().notNull(),
@@ -68,13 +69,13 @@ export const apikey = pgTable(
     metadata: text(),
   },
   (table) => [
-    index("apikey_configId_idx").using("btree", table.configId.asc().nullsLast()),
-    index("apikey_key_idx").using("btree", table.key.asc().nullsLast()),
-    index("apikey_referenceId_idx").using("btree", table.referenceId.asc().nullsLast()),
+    index('apikey_configId_idx').using('btree', table.configId.asc().nullsLast()),
+    index('apikey_key_idx').using('btree', table.key.asc().nullsLast()),
+    index('apikey_referenceId_idx').using('btree', table.referenceId.asc().nullsLast()),
   ],
 );
 
-export const jwks = pgTable("jwks", {
+export const jwks = pgTable('jwks', {
   id: text().primaryKey(),
   publicKey: text().notNull(),
   privateKey: text().notNull(),
@@ -83,32 +84,32 @@ export const jwks = pgTable("jwks", {
 });
 
 export const oauthAccessToken = pgTable(
-  "oauthAccessToken",
+  'oauthAccessToken',
   {
     id: text().primaryKey(),
     token: text().notNull(),
     clientId: text()
       .notNull()
-      .references(() => oauthClient.clientId, { onDelete: "cascade" }),
-    sessionId: text().references(() => session.id, { onDelete: "set null" }),
-    userId: text().references(() => user.id, { onDelete: "cascade" }),
+      .references(() => oauthClient.clientId, { onDelete: 'cascade' }),
+    sessionId: text().references(() => session.id, { onDelete: 'set null' }),
+    userId: text().references(() => user.id, { onDelete: 'cascade' }),
     referenceId: text(),
-    refreshId: text().references(() => oauthRefreshToken.id, { onDelete: "cascade" }),
+    refreshId: text().references(() => oauthRefreshToken.id, { onDelete: 'cascade' }),
     expiresAt: timestamp({ withTimezone: true }).notNull(),
     createdAt: timestamp({ withTimezone: true }).notNull(),
     scopes: jsonb().notNull(),
   },
   (table) => [
-    index("oauthAccessToken_clientId_idx").using("btree", table.clientId.asc().nullsLast()),
-    index("oauthAccessToken_refreshId_idx").using("btree", table.refreshId.asc().nullsLast()),
-    index("oauthAccessToken_sessionId_idx").using("btree", table.sessionId.asc().nullsLast()),
-    index("oauthAccessToken_userId_idx").using("btree", table.userId.asc().nullsLast()),
-    unique("oauthAccessToken_token_key").on(table.token),
+    index('oauthAccessToken_clientId_idx').using('btree', table.clientId.asc().nullsLast()),
+    index('oauthAccessToken_refreshId_idx').using('btree', table.refreshId.asc().nullsLast()),
+    index('oauthAccessToken_sessionId_idx').using('btree', table.sessionId.asc().nullsLast()),
+    index('oauthAccessToken_userId_idx').using('btree', table.userId.asc().nullsLast()),
+    unique('oauthAccessToken_token_key').on(table.token),
   ],
 );
 
 export const oauthClient = pgTable(
-  "oauthClient",
+  'oauthClient',
   {
     id: text().primaryKey(),
     clientId: text().notNull(),
@@ -118,7 +119,7 @@ export const oauthClient = pgTable(
     enableEndSession: boolean(),
     subjectType: text(),
     scopes: jsonb(),
-    userId: text().references(() => user.id, { onDelete: "cascade" }),
+    userId: text().references(() => user.id, { onDelete: 'cascade' }),
     createdAt: timestamp({ withTimezone: true }),
     updatedAt: timestamp({ withTimezone: true }),
     name: text(),
@@ -142,42 +143,42 @@ export const oauthClient = pgTable(
     metadata: jsonb(),
   },
   (table) => [
-    index("oauthClient_userId_idx").using("btree", table.userId.asc().nullsLast()),
-    unique("oauthClient_clientId_key").on(table.clientId),
+    index('oauthClient_userId_idx').using('btree', table.userId.asc().nullsLast()),
+    unique('oauthClient_clientId_key').on(table.clientId),
   ],
 );
 
 export const oauthConsent = pgTable(
-  "oauthConsent",
+  'oauthConsent',
   {
     id: text().primaryKey(),
     clientId: text()
       .notNull()
-      .references(() => oauthClient.clientId, { onDelete: "cascade" }),
-    userId: text().references(() => user.id, { onDelete: "cascade" }),
+      .references(() => oauthClient.clientId, { onDelete: 'cascade' }),
+    userId: text().references(() => user.id, { onDelete: 'cascade' }),
     referenceId: text(),
     scopes: jsonb().notNull(),
     createdAt: timestamp({ withTimezone: true }).notNull(),
     updatedAt: timestamp({ withTimezone: true }).notNull(),
   },
   (table) => [
-    index("oauthConsent_clientId_idx").using("btree", table.clientId.asc().nullsLast()),
-    index("oauthConsent_userId_idx").using("btree", table.userId.asc().nullsLast()),
+    index('oauthConsent_clientId_idx').using('btree', table.clientId.asc().nullsLast()),
+    index('oauthConsent_userId_idx').using('btree', table.userId.asc().nullsLast()),
   ],
 );
 
 export const oauthRefreshToken = pgTable(
-  "oauthRefreshToken",
+  'oauthRefreshToken',
   {
     id: text().primaryKey(),
     token: text().notNull(),
     clientId: text()
       .notNull()
-      .references(() => oauthClient.clientId, { onDelete: "cascade" }),
-    sessionId: text().references(() => session.id, { onDelete: "set null" }),
+      .references(() => oauthClient.clientId, { onDelete: 'cascade' }),
+    sessionId: text().references(() => session.id, { onDelete: 'set null' }),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     referenceId: text(),
     expiresAt: timestamp({ withTimezone: true }).notNull(),
     createdAt: timestamp({ withTimezone: true }).notNull(),
@@ -186,22 +187,22 @@ export const oauthRefreshToken = pgTable(
     scopes: jsonb().notNull(),
   },
   (table) => [
-    index("oauthRefreshToken_clientId_idx").using("btree", table.clientId.asc().nullsLast()),
-    index("oauthRefreshToken_sessionId_idx").using("btree", table.sessionId.asc().nullsLast()),
-    index("oauthRefreshToken_userId_idx").using("btree", table.userId.asc().nullsLast()),
-    unique("oauthRefreshToken_token_key").on(table.token),
+    index('oauthRefreshToken_clientId_idx').using('btree', table.clientId.asc().nullsLast()),
+    index('oauthRefreshToken_sessionId_idx').using('btree', table.sessionId.asc().nullsLast()),
+    index('oauthRefreshToken_userId_idx').using('btree', table.userId.asc().nullsLast()),
+    unique('oauthRefreshToken_token_key').on(table.token),
   ],
 );
 
 export const passkey = pgTable(
-  "passkey",
+  'passkey',
   {
     id: text().primaryKey(),
     name: text(),
     publicKey: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     credentialID: text().notNull(),
     counter: integer().notNull(),
     deviceType: text().notNull(),
@@ -211,13 +212,13 @@ export const passkey = pgTable(
     aaguid: text(),
   },
   (table) => [
-    index("passkey_credentialID_idx").using("btree", table.credentialID.asc().nullsLast()),
-    index("passkey_userId_idx").using("btree", table.userId.asc().nullsLast()),
+    index('passkey_credentialID_idx').using('btree', table.credentialID.asc().nullsLast()),
+    index('passkey_userId_idx').using('btree', table.userId.asc().nullsLast()),
   ],
 );
 
 export const session = pgTable(
-  "session",
+  'session',
   {
     id: text().primaryKey(),
     expiresAt: timestamp({ withTimezone: true }).notNull(),
@@ -230,33 +231,33 @@ export const session = pgTable(
     userAgent: text(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
   },
   (table) => [
-    index("session_userId_idx").using("btree", table.userId.asc().nullsLast()),
-    unique("session_token_key").on(table.token),
+    index('session_userId_idx').using('btree', table.userId.asc().nullsLast()),
+    unique('session_token_key').on(table.token),
   ],
 );
 
 export const twoFactor = pgTable(
-  "twoFactor",
+  'twoFactor',
   {
     id: text().primaryKey(),
     secret: text().notNull(),
     backupCodes: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     verified: boolean(),
   },
   (table) => [
-    index("twoFactor_secret_idx").using("btree", table.secret.asc().nullsLast()),
-    index("twoFactor_userId_idx").using("btree", table.userId.asc().nullsLast()),
+    index('twoFactor_secret_idx').using('btree', table.secret.asc().nullsLast()),
+    index('twoFactor_userId_idx').using('btree', table.userId.asc().nullsLast()),
   ],
 );
 
 export const user = pgTable(
-  "user",
+  'user',
   {
     id: text().primaryKey(),
     name: text().notNull(),
@@ -271,11 +272,11 @@ export const user = pgTable(
       .notNull(),
     twoFactorEnabled: boolean(),
   },
-  (table) => [unique("user_email_key").on(table.email)],
+  (table) => [unique('user_email_key').on(table.email)],
 );
 
 export const verification = pgTable(
-  "verification",
+  'verification',
   {
     id: text().primaryKey(),
     identifier: text().notNull(),
@@ -289,29 +290,29 @@ export const verification = pgTable(
       .notNull(),
   },
   (table) => [
-    index("verification_identifier_idx").using("btree", table.identifier.asc().nullsLast()),
+    index('verification_identifier_idx').using('btree', table.identifier.asc().nullsLast()),
   ],
 );
 
 // core tables
 
-export const filterActionEnum = pgEnum("filterAction", ["blur", "hide", "markRead"]);
+export const filterActionEnum = pgEnum('filterAction', ['blur', 'hide', 'markRead']);
 
 export const appliedRules = pgTable(
-  "applied_rules",
+  'applied_rules',
   {
     id: uuid()
       .primaryKey()
       .default(sql`uuidv7()`),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     articleId: uuid()
       .notNull()
-      .references(() => articles.id, { onDelete: "cascade" }),
+      .references(() => articles.id, { onDelete: 'cascade' }),
     ruleId: uuid()
       .notNull()
-      .references(() => userFilters.id, { onDelete: "cascade" }),
+      .references(() => userFilters.id, { onDelete: 'cascade' }),
     appliedAt: timestamp()
       .default(sql`now()`)
       .notNull(),
@@ -321,10 +322,10 @@ export const appliedRules = pgTable(
     undoneAt: timestamp(),
   },
   (table) => [
-    index("applied_rules_applied_at_idx").using("btree", table.appliedAt.asc().nullsLast()),
-    index("applied_rules_rule_idx").using("btree", table.ruleId.asc().nullsLast()),
-    index("applied_rules_user_article_idx").using(
-      "btree",
+    index('applied_rules_applied_at_idx').using('btree', table.appliedAt.asc().nullsLast()),
+    index('applied_rules_rule_idx').using('btree', table.ruleId.asc().nullsLast()),
+    index('applied_rules_user_article_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.articleId.asc().nullsLast(),
     ),
@@ -332,13 +333,13 @@ export const appliedRules = pgTable(
 );
 
 export const articles = pgTable(
-  "articles",
+  'articles',
   {
     id: uuid()
       .notNull()
       .default(sql`uuidv7()`),
     minifluxId: serial().unique().notNull(),
-    title: text().notNull().default("No title"),
+    title: text().notNull().default('No title'),
     url: text(),
     hash: varchar({ length: 64 }).unique(),
     description: text(),
@@ -359,43 +360,43 @@ export const articles = pgTable(
     // metaData: jsonb().$type<ArticleMetaData>(),
     feedId: uuid()
       .notNull()
-      .references(() => feeds.id, { onDelete: "cascade" }),
+      .references(() => feeds.id, { onDelete: 'cascade' }),
   },
   (table) => [
     primaryKey({
       columns: [table.id, table.minifluxId],
-      name: "articles_id_minifluxId_pk",
+      name: 'articles_id_minifluxId_pk',
     }),
-    index("articles_feed_idx").using("btree", table.feedId.asc().nullsLast()),
-    index("articles_feed_published_idx").using(
-      "btree",
+    index('articles_feed_idx').using('btree', table.feedId.asc().nullsLast()),
+    index('articles_feed_published_idx').using(
+      'btree',
       table.feedId.asc().nullsLast(),
       table.published.desc().nullsLast(),
     ),
-    index("articles_published_idx").using("btree", table.published.asc().nullsLast()),
-    index("articles_search_idx").using("pgroonga", table.readableText.asc().nullsLast()),
-    index("articles_category_idx").using("pgroonga", table.categories),
+    index('articles_published_idx').using('btree', table.published.asc().nullsLast()),
+    index('articles_search_idx').using('pgroonga', table.readableText.asc().nullsLast()),
+    index('articles_category_idx').using('pgroonga', table.categories),
     // index("articles_jsonb_metaData_idx").using("gin", table.metaData),
-    unique("articles_feed_id_hash_unique").on(table.feedId, table.hash),
-    unique("articles_hash_unique").on(table.hash),
-    unique("articles_id_unique").on(table.id),
-    unique("articles_minifluxId_unique").on(table.minifluxId),
+    unique('articles_feed_id_hash_unique').on(table.feedId, table.hash),
+    unique('articles_hash_unique').on(table.hash),
+    unique('articles_id_unique').on(table.id),
+    unique('articles_minifluxId_unique').on(table.minifluxId),
   ],
 );
 
-export const enclosures = pgTable("enclosures", {
+export const enclosures = pgTable('enclosures', {
   id: serial().primaryKey(),
-  entryId: integer("entry_id")
+  entryId: integer('entry_id')
     .notNull()
-    .references(() => articles.minifluxId, { onDelete: "cascade" }),
+    .references(() => articles.minifluxId, { onDelete: 'cascade' }),
   url: text().notNull(),
   size: integer(),
-  mimeType: varchar("mime_type", { length: 256 }).notNull(),
-  mediaProgression: integer("media_progression").default(0).notNull(),
+  mimeType: varchar('mime_type', { length: 256 }).notNull(),
+  mediaProgression: integer('media_progression').default(0).notNull(),
 });
 
 export const feedHost = pgTable(
-  "feed_host",
+  'feed_host',
   {
     id: uuid()
       .primaryKey()
@@ -403,11 +404,11 @@ export const feedHost = pgTable(
     url: text(),
     robotsTxt: text(),
   },
-  (table) => [unique("feed_host_url_unique").on(table.url)],
+  (table) => [unique('feed_host_url_unique').on(table.url)],
 );
 
 export const feeds = pgTable(
-  "feeds",
+  'feeds',
   {
     id: uuid()
       .notNull()
@@ -417,8 +418,8 @@ export const feeds = pgTable(
     subtitle: text(),
     url: text().notNull().unique(),
     site_url: varchar({ length: 256 }).notNull(),
-    etag_header: varchar({ length: 256 }).notNull().default(""),
-    last_modified_header: varchar({ length: 256 }).notNull().default(""),
+    etag_header: varchar({ length: 256 }).notNull().default(''),
+    last_modified_header: varchar({ length: 256 }).notNull().default(''),
     parsingErrorMessage: varchar({ length: 256 }),
     parsingErrorCount: integer().notNull().default(0),
     userAgent: varchar({ length: 256 }),
@@ -436,20 +437,20 @@ export const feeds = pgTable(
   (table) => [
     primaryKey({
       columns: [table.id, table.minifluxId],
-      name: "feeds_id_minifluxId_pk",
+      name: 'feeds_id_minifluxId_pk',
     }),
-    index("feeds_url_idx").using("btree", table.url.asc().nullsLast()),
-    index("feeds_lastChecked_idx").using("btree", table.lastChecked.asc().nullsLast()),
+    index('feeds_url_idx').using('btree', table.url.asc().nullsLast()),
+    index('feeds_lastChecked_idx').using('btree', table.lastChecked.asc().nullsLast()),
     // index("feeds_metaData_idx").using("gin", table.metaData),
-    unique("feeds_id_unique").on(table.id),
-    unique("feeds_minifluxId_unique").on(table.minifluxId),
-    unique("feeds_url_unique").on(table.url),
-    index("feeds_category_idx").using("pgroonga", table.categories),
+    unique('feeds_id_unique').on(table.id),
+    unique('feeds_minifluxId_unique').on(table.minifluxId),
+    unique('feeds_url_unique').on(table.url),
+    index('feeds_category_idx').using('pgroonga', table.categories),
   ],
 );
 
 export const folders = pgTable(
-  "folders",
+  'folders',
   {
     id: uuid()
       .notNull()
@@ -463,17 +464,17 @@ export const folders = pgTable(
   (table) => [
     primaryKey({
       columns: [table.id, table.minifluxId],
-      name: "folders_id_minifluxId_pk",
+      name: 'folders_id_minifluxId_pk',
     }),
-    index("folders_user_idx").using("btree", table.userId.asc().nullsLast()),
-    unique("folders_id_unique").on(table.id),
-    unique("folders_minifluxId_unique").on(table.minifluxId),
-    unique("folders_name_userId_unique").on(table.name, table.userId),
+    index('folders_user_idx').using('btree', table.userId.asc().nullsLast()),
+    unique('folders_id_unique').on(table.id),
+    unique('folders_minifluxId_unique').on(table.minifluxId),
+    unique('folders_name_userId_unique').on(table.name, table.userId),
   ],
 );
 
 export const icons = pgTable(
-  "icons",
+  'icons',
   {
     id: serial().primaryKey(),
     url: varchar({ length: 256 }).notNull(),
@@ -481,52 +482,52 @@ export const icons = pgTable(
     height: integer(),
     type: varchar({ length: 256 }),
   },
-  (table) => [unique("icons_url_unique").on(table.url)],
+  (table) => [unique('icons_url_unique').on(table.url)],
 );
 
 export const subscriptions = pgTable(
-  "subscriptions",
+  'subscriptions',
   {
     id: uuid()
       .primaryKey()
       .default(sql`uuidv7()`),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     userMinifluxId: serial().notNull(),
     feedId: uuid()
       .notNull()
-      .references(() => feeds.id, { onDelete: "cascade" }),
+      .references(() => feeds.id, { onDelete: 'cascade' }),
     description: text(),
     folderId: uuid().references(() => folders.id),
   },
   (table) => [
-    index("user_feeds_feed_idx").using("btree", table.feedId.asc().nullsLast()),
-    index("user_feeds_folder_idx").using("btree", table.folderId.asc().nullsLast()),
-    index("user_feeds_user_folder_idx").using(
-      "btree",
+    index('user_feeds_feed_idx').using('btree', table.feedId.asc().nullsLast()),
+    index('user_feeds_folder_idx').using('btree', table.folderId.asc().nullsLast()),
+    index('user_feeds_user_folder_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.folderId.asc().nullsLast(),
     ),
-    index("user_feeds_user_feed_idx").using(
-      "btree",
+    index('user_feeds_user_feed_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.userMinifluxId.asc().nullsLast(),
       table.feedId.asc().nullsLast(),
     ),
-    unique("subscriptions_userId_feedId_unique").on(table.userId, table.feedId),
+    unique('subscriptions_userId_feedId_unique').on(table.userId, table.feedId),
   ],
 );
 
 export const userArticleStates = pgTable(
-  "user_article_states",
+  'user_article_states',
   {
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     articleId: uuid()
       .notNull()
-      .references(() => articles.id, { onDelete: "cascade" }),
+      .references(() => articles.id, { onDelete: 'cascade' }),
     isRead: boolean().default(false).notNull(),
     isStarred: boolean().default(false).notNull(),
     isBlurred: boolean().default(false).notNull(),
@@ -536,27 +537,27 @@ export const userArticleStates = pgTable(
   (table) => [
     primaryKey({
       columns: [table.userId, table.articleId],
-      name: "user_article_states_userId_articleId_pk",
+      name: 'user_article_states_userId_articleId_pk',
     }),
-    index("user_article_states_article_idx").using("btree", table.articleId.asc().nullsLast()),
-    index("user_article_states_user_idx").using("btree", table.userId.asc().nullsLast()),
-    index("user_article_states_user_read_idx").using(
-      "btree",
+    index('user_article_states_article_idx').using('btree', table.articleId.asc().nullsLast()),
+    index('user_article_states_user_idx').using('btree', table.userId.asc().nullsLast()),
+    index('user_article_states_user_read_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.isRead.asc().nullsLast(),
     ),
-    index("user_article_states_user_starred_idx").using(
-      "btree",
+    index('user_article_states_user_starred_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.isStarred.asc().nullsLast(),
     ),
-    index("user_article_states_user_hidden_idx").using(
-      "btree",
+    index('user_article_states_user_hidden_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.isHidden.asc().nullsLast(),
     ),
-    index("user_article_states_user_blurred_idx").using(
-      "btree",
+    index('user_article_states_user_blurred_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.isBlurred.asc().nullsLast(),
     ),
@@ -564,7 +565,7 @@ export const userArticleStates = pgTable(
 );
 
 export const userFilters = pgTable(
-  "user_filters",
+  'user_filters',
   {
     id: uuid()
       .primaryKey()
@@ -572,24 +573,24 @@ export const userFilters = pgTable(
     name: varchar({ length: 256 }),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: 'cascade' }),
     conditions: jsonb().$type<Conditions>().notNull(),
     action: jsonb()
       .$type<{
-        type: "blur" | "hide" | "markRead";
+        type: 'blur' | 'hide' | 'markRead';
         contentWarning: string | null;
       }>()
       .notNull(),
     enabled: boolean().default(true).notNull(),
   },
   (table) => [
-    index("user_filters_actions_idx").using(
-      "btree",
+    index('user_filters_actions_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.action.asc().nullsLast(),
     ),
-    index("user_filters_user_idx").using(
-      "btree",
+    index('user_filters_user_idx').using(
+      'btree',
       table.userId.asc().nullsLast(),
       table.conditions.asc().nullsLast(),
     ),

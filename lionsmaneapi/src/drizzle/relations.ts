@@ -1,5 +1,6 @@
-import { defineRelations } from "drizzle-orm";
-import * as schema from "./schema";
+import { defineRelations } from 'drizzle-orm';
+
+import * as schema from './schema';
 
 export const relations = defineRelations(schema, (r) => ({
   account: {
@@ -12,10 +13,10 @@ export const relations = defineRelations(schema, (r) => ({
     accounts: r.many.account(),
     oauthAccessTokens: r.many.oauthAccessToken(),
     oauthClientsUserId: r.many.oauthClient({
-      alias: "oauthClient_userId_user_id",
+      alias: 'oauthClient_userId_user_id',
     }),
     oauthClientsViaOauthConsent: r.many.oauthClient({
-      alias: "oauthClient_clientId_user_id_via_oauthConsent",
+      alias: 'oauthClient_clientId_user_id_via_oauthConsent',
     }),
     oauthRefreshTokens: r.many.oauthRefreshToken(),
     passkeys: r.many.passkey(),
@@ -49,12 +50,12 @@ export const relations = defineRelations(schema, (r) => ({
     user: r.one.user({
       from: r.oauthClient.userId,
       to: r.user.id,
-      alias: "oauthClient_userId_user_id",
+      alias: 'oauthClient_userId_user_id',
     }),
     users: r.many.user({
       from: r.oauthClient.clientId.through(r.oauthConsent.clientId),
       to: r.user.id.through(r.oauthConsent.userId),
-      alias: "oauthClient_clientId_user_id_via_oauthConsent",
+      alias: 'oauthClient_clientId_user_id_via_oauthConsent',
     }),
     oauthRefreshTokens: r.many.oauthRefreshToken(),
   },
