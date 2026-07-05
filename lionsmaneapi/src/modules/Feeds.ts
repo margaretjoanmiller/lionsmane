@@ -59,7 +59,7 @@ export const FeedsSchema = defineEntity({
     itunes: p.json().nullable(),
     youtube: p.json().nullable(),
     favicon: p.string().length(256).nullable(),
-    icon: () => p.manyToOne(Icons).ref(),
+    icon: p.string().nullable(),
     feedHost: () => p.manyToOne(FeedHost).ref(),
     articlesCollection: () => p.oneToMany(Articles).mappedBy('feedId').cascade(Cascade.ALL),
   },

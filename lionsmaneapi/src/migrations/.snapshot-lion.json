@@ -1572,22 +1572,22 @@
           "enumItems": [],
           "mappedType": "uuid"
         },
-        "icon_id": {
-          "name": "icon_id",
-          "type": "int",
+        "icon": {
+          "name": "icon",
+          "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
-          "length": null,
+          "length": 255,
           "precision": null,
           "scale": null,
           "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
-          "mappedType": "integer"
+          "mappedType": "string"
         },
         "id": {
           "name": "id",
@@ -1854,13 +1854,6 @@
           "localTableName": "public.feeds",
           "referencedColumnNames": ["id"],
           "referencedTableName": "public.feed_host"
-        },
-        "feeds_icon_id_foreign": {
-          "columnNames": ["icon_id"],
-          "constraintName": "feeds_icon_id_foreign",
-          "localTableName": "public.feeds",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.icons"
         }
       },
       "comment": null
@@ -1942,119 +1935,6 @@
           "referencedTableName": "public.user"
         }
       },
-      "comment": null
-    },
-    {
-      "name": "icons",
-      "schema": "public",
-      "columns": {
-        "height": {
-          "name": "height",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "integer"
-        },
-        "id": {
-          "name": "id",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": true,
-          "primary": true,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "integer"
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar(256)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": 256,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "string"
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar(256)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": true,
-          "length": 256,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "string"
-        },
-        "width": {
-          "name": "width",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "integer"
-        }
-      },
-      "indexes": [
-        {
-          "columnNames": ["id"],
-          "composite": false,
-          "constraint": true,
-          "keyName": "icons_pkey",
-          "primary": true,
-          "unique": true
-        },
-        {
-          "columnNames": ["url"],
-          "composite": false,
-          "constraint": true,
-          "keyName": "icons_url_unique",
-          "primary": false,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "triggers": [],
-      "foreignKeys": {},
       "comment": null
     },
     {
