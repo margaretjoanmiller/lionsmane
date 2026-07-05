@@ -6,7 +6,7 @@ import { Elysia } from 'elysia';
 import { initORM } from './db';
 import { auth, OpenAPI } from './lib/auth';
 
-const db = await initORM();
+export const db = await initORM();
 
 const app = new Elysia({ adapter: node() })
   .use(

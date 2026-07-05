@@ -1,6 +1,7 @@
 import {
   Cascade,
   Collection,
+  InferEntity,
   type Opt,
   PrimaryKeyProp,
   type Ref,
@@ -46,12 +47,12 @@ export const FeedsSchema = defineEntity({
     subtitle: p.text().nullable(),
     url: p.text().index('feeds_url_idx').unique('feeds_url_unique'),
     siteUrl: p.string().length(256),
-    etagHeader: p.string().length(256),
-    lastModifiedHeader: p.string().length(256),
+    etagHeader: p.string().length(256).nullable(),
+    lastModifiedHeader: p.string().length(256).nullable(),
     parsingErrorMessage: p.string().name('parsingErrorMessage').length(256).nullable(),
-    parsingErrorCount: p.integer().name('parsingErrorCount'),
+    parsingErrorCount: p.integer().name('parsingErrorCount').default(0),
     userAgent: p.string().name('userAgent').length(256).nullable(),
-    crawler: p.boolean(),
+    crawler: p.boolean().default(false),
     lastChecked: p.datetime().name('lastChecked').columnType('timestamp(6)'),
     updated: p.datetime().nullable(),
     categories: p.text().array().columnType('varchar[]').index('feeds_category_idx'),
@@ -63,3 +64,5 @@ export const FeedsSchema = defineEntity({
     articlesCollection: () => p.oneToMany(Articles).mappedBy('feedId').cascade(Cascade.ALL),
   },
 });
+
+export type IFeed = InferEntity<typeof FeedsSchema>;
