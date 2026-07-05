@@ -1,18 +1,16 @@
 import { apiKey } from '@better-auth/api-key';
-import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { oauthProvider } from '@better-auth/oauth-provider';
 import { passkey } from '@better-auth/passkey';
+import { adapter as mikroOrmAdapter } from '@lubiah/better-auth-mikro-orm';
 import { betterAuth } from 'better-auth';
 import { jwt, openAPI, twoFactor } from 'better-auth/plugins';
 
-import { db } from '@/db';
-import * as schema from '@/drizzle/schema';
+import { initORM } from '@/db';
+
+const db = await initORM();
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: 'pg',
-    schema,
-  }),
+  database: mikroOrmAdapter(db.orm),
   basePath: '/api',
   baseURL: 'http://localhost:3000/',
   emailAndPassword: { enabled: true },

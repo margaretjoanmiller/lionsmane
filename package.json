@@ -11,8 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@typescript/native-preview": "7.0.0-dev.20260702.3",
     "lefthook": "^2.1.9",
-    "oxfmt": "^0.56.0",
+    "oxfmt": "^0.57.0",
     "oxlint": "^1.71.0"
   },
   "devEngines": {

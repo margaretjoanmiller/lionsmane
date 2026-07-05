@@ -1,8 +1,12 @@
 import { node } from '@elysia/node';
 import { openapi } from '@elysia/openapi';
+import { RequestContext, Utils, wrap } from '@mikro-orm/core';
 import { Elysia } from 'elysia';
 
+import { initORM } from './db';
 import { auth, OpenAPI } from './lib/auth';
+
+const db = await initORM();
 
 const app = new Elysia({ adapter: node() })
   .use(
@@ -12,6 +16,10 @@ const app = new Elysia({ adapter: node() })
         paths: await OpenAPI.getPaths(),
       },
     }),
+  )
+  .on('beforeHandle', () => RequestContext.enter(db.em))
+  .on('afterHandle', ({ response }) =>
+    Utils.isEntity(response) ? wrap(response).toObject() : response,
   )
   .mount('/auth', auth.handler)
   .get('/', () => 'Hello Elysia')

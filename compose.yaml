@@ -1,6 +1,6 @@
 services:
   db:
-    image: groonga/pgroonga:latest-alpine-18
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -8,10 +8,10 @@ services:
     volumes:
       - db:/var/lib/postgresql
     ports:
-      - "5423:5432"
+      - '5423:5432'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d postgres"]
+      test: ['CMD-SHELL', 'pg_isready -d postgres']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -19,12 +19,12 @@ services:
     container_name: valkey
     image: valkey/valkey:latest
     ports:
-      - "6379:6379"
+      - '6379:6379'
     environment:
-      VALKEY_EXTRA_FLAGS: "--appendonly yes"
+      VALKEY_EXTRA_FLAGS: '--appendonly yes'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "valkey-cli", "ping"]
+      test: ['CMD', 'valkey-cli', 'ping']
       interval: 30s
       timeout: 10s
       retries: 5
