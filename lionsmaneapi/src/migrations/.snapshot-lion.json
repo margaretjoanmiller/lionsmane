@@ -867,11 +867,11 @@
       "columns": {
         "authors": {
           "name": "authors",
-          "type": "varchar[]",
+          "type": "text[]",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
@@ -884,11 +884,11 @@
         },
         "categories": {
           "name": "categories",
-          "type": "varchar[]",
+          "type": "text[]",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
@@ -1058,7 +1058,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
@@ -1075,7 +1075,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": 6,
           "precision": null,
@@ -1143,12 +1143,12 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "'No title'",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -1214,14 +1214,6 @@
           "keyName": "articles_pkey",
           "primary": true,
           "unique": true
-        },
-        {
-          "columnNames": ["published"],
-          "composite": false,
-          "constraint": false,
-          "keyName": "articles_published_idx",
-          "primary": false,
-          "unique": false
         }
       ],
       "checks": [],
@@ -1532,7 +1524,7 @@
           "length": 256,
           "precision": null,
           "scale": null,
-          "default": "''",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -1651,7 +1643,7 @@
           "length": 256,
           "precision": null,
           "scale": null,
-          "default": "''",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -1766,7 +1758,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "unique": true,
+          "unique": false,
           "length": null,
           "precision": null,
           "scale": null,
@@ -1813,35 +1805,11 @@
       },
       "indexes": [
         {
-          "columnNames": ["categories"],
-          "composite": false,
-          "constraint": false,
-          "keyName": "feeds_category_idx",
-          "primary": false,
-          "unique": false
-        },
-        {
           "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "feeds_pkey",
           "primary": true,
-          "unique": true
-        },
-        {
-          "columnNames": ["url"],
-          "composite": false,
-          "constraint": false,
-          "keyName": "feeds_url_idx",
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": ["url"],
-          "composite": false,
-          "constraint": true,
-          "keyName": "feeds_url_unique",
-          "primary": false,
           "unique": true
         }
       ],
@@ -3641,29 +3609,12 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": null,
           "precision": null,
           "scale": null,
           "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "uuid"
-        },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": true,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": "uuidv7()",
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -3689,7 +3640,7 @@
       },
       "indexes": [
         {
-          "columnNames": ["id", "user_id", "feed_id"],
+          "columnNames": ["user_id", "feed_id"],
           "composite": true,
           "constraint": true,
           "keyName": "subscriptions_pkey",
@@ -3705,21 +3656,26 @@
           "constraintName": "subscriptions_feed_id_foreign",
           "localTableName": "public.subscriptions",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.feeds"
+          "referencedTableName": "public.feeds",
+          "updateRule": "cascade",
+          "deleteRule": "cascade"
         },
         "subscriptions_folder_id_id_foreign": {
           "columnNames": ["folder_id_id"],
           "constraintName": "subscriptions_folder_id_id_foreign",
           "localTableName": "public.subscriptions",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.folders"
+          "referencedTableName": "public.folders",
+          "deleteRule": "set null"
         },
         "subscriptions_user_id_foreign": {
           "columnNames": ["user_id"],
           "constraintName": "subscriptions_user_id_foreign",
           "localTableName": "public.subscriptions",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.user"
+          "referencedTableName": "public.user",
+          "updateRule": "cascade",
+          "deleteRule": "cascade"
         }
       },
       "comment": null

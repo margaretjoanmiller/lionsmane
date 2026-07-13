@@ -11,15 +11,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "@typescript/native-preview": "7.0.0-dev.20260702.3",
-    "lefthook": "^2.1.9",
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.71.0"
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
+    "lefthook": "^2.1.10",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0"
   },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.9.0",
+      "version": "^11.11.0",
       "onFail": "download"
     }
   }

@@ -1,21 +1,9 @@
-import { t } from 'elysia';
+import { z } from 'zod';
 
-export const newFeedSchema = t.Object({
-  url: t.String({
-    format: 'uri',
-  }),
-  feed: t.Nullable(
-    t.String({
-      format: 'uuid',
-    }),
-  ),
-  tags: t.Nullable(
-    t.Array(
-      t.String({
-        format: '',
-      }),
-    ),
-  ),
+export const newFeedSchema = z.object({
+  url: z.url(),
+  feed: z.uuidv7().nullish(),
+  folders: z.array(z.uuidv7()).nullish(),
 });
 
-export type NewFeed = (typeof newFeedSchema)['static'];
+export type NewFeed = z.infer<typeof newFeedSchema>;

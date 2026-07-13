@@ -1,18 +1,12 @@
-import { Collection, type Opt, PrimaryKeyProp, type Ref, defineEntity, p } from '@mikro-orm/core';
+import { defineEntity, p } from '@mikro-orm/core';
 
 import { Base } from './Base.js';
 import { Subscriptions } from './Subscriptions.js';
 import { User } from './User.js';
 
-export class Folders extends Base {
-  id!: string & Opt;
-  name!: string;
-  userId!: Ref<User>;
-  subscriptionsCollection = new Collection<Subscriptions>(this);
-}
-
 export const FoldersSchema = defineEntity({
-  class: Folders,
+  name: 'Folders',
+  extends: Base,
   properties: {
     id: p.uuid().defaultRaw(`uuidv7()`).primary(),
     name: p.string().length(100),
@@ -20,3 +14,7 @@ export const FoldersSchema = defineEntity({
     subscriptionsCollection: () => p.oneToMany(Subscriptions).mappedBy('folderId'),
   },
 });
+
+export class Folders extends FoldersSchema.class {}
+
+FoldersSchema.setClass(Folders);

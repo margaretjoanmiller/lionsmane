@@ -9,6 +9,7 @@ import config from './mikro-orm.config.js';
 import { Articles } from './modules/Articles.js';
 import { Feeds } from './modules/Feeds.js';
 import { Subscriptions } from './modules/Subscriptions.js';
+import { User } from './modules/User.js';
 
 export interface Services {
   orm: MikroORM;
@@ -16,6 +17,7 @@ export interface Services {
   feeds: EntityRepository<Feeds>;
   articles: EntityRepository<Articles>;
   subscriptions: EntityRepository<Subscriptions>;
+  users: EntityRepository<User>;
 }
 
 let cache: Services;
@@ -36,5 +38,18 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
     feeds: orm.em.getRepository(Feeds),
     articles: orm.em.getRepository(Articles),
     subscriptions: orm.em.getRepository(Subscriptions),
+    users: orm.em.getRepository(User),
   });
+}
+
+export function forkServices(): Services {
+  const em = cache.orm.em.fork();
+  return {
+    orm: cache.orm,
+    em,
+    feeds: em.getRepository(Feeds),
+    articles: em.getRepository(Articles),
+    subscriptions: em.getRepository(Subscriptions),
+    users: em.getRepository(User),
+  };
 }

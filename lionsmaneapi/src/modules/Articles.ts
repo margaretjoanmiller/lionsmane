@@ -1,40 +1,24 @@
-import { Cascade, Collection, type Opt, type Ref, defineEntity, p } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  type InferEntity,
+  type Opt,
+  type Ref,
+  defineEntity,
+  p,
+} from '@mikro-orm/core';
+import type { ItunesNs, YtNs } from 'feedsmith';
 
 import { Base } from './Base.js';
 import { Enclosures } from './Enclosures.js';
 import { Feeds } from './Feeds.js';
-import { User } from './User.js';
-
-export class Articles extends Base {
-  id!: string & Opt;
-  title: string & Opt = 'No title';
-  url?: string;
-  hash?: string;
-  description?: string;
-  rawContent?: string;
-  readableHtml?: string;
-  readableText?: string;
-  fullArticleHtml?: string;
-  fullArticleText?: string;
-  keywords: string[] & Opt = [];
-  published!: Date;
-  updated?: Date;
-  categories: string[] & Opt = [];
-  authors: string[] & Opt = [];
-  image?: string;
-  imageAlt?: string;
-  itunes?: any;
-  youtube?: any;
-  feedId!: Ref<Feeds>;
-  enclosuresCollection = new Collection<Enclosures>(this);
-  articleStatesInverse = new Collection<User>(this);
-}
 
 export const ArticlesSchema = defineEntity({
-  class: Articles,
+  name: 'Articles',
+  extends: Base,
   properties: {
     id: p.uuid().defaultRaw(`uuidv7()`).primary(),
-    title: p.text(),
+    title: p.text().nullable(),
     url: p.text().nullable(),
     hash: p.string().length(64).nullable(),
     description: p.text().nullable(),
@@ -43,16 +27,22 @@ export const ArticlesSchema = defineEntity({
     readableText: p.text().name('readableText').nullable(),
     fullArticleHtml: p.text().name('fullArticleHtml').nullable(),
     fullArticleText: p.text().name('fullArticleText').nullable(),
-    keywords: p.text().array().columnType('varchar[]'),
-    published: p.datetime().index('articles_published_idx'),
+    keywords: p.text().array().columnType('varchar[]').nullable(),
+    published: p.datetime().nullable(),
     updated: p.datetime().nullable(),
-    categories: p.text().array().columnType('varchar[]'),
-    authors: p.text().array().columnType('varchar[]'),
+    categories: p.text().array().nullable(),
+    authors: p.text().array().nullable(),
     image: p.string().length(512).nullable(),
     imageAlt: p.string().name('imageAlt').length(512).nullable(),
-    itunes: p.json().nullable(),
-    youtube: p.json().nullable(),
+    itunes: p.json<ItunesNs.Item>().nullable(),
+    youtube: p.json<YtNs.Item>().nullable(),
     feedId: () => p.manyToOne(Feeds).ref(),
     enclosuresCollection: () => p.oneToMany(Enclosures).mappedBy('entry').cascade(Cascade.ALL),
   },
 });
+
+export class Articles extends ArticlesSchema.class {}
+
+ArticlesSchema.setClass(Articles);
+
+export type IArticle = InferEntity<typeof ArticlesSchema>;

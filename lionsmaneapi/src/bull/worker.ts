@@ -1,0 +1,54 @@
+import { Worker } from 'bullmq';
+import { match } from 'ts-pattern';
+
+import { forkServices, initORM } from '@/db';
+import { Fetcher } from '@/fetcher';
+
+import { redisConfig } from './redis';
+import type { FeedJob } from './types/feed';
+
+export const db = await initORM();
+
+const feedWorker = new Worker<FeedJob>(
+  'feed',
+  async (job) => {
+    const svc = forkServices();
+    const fetcher = new Fetcher(svc);
+
+    await job.log(`Processing job ${job.id} of type ${job.data.type}`);
+    return match(job.data)
+      .with(
+        {
+          type: 'initial',
+        },
+        async ({ feedId }) => {
+          await fetcher.extractArticlesFromFeed(feedId);
+        },
+      )
+      .otherwise(async () => {
+        await job.log(`Unknown job type: ${job.data.type}`);
+      });
+  },
+  {
+    connection: redisConfig,
+  },
+);
+
+feedWorker.on('completed', (job) => {
+  console.log(`${job.id} has completed!`);
+});
+
+feedWorker.on('failed', (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+});
+
+const gracefulShutdown = async (signal) => {
+  console.log(`Received ${signal}, closing server...`);
+  await feedWorker.close();
+  // Other asynchronous closings
+  process.exit(0);
+};
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
