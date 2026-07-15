@@ -1,7 +1,7 @@
 import { isAfter, subWeeks } from 'date-fns';
 import { parseFeed, type Atom, type Rss, type Json, type Rdf } from 'feedsmith';
 import ky, { type KyResponse } from 'ky';
-import { isDefined } from 'ts-extras';
+import { isDefined, isPresent, isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 
 import type { Services } from '@/db';
@@ -77,7 +77,11 @@ export class Fetcher {
 
   parseArticlesAtom(items: Array<Atom.Entry<Date>>, lastChecked: Date, feedId: string) {
     return items
-      .filter((i) => i.published && isAfter(i.published, this.cutoffDate(lastChecked)))
+      .filter((i) => i.published || i.updated)
+      .filter((i) => {
+        if (i.published) isAfter(i.published, lastChecked);
+        else if (i.updated) isAfter(i.updated, lastChecked);
+      })
       .map((i) => ({
         title: i.title?.value || null,
         url: i.links?.at(0)?.href,
@@ -97,6 +101,7 @@ export class Fetcher {
 
   parseArticlesRss(items: Array<Rss.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
+      .filter(isPropertyDefined('pubDate'))
       .filter((i) => i.pubDate && isAfter(i.pubDate, this.cutoffDate(lastChecked)))
       .map((i) => ({
         title: i.title || null,
@@ -114,6 +119,7 @@ export class Fetcher {
 
   parseArticlesJson(items: Array<Json.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
+      .filter(isPropertyDefined('date_published'))
       .filter((i) => i.date_published && isAfter(i.date_published, this.cutoffDate(lastChecked)))
       .map((i) => ({
         title: i.title || null,
@@ -129,17 +135,23 @@ export class Fetcher {
 
   parseArticlesRdf(items: Array<Rdf.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
+      .filter(isPropertyDefined('atom'))
       .filter((i) => i.atom?.published && isAfter(i.atom?.published, this.cutoffDate(lastChecked)))
-      .map((i) => ({
-        title: i.title || null,
-        url: i.link,
-        //TODO: hash
-        description: i.description,
-        rawContent: i.content?.encoded,
-        published: i.atom?.published,
-        authors: i.atom?.authors?.map((a) => a.name).filter(isDefined),
-        feedId,
-      }));
+      .map((i) => {
+        if (i.atom?.published)
+          return {
+            title: i.title || null,
+            url: i.link,
+            //TODO: hash
+            description: i.description,
+            rawContent: i.content?.encoded,
+            published: i.atom?.published,
+            authors: i.atom?.authors?.map((a) => a.name).filter(isDefined),
+            feedId,
+          };
+        return null;
+      })
+      .filter(isPresent);
   }
 
   cutoffDate(lastChecked: Date | null): Date {

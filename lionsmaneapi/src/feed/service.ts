@@ -1,6 +1,5 @@
 import { wrap } from '@mikro-orm/core';
 import { subMonths } from 'date-fns';
-import { InternalServerErrorException } from 'elysia-http-exception';
 import { parseFeed, type Atom, type Rss, type Json, type Rdf } from 'feedsmith';
 import ky from 'ky';
 import { isDefined } from 'ts-extras';
@@ -8,8 +7,9 @@ import { match, P } from 'ts-pattern';
 
 import { feedQueue } from '@/bull/queue';
 import type { Services } from '@/db';
+import { FeedHost } from '@/entities/FeedHost';
 import { USER_AGENT } from '@/lib/constants';
-import { FeedHost } from '@/modules/FeedHost';
+import { Unknown } from '@/lib/errors/unknown';
 
 import { type NewFeed } from './model';
 
@@ -48,6 +48,27 @@ export class FeedService {
       });
       await this.svc.em.flush();
 
+      if (nf.folderName) {
+        const folder = await this.svc.folders.findOne({
+          name: nf.folderName,
+          userId,
+        });
+
+        if (!folder) {
+          this.svc.folders.create({
+            name: nf.folderName,
+            userId,
+            subscriptionsCollection: [newSub],
+          });
+        } else {
+          folder.subscriptionsCollection.add(newSub);
+
+          await this.svc.em.refresh(folder);
+        }
+
+        await this.svc.em.flush();
+      }
+
       await feedQueue.add('initial', {
         type: 'initial',
         feedId: newFeed.id,
@@ -60,6 +81,25 @@ export class FeedService {
         user,
       });
       await this.svc.em.flush();
+
+      if (nf.folderName) {
+        const folder = await this.svc.folders.findOne({
+          name: nf.folderName,
+          userId,
+        });
+
+        if (!folder) {
+          this.svc.folders.create({
+            name: nf.folderName,
+            userId,
+            subscriptionsCollection: [newSub],
+          });
+        } else {
+          folder.subscriptionsCollection.add(newSub);
+        }
+
+        await this.svc.em.flush();
+      }
 
       return newSub.feed;
     }
@@ -81,7 +121,11 @@ export class FeedService {
         populate: ['feed'],
       },
     );
-    return subs.map((s) => wrap(s.feed).toObject());
+    return subs.map((s) => ({
+      ...wrap(s.feed).toObject(),
+      lastChecked: s.feed.lastChecked.toISOString(),
+      updated: s.feed.updated?.toISOString(),
+    }));
   }
 
   //TODO: Update subscription
@@ -96,7 +140,7 @@ export class FeedService {
     });
 
     if (resp.status != 200) {
-      throw new InternalServerErrorException('Could not fetch submitted url');
+      throw new Unknown('Could not fetch submitted url');
     }
 
     const parsedFeed = parseFeed(await resp.text(), { parseDateFn: (raw) => new Date(raw) });

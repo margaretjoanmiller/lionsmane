@@ -1,7 +1,8 @@
 import type { MikroORM } from '@mikro-orm/postgresql';
-import { type AwilixContainer, asClass, asFunction, asValue, Lifetime } from 'awilix';
+import { type AwilixContainer, asClass, asValue, Lifetime } from 'awilix';
 
-import { forkServices, type Services } from '@/db';
+import { ArticleService } from '@/article/service';
+import { type Services } from '@/db';
 import { FeedService } from '@/feed/service';
 
 declare module '@fastify/awilix' {
@@ -9,14 +10,16 @@ declare module '@fastify/awilix' {
     svc: Services;
     orm: MikroORM;
     feedService: FeedService;
+    articleService: ArticleService;
   }
 }
 
-export function configureContainer(container: AwilixContainer, orm: MikroORM): AwilixContainer {
+export function configureContainer(container: AwilixContainer, svc: Services): AwilixContainer {
   container.register({
-    orm: asValue(orm),
-    svc: asFunction(({ orm }) => forkServices(orm), { lifetime: Lifetime.SCOPED }),
-    feedService: asClass(FeedService, { lifetime: Lifetime.SCOPED }),
+    orm: asValue(svc.orm),
+    svc: asValue(svc),
+    feedService: asClass(FeedService, { lifetime: Lifetime.SINGLETON }),
+    articleService: asClass(ArticleService, { lifetime: Lifetime.SINGLETON }),
   });
   return container;
 }

@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { feedSchema, newFeedSchema } from './model';
 
-export const feedRoutes: FastifyPluginAsyncZod = async (fastify, opts) => {
+export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.post(
     '',
     {
@@ -16,7 +16,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify, opts) => {
       },
     },
     async (req, reply) => {
-      const feedService = req.diScope.resolve('feedService');
+      const feedService = req.diScope.cradle.feedService;
 
       const newFeed = wrap(await feedService.newFeed(req.body, req.session?.user.id!)).toObject();
 
@@ -25,6 +25,22 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify, opts) => {
         lastChecked: newFeed.lastChecked.toISOString(),
         updated: newFeed.updated?.toISOString(),
       });
+    },
+  );
+
+  fastify.get(
+    '',
+    {
+      schema: {
+        response: {
+          200: z.array(feedSchema),
+        },
+      },
+    },
+    async (req, reply) => {
+      const feedService = req.diScope.cradle.feedService;
+
+      return reply.send(await feedService.getSubscriptions(req.session?.user.id!));
     },
   );
 };

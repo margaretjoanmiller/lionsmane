@@ -10,8 +10,8 @@ export default defineConfig({
     // we need to disable validation for no entities, due to the entity generation
     warnWhenNoEntities: false,
   },
-  entities: ['dist/modules/*.js'],
-  entitiesTs: ['src/modules/*.ts'],
+  entities: ['dist/entities/*.js'],
+  entitiesTs: ['src/entities/*.ts'],
   host: 'localhost',
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
@@ -22,15 +22,5 @@ export default defineConfig({
   migrations: {
     path: 'dist/migrations',
     pathTs: 'src/migrations',
-  },
-  entityGenerator: {
-    save: true,
-    path: 'src/modules',
-    esmImport: true,
-    readOnlyPivotTables: true,
-    outputPurePivotTables: true,
-    bidirectionalRelations: true,
-    customBaseEntityName: 'Base',
-    useCoreBaseEntity: true,
   },
 });

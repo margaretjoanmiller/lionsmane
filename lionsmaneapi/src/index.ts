@@ -1,6 +1,7 @@
 import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix';
 import circuitBreaker from '@fastify/circuit-breaker';
 import fastifyCors from '@fastify/cors';
+import { FastifyError } from '@fastify/error';
 import rateLimit from '@fastify/rate-limit';
 import sensible from '@fastify/sensible';
 import FastifySwagger from '@fastify/swagger';
@@ -10,20 +11,27 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from '@fastify/type-provider-zod';
+import { RequestContext } from '@mikro-orm/core';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
 
 import { feedRoutes } from '@/feed';
+import { configureContainer } from '@/lib/container';
+import authPlugin from '@/plugin/auth';
 
+import { articleRoutes } from './article';
 import { initORM } from './db';
 import { auth } from './lib/auth';
-import { configureContainer } from './lib/container';
-import authPlugin from './plugin/auth';
 
 const db = await initORM();
 
 const fastify = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+
+// register request context hook
+fastify.addHook('onRequest', (request, reply, done) => {
+  RequestContext.create(db.em, done);
+});
 
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
@@ -141,17 +149,15 @@ fastify.register(fastifyAwilixPlugin, {
   strictBooleanEnforced: true,
 });
 
-await fastify.register(
-  async (instance, opts) => {
-    await instance.register(authPlugin);
+await fastify.register(async (instance) => {
+  await instance.register(authPlugin);
 
-    instance.register(feedRoutes);
-  },
-  { prefix: '/feed' },
-);
+  instance.register(feedRoutes, { prefix: '/feed' });
+  instance.register(articleRoutes, { prefix: '/article' });
+});
 
 fastify.ready(() => {
-  configureContainer(diContainer, db.orm);
+  configureContainer(diContainer, db);
 });
 
 // Initialize server

@@ -5,11 +5,12 @@ import {
   type Options,
 } from '@mikro-orm/postgresql';
 
+import { Articles } from './entities/Articles.js';
+import { Feeds } from './entities/Feeds.js';
+import { Folders } from './entities/Folders.js';
+import { Subscriptions } from './entities/Subscriptions.js';
+import { User } from './entities/User.js';
 import config from './mikro-orm.config.js';
-import { Articles } from './modules/Articles.js';
-import { Feeds } from './modules/Feeds.js';
-import { Subscriptions } from './modules/Subscriptions.js';
-import { User } from './modules/User.js';
 
 export interface Services {
   orm: MikroORM;
@@ -18,6 +19,7 @@ export interface Services {
   articles: EntityRepository<Articles>;
   subscriptions: EntityRepository<Subscriptions>;
   users: EntityRepository<User>;
+  folders: EntityRepository<Folders>;
 }
 
 let cache: Services;
@@ -39,6 +41,7 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
     articles: orm.em.getRepository(Articles),
     subscriptions: orm.em.getRepository(Subscriptions),
     users: orm.em.getRepository(User),
+    folders: orm.em.getRepository(Folders),
   });
 }
 
@@ -51,5 +54,6 @@ export function forkServices(orm: MikroORM): Services {
     articles: em.getRepository(Articles),
     subscriptions: em.getRepository(Subscriptions),
     users: em.getRepository(User),
+    folders: orm.em.getRepository(Folders),
   };
 }

@@ -12,7 +12,7 @@ export const db = await initORM();
 const feedWorker = new Worker<FeedJob>(
   'feed',
   async (job) => {
-    const svc = forkServices();
+    const svc = forkServices(db.orm);
     const fetcher = new Fetcher(svc);
 
     await job.log(`Processing job ${job.id} of type ${job.data.type}`);

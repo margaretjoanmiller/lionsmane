@@ -3,6 +3,7 @@ import { Cascade, type InferEntity, defineEntity, p } from '@mikro-orm/core';
 import { Articles } from './Articles.js';
 import { Base } from './Base.js';
 import { FeedHost } from './FeedHost.js';
+import { Subscriptions } from './Subscriptions.js';
 
 export const FeedsSchema = defineEntity({
   name: 'Feeds',
@@ -28,6 +29,7 @@ export const FeedsSchema = defineEntity({
     icon: p.string().nullable(),
     feedHost: () => p.manyToOne(FeedHost).ref(),
     articlesCollection: () => p.oneToMany(Articles).mappedBy('feedId').cascade(Cascade.ALL),
+    subscriptions: () => p.oneToMany(Subscriptions).mappedBy('feed').cascade(Cascade.ALL),
   },
 });
 
