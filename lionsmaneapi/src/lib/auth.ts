@@ -20,6 +20,7 @@ export const auth = betterAuth({
     oauthProvider({
       loginPage: '/sign-in',
       consentPage: '/consent',
+      silenceWarnings: { oauthAuthServerConfig: true },
     }),
     openAPI(),
   ],
