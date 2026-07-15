@@ -42,10 +42,10 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
   });
 }
 
-export function forkServices(): Services {
-  const em = cache.orm.em.fork();
+export function forkServices(orm: MikroORM): Services {
+  const em = orm.em.fork();
   return {
-    orm: cache.orm,
+    orm,
     em,
     feeds: em.getRepository(Feeds),
     articles: em.getRepository(Articles),

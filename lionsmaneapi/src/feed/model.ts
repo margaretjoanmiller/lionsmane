@@ -18,9 +18,9 @@ export const feedSchema = z.object({
   userAgent: z.string().nullish(),
   crawler: z.boolean().default(false),
   lastChecked: z.iso.datetime(),
-  updated: z.iso.datetime().nullable(),
+  updated: z.iso.datetime().nullish(),
   categories: z.array(z.string()).nullable(),
-  icon: z.string().nullable(),
+  icon: z.string().nullish(),
 });
 
 export type FeedOut = z.infer<typeof feedSchema>;

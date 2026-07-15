@@ -14,7 +14,10 @@ import { FeedHost } from '@/modules/FeedHost';
 import { type NewFeed } from './model';
 
 export class FeedService {
-  constructor(private svc: Services) {}
+  private svc: Services;
+  constructor({ svc }: { svc: Services }) {
+    this.svc = svc;
+  }
 
   async newFeed(nf: NewFeed, userId: string) {
     const user = await this.svc.users.findOneOrFail({

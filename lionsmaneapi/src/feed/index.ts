@@ -1,19 +1,29 @@
-import type { ZodTypeProvider } from '@fastify/type-provider-zod';
-import { type FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
+import { wrap } from '@mikro-orm/core';
+import { z } from 'zod';
 
-import { newFeedSchema } from './model';
+import { feedSchema, newFeedSchema } from './model';
 
-export const feedRoutes: FastifyPluginAsync = async (fastify, opts) => {
-  fastify.withTypeProvider<ZodTypeProvider>().post(
+export const feedRoutes: FastifyPluginAsyncZod = async (fastify, opts) => {
+  fastify.post(
     '',
     {
       schema: {
         body: newFeedSchema,
+        response: {
+          201: feedSchema,
+        },
       },
     },
     async (req, reply) => {
+      const feedService = req.diScope.resolve('feedService');
+
+      const newFeed = wrap(await feedService.newFeed(req.body, req.session?.user.id!)).toObject();
+
       return reply.status(201).send({
-        hi: 'hi',
+        ...newFeed,
+        lastChecked: newFeed.lastChecked.toISOString(),
+        updated: newFeed.updated?.toISOString(),
       });
     },
   );

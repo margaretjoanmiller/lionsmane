@@ -1,3 +1,4 @@
+import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix';
 import fastifyCors from '@fastify/cors';
 import FastifySwagger from '@fastify/swagger';
 import {
@@ -12,35 +13,17 @@ import Fastify from 'fastify';
 
 import { feedRoutes } from '@/feed';
 
+import { initORM } from './db';
 import { auth } from './lib/auth';
+import { configureContainer } from './lib/container';
 import authPlugin from './plugin/auth';
+
+const db = await initORM();
 
 const fastify = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
-
-await fastify.register(FastifySwagger, {
-  openapi: {
-    info: {
-      title: 'lionsmane',
-      version: '1.0.0',
-    },
-    components: {
-      securitySchemes: {
-        apiKey: {
-          type: 'apiKey',
-          name: 'apiKey',
-          in: 'header',
-        },
-      },
-    },
-  },
-  transform: jsonSchemaTransform,
-});
-await fastify.register(ScalarApiReference, {
-  routePrefix: '/reference',
-});
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
@@ -87,6 +70,35 @@ fastify.route({
   },
 });
 
+await fastify.register(FastifySwagger, {
+  openapi: {
+    openapi: '3.1.0',
+    info: {
+      title: 'lionsmane',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        apiKey: {
+          type: 'apiKey',
+          name: 'apiKey',
+          in: 'header',
+        },
+      },
+    },
+  },
+  transform: jsonSchemaTransform,
+});
+await fastify.register(ScalarApiReference, {
+  routePrefix: '/reference',
+});
+
+fastify.register(fastifyAwilixPlugin, {
+  disposeOnClose: true,
+  disposeOnResponse: true,
+  strictBooleanEnforced: true,
+});
+
 await fastify.register(
   async (instance, opts) => {
     await instance.register(authPlugin);
@@ -96,7 +108,9 @@ await fastify.register(
   { prefix: '/feed' },
 );
 
-await fastify.ready();
+fastify.ready(() => {
+  configureContainer(diContainer, db.orm);
+});
 
 // Initialize server
 fastify.listen({ port: 4000 }, (err) => {
