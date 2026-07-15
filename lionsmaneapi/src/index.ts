@@ -1,11 +1,11 @@
 import fastifyCors from '@fastify/cors';
 import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
-import FastifyBetterAuth from 'fastify-better-auth';
 
-import { auth } from '@/lib/auth';
+import { feedRoutes } from '@/feed';
 
-import authHook from './plugin/auth';
+import { auth } from './lib/auth';
+import authPlugin from './plugin/auth';
 
 const fastify = Fastify({ logger: true });
 
@@ -18,7 +18,53 @@ fastify.register(fastifyCors, {
   maxAge: 86400,
 });
 
-fastify.register(FastifyBetterAuth, { auth });
+// Register authentication endpoint
+fastify.route({
+  method: ['GET', 'POST'],
+  url: '/api/auth/*',
+  async handler(request, reply) {
+    try {
+      // Construct request URL
+      const url = new URL(request.url, `http://${request.headers.host}`);
+
+      // Convert Fastify headers to standard Headers object
+      const headers = fromNodeHeaders(request.headers);
+
+      // Create Fetch API-compatible request
+      const req = new Request(url.toString(), {
+        method: request.method,
+        headers,
+        ...(request.body ? { body: JSON.stringify(request.body) } : {}),
+      });
+
+      // Process authentication request
+      const response = await auth.handler(req);
+
+      // Forward response to client
+      reply.status(response.status);
+      response.headers.forEach((value, key) => reply.header(key, value));
+      return reply.send(response.body ? await response.text() : null);
+    } catch (error) {
+      fastify.log.error('Authentication Error:', error);
+      return reply.status(500).send({
+        error: 'Internal authentication error',
+        code: 'AUTH_FAILURE',
+      });
+    }
+  },
+});
+
+await fastify.register(
+  async (instance, opts) => {
+    await instance.register(authPlugin);
+
+    instance.get('/', function (request, reply) {
+      console.log(request.session?.user);
+      reply.send({ hello: 'world' });
+    });
+  },
+  { prefix: '/feed' },
+);
 
 // Initialize server
 fastify.listen({ port: 4000 }, (err) => {

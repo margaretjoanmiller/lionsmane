@@ -285,9 +285,6 @@ importers:
       fastify:
         specifier: ^5.10.0
         version: 5.10.0
-      fastify-better-auth:
-        specifier: ^1.2.0
-        version: 1.2.0(better-auth@1.6.23(drizzle-kit@1.0.0-rc.3)(drizzle-orm@1.0.0-rc.3(@sinclair/typebox@0.34.49)(@types/pg@8.20.0)(pg@8.22.0)(zod@4.4.3))(pg@8.22.0))(fastify@5.10.0)
       fastify-plugin:
         specifier: ^6.0.0
         version: 6.0.0
@@ -1821,13 +1818,6 @@ packages:
   fast-xml-parser@5.9.3:
     resolution: {integrity: sha512-brCNCeScma/kqa54J4PIDriSSSLssRkuYaUCpvHJulGc3HGI/xxKUCTDcYkAdqJsyb//ydpbxecjC3hB9+tb/g==}
     hasBin: true
-
-  fastify-better-auth@1.2.0:
-    resolution: {integrity: sha512-Jx27gm7caq6kd3gmTPpg9FsYtHIoDyjJ2L1/e0f8vxRP7W9PowwTxvm8dNuiGy0MZ3N2kUwfirqBf1HrlzjIgg==}
-    engines: {node: '>= 23.10.0'}
-    peerDependencies:
-      better-auth: 1.x
-      fastify: 5.x
 
   fastify-plugin@5.1.0:
     resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
@@ -3365,12 +3355,6 @@ snapshots:
       path-expression-matcher: 1.6.1
       strnum: 2.4.1
       xml-naming: 0.1.0
-
-  fastify-better-auth@1.2.0(better-auth@1.6.23(drizzle-kit@1.0.0-rc.3)(drizzle-orm@1.0.0-rc.3(@sinclair/typebox@0.34.49)(@types/pg@8.20.0)(pg@8.22.0)(zod@4.4.3))(pg@8.22.0))(fastify@5.10.0):
-    dependencies:
-      better-auth: 1.6.23(drizzle-kit@1.0.0-rc.3)(drizzle-orm@1.0.0-rc.3(@sinclair/typebox@0.34.49)(@types/pg@8.20.0)(pg@8.22.0)(zod@4.4.3))(pg@8.22.0)
-      fastify: 5.10.0
-      fastify-plugin: 5.1.0
 
   fastify-plugin@5.1.0: {}
 
