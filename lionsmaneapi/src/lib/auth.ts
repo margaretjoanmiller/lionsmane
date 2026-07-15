@@ -11,9 +11,7 @@ const db = await initORM();
 
 export const auth = betterAuth({
   database: mikroOrmAdapter(db.orm),
-  basePath: '/api',
-  baseURL: 'http://localhost:3000/',
-  emailAndPassword: { enabled: true },
+  baseURL: 'http://localhost:4000/',
   plugins: [
     jwt(),
     twoFactor(),
@@ -25,6 +23,9 @@ export const auth = betterAuth({
     }),
     openAPI(),
   ],
+  emailAndPassword: {
+    enabled: true,
+  },
   socialProviders: {
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID!,
@@ -36,25 +37,3 @@ export const auth = betterAuth({
     },
   },
 });
-
-let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>;
-const getSchema = async () => (_schema ??= auth.api.generateOpenAPISchema());
-export const OpenAPI = {
-  getPaths: (prefix = '/auth/api') =>
-    getSchema().then(({ paths }) => {
-      const reference: typeof paths = Object.create(null);
-      for (const path of Object.keys(paths)) {
-        //@ts-ignore
-        const key = prefix + path;
-        //@ts-ignore
-        reference[key] = paths[path];
-        //@ts-ignore
-        for (const method of Object.keys(paths[path])) {
-          const operation = (reference[key] as any)[method];
-          operation.tags = ['Better Auth'];
-        }
-      }
-      return reference;
-    }) as Promise<any>,
-  components: getSchema().then(({ components }) => components) as Promise<any>,
-} as const;
