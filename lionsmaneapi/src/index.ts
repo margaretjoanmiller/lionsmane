@@ -1,4 +1,12 @@
 import fastifyCors from '@fastify/cors';
+import FastifySwagger from '@fastify/swagger';
+import {
+  type ZodTypeProvider,
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from '@fastify/type-provider-zod';
+import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
 
@@ -7,7 +15,32 @@ import { feedRoutes } from '@/feed';
 import { auth } from './lib/auth';
 import authPlugin from './plugin/auth';
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+
+fastify.setValidatorCompiler(validatorCompiler);
+fastify.setSerializerCompiler(serializerCompiler);
+
+await fastify.register(FastifySwagger, {
+  openapi: {
+    info: {
+      title: 'lionsmane',
+      version: '1.0.0',
+    },
+    components: {
+      securitySchemes: {
+        apiKey: {
+          type: 'apiKey',
+          name: 'apiKey',
+          in: 'header',
+        },
+      },
+    },
+  },
+  transform: jsonSchemaTransform,
+});
+await fastify.register(ScalarApiReference, {
+  routePrefix: '/reference',
+});
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
@@ -58,13 +91,12 @@ await fastify.register(
   async (instance, opts) => {
     await instance.register(authPlugin);
 
-    instance.get('/', function (request, reply) {
-      console.log(request.session?.user);
-      reply.send({ hello: 'world' });
-    });
+    instance.register(feedRoutes);
   },
   { prefix: '/feed' },
 );
+
+await fastify.ready();
 
 // Initialize server
 fastify.listen({ port: 4000 }, (err) => {

@@ -1,11 +1,20 @@
+import type { ZodTypeProvider } from '@fastify/type-provider-zod';
 import { type FastifyPluginAsync } from 'fastify';
 
-import authPlugin from '@/plugin/auth';
+import { newFeedSchema } from './model';
 
 export const feedRoutes: FastifyPluginAsync = async (fastify, opts) => {
-  await fastify.register(authPlugin);
-
-  fastify.get('/', function (request, reply) {
-    reply.send({ hello: 'world' });
-  });
+  fastify.withTypeProvider<ZodTypeProvider>().post(
+    '',
+    {
+      schema: {
+        body: newFeedSchema,
+      },
+    },
+    async (req, reply) => {
+      return reply.status(201).send({
+        hi: 'hi',
+      });
+    },
+  );
 };
