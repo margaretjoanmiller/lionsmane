@@ -1,4 +1,4 @@
 export type FeedJob =
-  | { type: 'initial'; feedId: string }
+  | { type: 'fetch'; feedId: string }
   | { type: 'filter'; userId: string }
   | { type: 'cron' };

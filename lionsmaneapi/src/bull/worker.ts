@@ -3,7 +3,7 @@ import { match } from 'ts-pattern';
 
 import { forkServices, initORM } from '@/db';
 import { Fetcher } from '@/fetcher';
-
+import { feedQueue } from './queue';
 import { redisConfig } from './redis';
 import type { FeedJob } from './types/feed';
 
@@ -19,10 +19,28 @@ const feedWorker = new Worker<FeedJob>(
     return match(job.data)
       .with(
         {
-          type: 'initial',
+          type: 'fetch',
         },
         async ({ feedId }) => {
           await fetcher.extractArticlesFromFeed(feedId);
+        },
+      )
+      .with(
+        {
+          type: 'cron',
+        },
+        async () => {
+          const feeds = await svc.feeds.findAll();
+
+          const feedJobs = feeds.map((f) => ({
+            name: f.id,
+            data: {
+              type: 'fetch' as const,
+              feedId: f.id,
+            },
+          }));
+
+          await feedQueue.addBulk(feedJobs);
         },
       )
       .otherwise(async () => {
