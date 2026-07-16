@@ -171,7 +171,7 @@ await fastify.register(async (instance) => {
 });
 
 // Initialize server
-fastify.listen({ port: parseInt(fastify.config.PORT) }, (err) => {
+fastify.listen({ port: parseInt(fastify.config.PORT, 10) }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

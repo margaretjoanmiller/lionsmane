@@ -18,7 +18,7 @@ export default defineConfig({
   port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
   dbName: process.env.POSTGRES_DB,
   // enable debug mode to log SQL queries and discovery information
-  debug: true,
+  debug: process.env.NODE_ENV !== 'production',
   migrations: {
     path: 'dist/migrations',
     pathTs: 'src/migrations',

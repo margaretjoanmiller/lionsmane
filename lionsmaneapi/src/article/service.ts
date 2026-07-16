@@ -149,7 +149,7 @@ export class ArticleService {
               },
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -173,7 +173,7 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
           });
 
@@ -202,7 +202,7 @@ export class ArticleService {
               ],
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -230,7 +230,7 @@ export class ArticleService {
               ],
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
           });
@@ -255,7 +255,7 @@ export class ArticleService {
               },
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -279,7 +279,7 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
           });
 
@@ -314,7 +314,7 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -339,7 +339,7 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
           });
 
@@ -369,7 +369,7 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -398,7 +398,7 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
           });
@@ -424,7 +424,7 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
             first: 10,
             after: cursor,
@@ -449,7 +449,7 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc nulls first',
+              published: 'desc',
             },
           });
 

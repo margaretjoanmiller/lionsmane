@@ -1,10 +1,4 @@
-import {
-  defineEntity,
-  type Opt,
-  PrimaryKeyProp,
-  p,
-  type Ref,
-} from '@mikro-orm/core';
+import { defineEntity, p } from '@mikro-orm/core';
 
 import { Articles } from './Articles.js';
 import { User } from './User.js';
