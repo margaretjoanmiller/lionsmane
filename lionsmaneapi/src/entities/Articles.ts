@@ -13,7 +13,7 @@ export const ArticlesSchema = defineEntity({
     id: p.uuid().defaultRaw(`uuidv7()`).primary(),
     title: p.text().nullable(),
     url: p.text().nullable(),
-    hash: p.string().length(64).nullable(),
+    hash: p.string().length(64).unique(),
     description: p.text().nullable(),
     rawContent: p.text().name('rawContent').nullable(),
     readableHtml: p.text().name('readableHtml').nullable(),

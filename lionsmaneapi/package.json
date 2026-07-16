@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "dev:worker": "tsx watch src/bull/worker.ts",
+    "migrate": "mikro-orm migration:up",
     "build": "tsc src/index.ts --outDir dist",
     "start": "node dist/index.js"
   },

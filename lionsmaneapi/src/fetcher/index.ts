@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { Readability } from '@mozilla/readability';
 import { isAfter, subWeeks } from 'date-fns';
 import createDomPurify, { type WindowLike } from 'dompurify';
@@ -88,6 +89,8 @@ export class Fetcher {
       artEntities.push(a);
     }
 
+    feed.lastChecked = new Date();
+
     await this.svc.em.flush();
 
     return artEntities;
@@ -105,23 +108,39 @@ export class Fetcher {
         else if (i.updated) return isAfter(i.updated, lastChecked);
         else return false;
       })
-      .map((i) => ({
-        title: i.title?.value || null,
-        url: i.links?.at(0)?.href,
-        //TODO: hash:
-        description: i.summary?.value || i.dc?.descriptions?.at(0),
-        rawContent: i.content?.value,
-        published: i.published,
-        updated: i.updated,
-        categories: i.categories?.map((c) => c.label).filter(isPresent),
-        authors: i.authors
-          ?.map((a) => `${a.name} <${a.email}>`)
-          .filter(isDefined),
-        //TODO: image
-        itunes: i.itunes,
-        youtube: i.yt,
-        feedId,
-      }));
+      .map((i) => {
+        let hash: string | null;
+        if (i.content && i.links?.at(0)) {
+          hash = createHash('sha256')
+            .update(`${i.links?.at(0)?.href}/${i.content}`, 'utf-8')
+            .digest('hex');
+        } else if (i.title && i.links?.at(0)) {
+          hash = createHash('sha256')
+            .update(`${i.links?.at(0)?.href}/${i.title}`, 'utf-8')
+            .digest('hex');
+        } else {
+          return null;
+        }
+
+        return {
+          title: i.title?.value || null,
+          url: i.links?.at(0)?.href,
+          hash,
+          description: i.summary?.value || i.dc?.descriptions?.at(0),
+          rawContent: i.content?.value,
+          published: i.published,
+          updated: i.updated,
+          categories: i.categories?.map((c) => c.label).filter(isPresent),
+          authors: i.authors
+            ?.map((a) => `${a.name} <${a.email}>`)
+            .filter(isDefined),
+          //TODO: image
+          itunes: i.itunes,
+          youtube: i.yt,
+          feedId,
+        };
+      })
+      .filter(isPresent);
   }
 
   parseArticlesRss(
@@ -134,18 +153,34 @@ export class Fetcher {
       .filter(
         (i) => i.pubDate && isAfter(i.pubDate, this.cutoffDate(lastChecked)),
       )
-      .map((i) => ({
-        title: i.title || null,
-        url: i.source?.url,
-        //TODO: hash
-        description: i.description,
-        rawContent: i.content?.encoded,
-        published: i.pubDate,
-        categories: i.categories?.map((c) => c.name).filter(isPresent),
-        authors: i.authors,
-        itunes: i.itunes,
-        feedId,
-      }));
+      .map((i) => {
+        let hash: string | null;
+        if (i.content && i.link) {
+          hash = createHash('sha256')
+            .update(`${i.link}/${i.content}`, 'utf-8')
+            .digest('hex');
+        } else if (i.title && i.link) {
+          hash = createHash('sha256')
+            .update(`${i.link}/${i.title}`, 'utf-8')
+            .digest('hex');
+        } else {
+          return null;
+        }
+
+        return {
+          title: i.title || null,
+          url: i.source?.url,
+          hash,
+          description: i.description,
+          rawContent: i.content?.encoded,
+          published: i.pubDate,
+          categories: i.categories?.map((c) => c.name).filter(isPresent),
+          authors: i.authors,
+          itunes: i.itunes,
+          feedId,
+        };
+      })
+      .filter(isPresent);
   }
 
   parseArticlesJson(
@@ -160,18 +195,33 @@ export class Fetcher {
           i.date_published &&
           isAfter(i.date_published, this.cutoffDate(lastChecked)),
       )
-      .map((i) => ({
-        title: i.title || null,
-        url: i.url,
-        //TODO: hash
-        description: i.summary,
-        rawContent: i.content_text,
-        published: i.date_published,
-        authors: i.authors
-          ?.map((a) => `${a.name} <${a.url}>`)
-          .filter(isDefined),
-        feedId,
-      }));
+      .map((i) => {
+        let hash: string | null;
+        if (i.content_text) {
+          hash = createHash('sha256')
+            .update(i.content_text, 'utf-8')
+            .digest('hex');
+        } else if (i.title && i.external_url) {
+          hash = createHash('sha256')
+            .update(`${i.external_url}/${i.title}`, 'utf-8')
+            .digest('hex');
+        } else {
+          return null;
+        }
+        return {
+          title: i.title || null,
+          url: i.url,
+          hash,
+          description: i.summary,
+          rawContent: i.content_text,
+          published: i.date_published,
+          authors: i.authors
+            ?.map((a) => `${a.name} <${a.url}>`)
+            .filter(isDefined),
+          feedId,
+        };
+      })
+      .filter(isPresent);
   }
 
   parseArticlesRdf(
@@ -187,17 +237,30 @@ export class Fetcher {
           isAfter(i.atom?.published, this.cutoffDate(lastChecked)),
       )
       .map((i) => {
-        if (i.atom?.published)
+        if (i.atom?.published) {
+          let hash: string | null;
+          if (i.content?.encoded) {
+            hash = createHash('sha256')
+              .update(i.content.encoded, 'utf-8')
+              .digest('hex');
+          } else if (i.title && i.link) {
+            hash = createHash('sha256')
+              .update(`${i.link}/${i.title}`, 'utf-8')
+              .digest('hex');
+          } else {
+            return null;
+          }
           return {
             title: i.title || null,
             url: i.link,
-            //TODO: hash
+            hash,
             description: i.description,
             rawContent: i.content?.encoded,
             published: i.atom?.published,
             authors: i.atom?.authors?.map((a) => a.name).filter(isDefined),
             feedId,
           };
+        }
         return null;
       })
       .filter(isPresent);
@@ -219,7 +282,7 @@ export class Fetcher {
     return {
       textContent: readableText || null,
       htmlContent: readableHtml || null,
-      cleanDescription: descText,
+      cleanDescription: descText?.textContent,
     };
   }
 

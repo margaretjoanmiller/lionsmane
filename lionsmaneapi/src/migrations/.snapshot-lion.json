@@ -973,8 +973,8 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "unique": false,
+          "nullable": false,
+          "unique": true,
           "length": 64,
           "precision": null,
           "scale": null,
@@ -1207,6 +1207,14 @@
         }
       },
       "indexes": [
+        {
+          "columnNames": ["hash"],
+          "composite": false,
+          "constraint": true,
+          "keyName": "articles_hash_unique",
+          "primary": false,
+          "unique": true
+        },
         {
           "columnNames": ["id"],
           "composite": false,
