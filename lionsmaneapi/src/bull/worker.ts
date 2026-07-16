@@ -49,6 +49,10 @@ const feedWorker = new Worker<FeedJob>(
   },
   {
     connection: redisConfig,
+    limiter: {
+      max: 20,
+      duration: 1000,
+    },
   },
 );
 
@@ -57,9 +61,10 @@ feedWorker.on('completed', (job) => {
 });
 
 feedWorker.on('failed', (job, err) => {
-  console.log(`${job.id} has failed with ${err.message}`);
+  console.log(`${job?.id} has failed with ${err.message}`);
 });
 
+// @ts-expect-error
 const gracefulShutdown = async (signal) => {
   console.log(`Received ${signal}, closing server...`);
   await feedWorker.close();
