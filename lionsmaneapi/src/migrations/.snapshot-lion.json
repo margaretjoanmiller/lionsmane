@@ -1075,7 +1075,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "unique": false,
           "length": 6,
           "precision": null,
@@ -3996,23 +3996,6 @@
           "enumItems": [],
           "mappedType": "array"
         },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": true,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": "uuidv7()",
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "uuid"
-        },
         "is_blurred": {
           "name": "is_blurred",
           "type": "boolean",
@@ -4024,7 +4007,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -4041,7 +4024,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -4058,7 +4041,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -4075,7 +4058,7 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "false",
+          "default": null,
           "comment": null,
           "collation": null,
           "enumItems": [],
@@ -4101,7 +4084,7 @@
       },
       "indexes": [
         {
-          "columnNames": ["id", "user_id_id", "article_id_id"],
+          "columnNames": ["user_id_id", "article_id_id"],
           "composite": true,
           "constraint": true,
           "keyName": "user_article_states_pkey",
@@ -4117,14 +4100,16 @@
           "constraintName": "user_article_states_article_id_id_foreign",
           "localTableName": "public.user_article_states",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.articles"
+          "referencedTableName": "public.articles",
+          "deleteRule": "cascade"
         },
         "user_article_states_user_id_id_foreign": {
           "columnNames": ["user_id_id"],
           "constraintName": "user_article_states_user_id_id_foreign",
           "localTableName": "public.user_article_states",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.user"
+          "referencedTableName": "public.user",
+          "deleteRule": "cascade"
         }
       },
       "comment": null

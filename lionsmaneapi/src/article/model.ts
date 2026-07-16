@@ -55,3 +55,8 @@ export const newArticleSchema = articleSchema
   });
 
 export type NewArticle = z.infer<typeof newArticleSchema>;
+
+export const articleList = z.object({
+  articles: z.array(articleSchema),
+  cursor: z.string().nullable(),
+});

@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
-import { articleSchema } from './model';
+import { articleList, articleSchema } from './model';
 
 export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
@@ -12,10 +12,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           cursor: z.string().optional(),
         }),
         response: {
-          200: z.object({
-            articles: z.array(articleSchema),
-            cursor: z.string().nullable(),
-          }),
+          200: articleList,
         },
         tags: ['article'],
       },
@@ -41,10 +38,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           cursor: z.string().optional(),
         }),
         response: {
-          200: z.object({
-            articles: z.array(articleSchema),
-            cursor: z.string().nullable(),
-          }),
+          200: articleList,
         },
         tags: ['article'],
       },
@@ -81,6 +75,29 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
       );
 
       return reply.send(article);
+    },
+  );
+
+  fastify.get(
+    '/unread',
+    {
+      schema: {
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForState(
+        req.session!.user.id!,
+        'unread',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
     },
   );
 };

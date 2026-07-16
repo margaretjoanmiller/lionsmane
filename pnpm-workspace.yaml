@@ -4,5 +4,6 @@ allowBuilds:
   esbuild: true
   lefthook: true
   msgpackr-extract: true
+  msw: true
 minimumReleaseAgeExclude:
   - bullmq@5.80.2

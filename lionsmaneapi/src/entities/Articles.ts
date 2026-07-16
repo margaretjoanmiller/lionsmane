@@ -4,6 +4,7 @@ import type { ItunesNs, YtNs } from 'feedsmith';
 import { Base } from './Base.js';
 import { Enclosures } from './Enclosures.js';
 import { Feeds } from './Feeds.js';
+import { UserArticleStates } from './UserArticleStates.js';
 
 export const ArticlesSchema = defineEntity({
   name: 'Articles',
@@ -31,6 +32,8 @@ export const ArticlesSchema = defineEntity({
     feedId: () => p.manyToOne(Feeds).ref(),
     enclosuresCollection: () =>
       p.oneToMany(Enclosures).mappedBy('entry').cascade(Cascade.ALL),
+    articleStates: () =>
+      p.oneToMany(UserArticleStates).mappedBy('articleId').cascade(Cascade.ALL),
   },
 });
 

@@ -7,24 +7,11 @@ import {
 } from '@mikro-orm/core';
 
 import { Articles } from './Articles.js';
-import { Base } from './Base.js';
 import { User } from './User.js';
 
-export class UserArticleStates extends Base {
-  [PrimaryKeyProp]?: ['userId', 'articleId'];
-  userId!: Ref<User>;
-  articleId!: Ref<Articles>;
-  isRead: boolean & Opt = false;
-  isStarred: boolean & Opt = false;
-  isBlurred: boolean & Opt = false;
-  isHidden: boolean & Opt = false;
-  contentWarning?: string[];
-}
-
 export const UserArticleStatesSchema = defineEntity({
-  class: UserArticleStates,
+  name: 'UserArticleStates',
   properties: {
-    id: p.uuid().primary().defaultRaw(`uuidv7()`),
     userId: () =>
       p.manyToOne(User).primary().ref().name('userId').updateRule('no action'),
     articleId: () =>
@@ -46,4 +33,9 @@ export const UserArticleStatesSchema = defineEntity({
       .columnType('varchar[]')
       .nullable(),
   },
+  primaryKeys: ['articleId', 'userId'],
 });
+
+export class UserArticleStates extends UserArticleStatesSchema.class {}
+
+UserArticleStatesSchema.setClass(UserArticleStates);
