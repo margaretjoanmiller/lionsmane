@@ -88,12 +88,145 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
+        tags: ['article'],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForState(
         req.session!.user.id!,
         'unread',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/read',
+    {
+      schema: {
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+        tags: ['article'],
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForState(
+        req.session!.user.id!,
+        'read',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/starred',
+    {
+      schema: {
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+        tags: ['article'],
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForState(
+        req.session!.user.id!,
+        'starred',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/feed/:id/unread',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+        tags: ['article'],
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForStateFeed(
+        req.params.id,
+        req.session!.user.id!,
+        'unread',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/feed/:id/read',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+        tags: ['article'],
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForStateFeed(
+        req.params.id,
+        req.session!.user.id!,
+        'read',
+        req.query.cursor,
+      );
+
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/feed/:id/starred',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: articleList,
+        },
+        tags: ['article'],
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForStateFeed(
+        req.params.id,
+        req.session!.user.id!,
+        'starred',
         req.query.cursor,
       );
 

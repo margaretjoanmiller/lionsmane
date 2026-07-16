@@ -191,10 +191,15 @@ export class ArticleService {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
-              articleStates: {
-                userId,
-                isRead: { $or: [false, null] },
-              },
+              $or: [
+                {
+                  articleStates: {
+                    userId,
+                    isRead: false,
+                  },
+                },
+                { articleStates: null },
+              ],
             },
             orderBy: {
               published: 'desc nulls first',
@@ -271,6 +276,176 @@ export class ArticleService {
                 userId,
                 isRead: true,
               },
+            },
+            first: 10,
+            orderBy: {
+              published: 'desc nulls first',
+            },
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        }
+      })
+      .exhaustive();
+  }
+
+  async getArticlesForStateFeed(
+    feedId: string,
+    userId: string,
+    status: 'read' | 'unread' | 'starred',
+    cursor?: string,
+  ) {
+    return await match(status)
+      .with('read', async () => {
+        if (cursor) {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              articleStates: {
+                userId,
+                isRead: true,
+              },
+              feedId,
+            },
+            orderBy: {
+              published: 'desc nulls first',
+            },
+            first: 10,
+            after: cursor,
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        } else {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              articleStates: {
+                userId,
+                isRead: true,
+              },
+              feedId,
+            },
+            first: 10,
+            orderBy: {
+              published: 'desc nulls first',
+            },
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        }
+      })
+      .with('unread', async () => {
+        if (cursor) {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              $or: [
+                {
+                  articleStates: {
+                    userId,
+                    isRead: false,
+                  },
+                },
+                { articleStates: null },
+              ],
+              feedId,
+            },
+            orderBy: {
+              published: 'desc nulls first',
+            },
+            first: 10,
+            after: cursor,
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        } else {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              $or: [
+                {
+                  articleStates: {
+                    userId,
+                    isRead: false,
+                  },
+                },
+                { articleStates: null },
+              ],
+              feedId,
+            },
+            orderBy: {
+              published: 'desc nulls first',
+            },
+            first: 10,
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        }
+      })
+      .with('starred', async () => {
+        if (cursor) {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              articleStates: {
+                userId,
+                isStarred: true,
+              },
+              feedId,
+            },
+            orderBy: {
+              published: 'desc nulls first',
+            },
+            first: 10,
+            after: cursor,
+          });
+
+          return {
+            articles: articles.items.map((i) => ({
+              ...wrap(i).toObject(),
+              published: i.published?.toISOString(),
+              updated: i.updated?.toISOString(),
+            })),
+            cursor: articles.hasNextPage ? articles.endCursor : null,
+          };
+        } else {
+          const articles = await this.svc.articles.findByCursor({
+            where: {
+              articleStates: {
+                userId,
+                isRead: true,
+              },
+              feedId,
             },
             first: 10,
             orderBy: {
