@@ -1,33 +1,25 @@
 {
-  "name": "lionsmane",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "license": "AGPL-3.0-or-later",
-  "author": "",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "@fastify/circuit-breaker": "^4.0.2",
-    "@fastify/env": "^7.0.0",
-    "@fastify/error": "^4.2.0",
-    "@fastify/multipart": "^10.1.0",
-    "@fastify/rate-limit": "^11.1.0"
-  },
-  "devDependencies": {
-    "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "lefthook": "^2.1.10",
-    "oxfmt": "^0.59.0",
-    "oxlint": "^1.74.0"
-  },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.11.0",
-      "onFail": "download"
-    }
-  }
+	"name": "lionsmane",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"license": "AGPL-3.0-or-later",
+	"author": "",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.3",
+		"lefthook": "^2.1.10",
+		"typescript": "^7.0.2"
+	},
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "^11.11.0",
+			"onFail": "download"
+		}
+	}
 }
