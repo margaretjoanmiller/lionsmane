@@ -35,9 +35,8 @@ export class Fetcher {
 
       if (feedXml.status === 304) {
         feed.lastChecked = new Date();
-        this.svc.em.persist(feed);
         await this.svc.em.flush();
-        return null;
+        return [];
       }
 
       const feedEtag = feedXml.headers.get('ETag');

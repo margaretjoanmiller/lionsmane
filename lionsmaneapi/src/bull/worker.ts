@@ -19,7 +19,7 @@ const feedWorker = new Worker<FeedJob>(
     const fetcher = new Fetcher(svc);
 
     await job.log(`Processing job ${job.id} of type ${job.data.type}`);
-    return match(job.data)
+    return await match(job.data)
       .with(
         {
           type: 'fetch',
