@@ -1,4 +1,5 @@
 import { Worker } from 'bullmq';
+import { subHours } from 'date-fns';
 import pino from 'pino';
 import { match } from 'ts-pattern';
 import { forkServices, initORM } from '@/db';
@@ -32,7 +33,10 @@ const feedWorker = new Worker<FeedJob>(
           type: 'cron',
         },
         async () => {
-          const feeds = await svc.feeds.findAll();
+          const cutoff = subHours(new Date(), 1);
+          const feeds = await svc.feeds.find({
+            $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
+          });
 
           const feedJobs = feeds.map((f) => ({
             name: f.id,
@@ -77,10 +81,10 @@ process.on('unhandledRejection', (reason, promise) => {
   logger.error({ promise, reason }, 'Unhandled Rejection at: Promise');
 });
 
-// @ts-expect-error
-const gracefulShutdown = async (signal) => {
+const gracefulShutdown = async (signal: NodeJS.Signals) => {
   logger.info(`Received ${signal}, closing server...`);
   await feedWorker.close();
+  await feedQueue.close();
 
   await db.orm.close();
   // Other asynchronous closings
