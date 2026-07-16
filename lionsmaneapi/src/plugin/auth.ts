@@ -3,6 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import fp from 'fastify-plugin';
 
 import { auth } from '@/lib/auth';
+import { Unauthorized } from '@/lib/errors/unauthorized';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -19,9 +20,9 @@ export default fp(async function authPlugin(fastify: FastifyInstance) {
     });
 
     if (!session?.user) {
-      return reply
-        .status(401)
-        .send({ error: 'You must be logged in to access this resource.' });
+      throw new Unauthorized(
+        'You need to be logged in to access this resource',
+      );
     }
 
     request.session = session;
