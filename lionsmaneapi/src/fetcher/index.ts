@@ -5,7 +5,7 @@ import { isAfter, subWeeks } from 'date-fns';
 import createDomPurify, { type WindowLike } from 'dompurify';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
 import { JSDOM } from 'jsdom';
-import ky, { type KyResponse } from 'ky';
+import ky, { HTTPError, type KyResponse } from 'ky';
 import { isDefined, isPresent, isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 import type { Merge } from 'type-fest';
@@ -22,42 +22,18 @@ export class Fetcher {
       id: feedId,
     });
 
-    let feedXml: KyResponse;
-    if (feed.etagHeader) {
-      feedXml = await ky.get(feed.url, {
-        headers: {
-          'User-Agent': USER_AGENT,
-          'If-None-Match': feed.etagHeader,
-        },
-        timeout: 5000,
-        retry: 5,
-      });
+    const feedXml = await this.fetchFeed(feed.url, feed.etagHeader);
 
-      if (feedXml.status === 304) {
-        feed.lastChecked = new Date();
-        await this.svc.em.flush();
-        return [];
-      }
+    if (feedXml.status === 304) {
+      feed.lastChecked = new Date();
+      await this.svc.em.flush();
+      return [];
+    }
 
-      const feedEtag = feedXml.headers.get('ETag');
+    const feedEtag = feedXml.headers.get('ETag');
 
-      if (feedEtag) {
-        feed.etagHeader = feedEtag;
-      }
-    } else {
-      feedXml = await ky.get(feed.url, {
-        headers: {
-          'User-Agent': USER_AGENT,
-        },
-        timeout: 5000,
-        retry: 5,
-      });
-
-      const feedEtag = feedXml.headers.get('ETag');
-
-      if (feedEtag) {
-        feed.etagHeader = feedEtag;
-      }
+    if (feedEtag) {
+      feed.etagHeader = feedEtag;
     }
 
     const parsedFeed = parseFeed(await feedXml.text(), {
@@ -118,6 +94,27 @@ export class Fetcher {
     }
 
     return artEntities;
+  }
+
+  private async fetchFeed(
+    url: string,
+    etagHeader?: string | null,
+  ): Promise<KyResponse> {
+    try {
+      return await ky.get(url, {
+        headers: {
+          'User-Agent': USER_AGENT,
+          ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
+        },
+        timeout: 5000,
+        retry: 5,
+      });
+    } catch (err) {
+      if (err instanceof HTTPError && err.response.status === 304) {
+        return err.response;
+      }
+      throw err;
+    }
   }
 
   private async filterExisting(
