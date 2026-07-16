@@ -12,7 +12,7 @@ export const articleSchema = z.object({
   fullArticleHtml: z.string().nullish(),
   fullArticleText: z.string().nullish(),
   keywords: z.array(z.string()).nullish(),
-  published: z.iso.datetime(),
+  published: z.iso.datetime().nullish(),
   updated: z.iso.datetime().nullish(),
   categories: z.array(z.string()).nullish(),
   authors: z.array(z.string()).nullish(),

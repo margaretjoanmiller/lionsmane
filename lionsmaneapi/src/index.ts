@@ -1,7 +1,5 @@
-import { diContainer, fastifyAwilixPlugin } from '@fastify/awilix';
 import circuitBreaker from '@fastify/circuit-breaker';
 import fastifyCors from '@fastify/cors';
-import { FastifyError } from '@fastify/error';
 import rateLimit from '@fastify/rate-limit';
 import sensible from '@fastify/sensible';
 import FastifySwagger from '@fastify/swagger';
@@ -17,8 +15,8 @@ import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
 
 import { feedRoutes } from '@/feed';
-import { configureContainer } from '@/lib/container';
 import authPlugin from '@/plugin/auth';
+import servicesPlugin from '@/plugin/services';
 
 import { articleRoutes } from './article';
 import { initORM } from './db';
@@ -143,21 +141,13 @@ await fastify.register(ScalarApiReference, {
   routePrefix: '/reference',
 });
 
-fastify.register(fastifyAwilixPlugin, {
-  disposeOnClose: true,
-  disposeOnResponse: true,
-  strictBooleanEnforced: true,
-});
+await fastify.register(servicesPlugin, { svc: db });
 
 await fastify.register(async (instance) => {
   await instance.register(authPlugin);
 
   instance.register(feedRoutes, { prefix: '/feed' });
   instance.register(articleRoutes, { prefix: '/article' });
-});
-
-fastify.ready(() => {
-  configureContainer(diContainer, db);
 });
 
 // Initialize server

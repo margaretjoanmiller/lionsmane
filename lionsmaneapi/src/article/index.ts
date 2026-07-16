@@ -20,9 +20,36 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const articleService = req.diScope.cradle.articleService;
+      const articles = await fastify.articleService.getArticlesForUser(
+        req.session?.user.id!,
+        req.query.cursor,
+      );
 
-      const articles = await articleService.getArticlesForUser(
+      return reply.send(articles);
+    },
+  );
+
+  fastify.get(
+    '/feed/:id',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        querystring: z.object({
+          cursor: z.string().optional(),
+        }),
+        response: {
+          200: z.object({
+            articles: z.array(articleSchema),
+            cursor: z.string().nullable(),
+          }),
+        },
+      },
+    },
+    async (req, reply) => {
+      const articles = await fastify.articleService.getArticlesForFeed(
+        req.params.id,
         req.session?.user.id!,
         req.query.cursor,
       );

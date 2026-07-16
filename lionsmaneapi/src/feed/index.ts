@@ -16,9 +16,9 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const feedService = req.diScope.cradle.feedService;
-
-      const newFeed = wrap(await feedService.newFeed(req.body, req.session?.user.id!)).toObject();
+      const newFeed = wrap(
+        await fastify.feedService.newFeed(req.body, req.session?.user.id!),
+      ).toObject();
 
       return reply.status(201).send({
         ...newFeed,
@@ -38,9 +38,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const feedService = req.diScope.cradle.feedService;
-
-      return reply.send(await feedService.getSubscriptions(req.session?.user.id!));
+      return reply.send(await fastify.feedService.getSubscriptions(req.session?.user.id!));
     },
   );
 
@@ -60,9 +58,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const feedService = req.diScope.cradle.feedService;
-
-      const updated = await feedService.updateFeed(
+      const updated = await fastify.feedService.updateFeed(
         req.params.id,
         req.session?.user.id!,
         req.body.folderName,
