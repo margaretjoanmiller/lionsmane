@@ -5,25 +5,25 @@ import fp from 'fastify-plugin';
 import { auth } from '@/lib/auth';
 
 declare module 'fastify' {
-	interface FastifyRequest {
-		session: typeof auth.$Infer.Session | null;
-	}
+  interface FastifyRequest {
+    session: typeof auth.$Infer.Session | null;
+  }
 }
 
 export default fp(async function authPlugin(fastify: FastifyInstance) {
-	fastify.decorateRequest('session', null);
+  fastify.decorateRequest('session', null);
 
-	fastify.addHook('preHandler', async (request, reply) => {
-		const session = await auth.api.getSession({
-			headers: fromNodeHeaders(request.headers),
-		});
+  fastify.addHook('preHandler', async (request, reply) => {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(request.headers),
+    });
 
-		if (!session?.user) {
-			return reply
-				.status(401)
-				.send({ error: 'You must be logged in to access this resource.' });
-		}
+    if (!session?.user) {
+      return reply
+        .status(401)
+        .send({ error: 'You must be logged in to access this resource.' });
+    }
 
-		request.session = session;
-	});
+    request.session = session;
+  });
 });
