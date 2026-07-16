@@ -1,4 +1,5 @@
 import { Cascade, type InferEntity, defineEntity, p } from '@mikro-orm/core';
+import type { ItunesNs, YtNs } from 'feedsmith';
 
 import { Articles } from './Articles.js';
 import { Base } from './Base.js';
@@ -23,8 +24,8 @@ export const FeedsSchema = defineEntity({
     lastChecked: p.datetime().name('lastChecked').columnType('timestamp(6)'),
     updated: p.datetime().nullable(),
     categories: p.text().array().columnType('varchar[]'),
-    itunes: p.json().nullable(),
-    youtube: p.json().nullable(),
+    itunes: p.json<ItunesNs.Feed>().nullable(),
+    youtube: p.json<YtNs.Feed>().nullable(),
     favicon: p.string().length(256).nullable(),
     icon: p.string().nullable(),
     feedHost: () => p.manyToOne(FeedHost).ref(),

@@ -1,12 +1,4 @@
-import {
-  Cascade,
-  Collection,
-  type InferEntity,
-  type Opt,
-  type Ref,
-  defineEntity,
-  p,
-} from '@mikro-orm/core';
+import { Cascade, type InferEntity, defineEntity, p } from '@mikro-orm/core';
 import type { ItunesNs, YtNs } from 'feedsmith';
 
 import { Base } from './Base.js';

@@ -43,4 +43,36 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       return reply.send(await feedService.getSubscriptions(req.session?.user.id!));
     },
   );
+
+  fastify.patch(
+    '/:id',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        body: z.object({
+          folderName: z.string().nullable(),
+        }),
+        response: {
+          200: feedSchema,
+        },
+      },
+    },
+    async (req, reply) => {
+      const feedService = req.diScope.cradle.feedService;
+
+      const updated = await feedService.updateFeed(
+        req.params.id,
+        req.session?.user.id!,
+        req.body.folderName,
+      );
+
+      return reply.status(200).send({
+        ...updated,
+        lastChecked: updated.lastChecked.toISOString(),
+        updated: updated.updated?.toISOString(),
+      });
+    },
+  );
 };

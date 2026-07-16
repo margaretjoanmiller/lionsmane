@@ -128,7 +128,42 @@ export class FeedService {
     }));
   }
 
-  //TODO: Update subscription
+  async updateFeed(feedId: string, userId: string, folderName: string | null) {
+    const sub = await this.svc.subscriptions.findOneOrFail(
+      {
+        feed: feedId,
+        user: userId,
+      },
+      { populate: ['feed'] },
+    );
+
+    if (folderName) {
+      const folder = await this.svc.folders.findOne({
+        name: folderName,
+        userId,
+      });
+
+      if (folder) {
+        sub.folderId = folder;
+
+        await this.svc.em.flush();
+      } else {
+        const newFolder = this.svc.folders.create({
+          name: folderName,
+          userId,
+          subscriptionsCollection: [sub],
+        });
+
+        sub.folderId = newFolder;
+        await this.svc.em.flush();
+      }
+    } else {
+      sub.folderId = null;
+      await this.svc.em.flush();
+    }
+
+    return wrap(sub.feed).toObject();
+  }
 
   async normalizeAndFetchFeed(url: string) {
     const urlObj = new URL(url);
