@@ -154,10 +154,12 @@ export class Fetcher {
     feedId: string,
   ) {
     return items
-      .filter((i) => i.published || i.updated)
+      .filter((i) => i.published || i.updated || i.dc?.dates?.at(0))
       .filter((i) => {
         if (i.published)
           return isAfter(i.published, this.cutoffDate(lastChecked));
+        else if (i.dc?.dates?.at(0))
+          return isAfter(i.dc.dates.at(0)!, this.cutoffDate(lastChecked));
         else if (i.updated)
           return isAfter(i.updated, this.cutoffDate(lastChecked));
         else return false;
@@ -182,8 +184,8 @@ export class Fetcher {
           hash,
           description: i.summary?.value || i.dc?.descriptions?.at(0),
           rawContent: i.content?.value,
-          published: i.published,
-          updated: i.updated,
+          published: i.published || i.dc?.dates?.at(0) || i.updated,
+          updated: i.updated || i.dcterms?.modified?.at(-1),
           categories: i.categories?.map((c) => c.label).filter(isPresent),
           authors: i.authors
             ?.map((a) => `${a.name} <${a.email}>`)
