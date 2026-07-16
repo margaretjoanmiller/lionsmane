@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import { Readability } from '@mozilla/readability';
 import { isAfter, subWeeks } from 'date-fns';
 import createDomPurify, { type WindowLike } from 'dompurify';
@@ -7,6 +8,7 @@ import { JSDOM } from 'jsdom';
 import ky, { type KyResponse } from 'ky';
 import { isDefined, isPresent, isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
+import type { Merge } from 'type-fest';
 import type { NewArticle } from '@/article/model';
 import type { Services } from '@/db';
 import type { Articles } from '@/entities/Articles';
@@ -27,6 +29,8 @@ export class Fetcher {
           'User-Agent': USER_AGENT,
           'If-None-Match': feed.etagHeader,
         },
+        timeout: 5000,
+        retry: 5,
       });
 
       if (feedXml.status === 304) {
@@ -35,11 +39,19 @@ export class Fetcher {
         await this.svc.em.flush();
         return null;
       }
+
+      const feedEtag = feedXml.headers.get('ETag');
+
+      if (feedEtag) {
+        feed.etagHeader = feedEtag;
+      }
     } else {
       feedXml = await ky.get(feed.url, {
         headers: {
           'User-Agent': USER_AGENT,
         },
+        timeout: 5000,
+        retry: 5,
       });
 
       const feedEtag = feedXml.headers.get('ETag');
@@ -77,7 +89,10 @@ export class Fetcher {
       .exhaustive();
 
     const artEntities: Array<Articles> = [];
-    for (const art of articles) {
+
+    const newArticles = await this.filterExisting(articles, feed.id);
+
+    for (const art of newArticles) {
       const cleanedArt = this.cleanRaw(art);
 
       const a = this.svc.articles.create({
@@ -91,9 +106,50 @@ export class Fetcher {
 
     feed.lastChecked = new Date();
 
-    await this.svc.em.flush();
+    try {
+      await this.svc.em.flush();
+    } catch (err) {
+      if (err instanceof UniqueConstraintViolationException) {
+        // A concurrent job for the same feed won the race on one hash.
+        // Fall back to per-article inserts so the rest of the batch survives.
+        await this.persistIndividually(artEntities);
+      } else {
+        throw err;
+      }
+    }
 
     return artEntities;
+  }
+
+  private async filterExisting(
+    articles: Array<Merge<NewArticle, { feedId: string; hash: string }>>,
+    feedId: string,
+  ): Promise<Array<Merge<NewArticle, { feedId: string; hash: string }>>> {
+    const hashes = articles.map((a) => a.hash).filter(isPresent);
+    if (hashes.length === 0) return [];
+
+    const existing = await this.svc.articles.find(
+      { feedId, hash: { $in: hashes } },
+      { fields: ['hash'] },
+    );
+    const existingHashes = new Set(existing.map((a) => a.hash));
+
+    return articles.filter((a) => a.hash && !existingHashes.has(a.hash));
+  }
+
+  private async persistIndividually(entities: Array<Articles>) {
+    for (const entity of entities) {
+      try {
+        this.svc.em.persist(entity);
+        await this.svc.em.flush();
+      } catch (err) {
+        if (err instanceof UniqueConstraintViolationException) {
+          this.svc.em.remove(entity);
+        } else {
+          throw err;
+        }
+      }
+    }
   }
 
   parseArticlesAtom(
@@ -104,8 +160,10 @@ export class Fetcher {
     return items
       .filter((i) => i.published || i.updated)
       .filter((i) => {
-        if (i.published) return isAfter(i.published, lastChecked);
-        else if (i.updated) return isAfter(i.updated, lastChecked);
+        if (i.published)
+          return isAfter(i.published, this.cutoffDate(lastChecked));
+        else if (i.updated)
+          return isAfter(i.updated, this.cutoffDate(lastChecked));
         else return false;
       })
       .map((i) => {
@@ -169,7 +227,7 @@ export class Fetcher {
 
         return {
           title: i.title || null,
-          url: i.source?.url,
+          url: i.link,
           hash,
           description: i.description,
           rawContent: i.content?.encoded,

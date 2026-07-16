@@ -1,11 +1,13 @@
 import { Worker } from 'bullmq';
+import pino from 'pino';
 import { match } from 'ts-pattern';
-
 import { forkServices, initORM } from '@/db';
 import { Fetcher } from '@/fetcher';
 import { feedQueue } from './queue';
 import { redisConfig } from './redis';
 import type { FeedJob } from './types/feed';
+
+const logger = pino();
 
 export const db = await initORM();
 
@@ -53,6 +55,7 @@ const feedWorker = new Worker<FeedJob>(
       max: 20,
       duration: 1000,
     },
+    concurrency: 5,
   },
 );
 
@@ -64,10 +67,22 @@ feedWorker.on('failed', (job, err) => {
   console.log(`${job?.id} has failed with ${err.message}`);
 });
 
+process.on('uncaughtException', (err) => {
+  // Handle the error safely
+  logger.error(err, 'Uncaught exception');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  // Handle the error safely
+  logger.error({ promise, reason }, 'Unhandled Rejection at: Promise');
+});
+
 // @ts-expect-error
 const gracefulShutdown = async (signal) => {
-  console.log(`Received ${signal}, closing server...`);
+  logger.info(`Received ${signal}, closing server...`);
   await feedWorker.close();
+
+  await db.orm.close();
   // Other asynchronous closings
   process.exit(0);
 };
