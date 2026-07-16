@@ -9,6 +9,10 @@ declare module 'fastify' {
   interface FastifyInstance {
     feedService: FeedService;
     articleService: ArticleService;
+    config: {
+      PORT: string;
+      CLIENT_ORIGIN: string;
+    };
   }
 }
 

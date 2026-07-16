@@ -1,5 +1,6 @@
 import circuitBreaker from '@fastify/circuit-breaker';
 import fastifyCors from '@fastify/cors';
+import fastifyEnv from '@fastify/env';
 import rateLimit from '@fastify/rate-limit';
 import sensible from '@fastify/sensible';
 import FastifySwagger from '@fastify/swagger';
@@ -24,6 +25,24 @@ import { auth } from './lib/auth';
 
 const db = await initORM();
 
+const envOptions = {
+  schema: {
+    type: 'object',
+    required: ['PORT'],
+    properties: {
+      PORT: {
+        type: 'string',
+        default: 4000,
+      },
+      CLIENT_ORIGIN: {
+        type: 'string',
+        default: 'http://localhost:3000',
+      },
+    },
+  },
+  dotenv: true,
+};
+
 const fastify = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
 
 // register request context hook
@@ -35,13 +54,14 @@ fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
 // global plugins
+await fastify.register(fastifyEnv, envOptions);
 await fastify.register(rateLimit);
 await fastify.register(circuitBreaker);
 await fastify.register(sensible);
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+  origin: fastify.config.CLIENT_ORIGIN,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
@@ -151,7 +171,7 @@ await fastify.register(async (instance) => {
 });
 
 // Initialize server
-fastify.listen({ port: 4000 }, (err) => {
+fastify.listen({ port: parseInt(fastify.config.PORT) }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

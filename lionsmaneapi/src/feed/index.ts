@@ -13,11 +13,12 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           201: feedSchema,
         },
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
       const newFeed = wrap(
-        await fastify.feedService.newFeed(req.body, req.session?.user.id!),
+        await fastify.feedService.newFeed(req.body, req.session!.user.id!),
       ).toObject();
 
       return reply.status(201).send({
@@ -35,11 +36,12 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: z.array(feedSchema),
         },
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
       return reply.send(
-        await fastify.feedService.getSubscriptions(req.session?.user.id!),
+        await fastify.feedService.getSubscriptions(req.session!.user.id!),
       );
     },
   );
@@ -57,12 +59,13 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: feedSchema,
         },
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
       const updated = await fastify.feedService.updateFeed(
         req.params.id,
-        req.session?.user.id!,
+        req.session!.user.id!,
         req.body.folderName,
       );
 
@@ -84,12 +87,13 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           204: z.undefined(),
         },
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
       await fastify.feedService.deleteSubscription(
         req.params.id,
-        req.session?.user.id!,
+        req.session!.user.id!,
       );
 
       return reply.status(204).send();

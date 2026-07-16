@@ -17,11 +17,12 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
             cursor: z.string().nullable(),
           }),
         },
+        tags: ['article'],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForUser(
-        req.session?.user.id!,
+        req.session!.user.id!,
         req.query.cursor,
       );
 
@@ -45,12 +46,13 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
             cursor: z.string().nullable(),
           }),
         },
+        tags: ['article'],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForFeed(
         req.params.id,
-        req.session?.user.id!,
+        req.session!.user.id!,
         req.query.cursor,
       );
 
@@ -69,12 +71,13 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleSchema,
         },
+        tags: ['article'],
       },
     },
     async (req, reply) => {
       const article = await fastify.articleService.getArticle(
         req.params.id,
-        req.session?.user.id!,
+        req.session!.user.id!,
       );
 
       return reply.send(article);
