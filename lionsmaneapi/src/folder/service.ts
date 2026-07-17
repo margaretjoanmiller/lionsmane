@@ -1,7 +1,6 @@
 import { wrap } from '@mikro-orm/core';
 import type { Services } from '@/db';
 import { Duplicate } from '@/lib/errors/duplicate';
-import { Unauthorized } from '@/lib/errors/unauthorized';
 import type { Folder, NewFolder, UpdateFolder } from './model';
 
 export class FolderService {

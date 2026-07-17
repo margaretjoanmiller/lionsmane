@@ -15,7 +15,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     async (req, reply) => {
       const folders = await fastify.folderService.getFolders(
-        req.session!.user.id!,
+        req.session?.user.id!,
       );
       return reply.send(folders);
     },
@@ -37,7 +37,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
     async (req, reply) => {
       const folder = await fastify.folderService.getFolder(
         req.params.id,
-        req.session!.user.id!,
+        req.session?.user.id!,
       );
       return reply.send(folder);
     },
@@ -56,7 +56,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     async (req, reply) => {
       const folder = await fastify.folderService.createFolder(
-        req.session!.user.id!,
+        req.session?.user.id!,
         req.body,
       );
 
@@ -82,7 +82,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       const folder = await fastify.folderService.updateFolder(
         req.params.id,
         req.body,
-        req.session!.user.id!,
+        req.session?.user.id!,
       );
 
       return reply.send(folder);
@@ -105,7 +105,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
     async (req, reply) => {
       await fastify.folderService.deleteFolder(
         req.params.id,
-        req.session!.user.id!,
+        req.session?.user.id!,
       );
 
       return reply.status(204).send();

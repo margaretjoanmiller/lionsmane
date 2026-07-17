@@ -14,7 +14,7 @@ declare module 'fastify' {
 export default fp(async function authPlugin(fastify: FastifyInstance) {
   fastify.decorateRequest('session', null);
 
-  fastify.addHook('preHandler', async (request, reply) => {
+  fastify.addHook('preHandler', async (request, _reply) => {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(request.headers),
     });
