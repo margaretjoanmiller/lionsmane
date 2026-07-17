@@ -22,6 +22,7 @@ import servicesPlugin from '@/plugin/services';
 
 import { articleRoutes } from './article';
 import { initORM } from './db';
+import { folderRoutes } from './folder';
 import { auth } from './lib/auth';
 
 const db = await initORM();
@@ -175,6 +176,7 @@ await fastify.register(async (instance) => {
 
   instance.register(feedRoutes, { prefix: '/feed' });
   instance.register(articleRoutes, { prefix: '/article' });
+  instance.register(folderRoutes, { prefix: '/folder' });
 });
 
 // Initialize server

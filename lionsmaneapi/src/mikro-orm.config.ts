@@ -1,15 +1,16 @@
 import 'dotenv/config';
-import { EntityGenerator } from '@mikro-orm/entity-generator';
 import { Migrator } from '@mikro-orm/migrations';
 import { defineConfig } from '@mikro-orm/postgresql';
 
 export default defineConfig({
   multipleStatements: true,
-  extensions: [EntityGenerator, Migrator],
+  extensions: [Migrator],
   discovery: {
     // we need to disable validation for no entities, due to the entity generation
     warnWhenNoEntities: false,
   },
+  entities: ['dist/entities/*.js'],
+  entitiesTs: ['src/entities/*.ts'],
   host: process.env.POSTGRES_HOST || 'localhost',
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,

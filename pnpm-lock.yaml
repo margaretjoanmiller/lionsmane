@@ -340,9 +340,6 @@ importers:
       '@mikro-orm/cli':
         specifier: ^7.1.6
         version: 7.1.6
-      '@mikro-orm/entity-generator':
-        specifier: ^7.1.6
-        version: 7.1.6(@mikro-orm/core@7.1.6)
       '@types/jsdom':
         specifier: ^28.0.3
         version: 28.0.3
@@ -882,12 +879,6 @@ packages:
     peerDependenciesMeta:
       dataloader:
         optional: true
-
-  '@mikro-orm/entity-generator@7.1.6':
-    resolution: {integrity: sha512-6qG6YcANJpnJ/l2rAggWq3ElvBafzhWP9OT7qzC1wxtsk9i8lQVbR79iwgNpPIbcEnMVTWK6anrYtRS6plVoIw==}
-    engines: {node: '>= 22.17.0'}
-    peerDependencies:
-      '@mikro-orm/core': 7.1.6
 
   '@mikro-orm/migrations@7.1.6':
     resolution: {integrity: sha512-857wUGF8o2gB9h+NxBXyhep9LWBLSX8eli/CdB6gU21GrHe1WUh5OAg/vSbhBV0GHzFsM8vclNvsLNAIFvqtsg==}
@@ -3012,11 +3003,6 @@ snapshots:
       - dataloader
 
   '@mikro-orm/core@7.1.6': {}
-
-  '@mikro-orm/entity-generator@7.1.6(@mikro-orm/core@7.1.6)':
-    dependencies:
-      '@mikro-orm/core': 7.1.6
-      '@mikro-orm/sql': 7.1.6(@mikro-orm/core@7.1.6)
 
   '@mikro-orm/migrations@7.1.6(@mikro-orm/core@7.1.6)':
     dependencies:

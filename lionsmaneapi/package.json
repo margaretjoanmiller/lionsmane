@@ -50,7 +50,6 @@
   },
   "devDependencies": {
     "@mikro-orm/cli": "^7.1.6",
-    "@mikro-orm/entity-generator": "^7.1.6",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",

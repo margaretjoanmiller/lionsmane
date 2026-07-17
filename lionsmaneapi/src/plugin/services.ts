@@ -4,11 +4,13 @@ import fp from 'fastify-plugin';
 import { ArticleService } from '@/article/service';
 import type { Services } from '@/db';
 import { FeedService } from '@/feed/service';
+import { FolderService } from '@/folder/service';
 
 declare module 'fastify' {
   interface FastifyInstance {
     feedService: FeedService;
     articleService: ArticleService;
+    folderService: FolderService;
     config: {
       PORT: number;
       CLIENT_ORIGIN: string;
@@ -30,6 +32,7 @@ export default fp(
       'articleService',
       new ArticleService({ svc: options.svc }),
     );
+    fastify.decorate('folderService', new FolderService({ svc: options.svc }));
   },
   { name: 'services' },
 );
