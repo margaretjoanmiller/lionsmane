@@ -22,27 +22,34 @@ export interface Services {
   folders: EntityRepository<Folders>;
 }
 
-let cache: Services;
+let cache: Promise<Services> | undefined;
 
 export async function initORM(options?: Partial<Options>): Promise<Services> {
-  if (cache) {
-    return cache;
+  if (!cache) {
+    cache = (async () => {
+      try {
+        const orm = await MikroORM.init({
+          ...config,
+          ...options,
+        });
+
+        return {
+          orm,
+          em: orm.em,
+          feeds: orm.em.getRepository(Feeds),
+          articles: orm.em.getRepository(Articles),
+          subscriptions: orm.em.getRepository(Subscriptions),
+          users: orm.em.getRepository(User),
+          folders: orm.em.getRepository(Folders),
+        };
+      } catch (err) {
+        cache = undefined;
+        throw err;
+      }
+    })();
   }
 
-  const orm = await MikroORM.init({
-    ...config,
-    ...options,
-  });
-
-  return (cache = {
-    orm,
-    em: orm.em,
-    feeds: orm.em.getRepository(Feeds),
-    articles: orm.em.getRepository(Articles),
-    subscriptions: orm.em.getRepository(Subscriptions),
-    users: orm.em.getRepository(User),
-    folders: orm.em.getRepository(Folders),
-  });
+  return cache;
 }
 
 export function forkServices(orm: MikroORM): Services {
@@ -54,6 +61,6 @@ export function forkServices(orm: MikroORM): Services {
     articles: em.getRepository(Articles),
     subscriptions: em.getRepository(Subscriptions),
     users: em.getRepository(User),
-    folders: orm.em.getRepository(Folders),
+    folders: em.getRepository(Folders),
   };
 }

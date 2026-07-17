@@ -2,6 +2,7 @@ import { wrap } from '@mikro-orm/core';
 import { match } from 'ts-pattern';
 import type { Services } from '@/db';
 import { NotFound } from '@/lib/errors/notfound';
+import { Unauthorized } from '@/lib/errors/unauthorized';
 
 export class ArticleService {
   private svc: Services;
@@ -143,6 +144,11 @@ export class ArticleService {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               articleStates: {
                 userId,
                 isRead: true,
@@ -166,6 +172,11 @@ export class ArticleService {
         } else {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               articleStates: {
                 userId,
                 isRead: true,
@@ -191,6 +202,11 @@ export class ArticleService {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               $or: [
                 {
                   articleStates: {
@@ -219,6 +235,11 @@ export class ArticleService {
         } else {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               $or: [
                 {
                   articleStates: {
@@ -249,6 +270,11 @@ export class ArticleService {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               articleStates: {
                 userId,
                 isStarred: true,
@@ -272,9 +298,14 @@ export class ArticleService {
         } else {
           const articles = await this.svc.articles.findByCursor({
             where: {
+              feedId: {
+                subscriptions: {
+                  user: userId,
+                },
+              },
               articleStates: {
                 userId,
-                isRead: true,
+                isStarred: true,
               },
             },
             first: 10,
@@ -302,6 +333,15 @@ export class ArticleService {
     status: 'read' | 'unread' | 'starred',
     cursor?: string,
   ) {
+    const sub = await this.svc.subscriptions.findOne({
+      user: userId,
+      feed: feedId,
+    });
+
+    if (!sub) {
+      throw new Unauthorized('User is not subscribed to this feed');
+    }
+
     return await match(status)
       .with('read', async () => {
         if (cursor) {

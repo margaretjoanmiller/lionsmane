@@ -10,7 +10,7 @@ declare module 'fastify' {
     feedService: FeedService;
     articleService: ArticleService;
     config: {
-      PORT: string;
+      PORT: number;
       CLIENT_ORIGIN: string;
     };
   }

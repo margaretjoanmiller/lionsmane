@@ -13,7 +13,7 @@ export const ArticlesSchema = defineEntity({
     id: p.uuid().defaultRaw(`uuidv7()`).primary(),
     title: p.text().nullable(),
     url: p.text().nullable(),
-    hash: p.string().length(64).unique(),
+    hash: p.string().length(64),
     description: p.text().nullable(),
     rawContent: p.text().name('rawContent').nullable(),
     readableHtml: p.text().name('readableHtml').nullable(),
@@ -35,6 +35,7 @@ export const ArticlesSchema = defineEntity({
     articleStates: () =>
       p.oneToMany(UserArticleStates).mappedBy('articleId').cascade(Cascade.ALL),
   },
+  uniques: [{ properties: ['hash', 'feedId'] }],
 });
 
 export class Articles extends ArticlesSchema.class {}

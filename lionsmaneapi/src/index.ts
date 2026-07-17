@@ -31,7 +31,7 @@ const envOptions = {
     required: ['PORT'],
     properties: {
       PORT: {
-        type: 'string',
+        type: 'number',
         default: 4000,
       },
       CLIENT_ORIGIN: {

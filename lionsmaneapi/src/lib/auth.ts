@@ -11,7 +11,7 @@ const db = await initORM();
 
 export const auth = betterAuth({
   database: mikroOrmAdapter(db.orm),
-  baseURL: 'http://localhost:4000/',
+  baseURL: process.env.HOST_URL || 'http://localhost:4000/',
   plugins: [
     jwt(),
     twoFactor(),

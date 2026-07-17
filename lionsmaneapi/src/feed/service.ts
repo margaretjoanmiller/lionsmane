@@ -9,8 +9,8 @@ import { feedQueue } from '@/bull/queue';
 import type { Services } from '@/db';
 import { FeedHost } from '@/entities/FeedHost';
 import { USER_AGENT } from '@/lib/constants';
+import { Duplicate } from '@/lib/errors/duplicate';
 import { Unknown } from '@/lib/errors/unknown';
-
 import type { NewFeed } from './model';
 
 export class FeedService {
@@ -23,9 +23,21 @@ export class FeedService {
     const user = await this.svc.users.findOneOrFail({
       id: userId,
     });
+
     const existing = await this.svc.feeds.findOne({
-      url: nf.url,
+      url: new URL(nf.url).toString(),
     });
+
+    const existingSub = await this.svc.subscriptions.findAll({
+      where: {
+        user,
+        feed: existing,
+      },
+    });
+
+    if (existingSub) {
+      throw new Duplicate('You are already subscribed to that feed');
+    }
 
     if (!existing) {
       const feedHost = await this.svc.em.upsert(FeedHost, {

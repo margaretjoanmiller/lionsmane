@@ -156,19 +156,18 @@ export class Fetcher {
     return items
       .filter((i) => i.published || i.updated || i.dc?.dates?.at(0))
       .filter((i) => {
-        if (i.published)
-          return isAfter(i.published, this.cutoffDate(lastChecked));
+        if (i.updated) return isAfter(i.updated, this.cutoffDate(lastChecked));
         else if (i.dc?.dates?.at(0))
           return isAfter(i.dc.dates.at(0)!, this.cutoffDate(lastChecked));
-        else if (i.updated)
-          return isAfter(i.updated, this.cutoffDate(lastChecked));
+        else if (i.published)
+          return isAfter(i.published, this.cutoffDate(lastChecked));
         else return false;
       })
       .map((i) => {
         let hash: string | null;
-        if (i.content && i.links?.at(0)) {
+        if (i.content?.value && i.links?.at(0)) {
           hash = createHash('sha256')
-            .update(`${i.links?.at(0)?.href}/${i.content}`, 'utf-8')
+            .update(`${i.links?.at(0)?.href}/${i.content.value}`, 'utf-8')
             .digest('hex');
         } else if (i.title && i.links?.at(0)) {
           hash = createHash('sha256')
@@ -211,9 +210,9 @@ export class Fetcher {
       )
       .map((i) => {
         let hash: string | null;
-        if (i.content && i.link) {
+        if (i.content?.encoded && i.link) {
           hash = createHash('sha256')
-            .update(`${i.link}/${i.content}`, 'utf-8')
+            .update(`${i.link}/${i.content.encoded}`, 'utf-8')
             .digest('hex');
         } else if (i.title && i.link) {
           hash = createHash('sha256')

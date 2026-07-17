@@ -1,11 +1,12 @@
 import { Worker } from 'bullmq';
-import { subHours } from 'date-fns';
+import { subMinutes } from 'date-fns';
 import pino from 'pino';
 import { match } from 'ts-pattern';
 import { forkServices, initORM } from '@/db';
 import { Fetcher } from '@/fetcher';
 import { feedQueue } from './queue';
 import { redisConfig } from './redis';
+import './scheduler.js';
 import type { FeedJob } from './types/feed';
 
 const logger = pino();
@@ -33,7 +34,7 @@ const feedWorker = new Worker<FeedJob>(
           type: 'cron',
         },
         async () => {
-          const cutoff = subHours(new Date(), 1);
+          const cutoff = subMinutes(new Date(), 15);
           const feeds = await svc.feeds.find({
             $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
           });
