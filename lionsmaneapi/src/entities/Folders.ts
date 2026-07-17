@@ -14,6 +14,7 @@ export const FoldersSchema = defineEntity({
     subscriptionsCollection: () =>
       p.oneToMany(Subscriptions).mappedBy('folderId').ref(),
   },
+  uniques: [{ properties: ['name', 'userId'] }],
 });
 
 export class Folders extends FoldersSchema.class {}

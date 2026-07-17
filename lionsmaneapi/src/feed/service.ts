@@ -7,7 +7,6 @@ import { match, P } from 'ts-pattern';
 
 import { feedQueue } from '@/bull/queue';
 import type { Services } from '@/db';
-import { FeedHost } from '@/entities/FeedHost';
 import { USER_AGENT } from '@/lib/constants';
 import { Duplicate } from '@/lib/errors/duplicate';
 import { Unknown } from '@/lib/errors/unknown';
@@ -42,15 +41,10 @@ export class FeedService {
     }
 
     if (!existing) {
-      const feedHost = await this.svc.em.upsert(FeedHost, {
-        url: new URL(nf.url).origin,
-      });
-
       const parsedFeed = await this.normalizeAndFetchFeed(nf.url);
 
       const newFeed = this.svc.feeds.create({
         ...parsedFeed,
-        feedHost: feedHost,
         categories: [],
         itunes: null,
         youtube: null,

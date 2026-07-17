@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+export const createFolderSchema = z.object({
+  name: z.string(),
+  feedIds: z.array(z.uuidv7()).min(1),
+});
+
+export type NewFolder = z.infer<typeof createFolderSchema>;
+
 export const updateFolderSchema = z.object({
   name: z.string().nullish(),
   feedIds: z.array(z.uuidv7()).nullish(),

@@ -1,6 +1,6 @@
 import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
-import { folderSchema, updateFolderSchema } from './model';
+import { createFolderSchema, folderSchema, updateFolderSchema } from './model';
 
 export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
@@ -40,6 +40,27 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         req.session!.user.id!,
       );
       return reply.send(folder);
+    },
+  );
+
+  fastify.post(
+    '',
+    {
+      schema: {
+        body: createFolderSchema,
+        response: {
+          201: folderSchema,
+        },
+        tags: ['folder'],
+      },
+    },
+    async (req, reply) => {
+      const folder = await fastify.folderService.createFolder(
+        req.session!.user.id!,
+        req.body,
+      );
+
+      return reply.status(201).send(folder);
     },
   );
 

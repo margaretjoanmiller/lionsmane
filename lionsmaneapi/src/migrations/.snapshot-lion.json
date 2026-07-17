@@ -1405,85 +1405,6 @@
       "comment": null
     },
     {
-      "name": "feed_host",
-      "schema": "public",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": true,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": "uuidv7()",
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "uuid"
-        },
-        "robots_txt": {
-          "name": "robots_txt",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "text"
-        },
-        "url": {
-          "name": "url",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": true,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "text"
-        }
-      },
-      "indexes": [
-        {
-          "columnNames": ["id"],
-          "composite": false,
-          "constraint": true,
-          "keyName": "feed_host_pkey",
-          "primary": true,
-          "unique": true
-        },
-        {
-          "columnNames": ["url"],
-          "composite": false,
-          "constraint": true,
-          "keyName": "feed_host_url_unique",
-          "primary": false,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "triggers": [],
-      "foreignKeys": {},
-      "comment": null
-    },
-    {
       "name": "feeds",
       "schema": "public",
       "columns": {
@@ -1554,23 +1475,6 @@
           "collation": null,
           "enumItems": [],
           "mappedType": "string"
-        },
-        "feed_host_id": {
-          "name": "feed_host_id",
-          "type": "uuid",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "collation": null,
-          "enumItems": [],
-          "mappedType": "uuid"
         },
         "icon": {
           "name": "icon",
@@ -1823,15 +1727,7 @@
       ],
       "checks": [],
       "triggers": [],
-      "foreignKeys": {
-        "feeds_feed_host_id_foreign": {
-          "columnNames": ["feed_host_id"],
-          "constraintName": "feeds_feed_host_id_foreign",
-          "localTableName": "public.feeds",
-          "referencedColumnNames": ["id"],
-          "referencedTableName": "public.feed_host"
-        }
-      },
+      "foreignKeys": {},
       "comment": null
     },
     {

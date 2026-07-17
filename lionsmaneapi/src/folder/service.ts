@@ -1,11 +1,43 @@
 import { wrap } from '@mikro-orm/core';
 import type { Services } from '@/db';
-import type { Folder, UpdateFolder } from './model';
+import { Duplicate } from '@/lib/errors/duplicate';
+import { Unauthorized } from '@/lib/errors/unauthorized';
+import type { Folder, NewFolder, UpdateFolder } from './model';
 
 export class FolderService {
   private svc: Services;
   constructor({ svc }: { svc: Services }) {
     this.svc = svc;
+  }
+
+  async createFolder(userId: string, newFolder: NewFolder) {
+    const subs = await this.svc.subscriptions.find({
+      feed: {
+        id: { $in: newFolder.feedIds },
+      },
+      user: userId,
+    });
+
+    const existingFolder = await this.svc.folders.findOne({
+      name: newFolder.name,
+      userId,
+    });
+
+    if (existingFolder) throw new Duplicate('This folder already exists');
+
+    const folder = await this.svc.folders.create({
+      name: newFolder.name,
+      userId,
+      subscriptionsCollection: subs,
+    });
+
+    await this.svc.em.flush();
+
+    return {
+      id: folder.id,
+      name: folder.name,
+      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+    };
   }
 
   async getFolders(userId: string): Promise<Array<Folder>> {

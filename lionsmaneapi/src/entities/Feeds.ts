@@ -3,7 +3,6 @@ import type { ItunesNs, YtNs } from 'feedsmith';
 
 import { Articles } from './Articles.js';
 import { Base } from './Base.js';
-import { FeedHost } from './FeedHost.js';
 import { Subscriptions } from './Subscriptions.js';
 
 export const FeedsSchema = defineEntity({
@@ -32,7 +31,6 @@ export const FeedsSchema = defineEntity({
     youtube: p.json<YtNs.Feed>().nullable(),
     favicon: p.string().length(256).nullable(),
     icon: p.string().nullable(),
-    feedHost: () => p.manyToOne(FeedHost).ref(),
     articlesCollection: () =>
       p.oneToMany(Articles).mappedBy('feedId').cascade(Cascade.ALL),
     subscriptions: () =>
