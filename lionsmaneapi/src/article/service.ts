@@ -32,7 +32,7 @@ export class ArticleService {
             },
           },
         },
-        orderBy: { published: 'desc' },
+        orderBy: { published: 'desc', id: 'desc' },
         exclude: ['feedId'],
       });
 
@@ -55,7 +55,7 @@ export class ArticleService {
             },
           },
         },
-        orderBy: { published: 'desc' },
+        orderBy: { published: 'desc', id: 'desc' },
         exclude: ['feedId'],
       });
 
@@ -83,7 +83,7 @@ export class ArticleService {
         where: {
           feedId,
         },
-        orderBy: { published: 'desc' },
+        orderBy: { published: 'desc', id: 'desc' },
         exclude: ['feedId'],
       });
 
@@ -102,7 +102,7 @@ export class ArticleService {
           feedId,
         },
         after: cursor,
-        orderBy: { published: 'desc' },
+        orderBy: { published: 'desc', id: 'desc' },
         exclude: ['feedId'],
       });
 
@@ -156,6 +156,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -185,6 +186,7 @@ export class ArticleService {
             first: 10,
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
           });
 
@@ -219,6 +221,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -252,6 +255,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
           });
@@ -282,6 +286,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -311,6 +316,7 @@ export class ArticleService {
             first: 10,
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
           });
 
@@ -355,6 +361,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -380,6 +387,7 @@ export class ArticleService {
             first: 10,
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
           });
 
@@ -410,6 +418,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -439,6 +448,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
           });
@@ -465,6 +475,7 @@ export class ArticleService {
             },
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
             first: 10,
             after: cursor,
@@ -490,6 +501,7 @@ export class ArticleService {
             first: 10,
             orderBy: {
               published: 'desc',
+              id: 'desc',
             },
           });
 

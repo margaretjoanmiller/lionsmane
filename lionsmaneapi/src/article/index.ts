@@ -9,7 +9,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
     {
       schema: {
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -35,7 +35,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           id: z.uuidv7(),
         }),
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -83,7 +83,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
     {
       schema: {
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -107,7 +107,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
     {
       schema: {
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -131,7 +131,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
     {
       schema: {
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -158,7 +158,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           id: z.uuidv7(),
         }),
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -186,7 +186,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           id: z.uuidv7(),
         }),
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
@@ -214,7 +214,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           id: z.uuidv7(),
         }),
         querystring: z.object({
-          cursor: z.string().optional(),
+          cursor: z.base64url().optional(),
         }),
         response: {
           200: articleList,
