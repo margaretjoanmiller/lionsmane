@@ -81,10 +81,16 @@ export class FeedService {
         await this.svc.em.flush();
       }
 
-      await feedQueue.add(`initial: ${newFeed.id}`, {
-        type: 'fetch',
-        feedId: newFeed.id,
-      });
+      await feedQueue.add(
+        `initial: ${newFeed.id}`,
+        {
+          type: 'fetch',
+          feedId: newFeed.id,
+        },
+        {
+          jobId: `initial:${newFeed.id}`,
+        },
+      );
 
       return newSub.feed;
     } else {

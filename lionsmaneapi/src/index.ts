@@ -176,10 +176,10 @@ await fastify.register(async (instance) => {
 });
 
 // Initialize server
-fastify.listen({ port: parseInt(fastify.config.PORT, 10) }, (err) => {
+fastify.listen({ port: fastify.config.PORT }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log('Server running on port 4000');
+  console.log(`Server running on port: ${fastify.config.PORT}`);
 });

@@ -50,6 +50,9 @@ const feedWorker = new Worker<FeedJob>(
               type: 'fetch' as const,
               feedId: f.id,
             },
+            opts: {
+              jobId: `fetch:${f.id}`,
+            },
           }));
 
           await feedQueue.addBulk(feedJobs);
@@ -72,11 +75,11 @@ const feedWorker = new Worker<FeedJob>(
 );
 
 feedWorker.on('completed', (job) => {
-  console.log(`${job.id} has completed!`);
+  logger.info(`${job.id} has completed!`);
 });
 
 feedWorker.on('failed', (job, err) => {
-  console.log(`${job?.id} has failed with ${err.message}`);
+  logger.info(`${job?.id} has failed with ${err.message}`);
 });
 
 process.on('uncaughtException', (err) => {

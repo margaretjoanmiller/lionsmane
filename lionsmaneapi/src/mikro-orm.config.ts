@@ -12,7 +12,7 @@ export default defineConfig({
   },
   entities: ['dist/entities/*.js'],
   entitiesTs: ['src/entities/*.ts'],
-  host: 'localhost',
+  host: process.env.POSTGRES_HOST || 'localhost',
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   port: parseInt(process.env.POSTGRES_PORT || '5432', 10),

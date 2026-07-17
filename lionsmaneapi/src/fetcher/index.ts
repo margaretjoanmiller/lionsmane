@@ -189,7 +189,7 @@ export class Fetcher {
           authors: i.authors
             ?.map((a) => `${a.name} <${a.email}>`)
             .filter(isDefined),
-          //TODO: image
+          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
           itunes: i.itunes,
           youtube: i.yt,
           feedId,
@@ -231,6 +231,7 @@ export class Fetcher {
           published: i.pubDate,
           categories: i.categories?.map((c) => c.name).filter(isPresent),
           authors: i.authors,
+          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
           itunes: i.itunes,
           feedId,
         };
@@ -273,6 +274,7 @@ export class Fetcher {
           authors: i.authors
             ?.map((a) => `${a.name} <${a.url}>`)
             .filter(isDefined),
+          image: i.image,
           feedId,
         };
       })
