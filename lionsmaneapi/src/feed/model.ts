@@ -9,6 +9,8 @@ export type NewFeed = z.infer<typeof newFeedSchema>;
 
 export const feedSchema = z.object({
   id: z.uuidv7(),
+  title: z.string(),
+  subTitle: z.string().nullish(),
   url: z.url(),
   siteUrl: z.url(),
   etagHeader: z.string().nullish(),

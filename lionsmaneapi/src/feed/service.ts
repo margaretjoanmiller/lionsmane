@@ -221,7 +221,7 @@ export class FeedService {
       title: feed.title?.value || url.toString(),
       subtitle: feed.subtitle?.value,
       url: url.toString(),
-      siteUrl: url.origin,
+      siteUrl: feed.links?.at(0)?.href || url.origin,
       lastChecked: subMonths(new Date(), 3),
       updated: feed.updated,
       categories: feed.categories?.map((c) => c.label).filter(isDefined) || [],
@@ -234,7 +234,7 @@ export class FeedService {
     return {
       title: feed.title || url.toString(),
       url: url.toString(),
-      siteUrl: url.origin,
+      siteUrl: feed.link || url.origin,
       lastChecked: subMonths(new Date(), 3),
       categories: feed.categories || [],
       itunes: feed.itunes,
@@ -244,7 +244,7 @@ export class FeedService {
     return {
       title: feed.title || url.toString(),
       url: url.toString(),
-      siteUrl: url.origin,
+      siteUrl: feed.home_page_url || url.origin,
       lastChecked: subMonths(new Date(), 3),
       icon: feed.icon,
     };
@@ -253,7 +253,7 @@ export class FeedService {
     return {
       title: feed.title || url.toString(),
       url: url.toString(),
-      siteUrl: url.origin,
+      siteUrl: feed.link || url.origin,
       lastChecked: subMonths(new Date(), 3),
     };
   }
