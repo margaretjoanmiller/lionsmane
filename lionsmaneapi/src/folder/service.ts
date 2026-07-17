@@ -1,6 +1,6 @@
 import { wrap } from '@mikro-orm/core';
 import type { Services } from '@/db';
-import type { Folder } from './model';
+import type { Folder, UpdateFolder } from './model';
 
 export class FolderService {
   private svc: Services;
@@ -43,5 +43,73 @@ export class FolderService {
       name: folder.name,
       feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
     };
+  }
+
+  async findByName(folderName: string, userId: string): Promise<Folder> {
+    const folder = await this.svc.folders.findOneOrFail({
+      name: folderName,
+      userId,
+    });
+
+    return {
+      id: folder.id,
+      name: folder.name,
+      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+    };
+  }
+
+  async updateFolder(
+    folderId: string,
+    updateFolder: UpdateFolder,
+    userId: string,
+  ) {
+    const folder = await this.svc.folders.findOneOrFail({
+      id: folderId,
+      userId,
+    });
+
+    if (updateFolder.feedIds && updateFolder.feedIds.length > 0) {
+      folder.subscriptionsCollection.removeAll();
+
+      updateFolder.feedIds.forEach(async (f) => {
+        const sub = await this.svc.subscriptions.findOneOrFail({
+          user: userId,
+          feed: f,
+        });
+        folder.subscriptionsCollection.add(sub);
+      });
+    }
+
+    if (updateFolder.name) {
+      folder.name = updateFolder.name;
+    }
+
+    await this.svc.em.flush();
+
+    return {
+      id: folder.id,
+      name: folder.name,
+      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+    };
+  }
+
+  async deleteFolder(folderId: string, userId: string) {
+    const folder = await this.svc.folders.findOneOrFail(
+      {
+        id: folderId,
+        userId,
+      },
+      {
+        populate: ['subscriptionsCollection'],
+      },
+    );
+
+    for (const feed of folder.subscriptionsCollection.$) {
+      feed.folderId = null;
+    }
+
+    this.svc.em.remove(folder);
+
+    await this.svc.em.flush();
   }
 }

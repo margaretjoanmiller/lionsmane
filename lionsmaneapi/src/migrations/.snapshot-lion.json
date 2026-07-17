@@ -1208,10 +1208,10 @@
       },
       "indexes": [
         {
-          "columnNames": ["hash"],
-          "composite": false,
+          "columnNames": ["hash", "feed_id_id"],
+          "composite": true,
           "constraint": true,
-          "keyName": "articles_hash_unique",
+          "keyName": "articles_hash_feed_id_id_unique",
           "primary": false,
           "unique": true
         },

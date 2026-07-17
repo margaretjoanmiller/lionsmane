@@ -28,15 +28,17 @@ export class FeedService {
       url: new URL(nf.url).toString(),
     });
 
-    const existingSub = await this.svc.subscriptions.findAll({
-      where: {
-        user,
-        feed: existing,
-      },
-    });
+    if (existing) {
+      const existingSub = await this.svc.subscriptions.findAll({
+        where: {
+          user,
+          feed: existing,
+        },
+      });
 
-    if (existingSub) {
-      throw new Duplicate('You are already subscribed to that feed');
+      if (existingSub) {
+        throw new Duplicate('You are already subscribed to that feed');
+      }
     }
 
     if (!existing) {
@@ -72,23 +74,22 @@ export class FeedService {
             userId,
             subscriptionsCollection: [newSub],
           });
+          await this.svc.em.flush();
         } else {
           folder.subscriptionsCollection.add(newSub);
 
           await this.svc.em.refresh(folder);
         }
-
-        await this.svc.em.flush();
       }
 
       await feedQueue.add(
-        `initial: ${newFeed.id}`,
+        `initial${newFeed.id}`,
         {
           type: 'fetch',
           feedId: newFeed.id,
         },
         {
-          jobId: `initial:${newFeed.id}`,
+          jobId: `initial${newFeed.id}`,
         },
       );
 
@@ -112,11 +113,10 @@ export class FeedService {
             userId,
             subscriptionsCollection: [newSub],
           });
+          await this.svc.em.flush();
         } else {
           folder.subscriptionsCollection.add(newSub);
         }
-
-        await this.svc.em.flush();
       }
 
       return newSub.feed;

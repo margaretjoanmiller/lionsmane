@@ -1,10 +1,10 @@
 import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
-import { folderSchema } from './model';
+import { folderSchema, updateFolderSchema } from './model';
 
 export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
-    '/',
+    '',
     {
       schema: {
         response: {
@@ -40,6 +40,54 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         req.session!.user.id!,
       );
       return reply.send(folder);
+    },
+  );
+
+  fastify.patch(
+    '/:id',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        body: updateFolderSchema,
+        response: {
+          200: folderSchema,
+        },
+        tags: ['folder'],
+      },
+    },
+    async (req, reply) => {
+      const folder = await fastify.folderService.updateFolder(
+        req.params.id,
+        req.body,
+        req.session!.user.id!,
+      );
+
+      return reply.send(folder);
+    },
+  );
+
+  fastify.delete(
+    '/:id',
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        response: {
+          204: z.undefined(),
+        },
+        tags: ['folder'],
+      },
+    },
+    async (req, reply) => {
+      await fastify.folderService.deleteFolder(
+        req.params.id,
+        req.session!.user.id!,
+      );
+
+      return reply.status(204).send();
     },
   );
 };

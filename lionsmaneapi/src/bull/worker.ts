@@ -51,7 +51,7 @@ const feedWorker = new Worker<FeedJob>(
               feedId: f.id,
             },
             opts: {
-              jobId: `fetch:${f.id}`,
+              jobId: `fetch${f.id}`,
             },
           }));
 

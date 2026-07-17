@@ -12,7 +12,7 @@ export const FoldersSchema = defineEntity({
     name: p.string().length(100),
     userId: () => p.manyToOne(User).ref(),
     subscriptionsCollection: () =>
-      p.oneToMany(Subscriptions).mappedBy('folderId'),
+      p.oneToMany(Subscriptions).mappedBy('folderId').ref(),
   },
 });
 
