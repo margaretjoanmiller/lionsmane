@@ -10,8 +10,6 @@ export default defineConfig({
     // we need to disable validation for no entities, due to the entity generation
     warnWhenNoEntities: false,
   },
-  entities: ['dist/entities/*.js'],
-  entitiesTs: ['src/entities/*.ts'],
   host: process.env.POSTGRES_HOST || 'localhost',
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,

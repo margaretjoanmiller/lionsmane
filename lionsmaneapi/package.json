@@ -34,6 +34,7 @@
     "dompurify": "^3.4.12",
     "dotenv": "^17.4.2",
     "fastify": "^5.10.0",
+    "fastify-graceful-shutdown": "^5.0.0",
     "fastify-plugin": "^6.0.0",
     "feedsmith": "3.0.0-next.6",
     "ioredis": "^5.11.1",

@@ -14,6 +14,7 @@ import { RequestContext } from '@mikro-orm/core';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
+import gracefulShutdown from 'fastify-graceful-shutdown';
 
 import { feedRoutes } from '@/feed';
 import authPlugin from '@/plugin/auth';
@@ -58,6 +59,7 @@ await fastify.register(fastifyEnv, envOptions);
 await fastify.register(rateLimit);
 await fastify.register(circuitBreaker);
 await fastify.register(sensible);
+await fastify.register(gracefulShutdown);
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
@@ -181,5 +183,12 @@ fastify.listen({ port: fastify.config.PORT }, (err) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log(`Server running on port: ${fastify.config.PORT}`);
+  fastify.log.info(`Server running on port: ${fastify.config.PORT}`);
+});
+
+fastify.after(() => {
+  fastify.gracefulShutdown(async (signal) => {
+    fastify.log.info('Received signal to shutdown: %s', signal);
+    await db.orm.close();
+  });
 });
