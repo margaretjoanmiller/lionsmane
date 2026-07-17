@@ -31,9 +31,13 @@ export class Fetcher {
     }
 
     const feedEtag = feedXml.headers.get('ETag');
+    const feedLastModified = feedXml.headers.get('Last-Modified');
 
     if (feedEtag) {
       feed.etagHeader = feedEtag;
+    }
+    if (feedLastModified) {
+      feed.lastModifiedHeader = feedLastModified;
     }
 
     const parsedFeed = parseFeed(await feedXml.text(), {
@@ -99,12 +103,14 @@ export class Fetcher {
   private async fetchFeed(
     url: string,
     etagHeader?: string | null,
+    lastModified?: string | null,
   ): Promise<KyResponse> {
     try {
       return await ky.get(url, {
         headers: {
           'User-Agent': USER_AGENT,
           ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
+          ...(lastModified ? { 'If-Modified-Since': lastModified } : {}),
         },
         timeout: 5000,
         retry: 5,
