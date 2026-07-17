@@ -36,7 +36,7 @@ export class FolderService {
     return {
       id: folder.id,
       name: folder.name,
-      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+      feeds: folder.subscriptionsCollection.map((s) => s.feed.id),
     };
   }
 
@@ -54,7 +54,11 @@ export class FolderService {
       return {
         id: folder.id,
         name: folder.name,
-        feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+        feeds: folder.subscriptionsCollection.map((s) => ({
+          ...s.feed,
+          lastChecked: s.feed.lastChecked.toISOString(),
+          updated: s.feed.updated?.toISOString(),
+        })),
       };
     });
   }
@@ -73,7 +77,11 @@ export class FolderService {
     return {
       id: folder.id,
       name: folder.name,
-      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
+      feedIds: folder.subscriptionsCollection.map((s) => ({
+        ...s.feed,
+        lastChecked: s.feed.lastChecked.toISOString(),
+        updated: s.feed.updated?.toISOString(),
+      })),
     };
   }
 
