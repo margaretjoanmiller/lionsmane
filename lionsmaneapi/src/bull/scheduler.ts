@@ -1,4 +1,4 @@
-import { feedQueue } from './queue.js';
+import { feedQueue } from './queue';
 
 await feedQueue.upsertJobScheduler(
   'updateEvery15',

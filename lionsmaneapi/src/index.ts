@@ -149,8 +149,13 @@ await fastify.register(FastifySwagger, {
       securitySchemes: {
         apiKey: {
           type: 'apiKey',
-          name: 'apiKey',
+          name: 'X-API-KEY',
           in: 'header',
+        },
+        jwt: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
     },

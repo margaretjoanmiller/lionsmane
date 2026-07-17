@@ -6,12 +6,12 @@ import { forkServices, initORM } from '@/db';
 import { Fetcher } from '@/fetcher';
 import { feedQueue } from './queue';
 import { redisConfig } from './redis';
-import './scheduler.js';
+import './scheduler';
 import type { FeedJob } from './types/feed';
 
 const logger = pino();
 
-export const db = await initORM();
+const db = await initORM();
 
 const feedWorker = new Worker<FeedJob>(
   'feed',
@@ -35,9 +35,14 @@ const feedWorker = new Worker<FeedJob>(
         },
         async () => {
           const cutoff = subMinutes(new Date(), 15);
-          const feeds = await svc.feeds.find({
-            $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
-          });
+          const feeds = await svc.feeds.find(
+            {
+              $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
+            },
+            {
+              fields: ['id'],
+            },
+          );
 
           const feedJobs = feeds.map((f) => ({
             name: f.id,
@@ -61,6 +66,8 @@ const feedWorker = new Worker<FeedJob>(
       duration: 1000,
     },
     concurrency: 5,
+    removeOnFail: { count: 0 },
+    removeOnComplete: { count: 0 },
   },
 );
 
