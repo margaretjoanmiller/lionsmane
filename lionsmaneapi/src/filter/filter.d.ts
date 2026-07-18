@@ -11,7 +11,7 @@ export interface FilterRule {
   userId: string;
   conditions: Conditions;
   action: {
-    type: 'blur' | 'hide' | 'markRead';
+    type: "blur" | "hide" | "markRead";
     contentWarning: string | null; // For blur action
   };
   enabled: boolean;
@@ -22,7 +22,7 @@ export interface AppliedRules {
   userId: string;
   articleId: string;
   ruleId: string;
-  action: 'blur' | 'markRead' | 'hide';
+  action: "blur" | "markRead" | "hide";
   contentWarning: string | null; // For blur action
   appliedAt: Date;
 }

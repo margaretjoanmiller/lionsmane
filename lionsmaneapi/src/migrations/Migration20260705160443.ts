@@ -1,4 +1,4 @@
-import { Migration } from '@mikro-orm/migrations';
+import { Migration } from "@mikro-orm/migrations";
 
 export class Migration20260705160443 extends Migration {
   override up(): void | Promise<void> {
@@ -14,9 +14,7 @@ export class Migration20260705160443 extends Migration {
     this.addSql(
       `create table "icons" ("height" int null, "id" serial primary key, "type" varchar(256) null, "url" varchar(256) not null, "width" int null);`,
     );
-    this.addSql(
-      `alter table "icons" add constraint "icons_url_unique" unique ("url");`,
-    );
+    this.addSql(`alter table "icons" add constraint "icons_url_unique" unique ("url");`);
 
     this.addSql(`alter table "feeds" drop column "icon";`);
     this.addSql(`alter table "feeds" add "icon_id" int not null;`);

@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { feedSchema } from '@/feed/model';
+import { z } from "zod";
+import { feedSchema } from "@/feed/model";
 
 export const createFolderSchema = z.object({
   name: z.string(),
@@ -18,7 +18,7 @@ export type UpdateFolder = z.infer<typeof updateFolderSchema>;
 export const folderSchema = z.object({
   id: z.uuidv7(),
   name: z.string(),
-  feedIds: z.array(feedSchema),
+  feeds: z.array(feedSchema),
 });
 
 export type Folder = z.infer<typeof folderSchema>;

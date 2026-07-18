@@ -1,8 +1,18 @@
-import { wrap } from '@mikro-orm/core';
-import type { Services } from '@/db';
-import { Duplicate } from '@/lib/errors/duplicate';
-import type { Folder, NewFolder, UpdateFolder } from './model';
+import { type Loaded } from "@mikro-orm/core";
+import type { Services } from "@/db";
+import { Duplicate } from "@/lib/errors/duplicate";
+import type { Folder, NewFolder, UpdateFolder } from "./model";
+import type { Folders } from "@/entities/Folders";
 
+const serializeFolder = (folder: Loaded<Folders, "subscriptionsCollection.feed">) => ({
+  id: folder.id,
+  name: folder.name,
+  feeds: folder.subscriptionsCollection.map((s) => ({
+    ...s.feed,
+    lastChecked: s.feed.lastChecked.toISOString(),
+    updated: s.feed.updated?.toISOString(),
+  })),
+});
 export class FolderService {
   private svc: Services;
   constructor({ svc }: { svc: Services }) {
@@ -12,7 +22,7 @@ export class FolderService {
   async createFolder(userId: string, newFolder: NewFolder) {
     const subs = await this.svc.subscriptions.find({
       feed: {
-        id: { $in: newFolder.feedIds },
+        id: { $in: newFolder.feeds },
       },
       user: userId,
     });
@@ -22,9 +32,9 @@ export class FolderService {
       userId,
     });
 
-    if (existingFolder) throw new Duplicate('This folder already exists');
+    if (existingFolder) throw new Duplicate("This folder already exists");
 
-    const folder = await this.svc.folders.create({
+    const folder = this.svc.folders.create({
       name: newFolder.name,
       userId,
       subscriptionsCollection: subs,
@@ -44,22 +54,10 @@ export class FolderService {
       where: {
         userId,
       },
-      populate: ['subscriptionsCollection.feed'],
+      populate: ["subscriptionsCollection.feed"],
     });
 
-    return folders.map((f) => {
-      const folder = wrap(f).toObject();
-
-      return {
-        id: folder.id,
-        name: folder.name,
-        feeds: folder.subscriptionsCollection.map((s) => ({
-          ...s.feed,
-          lastChecked: s.feed.lastChecked.toISOString(),
-          updated: s.feed.updated?.toISOString(),
-        })),
-      };
-    });
+    return folders.map(serializeFolder);
   }
 
   async getFolder(folderId: string, userId: string): Promise<Folder> {
@@ -69,39 +67,28 @@ export class FolderService {
         userId,
       },
       {
-        populate: ['subscriptionsCollection.feed'],
+        populate: ["subscriptionsCollection.feed"],
       },
     );
 
-    return {
-      id: folder.id,
-      name: folder.name,
-      feedIds: folder.subscriptionsCollection.map((s) => ({
-        ...s.feed,
-        lastChecked: s.feed.lastChecked.toISOString(),
-        updated: s.feed.updated?.toISOString(),
-      })),
-    };
+    return serializeFolder(folder);
   }
 
   async findByName(folderName: string, userId: string): Promise<Folder> {
-    const folder = await this.svc.folders.findOneOrFail({
-      name: folderName,
-      userId,
-    });
+    const folder = await this.svc.folders.findOneOrFail(
+      {
+        name: folderName,
+        userId,
+      },
+      {
+        populate: ["subscriptionsCollection.feed"],
+      },
+    );
 
-    return {
-      id: folder.id,
-      name: folder.name,
-      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
-    };
+    return serializeFolder(folder);
   }
 
-  async updateFolder(
-    folderId: string,
-    updateFolder: UpdateFolder,
-    userId: string,
-  ) {
+  async updateFolder(folderId: string, updateFolder: UpdateFolder, userId: string) {
     const folder = await this.svc.folders.findOneOrFail({
       id: folderId,
       userId,
@@ -125,11 +112,8 @@ export class FolderService {
 
     await this.svc.em.flush();
 
-    return {
-      id: folder.id,
-      name: folder.name,
-      feedIds: folder.subscriptionsCollection.map((s) => s.feed.id),
-    };
+    const loaded = await this.svc.em.populate(folder, ["subscriptionsCollection.feed"]);
+    return serializeFolder(loaded);
   }
 
   async deleteFolder(folderId: string, userId: string) {
@@ -139,7 +123,7 @@ export class FolderService {
         userId,
       },
       {
-        populate: ['subscriptionsCollection'],
+        populate: ["subscriptionsCollection"],
       },
     );
 

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const articleSchema = z.object({
   id: z.uuidv7(),

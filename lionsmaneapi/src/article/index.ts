@@ -1,11 +1,11 @@
-import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
-import { z } from 'zod';
+import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
+import { z } from "zod";
 
-import { articleList, articleSchema } from './model';
+import { articleList, articleSchema } from "./model";
 
 export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
-    '',
+    "",
     {
       schema: {
         querystring: z.object({
@@ -14,7 +14,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
@@ -28,7 +28,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/feed/:id',
+    "/feed/:id",
     {
       schema: {
         params: z.object({
@@ -40,7 +40,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
@@ -55,7 +55,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -65,21 +65,18 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleSchema,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
-      const article = await fastify.articleService.getArticle(
-        req.params.id,
-        req.session?.user.id!,
-      );
+      const article = await fastify.articleService.getArticle(req.params.id, req.session?.user.id!);
 
       return reply.send(article);
     },
   );
 
   fastify.get(
-    '/unread',
+    "/unread",
     {
       schema: {
         querystring: z.object({
@@ -88,13 +85,13 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForState(
         req.session?.user.id!,
-        'unread',
+        "unread",
         req.query.cursor,
       );
 
@@ -103,7 +100,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/read',
+    "/read",
     {
       schema: {
         querystring: z.object({
@@ -112,13 +109,13 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForState(
         req.session?.user.id!,
-        'read',
+        "read",
         req.query.cursor,
       );
 
@@ -127,7 +124,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/starred',
+    "/starred",
     {
       schema: {
         querystring: z.object({
@@ -136,13 +133,13 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForState(
         req.session?.user.id!,
-        'starred',
+        "starred",
         req.query.cursor,
       );
 
@@ -151,7 +148,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/feed/:id/unread',
+    "/feed/:id/unread",
     {
       schema: {
         params: z.object({
@@ -163,14 +160,14 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForStateFeed(
         req.params.id,
         req.session?.user.id!,
-        'unread',
+        "unread",
         req.query.cursor,
       );
 
@@ -179,7 +176,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/feed/:id/read',
+    "/feed/:id/read",
     {
       schema: {
         params: z.object({
@@ -191,14 +188,14 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForStateFeed(
         req.params.id,
         req.session?.user.id!,
-        'read',
+        "read",
         req.query.cursor,
       );
 
@@ -207,7 +204,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    '/feed/:id/starred',
+    "/feed/:id/starred",
     {
       schema: {
         params: z.object({
@@ -219,14 +216,14 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleList,
         },
-        tags: ['article'],
+        tags: ["article"],
       },
     },
     async (req, reply) => {
       const articles = await fastify.articleService.getArticlesForStateFeed(
         req.params.id,
         req.session?.user.id!,
-        'starred',
+        "starred",
         req.query.cursor,
       );
 

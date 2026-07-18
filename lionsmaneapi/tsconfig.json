@@ -19,9 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "types": ["node"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
+    "types": ["node", "vitest/globals"],
     "outDir": "./dist",
     "rootDir": ".",
     "paths": {

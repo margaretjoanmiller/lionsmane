@@ -1,7 +1,7 @@
-import { defineEntity, type Opt, p, type Ref } from '@mikro-orm/core';
+import { defineEntity, type Opt, p, type Ref } from "@mikro-orm/core";
 
-import { Articles } from './Articles.js';
-import { Base } from './Base.js';
+import { Articles } from "./Articles.js";
+import { Base } from "./Base.js";
 
 export class Enclosures extends Base {
   id!: number;
@@ -16,7 +16,7 @@ export const EnclosuresSchema = defineEntity({
   class: Enclosures,
   properties: {
     id: p.integer().primary(),
-    entry: () => p.manyToOne(Articles).inversedBy('enclosuresCollection'),
+    entry: () => p.manyToOne(Articles).inversedBy("enclosuresCollection"),
     url: p.text(),
     size: p.integer().nullable(),
     mimeType: p.string().length(256),

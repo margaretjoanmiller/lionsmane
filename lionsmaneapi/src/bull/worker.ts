@@ -1,20 +1,20 @@
-import { Worker } from 'bullmq';
-import { subMinutes } from 'date-fns';
-import pino from 'pino';
-import { match } from 'ts-pattern';
-import { forkServices, initORM } from '@/db';
-import { Fetcher } from '@/fetcher';
-import { feedQueue } from './queue';
-import { redisConfig } from './redis';
-import './scheduler';
-import type { FeedJob } from './types/feed';
+import { Worker } from "bullmq";
+import { subMinutes } from "date-fns";
+import pino from "pino";
+import { match } from "ts-pattern";
+import { forkServices, initORM } from "@/db";
+import { Fetcher } from "@/fetcher";
+import { feedQueue } from "./queue";
+import { redisConfig } from "./redis";
+import "./scheduler";
+import type { FeedJob } from "./types/feed";
 
 const logger = pino();
 
 const db = await initORM();
 
 const feedWorker = new Worker<FeedJob>(
-  'feed',
+  "feed",
   async (job) => {
     const svc = forkServices(db.orm);
     const fetcher = new Fetcher(svc);
@@ -23,7 +23,7 @@ const feedWorker = new Worker<FeedJob>(
     return await match(job.data)
       .with(
         {
-          type: 'fetch',
+          type: "fetch",
         },
         async ({ feedId }) => {
           await fetcher.extractArticlesFromFeed(feedId);
@@ -31,7 +31,7 @@ const feedWorker = new Worker<FeedJob>(
       )
       .with(
         {
-          type: 'cron',
+          type: "cron",
         },
         async () => {
           const cutoff = subMinutes(new Date(), 15);
@@ -40,14 +40,14 @@ const feedWorker = new Worker<FeedJob>(
               $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
             },
             {
-              fields: ['id'],
+              fields: ["id"],
             },
           );
 
           const feedJobs = feeds.map((f) => ({
             name: f.id,
             data: {
-              type: 'fetch' as const,
+              type: "fetch" as const,
               feedId: f.id,
             },
             opts: {
@@ -74,22 +74,22 @@ const feedWorker = new Worker<FeedJob>(
   },
 );
 
-feedWorker.on('completed', (job) => {
+feedWorker.on("completed", (job) => {
   logger.info(`${job.id} has completed!`);
 });
 
-feedWorker.on('failed', (job, err) => {
+feedWorker.on("failed", (job, err) => {
   logger.info(`${job?.id} has failed with ${err.message}`);
 });
 
-process.on('uncaughtException', (err) => {
+process.on("uncaughtException", (err) => {
   // Handle the error safely
-  logger.error(err, 'Uncaught exception');
+  logger.error(err, "Uncaught exception");
 });
 
-process.on('unhandledRejection', (reason, promise) => {
+process.on("unhandledRejection", (reason, promise) => {
   // Handle the error safely
-  logger.error({ promise, reason }, 'Unhandled Rejection at: Promise');
+  logger.error({ promise, reason }, "Unhandled Rejection at: Promise");
 });
 
 const gracefulShutdown = async (signal: NodeJS.Signals) => {
@@ -102,6 +102,6 @@ const gracefulShutdown = async (signal: NodeJS.Signals) => {
   process.exit(0);
 };
 
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));

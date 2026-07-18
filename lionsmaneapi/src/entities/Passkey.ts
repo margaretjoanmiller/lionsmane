@@ -1,7 +1,7 @@
-import { defineEntity, p, type Ref } from '@mikro-orm/core';
+import { defineEntity, p, type Ref } from "@mikro-orm/core";
 
-import { Base } from './Base.js';
-import { User } from './User.js';
+import { Base } from "./Base.js";
+import { User } from "./User.js";
 
 export class Passkey extends Base {
   id!: string;
@@ -22,20 +22,15 @@ export const PasskeySchema = defineEntity({
   properties: {
     id: p.text().primary(),
     name: p.text().nullable(),
-    publicKey: p.text().name('publicKey'),
+    publicKey: p.text().name("publicKey"),
     userId: () =>
-      p
-        .manyToOne(User)
-        .ref()
-        .name('userId')
-        .updateRule('no action')
-        .deleteRule('cascade'),
-    credentialID: p.text().name('credentialID'),
+      p.manyToOne(User).ref().name("userId").updateRule("no action").deleteRule("cascade"),
+    credentialID: p.text().name("credentialID"),
     counter: p.integer(),
-    deviceType: p.text().name('deviceType'),
-    backedUp: p.boolean().name('backedUp'),
+    deviceType: p.text().name("deviceType"),
+    backedUp: p.boolean().name("backedUp"),
     transports: p.text().nullable(),
-    createdAt: p.datetime().name('createdAt').nullable(),
+    createdAt: p.datetime().name("createdAt").nullable(),
     aaguid: p.text().nullable(),
   },
 });

@@ -1,10 +1,8 @@
-import { Migration } from '@mikro-orm/migrations';
+import { Migration } from "@mikro-orm/migrations";
 
 export class Migration20260705014015 extends Migration {
   override up(): void | Promise<void> {
-    this.addSql(
-      `create type "filterAction" as enum ('blur', 'hide', 'mark_read');`,
-    );
+    this.addSql(`create type "filterAction" as enum ('blur', 'hide', 'mark_read');`);
     this.addSql(
       `create table "user_article_states" ("id" uuid not null default uuidv7(), "user_id_id" text not null, "article_id_id" uuid not null, "is_read" boolean not null default false, "is_starred" boolean not null default false, "is_blurred" boolean not null default false, "is_hidden" boolean not null default false, "content_warning" varchar[] null, primary key ("id", "user_id_id", "article_id_id"));`,
     );
@@ -40,9 +38,7 @@ export class Migration20260705014015 extends Migration {
   }
 
   override down(): void | Promise<void> {
-    this.addSql(
-      `alter table "applied_rules" drop constraint "applied_rules_rule_id_id_foreign";`,
-    );
+    this.addSql(`alter table "applied_rules" drop constraint "applied_rules_rule_id_id_foreign";`);
 
     this.addSql(`drop table if exists "user_article_states" cascade;`);
     this.addSql(`drop table if exists "user_filters" cascade;`);

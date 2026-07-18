@@ -1,24 +1,30 @@
-import { wrap } from '@mikro-orm/core';
-import { subMonths } from 'date-fns';
-import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
-import ky from 'ky';
-import { isDefined } from 'ts-extras';
-import { match, P } from 'ts-pattern';
+import { wrap, type Loaded } from "@mikro-orm/core";
+import { subMonths } from "date-fns";
+import { type Atom, type Json, parseFeed, type Rdf, type Rss } from "feedsmith";
+import ky from "ky";
+import { isDefined } from "ts-extras";
+import { match, P } from "ts-pattern";
 
-import { feedQueue } from '@/bull/queue';
-import type { Services } from '@/db';
-import { USER_AGENT } from '@/lib/constants';
-import { Duplicate } from '@/lib/errors/duplicate';
-import { Unknown } from '@/lib/errors/unknown';
-import type { NewFeed } from './model';
+import { feedQueue } from "@/bull/queue";
+import type { Services } from "@/db";
+import { USER_AGENT } from "@/lib/constants";
+import { Duplicate } from "@/lib/errors/duplicate";
+import { Unknown } from "@/lib/errors/unknown";
+import type { FeedOut, NewFeed } from "./model";
+import type { Subscriptions } from "@/entities/Subscriptions";
 
+const serializeFeed = (sub: Loaded<Subscriptions, "feed">) => ({
+  ...wrap(sub.feed).toObject(),
+  lastChecked: sub.feed.lastChecked.toISOString(),
+  updated: sub.feed.updated?.toISOString(),
+});
 export class FeedService {
   private svc: Services;
   constructor({ svc }: { svc: Services }) {
     this.svc = svc;
   }
 
-  async newFeed(nf: NewFeed, userId: string) {
+  async newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
     const user = await this.svc.users.findOneOrFail({
       id: userId,
     });
@@ -36,7 +42,7 @@ export class FeedService {
       });
 
       if (existingSub) {
-        throw new Duplicate('You are already subscribed to that feed');
+        throw new Duplicate("You are already subscribed to that feed");
       }
     }
 
@@ -79,7 +85,7 @@ export class FeedService {
       await feedQueue.add(
         `initial${newFeed.id}`,
         {
-          type: 'fetch',
+          type: "fetch",
           feedId: newFeed.id,
         },
         {
@@ -87,7 +93,7 @@ export class FeedService {
         },
       );
 
-      return newSub.feed;
+      return serializeFeed(newSub);
     } else {
       const newSub = this.svc.subscriptions.create({
         feed: existing,
@@ -113,7 +119,7 @@ export class FeedService {
         }
       }
 
-      return newSub.feed;
+      return serializeFeed(newSub);
     }
   }
 
@@ -130,14 +136,22 @@ export class FeedService {
         user: userId,
       },
       {
-        populate: ['feed'],
+        populate: ["feed"],
       },
     );
-    return subs.map((s) => ({
-      ...wrap(s.feed).toObject(),
-      lastChecked: s.feed.lastChecked.toISOString(),
-      updated: s.feed.updated?.toISOString(),
-    }));
+    return subs.map(serializeFeed);
+  }
+
+  async getSubscription(feedId: string, userId: string): Promise<FeedOut> {
+    const sub = await this.svc.subscriptions.findOneOrFail(
+      {
+        user: userId,
+        feed: feedId,
+      },
+      { populate: ["feed"] },
+    );
+
+    return serializeFeed(sub);
   }
 
   async updateFeed(feedId: string, userId: string, folderName: string | null) {
@@ -146,7 +160,7 @@ export class FeedService {
         feed: feedId,
         user: userId,
       },
-      { populate: ['feed'] },
+      { populate: ["feed"] },
     );
 
     if (folderName) {
@@ -182,12 +196,12 @@ export class FeedService {
 
     const resp = await ky.get(urlObj, {
       headers: {
-        'User-Agent': USER_AGENT,
+        "User-Agent": USER_AGENT,
       },
     });
 
     if (resp.status !== 200) {
-      throw new Unknown('Could not fetch submitted url');
+      throw new Unknown("Could not fetch submitted url");
     }
 
     const parsedFeed = parseFeed(await resp.text(), {
@@ -195,18 +209,10 @@ export class FeedService {
     });
 
     return match(parsedFeed)
-      .with({ format: 'atom', feed: P.select() }, (f) =>
-        this.parseAtomFeed(f, urlObj),
-      )
-      .with({ format: 'rss', feed: P.select() }, (f) =>
-        this.parseRssFeed(f, urlObj),
-      )
-      .with({ format: 'json', feed: P.select() }, (f) =>
-        this.parseJsonFeed(f, urlObj),
-      )
-      .with({ format: 'rdf', feed: P.select() }, (f) =>
-        this.parseRdfFeed(f, urlObj),
-      )
+      .with({ format: "atom", feed: P.select() }, (f) => this.parseAtomFeed(f, urlObj))
+      .with({ format: "rss", feed: P.select() }, (f) => this.parseRssFeed(f, urlObj))
+      .with({ format: "json", feed: P.select() }, (f) => this.parseJsonFeed(f, urlObj))
+      .with({ format: "rdf", feed: P.select() }, (f) => this.parseRdfFeed(f, urlObj))
       .exhaustive();
   }
 

@@ -1,28 +1,26 @@
-import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
-import { z } from 'zod';
-import { createFolderSchema, folderSchema, updateFolderSchema } from './model';
+import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
+import { z } from "zod";
+import { createFolderSchema, folderSchema, updateFolderSchema } from "./model";
 
 export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
-    '',
+    "",
     {
       schema: {
         response: {
           200: z.array(folderSchema),
         },
-        tags: ['folder'],
+        tags: ["folder"],
       },
     },
     async (req, reply) => {
-      const folders = await fastify.folderService.getFolders(
-        req.session?.user.id!,
-      );
+      const folders = await fastify.folderService.getFolders(req.session?.user.id!);
       return reply.send(folders);
     },
   );
 
   fastify.get(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -31,41 +29,35 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: folderSchema,
         },
-        tags: ['folder'],
+        tags: ["folder"],
       },
     },
     async (req, reply) => {
-      const folder = await fastify.folderService.getFolder(
-        req.params.id,
-        req.session?.user.id!,
-      );
+      const folder = await fastify.folderService.getFolder(req.params.id, req.session?.user.id!);
       return reply.send(folder);
     },
   );
 
   fastify.post(
-    '',
+    "",
     {
       schema: {
         body: createFolderSchema,
         response: {
           201: folderSchema,
         },
-        tags: ['folder'],
+        tags: ["folder"],
       },
     },
     async (req, reply) => {
-      const folder = await fastify.folderService.createFolder(
-        req.session?.user.id!,
-        req.body,
-      );
+      const folder = await fastify.folderService.createFolder(req.session?.user.id!, req.body);
 
       return reply.status(201).send(folder);
     },
   );
 
   fastify.patch(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -75,7 +67,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: folderSchema,
         },
-        tags: ['folder'],
+        tags: ["folder"],
       },
     },
     async (req, reply) => {
@@ -90,7 +82,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.delete(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -99,14 +91,11 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           204: z.undefined(),
         },
-        tags: ['folder'],
+        tags: ["folder"],
       },
     },
     async (req, reply) => {
-      await fastify.folderService.deleteFolder(
-        req.params.id,
-        req.session?.user.id!,
-      );
+      await fastify.folderService.deleteFolder(req.params.id, req.session?.user.id!);
 
       return reply.status(204).send();
     },

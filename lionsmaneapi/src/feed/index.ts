@@ -1,19 +1,19 @@
-import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
-import { wrap } from '@mikro-orm/core';
-import { z } from 'zod';
+import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
+import { wrap } from "@mikro-orm/core";
+import { z } from "zod";
 
-import { feedSchema, newFeedSchema } from './model';
+import { feedSchema, newFeedSchema } from "./model";
 
 export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.post(
-    '',
+    "",
     {
       schema: {
         body: newFeedSchema,
         response: {
           201: feedSchema,
         },
-        tags: ['feed'],
+        tags: ["feed"],
       },
     },
     async (req, reply) => {
@@ -21,33 +21,47 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         await fastify.feedService.newFeed(req.body, req.session?.user.id!),
       ).toObject();
 
-      return reply.status(201).send({
-        ...newFeed,
-        lastChecked: newFeed.lastChecked.toISOString(),
-        updated: newFeed.updated?.toISOString(),
-      });
+      return reply.status(201).send(newFeed);
     },
   );
 
   fastify.get(
-    '',
+    "",
     {
       schema: {
         response: {
           200: z.array(feedSchema),
         },
-        tags: ['feed'],
+        tags: ["feed"],
       },
     },
     async (req, reply) => {
-      return reply.send(
-        await fastify.feedService.getSubscriptions(req.session?.user.id!),
-      );
+      return reply.send(await fastify.feedService.getSubscriptions(req.session?.user.id!));
+    },
+  );
+
+  fastify.get(
+    "/:id",
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        response: {
+          200: feedSchema,
+        },
+        tags: ["feed"],
+      },
+    },
+    async (req, reply) => {
+      const feed = await fastify.feedService.getSubscription(req.params.id, req.session!.user.id!);
+
+      return reply.send(feed);
     },
   );
 
   fastify.patch(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -59,7 +73,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: feedSchema,
         },
-        tags: ['feed'],
+        tags: ["feed"],
       },
     },
     async (req, reply) => {
@@ -78,7 +92,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.delete(
-    '/:id',
+    "/:id",
     {
       schema: {
         params: z.object({
@@ -87,14 +101,11 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           204: z.undefined(),
         },
-        tags: ['feed'],
+        tags: ["feed"],
       },
     },
     async (req, reply) => {
-      await fastify.feedService.deleteSubscription(
-        req.params.id,
-        req.session?.user.id!,
-      );
+      await fastify.feedService.deleteSubscription(req.params.id, req.session?.user.id!);
 
       return reply.status(204).send();
     },

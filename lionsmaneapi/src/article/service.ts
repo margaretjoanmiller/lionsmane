@@ -1,8 +1,8 @@
-import { wrap } from '@mikro-orm/core';
-import { match } from 'ts-pattern';
-import type { Services } from '@/db';
-import { NotFound } from '@/lib/errors/notfound';
-import { Unauthorized } from '@/lib/errors/unauthorized';
+import { wrap } from "@mikro-orm/core";
+import { match } from "ts-pattern";
+import type { Services } from "@/db";
+import { NotFound } from "@/lib/errors/notfound";
+import { Unauthorized } from "@/lib/errors/unauthorized";
 
 export class ArticleService {
   private svc: Services;
@@ -15,7 +15,7 @@ export class ArticleService {
       where: {
         user: userId,
       },
-      exclude: ['description', 'folderId'],
+      exclude: ["description", "folderId"],
     });
 
     return subscriptions.map((s) => s.feed.toObject().id);
@@ -32,8 +32,8 @@ export class ArticleService {
             },
           },
         },
-        orderBy: { published: 'desc', id: 'desc' },
-        exclude: ['feedId'],
+        orderBy: { published: "desc", id: "desc" },
+        exclude: ["feedId"],
       });
 
       return {
@@ -55,8 +55,8 @@ export class ArticleService {
             },
           },
         },
-        orderBy: { published: 'desc', id: 'desc' },
-        exclude: ['feedId'],
+        orderBy: { published: "desc", id: "desc" },
+        exclude: ["feedId"],
       });
 
       return {
@@ -74,7 +74,7 @@ export class ArticleService {
     const feedIds = await this.getFeedsForUser(userId);
 
     if (!feedIds.includes(feedId)) {
-      throw new NotFound('Feed not found or subscribed to');
+      throw new NotFound("Feed not found or subscribed to");
     }
 
     if (!cursor) {
@@ -83,8 +83,8 @@ export class ArticleService {
         where: {
           feedId,
         },
-        orderBy: { published: 'desc', id: 'desc' },
-        exclude: ['feedId'],
+        orderBy: { published: "desc", id: "desc" },
+        exclude: ["feedId"],
       });
 
       return {
@@ -102,8 +102,8 @@ export class ArticleService {
           feedId,
         },
         after: cursor,
-        orderBy: { published: 'desc', id: 'desc' },
-        exclude: ['feedId'],
+        orderBy: { published: "desc", id: "desc" },
+        exclude: ["feedId"],
       });
 
       return {
@@ -136,11 +136,11 @@ export class ArticleService {
 
   async getArticlesForState(
     userId: string,
-    status: 'read' | 'unread' | 'starred',
+    status: "read" | "unread" | "starred",
     cursor?: string,
   ) {
     return await match(status)
-      .with('read', async () => {
+      .with("read", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -155,8 +155,8 @@ export class ArticleService {
               },
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -185,8 +185,8 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
           });
 
@@ -200,7 +200,7 @@ export class ArticleService {
           };
         }
       })
-      .with('unread', async () => {
+      .with("unread", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -220,8 +220,8 @@ export class ArticleService {
               ],
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -254,8 +254,8 @@ export class ArticleService {
               ],
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
           });
@@ -270,7 +270,7 @@ export class ArticleService {
           };
         }
       })
-      .with('starred', async () => {
+      .with("starred", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -285,8 +285,8 @@ export class ArticleService {
               },
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -315,8 +315,8 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
           });
 
@@ -336,7 +336,7 @@ export class ArticleService {
   async getArticlesForStateFeed(
     feedId: string,
     userId: string,
-    status: 'read' | 'unread' | 'starred',
+    status: "read" | "unread" | "starred",
     cursor?: string,
   ) {
     const sub = await this.svc.subscriptions.findOne({
@@ -345,11 +345,11 @@ export class ArticleService {
     });
 
     if (!sub) {
-      throw new Unauthorized('User is not subscribed to this feed');
+      throw new Unauthorized("User is not subscribed to this feed");
     }
 
     return await match(status)
-      .with('read', async () => {
+      .with("read", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -360,8 +360,8 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -386,8 +386,8 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
           });
 
@@ -401,7 +401,7 @@ export class ArticleService {
           };
         }
       })
-      .with('unread', async () => {
+      .with("unread", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -417,8 +417,8 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -447,8 +447,8 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
           });
@@ -463,7 +463,7 @@ export class ArticleService {
           };
         }
       })
-      .with('starred', async () => {
+      .with("starred", async () => {
         if (cursor) {
           const articles = await this.svc.articles.findByCursor({
             where: {
@@ -474,8 +474,8 @@ export class ArticleService {
               feedId,
             },
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
             first: 10,
             after: cursor,
@@ -500,8 +500,8 @@ export class ArticleService {
             },
             first: 10,
             orderBy: {
-              published: 'desc',
-              id: 'desc',
+              published: "desc",
+              id: "desc",
             },
           });
 

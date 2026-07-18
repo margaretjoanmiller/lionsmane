@@ -1,7 +1,3 @@
-import { createError } from '@fastify/error';
+import { createError } from "@fastify/error";
 
-export const Unknown = createError(
-  'UNKNOWN_ERROR',
-  'Unknown internal server error',
-  500,
-);
+export const Unknown = createError("UNKNOWN_ERROR", "Unknown internal server error", 500);

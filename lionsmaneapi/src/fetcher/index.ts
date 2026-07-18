@@ -1,18 +1,18 @@
-import { createHash } from 'node:crypto';
-import { UniqueConstraintViolationException } from '@mikro-orm/core';
-import { Readability } from '@mozilla/readability';
-import { isAfter, subWeeks } from 'date-fns';
-import createDomPurify, { type WindowLike } from 'dompurify';
-import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
-import { JSDOM } from 'jsdom';
-import ky, { HTTPError, type KyResponse } from 'ky';
-import { isDefined, isPresent, isPropertyDefined } from 'ts-extras';
-import { match, P } from 'ts-pattern';
-import type { Merge } from 'type-fest';
-import type { NewArticle } from '@/article/model';
-import type { Services } from '@/db';
-import type { Articles } from '@/entities/Articles';
-import { USER_AGENT } from '@/lib/constants';
+import { createHash } from "node:crypto";
+import { UniqueConstraintViolationException } from "@mikro-orm/core";
+import { Readability } from "@mozilla/readability";
+import { isAfter, subWeeks } from "date-fns";
+import createDomPurify, { type WindowLike } from "dompurify";
+import { type Atom, type Json, parseFeed, type Rdf, type Rss } from "feedsmith";
+import { JSDOM } from "jsdom";
+import ky, { HTTPError, type KyResponse } from "ky";
+import { isDefined, isPresent, isPropertyDefined } from "ts-extras";
+import { match, P } from "ts-pattern";
+import type { Merge } from "type-fest";
+import type { NewArticle } from "@/article/model";
+import type { Services } from "@/db";
+import type { Articles } from "@/entities/Articles";
+import { USER_AGENT } from "@/lib/constants";
 
 export class Fetcher {
   constructor(private svc: Services) {}
@@ -30,8 +30,8 @@ export class Fetcher {
       return [];
     }
 
-    const feedEtag = feedXml.headers.get('ETag');
-    const feedLastModified = feedXml.headers.get('Last-Modified');
+    const feedEtag = feedXml.headers.get("ETag");
+    const feedLastModified = feedXml.headers.get("Last-Modified");
 
     if (feedEtag) {
       feed.etagHeader = feedEtag;
@@ -45,25 +45,17 @@ export class Fetcher {
     });
 
     const articles = match(parsedFeed)
-      .with({ format: 'atom', feed: P.select() }, (f) =>
-        f.entries
-          ? this.parseArticlesAtom(f.entries, feed.lastChecked, feed.id)
-          : [],
+      .with({ format: "atom", feed: P.select() }, (f) =>
+        f.entries ? this.parseArticlesAtom(f.entries, feed.lastChecked, feed.id) : [],
       )
-      .with({ format: 'rss', feed: P.select() }, (f) =>
-        f.items
-          ? this.parseArticlesRss(f.items, feed.lastChecked, feed.id)
-          : [],
+      .with({ format: "rss", feed: P.select() }, (f) =>
+        f.items ? this.parseArticlesRss(f.items, feed.lastChecked, feed.id) : [],
       )
-      .with({ format: 'json', feed: P.select() }, (f) =>
-        f.items
-          ? this.parseArticlesJson(f.items, feed.lastChecked, feed.id)
-          : [],
+      .with({ format: "json", feed: P.select() }, (f) =>
+        f.items ? this.parseArticlesJson(f.items, feed.lastChecked, feed.id) : [],
       )
-      .with({ format: 'rdf', feed: P.select() }, (f) =>
-        f.items
-          ? this.parseArticlesRdf(f.items, feed.lastChecked, feed.id)
-          : [],
+      .with({ format: "rdf", feed: P.select() }, (f) =>
+        f.items ? this.parseArticlesRdf(f.items, feed.lastChecked, feed.id) : [],
       )
       .exhaustive();
 
@@ -108,9 +100,9 @@ export class Fetcher {
     try {
       return await ky.get(url, {
         headers: {
-          'User-Agent': USER_AGENT,
-          ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
-          ...(lastModified ? { 'If-Modified-Since': lastModified } : {}),
+          "User-Agent": USER_AGENT,
+          ...(etagHeader ? { "If-None-Match": etagHeader } : {}),
+          ...(lastModified ? { "If-Modified-Since": lastModified } : {}),
         },
         timeout: 5000,
         retry: 5,
@@ -132,7 +124,7 @@ export class Fetcher {
 
     const existing = await this.svc.articles.find(
       { feedId, hash: { $in: hashes } },
-      { fields: ['hash'] },
+      { fields: ["hash"] },
     );
     const existingHashes = new Set(existing.map((a) => a.hash));
 
@@ -154,31 +146,26 @@ export class Fetcher {
     }
   }
 
-  parseArticlesAtom(
-    items: Array<Atom.Entry<Date>>,
-    lastChecked: Date,
-    feedId: string,
-  ) {
+  parseArticlesAtom(items: Array<Atom.Entry<Date>>, lastChecked: Date, feedId: string) {
     return items
       .filter((i) => i.published || i.updated || i.dc?.dates?.at(0))
       .filter((i) => {
         if (i.updated) return isAfter(i.updated, this.cutoffDate(lastChecked));
         else if (i.dc?.dates?.at(0))
           return isAfter(i.dc.dates.at(0)!, this.cutoffDate(lastChecked));
-        else if (i.published)
-          return isAfter(i.published, this.cutoffDate(lastChecked));
+        else if (i.published) return isAfter(i.published, this.cutoffDate(lastChecked));
         else return false;
       })
       .map((i) => {
         let hash: string | null;
         if (i.content?.value && i.links?.at(0)) {
-          hash = createHash('sha256')
-            .update(`${i.links?.at(0)?.href}/${i.content.value}`, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256")
+            .update(`${i.links?.at(0)?.href}/${i.content.value}`, "utf-8")
+            .digest("hex");
         } else if (i.title && i.links?.at(0)) {
-          hash = createHash('sha256')
-            .update(`${i.links?.at(0)?.href}/${i.title}`, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256")
+            .update(`${i.links?.at(0)?.href}/${i.title}`, "utf-8")
+            .digest("hex");
         } else {
           return null;
         }
@@ -192,10 +179,8 @@ export class Fetcher {
           published: i.published || i.dc?.dates?.at(0) || i.updated,
           updated: i.updated || i.dcterms?.modified?.at(-1),
           categories: i.categories?.map((c) => c.label).filter(isPresent),
-          authors: i.authors
-            ?.map((a) => `${a.name} <${a.email}>`)
-            .filter(isDefined),
-          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
+          authors: i.authors?.map((a) => `${a.name} <${a.email}>`).filter(isDefined),
+          image: i.media?.contents?.find((m) => m.type === "image")?.url,
           itunes: i.itunes,
           youtube: i.yt,
           feedId,
@@ -204,26 +189,18 @@ export class Fetcher {
       .filter(isPresent);
   }
 
-  parseArticlesRss(
-    items: Array<Rss.Item<Date>>,
-    lastChecked: Date,
-    feedId: string,
-  ) {
+  parseArticlesRss(items: Array<Rss.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
-      .filter(isPropertyDefined('pubDate'))
-      .filter(
-        (i) => i.pubDate && isAfter(i.pubDate, this.cutoffDate(lastChecked)),
-      )
+      .filter(isPropertyDefined("pubDate"))
+      .filter((i) => i.pubDate && isAfter(i.pubDate, this.cutoffDate(lastChecked)))
       .map((i) => {
         let hash: string | null;
         if (i.content?.encoded && i.link) {
-          hash = createHash('sha256')
-            .update(`${i.link}/${i.content.encoded}`, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256")
+            .update(`${i.link}/${i.content.encoded}`, "utf-8")
+            .digest("hex");
         } else if (i.title && i.link) {
-          hash = createHash('sha256')
-            .update(`${i.link}/${i.title}`, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256").update(`${i.link}/${i.title}`, "utf-8").digest("hex");
         } else {
           return null;
         }
@@ -237,7 +214,7 @@ export class Fetcher {
           published: i.pubDate,
           categories: i.categories?.map((c) => c.name).filter(isPresent),
           authors: i.authors,
-          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
+          image: i.media?.contents?.find((m) => m.type === "image")?.url,
           itunes: i.itunes,
           feedId,
         };
@@ -245,28 +222,16 @@ export class Fetcher {
       .filter(isPresent);
   }
 
-  parseArticlesJson(
-    items: Array<Json.Item<Date>>,
-    lastChecked: Date,
-    feedId: string,
-  ) {
+  parseArticlesJson(items: Array<Json.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
-      .filter(isPropertyDefined('date_published'))
-      .filter(
-        (i) =>
-          i.date_published &&
-          isAfter(i.date_published, this.cutoffDate(lastChecked)),
-      )
+      .filter(isPropertyDefined("date_published"))
+      .filter((i) => i.date_published && isAfter(i.date_published, this.cutoffDate(lastChecked)))
       .map((i) => {
         let hash: string | null;
         if (i.content_text) {
-          hash = createHash('sha256')
-            .update(i.content_text, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256").update(i.content_text, "utf-8").digest("hex");
         } else if (i.title && i.external_url) {
-          hash = createHash('sha256')
-            .update(`${i.external_url}/${i.title}`, 'utf-8')
-            .digest('hex');
+          hash = createHash("sha256").update(`${i.external_url}/${i.title}`, "utf-8").digest("hex");
         } else {
           return null;
         }
@@ -277,9 +242,7 @@ export class Fetcher {
           description: i.summary,
           rawContent: i.content_text,
           published: i.date_published,
-          authors: i.authors
-            ?.map((a) => `${a.name} <${a.url}>`)
-            .filter(isDefined),
+          authors: i.authors?.map((a) => `${a.name} <${a.url}>`).filter(isDefined),
           image: i.image,
           feedId,
         };
@@ -287,29 +250,17 @@ export class Fetcher {
       .filter(isPresent);
   }
 
-  parseArticlesRdf(
-    items: Array<Rdf.Item<Date>>,
-    lastChecked: Date,
-    feedId: string,
-  ) {
+  parseArticlesRdf(items: Array<Rdf.Item<Date>>, lastChecked: Date, feedId: string) {
     return items
-      .filter(isPropertyDefined('atom'))
-      .filter(
-        (i) =>
-          i.atom?.published &&
-          isAfter(i.atom?.published, this.cutoffDate(lastChecked)),
-      )
+      .filter(isPropertyDefined("atom"))
+      .filter((i) => i.atom?.published && isAfter(i.atom?.published, this.cutoffDate(lastChecked)))
       .map((i) => {
         if (i.atom?.published) {
           let hash: string | null;
           if (i.content?.encoded) {
-            hash = createHash('sha256')
-              .update(i.content.encoded, 'utf-8')
-              .digest('hex');
+            hash = createHash("sha256").update(i.content.encoded, "utf-8").digest("hex");
           } else if (i.title && i.link) {
-            hash = createHash('sha256')
-              .update(`${i.link}/${i.title}`, 'utf-8')
-              .digest('hex');
+            hash = createHash("sha256").update(`${i.link}/${i.title}`, "utf-8").digest("hex");
           } else {
             return null;
           }
@@ -330,18 +281,16 @@ export class Fetcher {
   }
 
   cleanRaw(newArt: NewArticle) {
-    const window = new JSDOM('').window;
+    const window = new JSDOM("").window;
     const purify = createDomPurify(window as WindowLike);
-    const cleanContent = purify.sanitize(newArt.rawContent || '');
-    const cleanDescription = purify.sanitize(newArt.description || '');
+    const cleanContent = purify.sanitize(newArt.rawContent || "");
+    const cleanDescription = purify.sanitize(newArt.description || "");
     const cleanDoc = new JSDOM(cleanContent);
     const readableRaw = new Readability(cleanDoc.window.document).parse();
     const readableText = readableRaw?.textContent;
     const readableHtml = readableRaw?.content;
 
-    const descText = new Readability(
-      new JSDOM(cleanDescription).window.document,
-    ).parse();
+    const descText = new Readability(new JSDOM(cleanDescription).window.document).parse();
     return {
       textContent: readableText || null,
       htmlContent: readableHtml || null,
