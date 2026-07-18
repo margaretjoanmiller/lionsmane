@@ -1,8 +1,16 @@
 import { wrap } from "@mikro-orm/core";
-import { match } from "ts-pattern";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { Services } from "@/db";
 import { NotFound } from "@/lib/errors/notfound";
-import { Unauthorized } from "@/lib/errors/unauthorized";
+import type { Articles } from "@/entities/Articles";
+
+export type ArticleStatus = "read" | "unread" | "starred";
+
+export interface GetArticlesOptions {
+  feedId: string | undefined;
+  status: ArticleStatus | undefined;
+  cursor: string | undefined;
+}
 
 export class ArticleService {
   private svc: Services;
@@ -21,100 +29,57 @@ export class ArticleService {
     return subscriptions.map((s) => s.feed.toObject().id);
   }
 
-  async getArticlesForUser(userId: string, cursor?: string) {
-    if (!cursor) {
-      const articles = await this.svc.articles.findByCursor({
-        first: 10,
-        where: {
-          feedId: {
-            subscriptions: {
-              user: userId,
-            },
-          },
-        },
-        orderBy: { published: "desc", id: "desc" },
-        exclude: ["feedId"],
-      });
-
-      return {
-        articles: articles.items.map((i) => ({
-          ...wrap(i).toObject(),
-          published: i.published?.toISOString(),
-          updated: i.updated?.toISOString(),
-        })),
-        cursor: articles.hasNextPage ? articles.endCursor : null,
-      };
-    } else {
-      const articles = await this.svc.articles.findByCursor({
-        first: 10,
-        after: cursor,
-        where: {
-          feedId: {
-            subscriptions: {
-              user: userId,
-            },
-          },
-        },
-        orderBy: { published: "desc", id: "desc" },
-        exclude: ["feedId"],
-      });
-
-      return {
-        articles: articles.items.map((i) => ({
-          ...wrap(i).toObject(),
-          published: i.published?.toISOString(),
-          updated: i.updated?.toISOString(),
-        })),
-        cursor: articles.hasNextPage ? articles.endCursor : null,
-      };
+  private stateFilter(userId: string, status?: ArticleStatus): FilterQuery<Articles> {
+    switch (status) {
+      case "read":
+        return { articleStates: { userId, isRead: true } };
+      case "starred":
+        return { articleStates: { userId, isStarred: true } };
+      case "unread":
+        // "unread" means either an explicit isRead:false state, or no
+        // state row exists yet for this user/article at all.
+        return {
+          $or: [{ articleStates: { userId, isRead: false } }, { articleStates: null }],
+        };
+      case undefined:
+        return {};
     }
   }
 
-  async getArticlesForFeed(feedId: string, userId: string, cursor?: string) {
-    const feedIds = await this.getFeedsForUser(userId);
+  private async paginatedArticles(where: FilterQuery<Articles>, cursor?: string) {
+    const result = await this.svc.articles.findByCursor({
+      where,
+      first: 10,
+      ...(cursor ? { after: cursor } : {}),
+      orderBy: { published: "desc", id: "desc" },
+      exclude: ["feedId"],
+    });
 
-    if (!feedIds.includes(feedId)) {
-      throw new NotFound("Feed not found or subscribed to");
-    }
+    return {
+      articles: result.items.map((i) => ({
+        ...wrap(i).toObject(),
+        published: i.published?.toISOString(),
+        updated: i.updated?.toISOString(),
+      })),
+      cursor: result.hasNextPage ? result.endCursor : null,
+    };
+  }
 
-    if (!cursor) {
-      const articles = await this.svc.articles.findByCursor({
-        first: 10,
-        where: {
-          feedId,
-        },
-        orderBy: { published: "desc", id: "desc" },
-        exclude: ["feedId"],
-      });
+  async getArticles(userId: string, opts: GetArticlesOptions = {}) {
+    const { feedId, status, cursor } = opts;
 
-      return {
-        articles: articles.items.map((i) => ({
-          ...wrap(i).toObject(),
-          published: i.published?.toISOString(),
-          updated: i.updated?.toISOString(),
-        })),
-        cursor: articles.hasNextPage ? articles.endCursor : null,
-      };
+    let feedFilter: FilterQuery<Articles>;
+    if (feedId) {
+      const feedIds = await this.getFeedsForUser(userId);
+      if (!feedIds.includes(feedId)) {
+        throw new NotFound("Feed not found or subscribed to");
+      }
+      feedFilter = { feedId };
     } else {
-      const articles = await this.svc.articles.findByCursor({
-        first: 10,
-        where: {
-          feedId,
-        },
-        after: cursor,
-        orderBy: { published: "desc", id: "desc" },
-        exclude: ["feedId"],
-      });
-
-      return {
-        articles: articles.items.map((i) => ({
-          ...wrap(i).toObject(),
-          published: i.published?.toISOString(),
-          updated: i.updated?.toISOString(),
-        })),
-        cursor: articles.hasNextPage ? articles.endCursor : null,
-      };
+      feedFilter = { feedId: { subscriptions: { user: userId } } };
     }
+
+    return this.paginatedArticles({ $and: [feedFilter, this.stateFilter(userId, status)] }, cursor);
   }
 
   async getArticle(articleId: string, userId: string) {
@@ -132,389 +97,5 @@ export class ArticleService {
       published: article.published?.toISOString(),
       updated: article.updated?.toISOString(),
     };
-  }
-
-  async getArticlesForState(
-    userId: string,
-    status: "read" | "unread" | "starred",
-    cursor?: string,
-  ) {
-    return await match(status)
-      .with("read", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              articleStates: {
-                userId,
-                isRead: true,
-              },
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              articleStates: {
-                userId,
-                isRead: true,
-              },
-            },
-            first: 10,
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .with("unread", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              $or: [
-                {
-                  articleStates: {
-                    userId,
-                    isRead: false,
-                  },
-                },
-                { articleStates: null },
-              ],
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              $or: [
-                {
-                  articleStates: {
-                    userId,
-                    isRead: false,
-                  },
-                },
-                { articleStates: null },
-              ],
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .with("starred", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              articleStates: {
-                userId,
-                isStarred: true,
-              },
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              feedId: {
-                subscriptions: {
-                  user: userId,
-                },
-              },
-              articleStates: {
-                userId,
-                isStarred: true,
-              },
-            },
-            first: 10,
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .exhaustive();
-  }
-
-  async getArticlesForStateFeed(
-    feedId: string,
-    userId: string,
-    status: "read" | "unread" | "starred",
-    cursor?: string,
-  ) {
-    const sub = await this.svc.subscriptions.findOne({
-      user: userId,
-      feed: feedId,
-    });
-
-    if (!sub) {
-      throw new Unauthorized("User is not subscribed to this feed");
-    }
-
-    return await match(status)
-      .with("read", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              articleStates: {
-                userId,
-                isRead: true,
-              },
-              feedId,
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              articleStates: {
-                userId,
-                isRead: true,
-              },
-              feedId,
-            },
-            first: 10,
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .with("unread", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              $or: [
-                {
-                  articleStates: {
-                    userId,
-                    isRead: false,
-                  },
-                },
-                { articleStates: null },
-              ],
-              feedId,
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              $or: [
-                {
-                  articleStates: {
-                    userId,
-                    isRead: false,
-                  },
-                },
-                { articleStates: null },
-              ],
-              feedId,
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .with("starred", async () => {
-        if (cursor) {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              articleStates: {
-                userId,
-                isStarred: true,
-              },
-              feedId,
-            },
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-            first: 10,
-            after: cursor,
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        } else {
-          const articles = await this.svc.articles.findByCursor({
-            where: {
-              articleStates: {
-                userId,
-                isRead: true,
-              },
-              feedId,
-            },
-            first: 10,
-            orderBy: {
-              published: "desc",
-              id: "desc",
-            },
-          });
-
-          return {
-            articles: articles.items.map((i) => ({
-              ...wrap(i).toObject(),
-              published: i.published?.toISOString(),
-              updated: i.updated?.toISOString(),
-            })),
-            cursor: articles.hasNextPage ? articles.endCursor : null,
-          };
-        }
-      })
-      .exhaustive();
   }
 }
