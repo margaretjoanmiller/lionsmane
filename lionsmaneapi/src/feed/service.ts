@@ -188,7 +188,7 @@ export class FeedService {
       await this.svc.em.flush();
     }
 
-    return wrap(sub.feed).toObject();
+    return sub.feed;
   }
 
   async normalizeAndFetchFeed(url: string) {

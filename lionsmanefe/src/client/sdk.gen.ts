@@ -10,21 +10,7 @@ import type {
   GetArticleByIdData,
   GetArticleByIdResponses,
   GetArticleData,
-  GetArticleFeedByIdData,
-  GetArticleFeedByIdReadData,
-  GetArticleFeedByIdReadResponses,
-  GetArticleFeedByIdResponses,
-  GetArticleFeedByIdStarredData,
-  GetArticleFeedByIdStarredResponses,
-  GetArticleFeedByIdUnreadData,
-  GetArticleFeedByIdUnreadResponses,
-  GetArticleReadData,
-  GetArticleReadResponses,
   GetArticleResponses,
-  GetArticleStarredData,
-  GetArticleStarredResponses,
-  GetArticleUnreadData,
-  GetArticleUnreadResponses,
   GetFeedByIdData,
   GetFeedByIdResponses,
   GetFeedData,
@@ -117,67 +103,11 @@ export const getArticle = <ThrowOnError extends boolean = false>(
     ...options,
   });
 
-export const getArticleFeedById = <ThrowOnError extends boolean = false>(
-  options: Options<GetArticleFeedByIdData, ThrowOnError>,
-): RequestResult<GetArticleFeedByIdResponses, unknown, ThrowOnError> =>
-  (options.client ?? client).get<GetArticleFeedByIdResponses, unknown, ThrowOnError>({
-    url: '/article/feed/{id}',
-    ...options,
-  });
-
 export const getArticleById = <ThrowOnError extends boolean = false>(
   options: Options<GetArticleByIdData, ThrowOnError>,
 ): RequestResult<GetArticleByIdResponses, unknown, ThrowOnError> =>
   (options.client ?? client).get<GetArticleByIdResponses, unknown, ThrowOnError>({
     url: '/article/{id}',
-    ...options,
-  });
-
-export const getArticleUnread = <ThrowOnError extends boolean = false>(
-  options?: Options<GetArticleUnreadData, ThrowOnError>,
-): RequestResult<GetArticleUnreadResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).get<GetArticleUnreadResponses, unknown, ThrowOnError>({
-    url: '/article/unread',
-    ...options,
-  });
-
-export const getArticleRead = <ThrowOnError extends boolean = false>(
-  options?: Options<GetArticleReadData, ThrowOnError>,
-): RequestResult<GetArticleReadResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).get<GetArticleReadResponses, unknown, ThrowOnError>({
-    url: '/article/read',
-    ...options,
-  });
-
-export const getArticleStarred = <ThrowOnError extends boolean = false>(
-  options?: Options<GetArticleStarredData, ThrowOnError>,
-): RequestResult<GetArticleStarredResponses, unknown, ThrowOnError> =>
-  (options?.client ?? client).get<GetArticleStarredResponses, unknown, ThrowOnError>({
-    url: '/article/starred',
-    ...options,
-  });
-
-export const getArticleFeedByIdUnread = <ThrowOnError extends boolean = false>(
-  options: Options<GetArticleFeedByIdUnreadData, ThrowOnError>,
-): RequestResult<GetArticleFeedByIdUnreadResponses, unknown, ThrowOnError> =>
-  (options.client ?? client).get<GetArticleFeedByIdUnreadResponses, unknown, ThrowOnError>({
-    url: '/article/feed/{id}/unread',
-    ...options,
-  });
-
-export const getArticleFeedByIdRead = <ThrowOnError extends boolean = false>(
-  options: Options<GetArticleFeedByIdReadData, ThrowOnError>,
-): RequestResult<GetArticleFeedByIdReadResponses, unknown, ThrowOnError> =>
-  (options.client ?? client).get<GetArticleFeedByIdReadResponses, unknown, ThrowOnError>({
-    url: '/article/feed/{id}/read',
-    ...options,
-  });
-
-export const getArticleFeedByIdStarred = <ThrowOnError extends boolean = false>(
-  options: Options<GetArticleFeedByIdStarredData, ThrowOnError>,
-): RequestResult<GetArticleFeedByIdStarredResponses, unknown, ThrowOnError> =>
-  (options.client ?? client).get<GetArticleFeedByIdStarredResponses, unknown, ThrowOnError>({
-    url: '/article/feed/{id}/starred',
     ...options,
   });
 

@@ -3,6 +3,7 @@ import type { FilterQuery } from "@mikro-orm/core";
 import type { Services } from "@/db";
 import { NotFound } from "@/lib/errors/notfound";
 import type { Articles } from "@/entities/Articles";
+import type { PartialDeep } from "type-fest";
 
 export type ArticleStatus = "read" | "unread" | "starred";
 
@@ -65,7 +66,7 @@ export class ArticleService {
     };
   }
 
-  async getArticles(userId: string, opts: GetArticlesOptions = {}) {
+  async getArticles(userId: string, opts: PartialDeep<GetArticlesOptions>) {
     const { feedId, status, cursor } = opts;
 
     let feedFilter: FilterQuery<Articles>;
