@@ -9,148 +9,147 @@ import {
   Settings2Icon,
   TerminalIcon,
   TerminalSquareIcon,
-} from 'lucide-react';
-import type * as React from 'react';
+} from "lucide-react";
+import type * as React from "react";
 
-import { NavMain } from '@/components/nav-main';
-import { NavProjects } from '@/components/nav-projects';
-import { NavUser } from '@/components/nav-user';
-import { TeamSwitcher } from '@/components/team-switcher';
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@/components/ui/sidebar';
+} from "@/components/ui/sidebar";
 
-import { ModeToggle } from './mode-toggle';
+import { ModeToggle } from "./mode-toggle";
 
 // This is sample data.
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: 'Acme Inc',
+      name: "Acme Inc",
       logo: <GalleryVerticalEndIcon />,
-      plan: 'Enterprise',
+      plan: "Enterprise",
     },
     {
-      name: 'Acme Corp.',
+      name: "Acme Corp.",
       logo: <AudioLinesIcon />,
-      plan: 'Startup',
+      plan: "Startup",
     },
     {
-      name: 'Evil Corp.',
+      name: "Evil Corp.",
       logo: <TerminalIcon />,
-      plan: 'Free',
+      plan: "Free",
     },
   ],
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
+      title: "Playground",
+      url: "#",
       icon: <TerminalSquareIcon />,
       isActive: true,
       items: [
         {
-          title: 'History',
-          url: '#',
+          title: "History",
+          url: "#",
         },
         {
-          title: 'Starred',
-          url: '#',
+          title: "Starred",
+          url: "#",
         },
         {
-          title: 'Settings',
-          url: '#',
+          title: "Settings",
+          url: "#",
         },
       ],
     },
     {
-      title: 'Models',
-      url: '#',
+      title: "Models",
+      url: "#",
       icon: <BotIcon />,
       items: [
         {
-          title: 'Genesis',
-          url: '#',
+          title: "Genesis",
+          url: "#",
         },
         {
-          title: 'Explorer',
-          url: '#',
+          title: "Explorer",
+          url: "#",
         },
         {
-          title: 'Quantum',
-          url: '#',
+          title: "Quantum",
+          url: "#",
         },
       ],
     },
     {
-      title: 'Documentation',
-      url: '#',
+      title: "Documentation",
+      url: "#",
       icon: <BookOpenIcon />,
       items: [
         {
-          title: 'Introduction',
-          url: '#',
+          title: "Introduction",
+          url: "#",
         },
         {
-          title: 'Get Started',
-          url: '#',
+          title: "Get Started",
+          url: "#",
         },
         {
-          title: 'Tutorials',
-          url: '#',
+          title: "Tutorials",
+          url: "#",
         },
         {
-          title: 'Changelog',
-          url: '#',
+          title: "Changelog",
+          url: "#",
         },
       ],
     },
     {
-      title: 'Settings',
-      url: '#',
+      title: "Settings",
+      url: "#",
       icon: <Settings2Icon />,
       items: [
         {
-          title: 'General',
-          url: '#',
+          title: "General",
+          url: "#",
         },
         {
-          title: 'Team',
-          url: '#',
+          title: "Team",
+          url: "#",
         },
         {
-          title: 'Billing',
-          url: '#',
+          title: "Billing",
+          url: "#",
         },
         {
-          title: 'Limits',
-          url: '#',
+          title: "Limits",
+          url: "#",
         },
       ],
     },
   ],
   projects: [
     {
-      name: 'Design Engineering',
-      url: '#',
+      name: "Design Engineering",
+      url: "#",
       icon: <FrameIcon />,
     },
     {
-      name: 'Sales & Marketing',
-      url: '#',
+      name: "Sales & Marketing",
+      url: "#",
       icon: <PieChartIcon />,
     },
     {
-      name: 'Travel',
-      url: '#',
+      name: "Travel",
+      url: "#",
       icon: <MapIcon />,
     },
   ],

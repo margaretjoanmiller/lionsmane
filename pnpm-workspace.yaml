@@ -1,9 +1,11 @@
 packages:
-  - 'lionsmaneapi'
-  - 'lionsmanefe'
+  - "lionsmaneapi"
+  - "lionsmanefe"
+injectWorkspacePackages: true
+confirmModulesPurge: false
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  '@swc/core': set this to true or false
+  "@parcel/watcher": set this to true or false
+  "@swc/core": set this to true or false
   esbuild: true
   lefthook: true
   lmdb: set this to true or false

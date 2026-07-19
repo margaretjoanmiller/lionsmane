@@ -2,27 +2,16 @@ FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PATH"
 RUN corepack enable
-COPY . /app
-WORKDIR /app
-
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
 
 FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
-RUN pnpm run build --filter=lionsmaneapi
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run --filter=lionsmaneapi build
+RUN pnpm deploy --filter=lionsmaneapi --prod /prod/api
 
-FROM node:24-alpine AS runner
-
-ENV NODE_ENV=production
-WORKDIR /app
-
-COPY package.json ./
-
-COPY --from=build /app/lionsmaneapi/dist ./dist
-
-USER node
-
+FROM base AS api
+COPY --from=build /prod/api /prod/api
+WORKDIR /prod/api
 EXPOSE 4000
-
-CMD ["node", "dist/index.mjs"]
+CMD [ "node", "/prod/api/dist/index.mjs" ]
