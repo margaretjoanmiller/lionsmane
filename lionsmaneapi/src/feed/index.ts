@@ -1,5 +1,4 @@
 import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
-import { wrap } from "@mikro-orm/core";
 import { z } from "zod";
 
 import { feedSchema, newFeedSchema } from "./model";
@@ -17,9 +16,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const newFeed = wrap(
-        await fastify.feedService.newFeed(req.body, req.session?.user.id!),
-      ).toObject();
+      const newFeed = await fastify.feedService.newFeed(req.body, req.session?.user.id!);
 
       return reply.status(201).send(newFeed);
     },
