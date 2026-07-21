@@ -2,27 +2,34 @@ import { fromNodeHeaders } from "better-auth/node";
 import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 
-import { auth } from "@/lib/auth";
+import { type Auth } from "@/lib/auth";
 import { Unauthorized } from "@/lib/errors/unauthorized";
 
 declare module "fastify" {
   interface FastifyRequest {
-    session: typeof auth.$Infer.Session | null;
+    session: Auth["$Infer"]["Session"] | null;
   }
 }
 
-export default fp(async function authPlugin(fastify: FastifyInstance) {
-  fastify.decorateRequest("session", null);
+export interface AuthPluginOptions {
+  auth: Auth;
+}
 
-  fastify.addHook("preHandler", async (request, _reply) => {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(request.headers),
+export default fp(
+  async function authPlugin(fastify: FastifyInstance, options: AuthPluginOptions) {
+    fastify.decorateRequest("session", null);
+
+    fastify.addHook("preHandler", async (request, _reply) => {
+      const session = await options.auth.api.getSession({
+        headers: fromNodeHeaders(request.headers),
+      });
+
+      if (!session?.user) {
+        throw new Unauthorized("You need to be logged in to access this resource");
+      }
+
+      request.session = session;
     });
-
-    if (!session?.user) {
-      throw new Unauthorized("You need to be logged in to access this resource");
-    }
-
-    request.session = session;
-  });
-});
+  },
+  { name: "authPlugin" },
+);

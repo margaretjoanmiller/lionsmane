@@ -23,9 +23,10 @@ import servicesPlugin from "@/plugin/services";
 import { articleRoutes } from "./article";
 import { initORM } from "./db";
 import { folderRoutes } from "./folder";
-import { auth } from "./lib/auth";
+import { getAuth } from "./lib/auth";
 
 const db = await initORM();
+const auth = await getAuth(db);
 
 const envOptions = {
   schema: {
@@ -98,7 +99,7 @@ fastify.route({
       response.headers.forEach((value, key) => reply.header(key, value));
       return reply.send(response.body ? await response.text() : null);
     } catch (error) {
-      fastify.log.error("Authentication Error:", error);
+      fastify.log.error({ error }, "Authentication Error:");
       return reply.status(500).send({
         error: "Internal authentication error",
         code: "AUTH_FAILURE",
@@ -132,7 +133,7 @@ fastify.route({
       response.headers.forEach((value, key) => reply.header(key, value));
       return reply.send(response.body ? await response.text() : null);
     } catch (error) {
-      fastify.log.error("Authentication Error:", error);
+      fastify.log.error({ error }, "Authentication Error:");
       return reply.status(500).send({
         error: "Internal authentication error",
         code: "AUTH_FAILURE",
@@ -172,7 +173,7 @@ await fastify.register(ScalarApiReference, {
 await fastify.register(servicesPlugin, { svc: db });
 
 await fastify.register(async (instance) => {
-  await instance.register(authPlugin);
+  await instance.register(authPlugin, { auth });
 
   instance.register(feedRoutes, { prefix: "/feed" });
   instance.register(articleRoutes, { prefix: "/article" });
