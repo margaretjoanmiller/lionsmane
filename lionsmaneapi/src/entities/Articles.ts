@@ -29,7 +29,7 @@ export const ArticlesSchema = defineEntity({
     imageAlt: p.string().name("imageAlt").length(512).nullable(),
     itunes: p.json<ItunesNs.Item>().nullable(),
     youtube: p.json<YtNs.Item>().nullable(),
-    feedId: () => p.manyToOne(Feeds).ref(),
+    feedId: () => p.manyToOne(Feeds).ref().deleteRule("cascade"),
     enclosuresCollection: () => p.oneToMany(Enclosures).mappedBy("entry").cascade(Cascade.ALL),
     articleStates: () => p.oneToMany(UserArticleStates).mappedBy("articleId").cascade(Cascade.ALL),
   },

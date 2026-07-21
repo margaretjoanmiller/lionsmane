@@ -1232,7 +1232,8 @@
           "constraintName": "articles_feed_id_id_foreign",
           "localTableName": "public.articles",
           "referencedColumnNames": ["id"],
-          "referencedTableName": "public.feeds"
+          "referencedTableName": "public.feeds",
+          "deleteRule": "cascade"
         }
       },
       "comment": null

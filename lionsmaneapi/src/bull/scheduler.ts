@@ -11,3 +11,15 @@ await feedQueue.upsertJobScheduler(
     },
   },
 );
+
+await feedQueue.upsertJobScheduler(
+  "reapEvery30",
+  {
+    every: 600000,
+  },
+  {
+    data: {
+      type: "reaper",
+    },
+  },
+);

@@ -58,6 +58,10 @@ const feedWorker = new Worker<FeedJob>(
           await feedQueue.addBulk(feedJobs);
         },
       )
+      .with({ type: "reaper" }, async () => {
+        const deleted = await svc.feeds.nativeDelete({ subscriptions: null });
+        job.log(`${deleted} orphan feeds deleted`);
+      })
       .otherwise(async () => {
         await job.log(`Unknown job type: ${job.data.type}`);
       });

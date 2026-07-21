@@ -27,7 +27,8 @@ export const FeedsSchema = defineEntity({
     youtube: p.json<YtNs.Feed>().nullable(),
     favicon: p.string().length(256).nullable(),
     icon: p.string().nullable(),
-    articlesCollection: () => p.oneToMany(Articles).mappedBy("feedId").cascade(Cascade.ALL),
+    articlesCollection: () =>
+      p.oneToMany(Articles).mappedBy("feedId").cascade(Cascade.ALL).orphanRemoval(true),
     subscriptions: () => p.oneToMany(Subscriptions).mappedBy("feed").cascade(Cascade.ALL),
   },
 });
