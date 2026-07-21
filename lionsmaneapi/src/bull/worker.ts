@@ -6,12 +6,14 @@ import { forkServices, initORM } from "@/db";
 import { Fetcher } from "@/fetcher";
 import { feedQueue } from "./queue";
 import { redisConfig } from "./redis";
-import "./scheduler";
 import type { FeedJob } from "./types/feed";
+import { startScheduler } from "./scheduler";
 
 const logger = pino();
 
 const db = await initORM();
+
+await startScheduler();
 
 const feedWorker = new Worker<FeedJob>(
   "feed",
