@@ -27,7 +27,7 @@
     "@mikro-orm/migrations": "^7.1.7",
     "@mikro-orm/postgresql": "^7.1.7",
     "@mozilla/readability": "^0.6.0",
-    "@scalar/fastify-api-reference": "^1.62.9",
+    "@scalar/fastify-api-reference": "^1.63.0",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "better-auth": "^1.6.23",
     "bullmq": "^5.80.9",
