@@ -14,9 +14,20 @@ import type { Services } from "@/db";
 import type { Articles } from "@/entities/Articles";
 import { USER_AGENT } from "@/lib/constants";
 
+function hashSource(input: string): string {
+  return createHash("sha256").update(input, "utf-8").digest("hex");
+}
+
+function joined(a: string | null | undefined, b: string | null | undefined): string | null {
+  const left = a?.trim(); // handles " "
+  const right = b?.trim();
+  return left && right ? `${left}/${right}` : null;
+}
+
 export class Fetcher {
   constructor(private svc: Services) {}
 
+  //TODO: Enclosures
   async extractArticlesFromFeed(feedId: string) {
     const feed = await this.svc.feeds.findOneOrFail({
       id: feedId,
@@ -159,13 +170,15 @@ export class Fetcher {
       .map((i) => {
         let hash: string | null;
         if (i.content?.value && i.links?.at(0)) {
-          hash = createHash("sha256")
-            .update(`${i.links?.at(0)?.href}/${i.content.value}`, "utf-8")
-            .digest("hex");
+          const j = joined(i.content.value, i.links.at(0)?.href);
+          if (!j) return null;
+          hash = j;
         } else if (i.title && i.links?.at(0)) {
-          hash = createHash("sha256")
-            .update(`${i.links?.at(0)?.href}/${i.title}`, "utf-8")
-            .digest("hex");
+          const j = joined(i.title.value, i.links.at(0)?.href);
+          if (!j) return null;
+          hash = j;
+        } else if (i.links?.at(0)?.href) {
+          hash = hashSource(i.links.at(0)!.href!);
         } else {
           return null;
         }
@@ -196,11 +209,17 @@ export class Fetcher {
       .map((i) => {
         let hash: string | null;
         if (i.content?.encoded && i.link) {
-          hash = createHash("sha256")
-            .update(`${i.link}/${i.content.encoded}`, "utf-8")
-            .digest("hex");
+          const j = joined(i.content.encoded, i.link);
+          if (!j) return null;
+          hash = j;
         } else if (i.title && i.link) {
-          hash = createHash("sha256").update(`${i.link}/${i.title}`, "utf-8").digest("hex");
+          const j = joined(i.title, i.link);
+          if (!j) return null;
+          hash = j;
+        } else if (i.link) {
+          hash = hashSource(i.link);
+        } else if (i.enclosures?.at(0)?.url) {
+          hash = hashSource(i.enclosures.at(0)!.url!);
         } else {
           return null;
         }
@@ -228,13 +247,22 @@ export class Fetcher {
       .filter((i) => i.date_published && isAfter(i.date_published, this.cutoffDate(lastChecked)))
       .map((i) => {
         let hash: string | null;
-        if (i.content_text) {
-          hash = createHash("sha256").update(i.content_text, "utf-8").digest("hex");
-        } else if (i.title && i.external_url) {
-          hash = createHash("sha256").update(`${i.external_url}/${i.title}`, "utf-8").digest("hex");
+        if (i.external_url && i.content_text) {
+          const j = joined(i.external_url, i.content_text);
+          if (!j) return null;
+          hash = j;
+        } else if (i.external_url && i.title) {
+          const j = joined(i.external_url, i.title);
+          if (!j) return null;
+          hash = j;
+        } else if (i.external_url) {
+          hash = hashSource(i.external_url);
+        } else if (i.content_text) {
+          hash = hashSource(i.content_text);
         } else {
           return null;
         }
+
         return {
           title: i.title || null,
           url: i.url,
@@ -257,13 +285,22 @@ export class Fetcher {
       .map((i) => {
         if (i.atom?.published) {
           let hash: string | null;
-          if (i.content?.encoded) {
-            hash = createHash("sha256").update(i.content.encoded, "utf-8").digest("hex");
+          if (i.content?.encoded && i.link) {
+            const j = joined(i.content.encoded, i.link);
+            if (!j) return null;
+            hash = j;
           } else if (i.title && i.link) {
-            hash = createHash("sha256").update(`${i.link}/${i.title}`, "utf-8").digest("hex");
+            const j = joined(i.title, i.link);
+            if (!j) return null;
+            hash = j;
+          } else if (i.link) {
+            hash = hashSource(i.link);
+          } else if (i.content?.encoded) {
+            hash = hashSource(i.content.encoded);
           } else {
             return null;
           }
+
           return {
             title: i.title || null,
             url: i.link,
