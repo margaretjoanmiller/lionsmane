@@ -15,10 +15,20 @@ import type { Services } from "@/db";
 import type { Articles } from "@/entities/Articles";
 import { USER_AGENT } from "@/lib/constants";
 
+export interface ParsedEnclosure {
+  url: string;
+  mimeType: string | undefined;
+  size: number | undefined;
+}
+
+export interface ParsedItem {
+  article: Merge<NewArticle, { feedId: string; hash: string }>;
+  enclosures: Array<ParsedEnclosure>;
+}
+
 export class Fetcher {
   constructor(private svc: Services) {}
 
-  //TODO: Enclosures
   async extractArticlesFromFeed(feedId: string) {
     const feed = await this.svc.feeds.findOneOrFail({
       id: feedId,
@@ -66,13 +76,14 @@ export class Fetcher {
     const newArticles = await this.filterExisting(articles, feed.id);
 
     for (const art of newArticles) {
-      const cleanedArt = cleanRaw(art);
+      const cleanedArt = cleanRaw(art.article);
 
       const a = this.svc.articles.create({
-        ...art,
+        ...art.article,
         readableHtml: cleanedArt.htmlContent,
         readableText: cleanedArt.textContent,
         description: cleanedArt.cleanDescription,
+        enclosuresCollection: art.enclosures,
       });
       artEntities.push(a);
     }
@@ -118,10 +129,10 @@ export class Fetcher {
   }
 
   private async filterExisting(
-    articles: Array<Merge<NewArticle, { feedId: string; hash: string }>>,
+    articles: Array<ParsedItem>,
     feedId: string,
-  ): Promise<Array<Merge<NewArticle, { feedId: string; hash: string }>>> {
-    const hashes = articles.map((a) => a.hash).filter(isPresent);
+  ): Promise<Array<ParsedItem>> {
+    const hashes = articles.map((a) => a.article.hash).filter(isPresent);
     if (hashes.length === 0) return [];
 
     const existing = await this.svc.articles.find(
@@ -130,7 +141,7 @@ export class Fetcher {
     );
     const existingHashes = new Set(existing.map((a) => a.hash));
 
-    return articles.filter((a) => a.hash && !existingHashes.has(a.hash));
+    return articles.filter((a) => a.article.hash && !existingHashes.has(a.article.hash));
   }
 
   private async persistIndividually(entities: Array<Articles>) {
@@ -153,7 +164,7 @@ export function parseArticlesAtom(
   items: Array<Atom.Entry<Date>>,
   lastChecked: Date,
   feedId: string,
-) {
+): Array<ParsedItem> {
   return items
     .filter((i) => i.published || i.updated || i.dc?.dates?.at(0))
     .filter((i) => {
@@ -172,25 +183,45 @@ export function parseArticlesAtom(
       if (!hash) return null;
 
       return {
-        title: i.title?.value || null,
-        url: i.links?.at(0)?.href,
-        hash,
-        description: i.summary?.value || i.dc?.descriptions?.at(0),
-        rawContent: i.content?.value,
-        published: i.published || i.dc?.dates?.at(0) || i.updated,
-        updated: i.updated || i.dcterms?.modified?.at(-1),
-        categories: i.categories?.map((c) => c.label).filter(isPresent),
-        authors: i.authors?.map((a) => `${a.name} <${a.email}>`).filter(isDefined),
-        image: i.media?.contents?.find((m) => m.type === "image")?.url,
-        itunes: i.itunes,
-        youtube: i.yt,
-        feedId,
+        article: {
+          title: i.title?.value || null,
+          url: i.links?.at(0)?.href,
+          hash,
+          description: i.summary?.value || i.dc?.descriptions?.at(0),
+          rawContent: i.content?.value,
+          published: i.published || i.dc?.dates?.at(0) || i.updated,
+          updated: i.updated || i.dcterms?.modified?.at(-1),
+          categories: i.categories?.map((c) => c.label).filter(isPresent),
+          authors: i.authors?.map((a) => `${a.name} <${a.email}>`).filter(isDefined),
+          image: i.media?.contents?.find((m) => m.type === "image")?.url,
+          itunes: i.itunes,
+          youtube: i.yt,
+          feedId,
+        },
+        enclosures:
+          i.links
+            ?.filter((l) => l.rel === "enclosure")
+            .map((l) => {
+              if (!l.href) {
+                return null;
+              }
+              return {
+                url: l.href,
+                mimeType: l.type,
+                size: l.length,
+              };
+            })
+            .filter(isPresent) ?? [],
       };
     })
     .filter(isPresent);
 }
 
-export function parseArticlesRss(items: Array<Rss.Item<Date>>, lastChecked: Date, feedId: string) {
+export function parseArticlesRss(
+  items: Array<Rss.Item<Date>>,
+  lastChecked: Date,
+  feedId: string,
+): Array<ParsedItem> {
   return items
     .filter(isPropertyDefined("pubDate"))
     .filter((i) => i.pubDate && isAfter(i.pubDate, cutoffDate(lastChecked)))
@@ -204,17 +235,32 @@ export function parseArticlesRss(items: Array<Rss.Item<Date>>, lastChecked: Date
       if (!hash) return null;
 
       return {
-        title: i.title || null,
-        url: i.link,
-        hash,
-        description: i.description,
-        rawContent: i.content?.encoded,
-        published: i.pubDate,
-        categories: i.categories?.map((c) => c.name).filter(isPresent),
-        authors: i.authors,
-        image: i.media?.contents?.find((m) => m.type === "image")?.url,
-        itunes: i.itunes,
-        feedId,
+        article: {
+          title: i.title || null,
+          url: i.link,
+          hash,
+          description: i.description,
+          rawContent: i.content?.encoded,
+          published: i.pubDate,
+          categories: i.categories?.map((c) => c.name).filter(isPresent),
+          authors: i.authors,
+          image: i.media?.contents?.find((m) => m.type === "image")?.url,
+          itunes: i.itunes,
+          feedId,
+        },
+        enclosures:
+          i.enclosures
+            ?.map((e) => {
+              if (!e.url) {
+                return null;
+              }
+              return {
+                url: e.url,
+                mimeType: e.type,
+                size: e.length,
+              };
+            })
+            .filter(isPresent) ?? [],
       };
     })
     .filter(isPresent);
@@ -224,7 +270,7 @@ export function parseArticlesJson(
   items: Array<Json.Item<Date>>,
   lastChecked: Date,
   feedId: string,
-) {
+): Array<ParsedItem> {
   return items
     .filter(isPropertyDefined("date_published"))
     .filter((i) => i.date_published && isAfter(i.date_published, cutoffDate(lastChecked)))
@@ -238,21 +284,40 @@ export function parseArticlesJson(
       if (!hash) return null;
 
       return {
-        title: i.title || null,
-        url: i.url,
-        hash,
-        description: i.summary,
-        rawContent: i.content_text,
-        published: i.date_published,
-        authors: i.authors?.map((a) => `${a.name} <${a.url}>`).filter(isDefined),
-        image: i.image,
-        feedId,
+        article: {
+          title: i.title || null,
+          url: i.url,
+          hash,
+          description: i.summary,
+          rawContent: i.content_text,
+          published: i.date_published,
+          authors: i.authors?.map((a) => `${a.name} <${a.url}>`).filter(isDefined),
+          image: i.image,
+          feedId,
+        },
+        enclosures:
+          i.attachments
+            ?.map((a) => {
+              if (!a.url) {
+                return null;
+              }
+              return {
+                url: a.url,
+                mimeType: a.mime_type,
+                size: a.size_in_bytes,
+              };
+            })
+            .filter(isPresent) ?? [],
       };
     })
     .filter(isPresent);
 }
 
-export function parseArticlesRdf(items: Array<Rdf.Item<Date>>, lastChecked: Date, feedId: string) {
+export function parseArticlesRdf(
+  items: Array<Rdf.Item<Date>>,
+  lastChecked: Date,
+  feedId: string,
+): Array<ParsedItem> {
   return items
     .filter(isPropertyDefined("atom"))
     .filter((i) => i.atom?.published && isAfter(i.atom?.published, cutoffDate(lastChecked)))
@@ -267,14 +332,17 @@ export function parseArticlesRdf(items: Array<Rdf.Item<Date>>, lastChecked: Date
         if (!hash) return null;
 
         return {
-          title: i.title || null,
-          url: i.link,
-          hash,
-          description: i.description,
-          rawContent: i.content?.encoded,
-          published: i.atom?.published,
-          authors: i.atom?.authors?.map((a) => a.name).filter(isDefined),
-          feedId,
+          article: {
+            title: i.title || null,
+            url: i.link,
+            hash,
+            description: i.description,
+            rawContent: i.content?.encoded,
+            published: i.atom?.published,
+            authors: i.atom?.authors?.map((a) => a.name).filter(isDefined),
+            feedId,
+          },
+          enclosures: [],
         };
       }
       return null;
