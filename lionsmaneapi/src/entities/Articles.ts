@@ -33,6 +33,16 @@ export const ArticlesSchema = defineEntity({
     enclosuresCollection: () => p.oneToMany(Enclosures).mappedBy("entry").cascade(Cascade.ALL),
     articleStates: () => p.oneToMany(UserArticleStates).mappedBy("articleId").cascade(Cascade.ALL),
   },
+  indexes: [
+    {
+      properties: ["feedId", "hash"],
+    },
+    {
+      name: "fullTextIndex",
+      type: "fulltext",
+      properties: ["title", "description", "readableText"],
+    },
+  ],
   uniques: [{ properties: ["hash", "feedId"] }],
 });
 

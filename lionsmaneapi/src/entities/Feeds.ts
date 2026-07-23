@@ -31,6 +31,7 @@ export const FeedsSchema = defineEntity({
       p.oneToMany(Articles).mappedBy("feedId").cascade(Cascade.ALL).orphanRemoval(true),
     subscriptions: () => p.oneToMany(Subscriptions).mappedBy("feed").cascade(Cascade.ALL),
   },
+  indexes: [{ properties: ["url"] }, { properties: ["lastChecked"] }],
 });
 
 export class Feeds extends FeedsSchema.class {}

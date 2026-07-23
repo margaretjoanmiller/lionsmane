@@ -1208,6 +1208,14 @@
       },
       "indexes": [
         {
+          "columnNames": ["feed_id_id", "hash"],
+          "composite": true,
+          "constraint": false,
+          "keyName": "articles_feed_id_id_hash_index",
+          "primary": false,
+          "unique": false
+        },
+        {
           "columnNames": ["hash", "feed_id_id"],
           "composite": true,
           "constraint": true,
@@ -1222,6 +1230,15 @@
           "keyName": "articles_pkey",
           "primary": true,
           "unique": true
+        },
+        {
+          "columnNames": ["title", "description", "readable_text"],
+          "composite": true,
+          "constraint": false,
+          "keyName": "fullTextIndex",
+          "primary": false,
+          "unique": false,
+          "type": "fulltext"
         }
       ],
       "checks": [],
@@ -1718,12 +1735,28 @@
       },
       "indexes": [
         {
+          "columnNames": ["last_checked"],
+          "composite": false,
+          "constraint": false,
+          "keyName": "feeds_last_checked_index",
+          "primary": false,
+          "unique": false
+        },
+        {
           "columnNames": ["id"],
           "composite": false,
           "constraint": true,
           "keyName": "feeds_pkey",
           "primary": true,
           "unique": true
+        },
+        {
+          "columnNames": ["url"],
+          "composite": false,
+          "constraint": false,
+          "keyName": "feeds_url_index",
+          "primary": false,
+          "unique": false
         }
       ],
       "checks": [],
