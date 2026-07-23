@@ -26,6 +26,7 @@ function buildAuth(db: Services) {
     emailAndPassword: {
       enabled: true,
     },
+    trustedOrigins: [process.env.HOST_FE, "http://localhost:3000"],
     socialProviders: {
       discord: {
         clientId: process.env.DISCORD_CLIENT_ID!,
