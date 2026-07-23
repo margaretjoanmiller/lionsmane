@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
 import { z } from "zod";
 
-import { articleList, articleSchema } from "./model";
+import { articleList, articleSchema, updateArticleSchema } from "./model";
 
 export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
@@ -47,6 +47,31 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
       const article = await fastify.articleService.getArticle(req.params.id, req.session?.user.id!);
 
       return reply.send(article);
+    },
+  );
+
+  fastify.patch(
+    "/:id",
+    {
+      schema: {
+        params: z.object({
+          id: z.uuidv7(),
+        }),
+        body: updateArticleSchema,
+        response: {
+          200: z.unknown(),
+        },
+        tags: ["article"],
+      },
+    },
+    async (req, reply) => {
+      await fastify.articleService.changeArticleState(
+        req.params.id,
+        req.session?.user.id!,
+        req.body,
+      );
+
+      return reply.send();
     },
   );
 };

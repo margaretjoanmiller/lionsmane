@@ -4,6 +4,11 @@ export const articleSchema = z.object({
   id: z.uuidv7(),
   title: z.string().nullish(),
   url: z.url().nullish(),
+  isRead: z.boolean().nullish(),
+  isStarred: z.boolean().nullish(),
+  isHidden: z.boolean().nullish(),
+  isBlurred: z.boolean().nullish(),
+  contentWarning: z.array(z.string()).nullish(),
   hash: z.string().nullish(),
   description: z.string().nullish(),
   rawContent: z.string().nullish(),
@@ -67,3 +72,10 @@ export const articleList = z.object({
   articles: z.array(articleSchema),
   cursor: z.string().nullable(),
 });
+
+export const updateArticleSchema = z.object({
+  isStarred: z.boolean(),
+  isRead: z.boolean(),
+});
+
+export type UpdateArticle = z.infer<typeof updateArticleSchema>;
