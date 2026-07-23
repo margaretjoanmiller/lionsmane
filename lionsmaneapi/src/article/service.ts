@@ -54,6 +54,7 @@ export class ArticleService {
       ...(cursor ? { after: cursor } : {}),
       orderBy: { published: "desc", id: "desc" },
       exclude: ["feedId"],
+      populate: ["enclosuresCollection"],
     });
 
     return {
@@ -84,17 +85,20 @@ export class ArticleService {
   }
 
   async getArticle(articleId: string, userId: string) {
-    const article = await this.svc.articles.findOneOrFail({
-      id: articleId,
-      feedId: {
-        subscriptions: {
-          user: userId,
+    const article = await this.svc.articles.findOneOrFail(
+      {
+        id: articleId,
+        feedId: {
+          subscriptions: {
+            user: userId,
+          },
         },
       },
-    });
+      { populate: ["enclosuresCollection"] },
+    );
 
     return {
-      ...wrap(article).toObject(),
+      ...article,
       published: article.published?.toISOString(),
       updated: article.updated?.toISOString(),
     };

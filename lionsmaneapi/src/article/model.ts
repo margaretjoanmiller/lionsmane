@@ -18,6 +18,13 @@ export const articleSchema = z.object({
   authors: z.array(z.string()).nullish(),
   image: z.url().nullish(),
   imageAlt: z.string().nullish(),
+  enclosuresCollection: z.array(
+    z.object({
+      url: z.url(),
+      mimeType: z.string().nullish(),
+      size: z.int().nullish(),
+    }),
+  ),
   itunes: z
     .object({
       duration: z.number().nullish(),
