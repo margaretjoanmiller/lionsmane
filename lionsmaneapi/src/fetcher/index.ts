@@ -372,17 +372,17 @@ export function cutoffDate(lastChecked: Date | null): Date {
   return lastChecked ?? subWeeks(new Date(), 6);
 }
 
-function hashSource(input: string): string {
+export function hashSource(input: string): string {
   return createHash("sha256").update(input, "utf-8").digest("hex");
 }
 
-function joined(a: string | null | undefined, b: string | null | undefined): string | null {
+export function joined(a: string | null | undefined, b: string | null | undefined): string | null {
   const left = a?.trim(); // handles " " case
   const right = b?.trim();
   return left && right ? `${left}/${right}` : null;
 }
 
-function resolveHash(...candidates: Array<string | null | undefined>): string | null {
+export function resolveHash(...candidates: Array<string | null | undefined>): string | null {
   const input = pipe(
     candidates,
     map((c) => c?.trim()),
