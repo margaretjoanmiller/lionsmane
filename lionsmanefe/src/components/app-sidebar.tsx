@@ -13,7 +13,6 @@ import {
 import type * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { ModeToggle } from "./mode-toggle";
+import { $api } from "@/lib/api";
 
 // This is sample data.
 const data = {
@@ -32,23 +32,6 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: <GalleryVerticalEndIcon />,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: <AudioLinesIcon />,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: <TerminalIcon />,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -156,19 +139,60 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <ModeToggle />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
-  );
+  const feedQuery = $api.useQuery("get", "/feed", {
+    credentials: "include",
+  });
+  const folderQuery = $api.useQuery("get", "/folder", {
+    credentials: "include",
+  });
+
+  if (feedQuery.data && folderQuery.data) {
+    const feedData = feedQuery.data?.map((f) => ({
+      title: f.title ?? f.url,
+      url: `/dash/feed/${f.id}`,
+    }));
+
+    const folderData = folderQuery.data?.map((f) => ({
+      title: f.name,
+      url: `/dash/folder/${f.id}`,
+      items: f.feeds.map((feed) => ({
+        title: feed.title ?? feed.url,
+        url: `/dash/feed/${feed.id}`,
+      })),
+    }));
+
+    let ffdata: Array<{ url: string; title: string }>;
+    if (folderData) {
+      ffdata = feedData?.concat(folderData) ?? [];
+    } else {
+      ffdata = [];
+    }
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <ModeToggle />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={ffdata} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    );
+  } else {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <ModeToggle />
+        </SidebarHeader>
+        <SidebarContent></SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
 }
