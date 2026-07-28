@@ -46,7 +46,12 @@ const envOptions = {
   dotenv: true,
 };
 
-const fastify = Fastify({ logger: true }).withTypeProvider<ZodTypeProvider>();
+const fastify = Fastify({
+  logger: true,
+  routerOptions: {
+    ignoreTrailingSlash: true,
+  },
+}).withTypeProvider<ZodTypeProvider>();
 
 // register request context hook
 fastify.addHook("onRequest", (_request, _reply, done) => {
