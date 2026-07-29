@@ -1,13 +1,10 @@
 import {
-  AudioLinesIcon,
   BookOpenIcon,
   BotIcon,
   FrameIcon,
-  GalleryVerticalEndIcon,
   MapIcon,
   PieChartIcon,
   Settings2Icon,
-  TerminalIcon,
   TerminalSquareIcon,
 } from "lucide-react";
 import type * as React from "react";
@@ -24,119 +21,7 @@ import {
 
 import { ModeToggle } from "./mode-toggle";
 import { $api } from "@/lib/api";
-
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: <TerminalSquareIcon />,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: <BotIcon />,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: <BookOpenIcon />,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: <Settings2Icon />,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: <FrameIcon />,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: <PieChartIcon />,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: <MapIcon />,
-    },
-  ],
-};
+import { authClient } from "#/lib/auth-client.ts";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const feedQuery = $api.useQuery("get", "/feed", {
@@ -145,6 +30,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const folderQuery = $api.useQuery("get", "/folder", {
     credentials: "include",
   });
+
+  const session = authClient.useSession();
+  if (!session.data) {
+    return <p>Error loading user</p>;
+  }
+
+  const user = {
+    name: session.data.user.name,
+    email: session.data.user.email,
+    avatar:
+      session.data.user.image ?? "https://upload.wikimedia.org/wikipedia/en/9/97/Doc_Brown.JPG",
+  };
 
   if (feedQuery.data && folderQuery.data) {
     const feedData = feedQuery.data?.map((f) => ({
@@ -161,12 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       })),
     }));
 
-    let ffdata: Array<{ url: string; title: string }>;
-    if (folderData) {
-      ffdata = feedData?.concat(folderData) ?? [];
-    } else {
-      ffdata = [];
-    }
+    const ffdata = feedData?.concat(folderData) ?? [];
     return (
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
@@ -176,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavMain items={ffdata} />
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={user} />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
@@ -189,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent></SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={user} />
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>

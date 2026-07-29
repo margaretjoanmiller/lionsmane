@@ -1,4 +1,5 @@
 import circuitBreaker from "@fastify/circuit-breaker";
+import helmet from "@fastify/helmet";
 import fastifyCors from "@fastify/cors";
 import fastifyEnv from "@fastify/env";
 import rateLimit from "@fastify/rate-limit";
@@ -24,6 +25,8 @@ import { articleRoutes } from "./article";
 import { initORM } from "./db";
 import { folderRoutes } from "./folder";
 import { getAuth } from "./lib/auth";
+import { errorRespSchema } from "./lib/global/error.schema";
+import { FastifyError } from "@fastify/error";
 
 const db = await initORM();
 const auth = await getAuth(db);
@@ -62,11 +65,55 @@ fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
 // global plugins
+await fastify.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: [
+        "https://cdn.jsdelivr.net/npm/@scalar/api-reference",
+        "'self'",
+        "'unsafe-inline'",
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+    },
+  },
+});
 await fastify.register(fastifyEnv, envOptions);
 await fastify.register(rateLimit);
 await fastify.register(circuitBreaker);
 await fastify.register(sensible);
 await fastify.register(gracefulShutdown);
+
+fastify.addHook("onRoute", (routeOptions) => {
+  if (routeOptions.schema?.response) {
+    // global error responses
+    routeOptions.schema.response = {
+      400: errorRespSchema,
+      401: errorRespSchema,
+      403: errorRespSchema,
+      404: errorRespSchema,
+      500: errorRespSchema,
+      ...routeOptions.schema.response,
+    };
+  }
+});
+
+// Register parent error handler
+fastify.setErrorHandler((error, req, res) => {
+  if (error instanceof FastifyError) {
+    req.log.error(`Fastify error: ${error.message}`);
+    return res.status(error.statusCode || 400).send({ message: `Fastify error: ${error.message}` });
+  }
+  if (error instanceof Error) {
+    req.log.error(`Unhandled Error: ${error.message}`);
+    return res.status(500).send({
+      message: `Internal server error: ${error.message}`,
+    });
+  }
+  req.log.error(`Unknown error`);
+  return res.status(500).send({
+    message: "Unknown error occurred",
+  });
+});
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
