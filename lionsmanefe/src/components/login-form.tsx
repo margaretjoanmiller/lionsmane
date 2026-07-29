@@ -18,8 +18,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const navigate = useNavigate({ from: "/login" });
   const form = useForm({
     defaultValues: {
-      email: "hi@example.com",
-      password: "badpassword",
+      email: "",
+      password: "",
     },
     validators: {
       onSubmit: loginSchema,
@@ -31,7 +31,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       });
 
       if (error) {
-        toast.error("Error signing in");
+        toast.error("Error signing in", {
+          description: error.message,
+        });
         return;
       }
 
