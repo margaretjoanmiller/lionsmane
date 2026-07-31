@@ -1,10 +1,26 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
+import { authClient } from '#/lib/auth-client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export const Route = createFileRoute('/dash')({
+  beforeLoad: async ({ context, location }) => {
+    if (!context?.auth?.session) {
+      const { data: session, error } = await authClient.getSession();
+
+      if (!session || error) {
+        throw redirect({
+          search: {
+            redirect: location.href,
+          },
+          to: '/login',
+        });
+      }
+    }
+  },
+
   component: DashLayout,
 });
 

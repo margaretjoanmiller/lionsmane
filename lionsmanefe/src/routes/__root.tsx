@@ -1,35 +1,37 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { QueryClient } from '@tanstack/react-query';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 
 import '../styles.css';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
+import type { authClient } from '#/lib/auth-client';
 import { ThemeProvider } from '@/components/theme-provider';
 
-export const Route = createRootRoute({
+interface RootRouteContext {
+  queryClient: QueryClient | null;
+  auth: typeof authClient.$Infer.Session | null;
+}
+
+export const Route = createRootRouteWithContext<RootRouteContext>()({
   component: RootComponent,
 });
 
-const queryClient = new QueryClient();
-
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="lionsmane-theme">
-        <Outlet />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'TanStack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="system" storageKey="lionsmane-theme">
+      <Outlet />
+      <TanStackDevtools
+        config={{
+          position: 'bottom-right',
+        }}
+        plugins={[
+          {
+            name: 'TanStack Router',
+            render: <TanStackRouterDevtoolsPanel />,
+          },
+        ]}
+      />
+    </ThemeProvider>
   );
 }
