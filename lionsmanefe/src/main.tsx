@@ -1,22 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { RouterProvider } from '@tanstack/react-router';
 import ReactDOM from 'react-dom/client';
 
-import { routeTree } from './routeTree.gen';
+import { authClient } from '#/lib/auth-client';
 
-const router = createRouter({
-  routeTree,
-  defaultPreload: 'intent',
-  scrollRestoration: true,
-});
-
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { getRouter } from './router';
 
 const queryClient = new QueryClient();
+const router = getRouter();
+
+authClient.getSession().then(({ data: session }) => {
+  router.update({ context: { queryClient, auth: session } });
+});
 
 const rootElement = document.getElementById('app')!;
 

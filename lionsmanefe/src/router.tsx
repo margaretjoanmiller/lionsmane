@@ -8,6 +8,10 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
+    context: {
+      queryClient: null,
+      auth: null,
+    },
   });
 
   return router;
