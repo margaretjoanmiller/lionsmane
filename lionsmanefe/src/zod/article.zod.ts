@@ -4,6 +4,7 @@ export const articleSchema = z.object({
   id: z.uuidv7(),
   title: z.string().nullish(),
   url: z.url().nullish(),
+  feedTitle: z.string().nullish(),
   isRead: z.boolean().nullish(),
   isStarred: z.boolean().nullish(),
   isHidden: z.boolean().nullish(),

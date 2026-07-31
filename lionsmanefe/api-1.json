@@ -1540,6 +1540,9 @@
                               }
                             ]
                           },
+                          "feedTitle": {
+                            "type": "string"
+                          },
                           "isRead": {
                             "anyOf": [
                               {
@@ -1954,7 +1957,7 @@
                             ]
                           }
                         },
-                        "required": ["id", "enclosuresCollection"],
+                        "required": ["id", "feedTitle", "enclosuresCollection"],
                         "additionalProperties": false
                       }
                     },
@@ -2116,6 +2119,9 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "feedTitle": {
+                      "type": "string"
                     },
                     "isRead": {
                       "anyOf": [
@@ -2531,7 +2537,7 @@
                       ]
                     }
                   },
-                  "required": ["id", "enclosuresCollection"],
+                  "required": ["id", "feedTitle", "enclosuresCollection"],
                   "additionalProperties": false
                 }
               }

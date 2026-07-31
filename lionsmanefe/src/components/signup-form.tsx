@@ -1,12 +1,13 @@
-import { authClient } from "#/lib/auth-client.ts";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useForm } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { z } from "zod";
+import { useForm } from '@tanstack/react-form';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { authClient } from '#/lib/auth-client.ts';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 
 const signUpForm = z
   .object({
@@ -18,14 +19,14 @@ const signUpForm = z
   .refine((s) => s.password === s.confirm);
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const navigate = useNavigate({ from: "/signup" });
+  const navigate = useNavigate({ from: '/signup' });
 
   const form = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirm: "",
+      name: '',
+      email: '',
+      password: '',
+      confirm: '',
     },
     validators: {
       onSubmit: signUpForm,
@@ -38,14 +39,14 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       });
 
       if (error) {
-        toast.error("Error signing up", {
+        toast.error('Error signing up', {
           description: error.message,
         });
         return;
       }
 
       navigate({
-        to: "/dash",
+        to: '/dash',
       });
     },
   });

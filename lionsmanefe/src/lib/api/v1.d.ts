@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-  "/feed": {
+  '/feed': {
     parameters: {
       query?: never;
       header?: never;
@@ -26,7 +26,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               title?: string | null;
@@ -67,7 +67,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -78,7 +78,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -89,7 +89,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -100,7 +100,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -111,7 +111,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -128,7 +128,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": {
+          'application/json': {
             /** Format: uri */
             url: string;
             folderName?: string | null;
@@ -142,7 +142,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               title?: string | null;
@@ -183,7 +183,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -194,7 +194,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -205,7 +205,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -216,7 +216,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -227,7 +227,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -240,7 +240,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/feed/{id}": {
+  '/feed/{id}': {
     parameters: {
       query?: never;
       header?: never;
@@ -264,7 +264,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               title?: string | null;
@@ -305,7 +305,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -316,7 +316,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -327,7 +327,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -338,7 +338,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -349,7 +349,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -382,7 +382,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -393,7 +393,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -404,7 +404,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -415,7 +415,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -426,7 +426,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -446,7 +446,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": {
+          'application/json': {
             folderName: string | null;
           };
         };
@@ -458,7 +458,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               title?: string | null;
@@ -499,7 +499,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -510,7 +510,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -521,7 +521,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -532,7 +532,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -543,7 +543,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -552,7 +552,7 @@ export interface paths {
     };
     trace?: never;
   };
-  "/article": {
+  '/article': {
     parameters: {
       query?: never;
       header?: never;
@@ -564,7 +564,7 @@ export interface paths {
         query?: {
           cursor?: string;
           feedId?: string;
-          status?: "read" | "unread" | "starred";
+          status?: 'read' | 'unread' | 'starred';
         };
         header?: never;
         path?: never;
@@ -578,12 +578,13 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               articles: {
                 /** Format: uuid */
                 id: string;
                 title?: string | null;
                 url?: string | null;
+                feedTitle: string;
                 isRead?: boolean | null;
                 isStarred?: boolean | null;
                 isHidden?: boolean | null;
@@ -638,7 +639,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -649,7 +650,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -660,7 +661,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -671,7 +672,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -682,7 +683,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -697,7 +698,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/article/{id}": {
+  '/article/{id}': {
     parameters: {
       query?: never;
       header?: never;
@@ -721,11 +722,12 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               title?: string | null;
               url?: string | null;
+              feedTitle: string;
               isRead?: boolean | null;
               isStarred?: boolean | null;
               isHidden?: boolean | null;
@@ -778,7 +780,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -789,7 +791,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -800,7 +802,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -811,7 +813,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -822,7 +824,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -845,7 +847,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": {
+          'application/json': {
             isStarred: boolean;
             isRead: boolean;
           };
@@ -858,7 +860,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": unknown;
+            'application/json': unknown;
           };
         };
         /** @description Default Response */
@@ -867,7 +869,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -878,7 +880,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -889,7 +891,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -900,7 +902,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -911,7 +913,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -920,7 +922,7 @@ export interface paths {
     };
     trace?: never;
   };
-  "/folder": {
+  '/folder': {
     parameters: {
       query?: never;
       header?: never;
@@ -942,7 +944,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               name: string;
@@ -988,7 +990,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -999,7 +1001,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1010,7 +1012,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1021,7 +1023,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1032,7 +1034,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1049,7 +1051,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": {
+          'application/json': {
             name: string;
             feeds: string[];
           };
@@ -1062,7 +1064,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               name: string;
@@ -1108,7 +1110,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1119,7 +1121,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1130,7 +1132,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1141,7 +1143,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1152,7 +1154,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1165,7 +1167,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/folder/{id}": {
+  '/folder/{id}': {
     parameters: {
       query?: never;
       header?: never;
@@ -1189,7 +1191,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               name: string;
@@ -1235,7 +1237,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1246,7 +1248,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1257,7 +1259,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1268,7 +1270,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1279,7 +1281,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1312,7 +1314,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1323,7 +1325,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1334,7 +1336,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1345,7 +1347,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1356,7 +1358,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1376,7 +1378,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          "application/json": {
+          'application/json': {
             name?: string | null;
             feedIds?: string[] | null;
           };
@@ -1389,7 +1391,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               /** Format: uuid */
               id: string;
               name: string;
@@ -1435,7 +1437,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1446,7 +1448,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1457,7 +1459,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1468,7 +1470,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };
@@ -1479,7 +1481,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": {
+            'application/json': {
               message: string;
             };
           };

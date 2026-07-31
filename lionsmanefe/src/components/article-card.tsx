@@ -3,13 +3,13 @@ import { Link } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import React from 'react';
 import { toast } from 'sonner';
+import SolarStarBold from '~icons/solar/star-bold';
+import SolarStarLinear from '~icons/solar/star-linear';
 
 import type { ArticleDetail } from '#/zod/article.zod.ts';
 import { Badge } from '@/components/ui/badge';
 import { $api } from '@/lib/api';
 
-// import SolarStarBold from '~icons/solar/star-bold';
-// import SolarStarLinear from '~icons/solar/star-linear';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
@@ -56,9 +56,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         path: {
           id: article.id,
         },
-        query: {
-          status: 'starred',
-        },
+      },
+      body: {
+        isStarred: true,
+        isRead: article.isRead || false,
       },
     });
   }
@@ -68,9 +69,10 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
         path: {
           id: article.id,
         },
-        query: {
-          status: 'unstarred',
-        },
+      },
+      body: {
+        isStarred: false,
+        isRead: article.isRead || false,
       },
     });
   }
@@ -87,14 +89,15 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
                   path: {
                     id: article.id,
                   },
-                  query: {
-                    status: 'read',
-                  },
+                },
+                body: {
+                  isStarred: article.isStarred || false,
+                  isRead: true,
                 },
               })
             }
             params={{ articleId: article.id }}
-            to="/dashboard/$articleId"
+            to="/dash/$articleId"
           >
             {article.title || 'No title'}
           </Link>
@@ -146,22 +149,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   if (article.isBlurred && !dismissBlur) {
     return (
-      <Card
-        className="group relative flex h-full flex-col shadow-2xl"
-        onMouseMove={handleMouseMove}
-      >
-        <motion.div
-          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-          style={{
-            background: useMotionTemplate`
-                   radial-gradient(
-                     650px circle at ${mouseX}px ${mouseY}px,
-                     oklch(0.6726 0.1916 341.4084 / 8%),
-                     transparent 50%
-                   )
-                 `,
-          }}
-        />
+      <Card className="group relative flex h-full flex-col shadow-2xl">
         <div className="blur-sm">{card}</div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex flex-wrap justify-center gap-2">
@@ -183,22 +171,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
     );
   } else if (article.isBlurred && dismissBlur) {
     return (
-      <Card
-        className="group relative flex h-full flex-col shadow-2xl"
-        onMouseMove={handleMouseMove}
-      >
-        <motion.div
-          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-          style={{
-            background: useMotionTemplate`
-                   radial-gradient(
-                     650px circle at ${mouseX}px ${mouseY}px,
-                     oklch(0.6726 0.1916 341.4084 / 8%),
-                     transparent 50%
-                   )
-                 `,
-          }}
-        />
+      <Card className="group relative flex h-full flex-col shadow-2xl">
         {card}
         <Button
           className="-my-3 max-w-1/3 place-self-center"
@@ -210,25 +183,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
       </Card>
     );
   } else {
-    return (
-      <Card
-        className="group relative flex h-full flex-col shadow-2xl"
-        onMouseMove={handleMouseMove}
-      >
-        <motion.div
-          className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-          style={{
-            background: useMotionTemplate`
-                 radial-gradient(
-                   650px circle at ${mouseX}px ${mouseY}px,
-                   oklch(0.6726 0.1916 341.4084 / 8%),
-                   transparent 50%
-                 )
-               `,
-          }}
-        />
-        {card}
-      </Card>
-    );
+    return <Card className="group relative flex h-full flex-col shadow-2xl">{card}</Card>;
   }
 }

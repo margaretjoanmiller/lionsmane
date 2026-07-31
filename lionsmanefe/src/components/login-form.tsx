@@ -1,25 +1,26 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useForm } from "@tanstack/react-form";
-import { cn } from "@/lib/utils";
-import z from "zod";
-import { authClient } from "#/lib/auth-client";
-import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
+import { useForm } from '@tanstack/react-form';
+import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
+import z from 'zod';
+
+import { authClient } from '#/lib/auth-client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 const loginSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
 });
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const navigate = useNavigate({ from: "/login" });
+export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate({ from: '/login' });
   const form = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
     validators: {
       onSubmit: loginSchema,
@@ -31,20 +32,20 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       });
 
       if (error) {
-        toast.error("Error signing in", {
+        toast.error('Error signing in', {
           description: error.message,
         });
         return;
       }
 
       navigate({
-        to: "/dash",
+        to: '/dash',
       });
     },
   });
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>

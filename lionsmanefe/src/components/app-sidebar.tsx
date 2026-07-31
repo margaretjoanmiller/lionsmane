@@ -6,29 +6,30 @@ import {
   PieChartIcon,
   Settings2Icon,
   TerminalSquareIcon,
-} from "lucide-react";
-import type * as React from "react";
+} from 'lucide-react';
+import type * as React from 'react';
 
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+import { authClient } from '#/lib/auth-client.ts';
+import { NavArticles } from '@/components/nav-articles';
+import { NavMain } from '@/components/nav-main';
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar";
+} from '@/components/ui/sidebar';
+import { $api } from '@/lib/api';
 
-import { ModeToggle } from "./mode-toggle";
-import { $api } from "@/lib/api";
-import { authClient } from "#/lib/auth-client.ts";
+import { ModeToggle } from './mode-toggle';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const feedQuery = $api.useQuery("get", "/feed", {
-    credentials: "include",
+  const feedQuery = $api.useQuery('get', '/feed', {
+    credentials: 'include',
   });
-  const folderQuery = $api.useQuery("get", "/folder", {
-    credentials: "include",
+  const folderQuery = $api.useQuery('get', '/folder', {
+    credentials: 'include',
   });
 
   const session = authClient.useSession();
@@ -40,7 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     name: session.data.user.name,
     email: session.data.user.email,
     avatar:
-      session.data.user.image ?? "https://upload.wikimedia.org/wikipedia/en/9/97/Doc_Brown.JPG",
+      session.data.user.image ?? 'https://upload.wikimedia.org/wikipedia/en/9/97/Doc_Brown.JPG',
   };
 
   if (feedQuery.data && folderQuery.data) {
@@ -65,6 +66,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <ModeToggle />
         </SidebarHeader>
         <SidebarContent>
+          <NavArticles />
           <NavMain items={ffdata} />
         </SidebarContent>
         <SidebarFooter>
@@ -79,7 +81,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <ModeToggle />
         </SidebarHeader>
-        <SidebarContent></SidebarContent>
+        <SidebarContent>
+          <NavArticles />
+        </SidebarContent>
         <SidebarFooter>
           <NavUser user={user} />
         </SidebarFooter>

@@ -8,106 +8,185 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as LoginRouteImport } from "./routes/login";
-import { Route as SignupRouteImport } from "./routes/signup";
-import { Route as DashIndexRouteImport } from "./routes/dash/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashRouteRouteImport } from './routes/dash/route'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as DashIndexRouteImport } from './routes/dash/index'
+import { Route as DashArticleIdRouteImport } from './routes/dash/$articleId'
+import { Route as DashFeedIdRouteImport } from './routes/dash/feed/$id'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const DashRouteRoute = DashRouteRouteImport.update({
+  id: '/dash',
+  path: '/dash',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SignupRoute = SignupRouteImport.update({
-  id: "/signup",
-  path: "/signup",
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DashIndexRoute = DashIndexRouteImport.update({
-  id: "/dash/",
-  path: "/dash/",
-  getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashRouteRoute,
+} as any)
+const DashArticleIdRoute = DashArticleIdRouteImport.update({
+  id: '/$articleId',
+  path: '/$articleId',
+  getParentRoute: () => DashRouteRoute,
+} as any)
+const DashFeedIdRoute = DashFeedIdRouteImport.update({
+  id: '/feed/$id',
+  path: '/feed/$id',
+  getParentRoute: () => DashRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRoute;
-  "/signup": typeof SignupRoute;
-  "/dash/": typeof DashIndexRoute;
+  '/': typeof IndexRoute
+  '/dash': typeof DashRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dash/$articleId': typeof DashArticleIdRoute
+  '/dash/': typeof DashIndexRoute
+  '/dash/feed/$id': typeof DashFeedIdRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRoute;
-  "/signup": typeof SignupRoute;
-  "/dash": typeof DashIndexRoute;
+  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dash/$articleId': typeof DashArticleIdRoute
+  '/dash': typeof DashIndexRoute
+  '/dash/feed/$id': typeof DashFeedIdRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRoute;
-  "/signup": typeof SignupRoute;
-  "/dash/": typeof DashIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/dash': typeof DashRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dash/$articleId': typeof DashArticleIdRoute
+  '/dash/': typeof DashIndexRoute
+  '/dash/feed/$id': typeof DashFeedIdRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/login" | "/signup" | "/dash/";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/login" | "/signup" | "/dash";
-  id: "__root__" | "/" | "/login" | "/signup" | "/dash/";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/dash'
+    | '/login'
+    | '/signup'
+    | '/dash/$articleId'
+    | '/dash/'
+    | '/dash/feed/$id'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    '/' | '/login' | '/signup' | '/dash/$articleId' | '/dash' | '/dash/feed/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/dash'
+    | '/login'
+    | '/signup'
+    | '/dash/$articleId'
+    | '/dash/'
+    | '/dash/feed/$id'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  LoginRoute: typeof LoginRoute;
-  SignupRoute: typeof SignupRoute;
-  DashIndexRoute: typeof DashIndexRoute;
+  IndexRoute: typeof IndexRoute
+  DashRouteRoute: typeof DashRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/signup": {
-      id: "/signup";
-      path: "/signup";
-      fullPath: "/signup";
-      preLoaderRoute: typeof SignupRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/dash/": {
-      id: "/dash/";
-      path: "/dash";
-      fullPath: "/dash/";
-      preLoaderRoute: typeof DashIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dash': {
+      id: '/dash'
+      path: '/dash'
+      fullPath: '/dash'
+      preLoaderRoute: typeof DashRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dash/': {
+      id: '/dash/'
+      path: '/'
+      fullPath: '/dash/'
+      preLoaderRoute: typeof DashIndexRouteImport
+      parentRoute: typeof DashRouteRoute
+    }
+    '/dash/$articleId': {
+      id: '/dash/$articleId'
+      path: '/$articleId'
+      fullPath: '/dash/$articleId'
+      preLoaderRoute: typeof DashArticleIdRouteImport
+      parentRoute: typeof DashRouteRoute
+    }
+    '/dash/feed/$id': {
+      id: '/dash/feed/$id'
+      path: '/feed/$id'
+      fullPath: '/dash/feed/$id'
+      preLoaderRoute: typeof DashFeedIdRouteImport
+      parentRoute: typeof DashRouteRoute
+    }
   }
 }
 
+interface DashRouteRouteChildren {
+  DashArticleIdRoute: typeof DashArticleIdRoute
+  DashIndexRoute: typeof DashIndexRoute
+  DashFeedIdRoute: typeof DashFeedIdRoute
+}
+
+const DashRouteRouteChildren: DashRouteRouteChildren = {
+  DashArticleIdRoute: DashArticleIdRoute,
+  DashIndexRoute: DashIndexRoute,
+  DashFeedIdRoute: DashFeedIdRoute,
+}
+
+const DashRouteRouteWithChildren = DashRouteRoute._addFileChildren(
+  DashRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashRouteRoute: DashRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
-  DashIndexRoute: DashIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
