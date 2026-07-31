@@ -1,6 +1,6 @@
-import { defineEntity, type Opt, p } from "@mikro-orm/core";
+import { defineEntity, type Opt, p } from '@mikro-orm/core';
 
-import { Base } from "./Base.js";
+import { Base } from './Base.js';
 
 export class Verification extends Base {
   id!: string;
@@ -15,10 +15,10 @@ export const VerificationSchema = defineEntity({
   class: Verification,
   properties: {
     id: p.text().primary(),
-    identifier: p.text().index("verification_identifier_idx"),
+    identifier: p.text().index('verification_identifier_idx'),
     value: p.text(),
-    expiresAt: p.datetime().name("expiresAt"),
-    createdAt: p.datetime().name("createdAt").defaultRaw(`CURRENT_TIMESTAMP`),
-    updatedAt: p.datetime().name("updatedAt").defaultRaw(`CURRENT_TIMESTAMP`),
+    expiresAt: p.datetime().name('expiresAt'),
+    createdAt: p.datetime().name('createdAt').defaultRaw(`CURRENT_TIMESTAMP`),
+    updatedAt: p.datetime().name('updatedAt').defaultRaw(`CURRENT_TIMESTAMP`),
   },
 });

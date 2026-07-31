@@ -1,7 +1,7 @@
-import { defineEntity, p, type Ref } from "@mikro-orm/core";
+import { defineEntity, p, type Ref } from '@mikro-orm/core';
 
-import { Base } from "./Base.js";
-import { User } from "./User.js";
+import { Base } from './Base.js';
+import { User } from './User.js';
 
 export class TwoFactor extends Base {
   id!: string;
@@ -13,13 +13,13 @@ export class TwoFactor extends Base {
 
 export const TwoFactorSchema = defineEntity({
   class: TwoFactor,
-  tableName: "twoFactor",
+  tableName: 'twoFactor',
   properties: {
     id: p.text().primary(),
     secret: p.text(),
-    backupCodes: p.text().name("backupCodes"),
+    backupCodes: p.text().name('backupCodes'),
     userId: () =>
-      p.manyToOne(User).ref().name("userId").updateRule("no action").deleteRule("cascade"),
+      p.manyToOne(User).ref().name('userId').updateRule('no action').deleteRule('cascade'),
     verified: p.boolean().nullable(),
   },
 });

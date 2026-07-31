@@ -1,12 +1,12 @@
-import { defineEntity, p, type InferEntity } from "@mikro-orm/core";
+import { defineEntity, p, type InferEntity } from '@mikro-orm/core';
 
-import { Articles } from "./Articles.js";
+import { Articles } from './Articles.js';
 
 export const EnclosuresSchema = defineEntity({
-  name: "Enclosures",
+  name: 'Enclosures',
   properties: {
     id: p.integer().primary(),
-    entry: () => p.manyToOne(Articles).inversedBy("enclosuresCollection"),
+    entry: () => p.manyToOne(Articles).inversedBy('enclosuresCollection'),
     url: p.text(),
     size: p.integer().nullable(),
     mimeType: p.string().length(256).nullable(),

@@ -1,3 +1,3 @@
-import { createError } from "@fastify/error";
+import { createError } from '@fastify/error';
 
-export const DatabaseError = createError("DATABASE", "Database error", 500);
+export const DatabaseError = createError('DATABASE', 'Database error', 500);

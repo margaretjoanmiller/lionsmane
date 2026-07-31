@@ -1,5 +1,6 @@
-import { z } from "zod";
-import { feedSchema } from "@/feed/model";
+import { z } from 'zod';
+
+import { feedSchema } from '@/feed/model';
 
 export const createFolderSchema = z.object({
   name: z.string(),

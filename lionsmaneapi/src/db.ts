@@ -3,14 +3,14 @@ import {
   type EntityRepository,
   MikroORM,
   type Options,
-} from "@mikro-orm/postgresql";
+} from '@mikro-orm/postgresql';
 
-import { Articles } from "./entities/Articles.js";
-import { Feeds } from "./entities/Feeds.js";
-import { Folders } from "./entities/Folders.js";
-import { Subscriptions } from "./entities/Subscriptions.js";
-import { User } from "./entities/User.js";
-import config from "./mikro-orm.config.js";
+import { Articles } from './entities/Articles.js';
+import { Feeds } from './entities/Feeds.js';
+import { Folders } from './entities/Folders.js';
+import { Subscriptions } from './entities/Subscriptions.js';
+import { User } from './entities/User.js';
+import config from './mikro-orm.config.js';
 
 export interface Services {
   orm: MikroORM;

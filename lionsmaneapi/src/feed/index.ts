@@ -1,18 +1,18 @@
-import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
-import { z } from "zod";
+import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
+import { z } from 'zod';
 
-import { feedSchema, newFeedSchema } from "./model";
+import { feedSchema, newFeedSchema } from './model';
 
 export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.post(
-    "",
+    '',
     {
       schema: {
         body: newFeedSchema,
         response: {
           201: feedSchema,
         },
-        tags: ["feed"],
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
@@ -23,13 +23,13 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    "",
+    '',
     {
       schema: {
         response: {
           200: z.array(feedSchema),
         },
-        tags: ["feed"],
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
@@ -38,7 +38,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -47,7 +47,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: feedSchema,
         },
-        tags: ["feed"],
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
@@ -58,7 +58,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.patch(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -70,7 +70,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: feedSchema,
         },
-        tags: ["feed"],
+        tags: ['feed'],
       },
     },
     async (req, reply) => {
@@ -89,7 +89,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.delete(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -98,7 +98,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           204: z.undefined(),
         },
-        tags: ["feed"],
+        tags: ['feed'],
       },
     },
     async (req, reply) => {

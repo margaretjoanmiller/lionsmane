@@ -1,48 +1,48 @@
-import circuitBreaker from "@fastify/circuit-breaker";
-import helmet from "@fastify/helmet";
-import fastifyCors from "@fastify/cors";
-import fastifyEnv from "@fastify/env";
-import rateLimit from "@fastify/rate-limit";
-import sensible from "@fastify/sensible";
-import FastifySwagger from "@fastify/swagger";
+import circuitBreaker from '@fastify/circuit-breaker';
+import fastifyCors from '@fastify/cors';
+import fastifyEnv from '@fastify/env';
+import { FastifyError } from '@fastify/error';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
+import sensible from '@fastify/sensible';
+import FastifySwagger from '@fastify/swagger';
 import {
   jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
-} from "@fastify/type-provider-zod";
-import { RequestContext } from "@mikro-orm/core";
-import ScalarApiReference from "@scalar/fastify-api-reference";
-import { fromNodeHeaders } from "better-auth/node";
-import Fastify from "fastify";
-import gracefulShutdown from "fastify-graceful-shutdown";
+} from '@fastify/type-provider-zod';
+import { RequestContext } from '@mikro-orm/core';
+import ScalarApiReference from '@scalar/fastify-api-reference';
+import { fromNodeHeaders } from 'better-auth/node';
+import Fastify from 'fastify';
+import gracefulShutdown from 'fastify-graceful-shutdown';
 
-import { feedRoutes } from "@/feed";
-import authPlugin from "@/plugin/auth";
-import servicesPlugin from "@/plugin/services";
+import { feedRoutes } from '@/feed';
+import authPlugin from '@/plugin/auth';
+import servicesPlugin from '@/plugin/services';
 
-import { articleRoutes } from "./article";
-import { initORM } from "./db";
-import { folderRoutes } from "./folder";
-import { getAuth } from "./lib/auth";
-import { errorRespSchema } from "./lib/global/error.schema";
-import { FastifyError } from "@fastify/error";
+import { articleRoutes } from './article';
+import { initORM } from './db';
+import { folderRoutes } from './folder';
+import { getAuth } from './lib/auth';
+import { errorRespSchema } from './lib/global/error.schema';
 
 const db = await initORM();
 const auth = await getAuth(db);
 
 const envOptions = {
   schema: {
-    type: "object",
-    required: ["PORT"],
+    type: 'object',
+    required: ['PORT'],
     properties: {
       PORT: {
-        type: "number",
+        type: 'number',
         default: 4000,
       },
       CLIENT_ORIGIN: {
-        type: "string",
-        default: "http://localhost:3000",
+        type: 'string',
+        default: 'http://localhost:3000',
       },
     },
   },
@@ -57,7 +57,7 @@ const fastify = Fastify({
 }).withTypeProvider<ZodTypeProvider>();
 
 // register request context hook
-fastify.addHook("onRequest", (_request, _reply, done) => {
+fastify.addHook('onRequest', (_request, _reply, done) => {
   RequestContext.create(db.em, done);
 });
 
@@ -69,7 +69,7 @@ await fastify.register(helmet, {
   contentSecurityPolicy: {
     directives: {
       scriptSrc: [
-        "https://cdn.jsdelivr.net/npm/@scalar/api-reference",
+        'https://cdn.jsdelivr.net/npm/@scalar/api-reference',
         "'self'",
         "'unsafe-inline'",
       ],
@@ -83,7 +83,7 @@ await fastify.register(circuitBreaker);
 await fastify.register(sensible);
 await fastify.register(gracefulShutdown);
 
-fastify.addHook("onRoute", (routeOptions) => {
+fastify.addHook('onRoute', (routeOptions) => {
   if (routeOptions.schema?.response) {
     // global error responses
     routeOptions.schema.response = {
@@ -111,23 +111,23 @@ fastify.setErrorHandler((error, req, res) => {
   }
   req.log.error(`Unknown error`);
   return res.status(500).send({
-    message: "Unknown error occurred",
+    message: 'Unknown error occurred',
   });
 });
 
 // Configure CORS policies
 fastify.register(fastifyCors, {
   origin: fastify.config.CLIENT_ORIGIN,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
   maxAge: 86400,
 });
 
 // Register authentication endpoint
 fastify.route({
-  method: ["GET", "POST"],
-  url: "/api/auth/*",
+  method: ['GET', 'POST'],
+  url: '/api/auth/*',
   async handler(request, reply) {
     try {
       // Construct request URL
@@ -151,17 +151,17 @@ fastify.route({
       response.headers.forEach((value, key) => reply.header(key, value));
       return reply.send(response.body ? await response.text() : null);
     } catch (error) {
-      fastify.log.error({ error }, "Authentication Error:");
+      fastify.log.error({ error }, 'Authentication Error:');
       return reply.status(500).send({
-        error: "Internal authentication error",
-        code: "AUTH_FAILURE",
+        error: 'Internal authentication error',
+        code: 'AUTH_FAILURE',
       });
     }
   },
 });
 fastify.route({
-  method: ["GET", "POST"],
-  url: "/.well-known/*",
+  method: ['GET', 'POST'],
+  url: '/.well-known/*',
   async handler(request, reply) {
     try {
       // Construct request URL
@@ -185,10 +185,10 @@ fastify.route({
       response.headers.forEach((value, key) => reply.header(key, value));
       return reply.send(response.body ? await response.text() : null);
     } catch (error) {
-      fastify.log.error({ error }, "Authentication Error:");
+      fastify.log.error({ error }, 'Authentication Error:');
       return reply.status(500).send({
-        error: "Internal authentication error",
-        code: "AUTH_FAILURE",
+        error: 'Internal authentication error',
+        code: 'AUTH_FAILURE',
       });
     }
   },
@@ -196,22 +196,22 @@ fastify.route({
 
 await fastify.register(FastifySwagger, {
   openapi: {
-    openapi: "3.1.0",
+    openapi: '3.1.0',
     info: {
-      title: "lionsmane",
-      version: "1.0.0",
+      title: 'lionsmane',
+      version: '1.0.0',
     },
     components: {
       securitySchemes: {
         apiKey: {
-          type: "apiKey",
-          name: "X-API-KEY",
-          in: "header",
+          type: 'apiKey',
+          name: 'X-API-KEY',
+          in: 'header',
         },
         jwt: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
     },
@@ -219,7 +219,7 @@ await fastify.register(FastifySwagger, {
   transform: jsonSchemaTransform,
 });
 await fastify.register(ScalarApiReference, {
-  routePrefix: "/reference",
+  routePrefix: '/reference',
 });
 
 await fastify.register(servicesPlugin, { svc: db });
@@ -227,9 +227,9 @@ await fastify.register(servicesPlugin, { svc: db });
 await fastify.register(async (instance) => {
   await instance.register(authPlugin, { auth });
 
-  instance.register(feedRoutes, { prefix: "/feed" });
-  instance.register(articleRoutes, { prefix: "/article" });
-  instance.register(folderRoutes, { prefix: "/folder" });
+  instance.register(feedRoutes, { prefix: '/feed' });
+  instance.register(articleRoutes, { prefix: '/article' });
+  instance.register(folderRoutes, { prefix: '/folder' });
 });
 
 // Initialize server
@@ -243,7 +243,7 @@ fastify.listen({ port: fastify.config.PORT }, (err) => {
 
 fastify.after(() => {
   fastify.gracefulShutdown(async (signal) => {
-    fastify.log.info("Received signal to shutdown: %s", signal);
+    fastify.log.info('Received signal to shutdown: %s', signal);
     await db.orm.close();
   });
 });

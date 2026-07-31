@@ -1,13 +1,15 @@
-import { wrap } from "@mikro-orm/core";
-import type { FilterQuery } from "@mikro-orm/core";
-import type { Services } from "@/db";
-import { NotFound } from "@/lib/errors/notfound";
-import type { Articles } from "@/entities/Articles";
-import type { PartialDeep } from "type-fest";
-import type { UpdateArticle } from "./model";
-import { UserArticleStates } from "@/entities/UserArticleStates";
+import { wrap } from '@mikro-orm/core';
+import type { FilterQuery } from '@mikro-orm/core';
+import type { PartialDeep } from 'type-fest';
 
-export type ArticleStatus = "read" | "unread" | "starred";
+import type { Services } from '@/db';
+import type { Articles } from '@/entities/Articles';
+import { UserArticleStates } from '@/entities/UserArticleStates';
+import { NotFound } from '@/lib/errors/notfound';
+
+import type { UpdateArticle } from './model';
+
+export type ArticleStatus = 'read' | 'unread' | 'starred';
 
 export interface GetArticlesOptions {
   feedId: string | undefined;
@@ -26,7 +28,7 @@ export class ArticleService {
       where: {
         user: userId,
       },
-      exclude: ["description", "folderId"],
+      exclude: ['description', 'folderId'],
     });
 
     return subscriptions.map((s) => s.feed.toObject().id);
@@ -34,11 +36,11 @@ export class ArticleService {
 
   private stateFilter(userId: string, status?: ArticleStatus): FilterQuery<Articles> {
     switch (status) {
-      case "read":
+      case 'read':
         return { articleStates: { userId, isRead: true } };
-      case "starred":
+      case 'starred':
         return { articleStates: { userId, isStarred: true } };
-      case "unread":
+      case 'unread':
         // "unread" means either an explicit isRead:false state, or no
         // state row exists yet for this user/article at all.
         return {
@@ -54,9 +56,8 @@ export class ArticleService {
       where,
       first: 10,
       ...(cursor ? { after: cursor } : {}),
-      orderBy: { published: "desc", id: "desc" },
-      exclude: ["feedId"],
-      populate: ["enclosuresCollection", "articleStates"],
+      orderBy: { published: 'desc', id: 'desc' },
+      populate: ['enclosuresCollection', 'articleStates', 'feedId'],
     });
 
     return {
@@ -65,6 +66,7 @@ export class ArticleService {
         return {
           ...wrap(i).toObject(),
           ...states,
+          feedTitle: i.feedId.title,
           published: i.published?.toISOString(),
           updated: i.updated?.toISOString(),
         };
@@ -80,7 +82,7 @@ export class ArticleService {
     if (feedId) {
       const feedIds = await this.getFeedsForUser(userId);
       if (!feedIds.includes(feedId)) {
-        throw new NotFound("Feed not found or subscribed to");
+        throw new NotFound('Feed not found or subscribed to');
       }
       feedFilter = { feedId };
     } else {
@@ -104,13 +106,14 @@ export class ArticleService {
           },
         },
       },
-      { populate: ["enclosuresCollection", "articleStates"] },
+      { populate: ['enclosuresCollection', 'articleStates', 'feedId'] },
     );
     const states = article.articleStates.find((c) => c.userId.id === userId);
 
     return {
       ...wrap(article).toObject(),
       ...states,
+      feedTitle: article.feedId.title,
       published: article.published?.toISOString(),
       updated: article.updated?.toISOString(),
     };

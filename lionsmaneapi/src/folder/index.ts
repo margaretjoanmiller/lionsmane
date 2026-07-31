@@ -1,16 +1,17 @@
-import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
-import { z } from "zod";
-import { createFolderSchema, folderSchema, updateFolderSchema } from "./model";
+import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
+import { z } from 'zod';
+
+import { createFolderSchema, folderSchema, updateFolderSchema } from './model';
 
 export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
-    "",
+    '',
     {
       schema: {
         response: {
           200: z.array(folderSchema),
         },
-        tags: ["folder"],
+        tags: ['folder'],
       },
     },
     async (req, reply) => {
@@ -20,7 +21,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -29,7 +30,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: folderSchema,
         },
-        tags: ["folder"],
+        tags: ['folder'],
       },
     },
     async (req, reply) => {
@@ -39,14 +40,14 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.post(
-    "",
+    '',
     {
       schema: {
         body: createFolderSchema,
         response: {
           201: folderSchema,
         },
-        tags: ["folder"],
+        tags: ['folder'],
       },
     },
     async (req, reply) => {
@@ -57,7 +58,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.patch(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -67,7 +68,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: folderSchema,
         },
-        tags: ["folder"],
+        tags: ['folder'],
       },
     },
     async (req, reply) => {
@@ -82,7 +83,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.delete(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -91,7 +92,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           204: z.undefined(),
         },
-        tags: ["folder"],
+        tags: ['folder'],
       },
     },
     async (req, reply) => {

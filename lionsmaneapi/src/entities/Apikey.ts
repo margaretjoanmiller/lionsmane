@@ -1,6 +1,6 @@
-import { defineEntity, p } from "@mikro-orm/core";
+import { defineEntity, p } from '@mikro-orm/core';
 
-import { Base } from "./Base.js";
+import { Base } from './Base.js';
 
 export class Apikey extends Base {
   id!: string;
@@ -31,25 +31,25 @@ export const ApikeySchema = defineEntity({
   class: Apikey,
   properties: {
     id: p.text().primary(),
-    configId: p.text().name("configId"),
+    configId: p.text().name('configId'),
     name: p.text().nullable(),
     start: p.text().nullable(),
-    referenceId: p.text().name("referenceId"),
+    referenceId: p.text().name('referenceId'),
     prefix: p.text().nullable(),
-    key: p.text().index("apikey_key_idx"),
-    refillInterval: p.integer().name("refillInterval").nullable(),
-    refillAmount: p.integer().name("refillAmount").nullable(),
-    lastRefillAt: p.datetime().name("lastRefillAt").nullable(),
+    key: p.text().index('apikey_key_idx'),
+    refillInterval: p.integer().name('refillInterval').nullable(),
+    refillAmount: p.integer().name('refillAmount').nullable(),
+    lastRefillAt: p.datetime().name('lastRefillAt').nullable(),
     enabled: p.boolean().nullable(),
-    rateLimitEnabled: p.boolean().name("rateLimitEnabled").nullable(),
-    rateLimitTimeWindow: p.integer().name("rateLimitTimeWindow").nullable(),
-    rateLimitMax: p.integer().name("rateLimitMax").nullable(),
-    requestCount: p.integer().name("requestCount").nullable(),
+    rateLimitEnabled: p.boolean().name('rateLimitEnabled').nullable(),
+    rateLimitTimeWindow: p.integer().name('rateLimitTimeWindow').nullable(),
+    rateLimitMax: p.integer().name('rateLimitMax').nullable(),
+    requestCount: p.integer().name('requestCount').nullable(),
     remaining: p.integer().nullable(),
-    lastRequest: p.datetime().name("lastRequest").nullable(),
-    expiresAt: p.datetime().name("expiresAt").nullable(),
-    createdAt: p.datetime().name("createdAt"),
-    updatedAt: p.datetime().name("updatedAt"),
+    lastRequest: p.datetime().name('lastRequest').nullable(),
+    expiresAt: p.datetime().name('expiresAt').nullable(),
+    createdAt: p.datetime().name('createdAt'),
+    updatedAt: p.datetime().name('updatedAt'),
     permissions: p.text().nullable(),
     metadata: p.text().nullable(),
   },

@@ -1,10 +1,12 @@
-import { type Loaded } from "@mikro-orm/core";
-import type { Services } from "@/db";
-import { Duplicate } from "@/lib/errors/duplicate";
-import type { Folder, NewFolder, UpdateFolder } from "./model";
-import type { Folders } from "@/entities/Folders";
+import { type Loaded } from '@mikro-orm/core';
 
-const serializeFolder = (folder: Loaded<Folders, "subscriptionsCollection.feed">) => ({
+import type { Services } from '@/db';
+import type { Folders } from '@/entities/Folders';
+import { Duplicate } from '@/lib/errors/duplicate';
+
+import type { Folder, NewFolder, UpdateFolder } from './model';
+
+const serializeFolder = (folder: Loaded<Folders, 'subscriptionsCollection.feed'>) => ({
   id: folder.id,
   name: folder.name,
   feeds: folder.subscriptionsCollection.map((s) => ({
@@ -32,7 +34,7 @@ export class FolderService {
       userId,
     });
 
-    if (existingFolder) throw new Duplicate("This folder already exists");
+    if (existingFolder) throw new Duplicate('This folder already exists');
 
     const folder = this.svc.folders.create({
       name: newFolder.name,
@@ -54,7 +56,7 @@ export class FolderService {
       where: {
         userId,
       },
-      populate: ["subscriptionsCollection.feed"],
+      populate: ['subscriptionsCollection.feed'],
     });
 
     return folders.map(serializeFolder);
@@ -67,7 +69,7 @@ export class FolderService {
         userId,
       },
       {
-        populate: ["subscriptionsCollection.feed"],
+        populate: ['subscriptionsCollection.feed'],
       },
     );
 
@@ -81,7 +83,7 @@ export class FolderService {
         userId,
       },
       {
-        populate: ["subscriptionsCollection.feed"],
+        populate: ['subscriptionsCollection.feed'],
       },
     );
 
@@ -112,7 +114,7 @@ export class FolderService {
 
     await this.svc.em.flush();
 
-    const loaded = await this.svc.em.populate(folder, ["subscriptionsCollection.feed"]);
+    const loaded = await this.svc.em.populate(folder, ['subscriptionsCollection.feed']);
     return serializeFolder(loaded);
   }
 
@@ -123,7 +125,7 @@ export class FolderService {
         userId,
       },
       {
-        populate: ["subscriptionsCollection"],
+        populate: ['subscriptionsCollection'],
       },
     );
 

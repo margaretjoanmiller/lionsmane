@@ -1,22 +1,22 @@
-import type { FastifyPluginAsyncZod } from "@fastify/type-provider-zod";
-import { z } from "zod";
+import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
+import { z } from 'zod';
 
-import { articleList, articleSchema, updateArticleSchema } from "./model";
+import { articleList, articleSchema, updateArticleSchema } from './model';
 
 export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
-    "",
+    '',
     {
       schema: {
         querystring: z.object({
           cursor: z.base64url().optional(),
           feedId: z.uuidv7().optional(),
-          status: z.enum(["read", "unread", "starred"]).optional(),
+          status: z.enum(['read', 'unread', 'starred']).optional(),
         }),
         response: {
           200: articleList,
         },
-        tags: ["article"],
+        tags: ['article'],
       },
     },
     async (req, reply) => {
@@ -31,7 +31,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.get(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -40,7 +40,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: articleSchema,
         },
-        tags: ["article"],
+        tags: ['article'],
       },
     },
     async (req, reply) => {
@@ -51,7 +51,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
   );
 
   fastify.patch(
-    "/:id",
+    '/:id',
     {
       schema: {
         params: z.object({
@@ -61,7 +61,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
         response: {
           200: z.unknown(),
         },
-        tags: ["article"],
+        tags: ['article'],
       },
     },
     async (req, reply) => {

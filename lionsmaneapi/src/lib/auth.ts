@@ -1,24 +1,24 @@
-import { apiKey } from "@better-auth/api-key";
-import { oauthProvider } from "@better-auth/oauth-provider";
-import { passkey } from "@better-auth/passkey";
-import { adapter as mikroOrmAdapter } from "@lubiah/better-auth-mikro-orm";
-import { betterAuth } from "better-auth";
-import { jwt, openAPI, twoFactor } from "better-auth/plugins";
+import { apiKey } from '@better-auth/api-key';
+import { oauthProvider } from '@better-auth/oauth-provider';
+import { passkey } from '@better-auth/passkey';
+import { adapter as mikroOrmAdapter } from '@lubiah/better-auth-mikro-orm';
+import { betterAuth } from 'better-auth';
+import { jwt, openAPI, twoFactor } from 'better-auth/plugins';
 
-import { initORM, type Services } from "@/db";
+import { initORM, type Services } from '@/db';
 
 function buildAuth(db: Services) {
   return betterAuth({
     database: mikroOrmAdapter(db.orm),
-    baseURL: process.env.HOST_URL || "http://localhost:4000/",
+    baseURL: process.env.HOST_URL || 'http://localhost:4000/',
     plugins: [
       jwt(),
       twoFactor(),
       passkey(),
       apiKey(),
       oauthProvider({
-        loginPage: "/sign-in",
-        consentPage: "/consent",
+        loginPage: '/sign-in',
+        consentPage: '/consent',
         silenceWarnings: { oauthAuthServerConfig: true },
       }),
       openAPI(),
@@ -26,7 +26,7 @@ function buildAuth(db: Services) {
     emailAndPassword: {
       enabled: true,
     },
-    trustedOrigins: [process.env.HOST_FE, "http://localhost:3000"],
+    trustedOrigins: [process.env.HOST_FE, 'http://localhost:3000'],
     socialProviders: {
       discord: {
         clientId: process.env.DISCORD_CLIENT_ID!,
