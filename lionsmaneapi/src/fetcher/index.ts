@@ -17,7 +17,7 @@ import type { Services } from '@/db';
 import type { Articles } from '@/entities/Articles';
 import { USER_AGENT } from '@/lib/constants';
 
-import { extractAtomImage, extractRdfImage } from './image';
+import { extractAtomImage, extractRdfImage, extractJsonImage, extractRssImage } from './image';
 
 export interface ParsedEnclosure {
   url: string;
