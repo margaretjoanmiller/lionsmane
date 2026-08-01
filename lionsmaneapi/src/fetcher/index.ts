@@ -17,6 +17,8 @@ import type { Services } from '@/db';
 import type { Articles } from '@/entities/Articles';
 import { USER_AGENT } from '@/lib/constants';
 
+import { extractAtomImage, extractRdfImage } from './image';
+
 export interface ParsedEnclosure {
   url: string;
   mimeType: string | undefined;
@@ -195,7 +197,7 @@ export function parseArticlesAtom(
           updated: i.updated || i.dcterms?.modified?.at(-1),
           categories: i.categories?.map((c) => c.label).filter(isPresent),
           authors: i.authors?.map((a) => `${a.name} <${a.email}>`).filter(isDefined),
-          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
+          image: extractAtomImage(i),
           itunes: i.itunes,
           youtube: i.yt,
           feedId,
@@ -246,7 +248,7 @@ export function parseArticlesRss(
           published: i.pubDate,
           categories: i.categories?.map((c) => c.name).filter(isPresent),
           authors: i.authors,
-          image: i.media?.contents?.find((m) => m.type === 'image')?.url,
+          image: extractRssImage(i),
           itunes: i.itunes,
           feedId,
         },
@@ -294,7 +296,7 @@ export function parseArticlesJson(
           rawContent: i.content_text,
           published: i.date_published,
           authors: i.authors?.map((a) => `${a.name} <${a.url}>`).filter(isDefined),
-          image: i.image,
+          image: extractJsonImage(i),
           feedId,
         },
         enclosures:
@@ -338,6 +340,7 @@ export function parseArticlesRdf(
             title: i.title || null,
             url: i.link,
             hash,
+            image: extractRdfImage(i),
             description: i.description,
             rawContent: i.content?.encoded,
             published: i.atom?.published,

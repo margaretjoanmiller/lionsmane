@@ -61,6 +61,13 @@ export const newArticleSchema = articleSchema
     itunes: true,
     youtube: true,
     keywords: true,
+    feedTitle: true,
+    isBlurred: true,
+    isRead: true,
+    isHidden: true,
+    isStarred: true,
+    contentWarning: true,
+    enclosuresCollection: true,
   })
   .extend({
     published: z.date().nullish(),
