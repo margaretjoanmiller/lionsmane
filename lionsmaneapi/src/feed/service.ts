@@ -78,8 +78,7 @@ export class FeedService {
           await this.svc.em.flush();
         } else {
           folder.subscriptionsCollection.add(newSub);
-
-          await this.svc.em.refresh(folder);
+          await this.svc.em.flush();
         }
       }
 
@@ -117,6 +116,7 @@ export class FeedService {
           await this.svc.em.flush();
         } else {
           folder.subscriptionsCollection.add(newSub);
+          await this.svc.em.flush();
         }
       }
 

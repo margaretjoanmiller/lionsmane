@@ -99,13 +99,13 @@ export class FolderService {
     if (updateFolder.feedIds && updateFolder.feedIds.length > 0) {
       folder.subscriptionsCollection.removeAll();
 
-      updateFolder.feedIds.forEach(async (f) => {
+      for (const f of updateFolder.feedIds) {
         const sub = await this.svc.subscriptions.findOneOrFail({
           user: userId,
           feed: f,
         });
         folder.subscriptionsCollection.add(sub);
-      });
+      }
     }
 
     if (updateFolder.name) {
