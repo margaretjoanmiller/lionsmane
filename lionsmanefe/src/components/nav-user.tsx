@@ -1,5 +1,6 @@
 'use client';
 
+import { redirect } from '@tanstack/react-router';
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -9,6 +10,7 @@ import {
   SparklesIcon,
 } from 'lucide-react';
 
+import { authClient } from '#/lib/auth-client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -69,30 +71,19 @@ export function NavUser({
                 </div>
               </DropdownMenuLabel>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SparklesIcon />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                await authClient.signOut();
+                redirect({ to: '/login' });
+              }}
+            >
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
