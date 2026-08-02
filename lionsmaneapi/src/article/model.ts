@@ -24,6 +24,26 @@ export const articleSchema = z.object({
   authors: z.array(z.string()).nullish(),
   image: z.url().nullish(),
   imageAlt: z.string().nullish(),
+  media: z
+    .array(
+      z.object({
+        url: z.url().nullish(),
+        fileSize: z.number().nullish(),
+        type: z.string().nullish(),
+        medium: z.string().nullish(),
+        isDefault: z.boolean().nullish(),
+        expression: z.string().nullish(),
+        bitrate: z.number().nullish(),
+        framerate: z.number().nullish(),
+        samplingrate: z.number().nullish(),
+        channels: z.number().nullish(),
+        duration: z.number().nullish(),
+        height: z.number().nullish(),
+        width: z.number().nullish(),
+        lang: z.string().nullish(),
+      }),
+    )
+    .nullish(),
   enclosuresCollection: z.array(
     z.object({
       url: z.url(),

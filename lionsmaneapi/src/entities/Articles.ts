@@ -1,5 +1,5 @@
 import { Cascade, defineEntity, type InferEntity, p } from '@mikro-orm/core';
-import type { ItunesNs, YtNs } from 'feedsmith';
+import type { ItunesNs, MediaNs, YtNs } from 'feedsmith';
 
 import { Base } from './Base.js';
 import { Enclosures } from './Enclosures.js';
@@ -27,6 +27,7 @@ export const ArticlesSchema = defineEntity({
     authors: p.text().array().nullable(),
     image: p.string().length(512).nullable(),
     imageAlt: p.string().name('imageAlt').length(512).nullable(),
+    media: p.json<MediaNs.Content[]>().nullable(),
     itunes: p.json<ItunesNs.Item>().nullable(),
     youtube: p.json<YtNs.Item>().nullable(),
     feedId: () => p.manyToOne(Feeds).deleteRule('cascade'),

@@ -82,11 +82,11 @@ function ArticlePage() {
           </h1>
           <h2 className="scroll-m-20 text-center text-3xl font-semibold tracking-tight first:mt-0">
             {data.isRead ? (
-              <Button asChild className="ml-2" onClick={markUnread} size="sm" variant="ghost">
+              <Button className="ml-2" onClick={markUnread} size="sm" variant="ghost">
                 <Badge variant="outline">Read</Badge>
               </Button>
             ) : (
-              <Button asChild className="ml-2" onClick={markRead} size="sm">
+              <Button className="ml-2" onClick={markRead} size="sm">
                 <Badge>Unread</Badge>
               </Button>
             )}
@@ -171,40 +171,56 @@ function ArticlePage() {
           {/*   [] */}
           {/* )} */}
 
-          {/*{data.enclosures?.map((e) => {
-            if (e.mime_type && e.mime_type !== 'application/octet-stream')
-              return (
-                <MediaPlayer>
-                  <MediaPlayerVideo>
-                    <source src={e.url} type={e.mime_type} />
-                  </MediaPlayerVideo>
-                  <MediaPlayerControls className="flex-col items-start gap-2.5">
-                    <MediaPlayerControlsOverlay />
-                    <MediaPlayerSeek />
-                    <div className="flex w-full items-center gap-2">
-                      <div className="flex flex-1 items-center gap-2">
-                        <MediaPlayerPlay />
-                        <MediaPlayerSeekBackward />
-                        <MediaPlayerSeekForward />
-                        <MediaPlayerVolume expandable />
-                        <MediaPlayerTime />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MediaPlayerPlaybackSpeed />
-                        <MediaPlayerPiP />
-                        <MediaPlayerFullscreen />
-                      </div>
-                    </div>
-                  </MediaPlayerControls>
-                </MediaPlayer>
-              );
-            return (
-              <img
-                aria-label="enclosure image did not include alt text"
-                src={e.url}
-              />
-            );
-          })}*/}
+          {data.image ? <img src={data.image!} /> : null}
+
+          {data.enclosuresCollection?.map((e) => {
+            if (e.mimeType && e.mimeType !== 'application/octet-stream')
+              if (e.mimeType.startsWith('video/')) {
+                return (
+                  <video
+                    aria-label="enclosure video did not include alt text"
+                    src={e.url}
+                    controls
+                  />
+                );
+              } else if (e.mimeType.startsWith('audio/')) {
+                return (
+                  <audio
+                    aria-label="enclosure audio did not include alt text"
+                    src={e.url}
+                    controls
+                  />
+                );
+              } else if (e.mimeType.startsWith('image/')) {
+                return <img aria-label="enclosure image did not include alt text" src={e.url} />;
+              } else {
+                return <img aria-label="enclosure image did not include alt text" src={e.url} />;
+              }
+          })}
+          {data.media?.map((e) => {
+            if (e.type && e.type !== 'application/octet-stream')
+              if (e.type.startsWith('video/')) {
+                return (
+                  <video
+                    aria-label="enclosure video did not include alt text"
+                    src={e.url!}
+                    controls
+                  />
+                );
+              } else if (e.type.startsWith('audio/')) {
+                return (
+                  <audio
+                    aria-label="enclosure audio did not include alt text"
+                    src={e.url!}
+                    controls
+                  />
+                );
+              } else if (e.type.startsWith('image/')) {
+                return <img aria-label="enclosure image did not include alt text" src={e.url!} />;
+              } else {
+                return <img aria-label="enclosure image did not include alt text" src={e.url!} />;
+              }
+          })}
         </div>
         <footer className="flex flex-col items-center pt-8">
           <a className="text-primary font-bold hover:underline" href={data.url!}>

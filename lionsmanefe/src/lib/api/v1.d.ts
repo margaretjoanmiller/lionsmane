@@ -604,6 +604,24 @@ export interface paths {
                 authors?: string[] | null;
                 image?: string | null;
                 imageAlt?: string | null;
+                media?:
+                  | {
+                      url?: string | null;
+                      fileSize?: number | null;
+                      type?: string | null;
+                      medium?: string | null;
+                      isDefault?: boolean | null;
+                      expression?: string | null;
+                      bitrate?: number | null;
+                      framerate?: number | null;
+                      samplingrate?: number | null;
+                      channels?: number | null;
+                      duration?: number | null;
+                      height?: number | null;
+                      width?: number | null;
+                      lang?: string | null;
+                    }[]
+                  | null;
                 enclosuresCollection: {
                   /** Format: uri */
                   url: string;
@@ -747,6 +765,24 @@ export interface paths {
               authors?: string[] | null;
               image?: string | null;
               imageAlt?: string | null;
+              media?:
+                | {
+                    url?: string | null;
+                    fileSize?: number | null;
+                    type?: string | null;
+                    medium?: string | null;
+                    isDefault?: boolean | null;
+                    expression?: string | null;
+                    bitrate?: number | null;
+                    framerate?: number | null;
+                    samplingrate?: number | null;
+                    channels?: number | null;
+                    duration?: number | null;
+                    height?: number | null;
+                    width?: number | null;
+                    lang?: string | null;
+                  }[]
+                | null;
               enclosuresCollection: {
                 /** Format: uri */
                 url: string;
