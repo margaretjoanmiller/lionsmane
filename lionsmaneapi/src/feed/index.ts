@@ -26,6 +26,9 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
     '',
     {
       schema: {
+        querystring: z.object({
+          foldered: z.stringbool().optional(),
+        }),
         response: {
           200: z.array(feedSchema),
         },
@@ -33,7 +36,11 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      return reply.send(await fastify.feedService.getSubscriptions(req.session?.user.id!));
+      return reply.send(
+        await fastify.feedService.getSubscriptions(req.session?.user.id!, {
+          foldered: req.query.foldered,
+        }),
+      );
     },
   );
 

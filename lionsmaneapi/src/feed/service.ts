@@ -131,10 +131,18 @@ export class FeedService {
     });
   }
 
-  async getSubscriptions(userId: string) {
+  async getSubscriptions(userId: string, options?: { foldered?: boolean | undefined }) {
+    const folderFilter =
+      options?.foldered === false
+        ? { folderId: null }
+        : options?.foldered === true
+          ? { folderId: { $ne: null } }
+          : {};
+
     const subs = await this.svc.subscriptions.find(
       {
         user: userId,
+        ...folderFilter,
       },
       {
         populate: ['feed'],

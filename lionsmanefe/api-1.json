@@ -364,6 +364,16 @@
       },
       "get": {
         "tags": ["feed"],
+        "parameters": [
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "foldered",
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response",

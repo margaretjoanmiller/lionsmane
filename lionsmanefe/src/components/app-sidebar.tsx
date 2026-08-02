@@ -26,11 +26,32 @@ import { ModeToggle } from './mode-toggle';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const feedQuery = $api.useQuery('get', '/feed', {
-    credentials: 'include',
+    params: {
+      query: {
+        foldered: false,
+      },
+    },
   });
-  const folderQuery = $api.useQuery('get', '/folder', {
-    credentials: 'include',
-  });
+
+  const folderQuery = $api.useQuery('get', '/folder');
+
+  const feedData = feedQuery.data?.map((f) => ({
+    title: f.title,
+    url: `/dash/feed/${f.id}`,
+    isActive: false,
+  }));
+
+  const folderData = folderQuery.data?.map((f) => ({
+    title: f.name,
+    url: `/dash/folder/${f.id}`,
+    isActive: false,
+    items: f.feeds.map((feed) => ({
+      title: feed.title,
+      url: `/dash/feed/${feed.id}`,
+    })),
+  }));
+
+  const ffData = feedData?.concat(folderData ?? []);
 
   const session = authClient.useSession();
   if (!session.data) {
@@ -45,21 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   if (feedQuery.data && folderQuery.data) {
-    const feedData = feedQuery.data?.map((f) => ({
-      title: f.title ?? f.url,
-      url: `/dash/feed/${f.id}`,
-    }));
-
-    const folderData = folderQuery.data?.map((f) => ({
-      title: f.name,
-      url: `/dash/folder/${f.id}`,
-      items: f.feeds.map((feed) => ({
-        title: feed.title ?? feed.url,
-        url: `/dash/feed/${feed.id}`,
-      })),
-    }));
-
-    const ffdata = feedData?.concat(folderData) ?? [];
     return (
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
@@ -67,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent>
           <NavArticles />
-          <NavMain items={ffdata} />
+          <NavMain items={ffData} />
         </SidebarContent>
         <SidebarFooter>
           <NavUser user={user} />

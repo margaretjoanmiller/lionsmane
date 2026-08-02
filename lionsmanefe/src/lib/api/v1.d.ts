@@ -13,7 +13,9 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          foldered?: boolean;
+        };
         header?: never;
         path?: never;
         cookie?: never;
