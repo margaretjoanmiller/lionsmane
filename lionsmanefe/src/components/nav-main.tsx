@@ -22,10 +22,12 @@ export function NavMain({
     url: string;
     icon?: React.ReactNode;
     isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
+    items?:
+      | {
+          title: string;
+          url: string;
+        }[]
+      | undefined;
   }[];
 }) {
   return (

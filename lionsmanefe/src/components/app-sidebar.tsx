@@ -1,12 +1,3 @@
-import {
-  BookOpenIcon,
-  BotIcon,
-  FrameIcon,
-  MapIcon,
-  PieChartIcon,
-  Settings2Icon,
-  TerminalSquareIcon,
-} from 'lucide-react';
 import type * as React from 'react';
 
 import { authClient } from '#/lib/auth-client.ts';
@@ -36,7 +27,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const folderQuery = $api.useQuery('get', '/folder');
 
   const feedData = feedQuery.data?.map((f) => ({
-    title: f.title,
+    title: f.title || f.url,
     url: `/dash/feed/${f.id}`,
     isActive: false,
   }));
@@ -46,7 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     url: `/dash/folder/${f.id}`,
     isActive: false,
     items: f.feeds.map((feed) => ({
-      title: feed.title,
+      title: feed.title || feed.url,
       url: `/dash/feed/${feed.id}`,
     })),
   }));
@@ -65,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       session.data.user.image ?? 'https://upload.wikimedia.org/wikipedia/en/9/97/Doc_Brown.JPG',
   };
 
-  if (feedQuery.data && folderQuery.data) {
+  if (ffData) {
     return (
       <Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
