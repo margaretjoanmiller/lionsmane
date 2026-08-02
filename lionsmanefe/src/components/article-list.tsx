@@ -43,7 +43,6 @@ export default function ArticleList({ feedId, status }: ArticleListProps) {
           ...(status ? { status } : {}),
         },
       },
-      credentials: 'include',
     },
     {
       initialPageParam: null,

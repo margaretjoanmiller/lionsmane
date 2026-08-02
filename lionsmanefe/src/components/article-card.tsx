@@ -51,7 +51,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
 
   function markStarred() {
     mutate({
-      credentials: 'include',
       params: {
         path: {
           id: article.id,
@@ -84,7 +83,6 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           <Link
             onClick={() =>
               mutate({
-                credentials: 'include',
                 params: {
                   path: {
                     id: article.id,

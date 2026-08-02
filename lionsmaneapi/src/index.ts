@@ -118,7 +118,7 @@ fastify.setErrorHandler((error, req, res) => {
 // Configure CORS policies
 fastify.register(fastifyCors, {
   origin: fastify.config.CLIENT_ORIGIN,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
   maxAge: 86400,

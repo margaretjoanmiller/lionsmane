@@ -26,7 +26,6 @@ function ArticlePage() {
   const articleId = Route.useParams().articleId;
   const queryClient = useQueryClient();
   const { data } = $api.useSuspenseQuery('get', '/article/{id}', {
-    credentials: 'include',
     params: {
       path: {
         id: articleId,
@@ -44,7 +43,6 @@ function ArticlePage() {
 
   function markUnread() {
     mutate({
-      credentials: 'include',
       params: {
         path: { id: data.id },
       },
@@ -57,7 +55,6 @@ function ArticlePage() {
 
   function markRead() {
     mutate({
-      credentials: 'include',
       params: {
         path: { id: data.id },
       },
@@ -94,7 +91,6 @@ function ArticlePage() {
               <Button
                 onClick={() =>
                   mutate({
-                    credentials: 'include',
                     params: {
                       path: {
                         id: data.id,
@@ -116,7 +112,6 @@ function ArticlePage() {
               <Button
                 onClick={() =>
                   mutate({
-                    credentials: 'include',
                     params: {
                       path: {
                         id: data.id,
