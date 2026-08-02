@@ -26,16 +26,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const folderQuery = $api.useQuery('get', '/folder');
 
   const feedData = feedQuery.data?.map((f) => ({
+    id: f.id,
     title: f.title || f.url,
     url: `/dash/feed/${f.id}`,
     isActive: false,
   }));
 
   const folderData = folderQuery.data?.map((f) => ({
+    id: f.id,
     title: f.name,
     url: `/dash/folder/${f.id}`,
     isActive: false,
     items: f.feeds.map((feed) => ({
+      id: feed.id,
       title: feed.title || feed.url,
       url: `/dash/feed/${feed.id}`,
     })),
