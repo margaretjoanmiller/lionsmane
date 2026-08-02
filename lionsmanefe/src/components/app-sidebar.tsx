@@ -1,7 +1,6 @@
 import type * as React from 'react';
 
 import { authClient } from '#/lib/auth-client.ts';
-import { NavArticles } from '@/components/nav-articles';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -63,7 +62,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <ModeToggle />
         </SidebarHeader>
         <SidebarContent>
-          <NavArticles />
           <NavMain items={ffData} />
         </SidebarContent>
         <SidebarFooter>
@@ -78,9 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <ModeToggle />
         </SidebarHeader>
-        <SidebarContent>
-          <NavArticles />
-        </SidebarContent>
+        <SidebarContent></SidebarContent>
         <SidebarFooter>
           <NavUser user={user} />
         </SidebarFooter>

@@ -2,6 +2,7 @@ import DesertIcon from '~icons/twemoji/desert';
 
 import { $api } from '../lib/api';
 import { ArticleCard } from './article-card';
+import { ArticleFilterBar } from './article-filter-bar';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from './ui/empty';
@@ -66,19 +67,23 @@ export default function ArticleList({ feedId, status }: ArticleListProps) {
 
   if (allArticles.length === 0) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <DesertIcon height="1em" />
-          </EmptyMedia>
-          <EmptyTitle>No articles found</EmptyTitle>
-        </EmptyHeader>
-      </Empty>
+      <>
+        <ArticleFilterBar feedId={feedId} status={status} />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <DesertIcon height="1em" />
+            </EmptyMedia>
+            <EmptyTitle>No articles found</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
+      </>
     );
   }
 
   return (
     <>
+      <ArticleFilterBar feedId={feedId} status={status} />
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         {allArticles.map((article) => (
           <ArticleCard article={article} key={article.id} />
