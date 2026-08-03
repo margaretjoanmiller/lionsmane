@@ -5,6 +5,7 @@ import SolarStarBold from '~icons/solar/star-bold';
 import SolarStarLinear from '~icons/solar/star-linear';
 
 import { $api } from '#/lib/api/index.ts';
+import { BadgeOverflow } from '@/components/badge-overflow';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
@@ -216,11 +217,7 @@ function ArticlePage() {
             Original article
           </a>
           <div className="grid-flow-row pt-2">
-            {/* <BadgeOverflow */}
-            {/*   items={data.categories} */}
-            {/*   lineCount={2} */}
-            {/*   renderBadge={(_, label) => <Badge>{label}</Badge>} */}
-            {/* /> */}
+            {data.categories && <BadgeOverflow items={data.categories} />}
           </div>
         </footer>
       </div>
