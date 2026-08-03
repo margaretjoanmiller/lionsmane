@@ -13,16 +13,6 @@ export const Route = createFileRoute('/dash/$articleId')({
 });
 
 function ArticlePage() {
-  // const { data: session } = authClient.useSession();
-  // const hasReadeckKey = usePrefStore((state) => state.hasReadeckKey);
-  // const setReadeckkey = usePrefStore((state) => state.setToTrue);
-  // const unsetReadeckkey = usePrefStore((state) => state.setToFalse);
-  // if (session?.user.hasReadeckKey === true) {
-  //   setReadeckkey();
-  // } else {
-  //   unsetReadeckkey();
-  // }
-
   const articleId = Route.useParams().articleId;
   const queryClient = useQueryClient();
   const { data } = $api.useSuspenseQuery('get', '/article/{id}', {
@@ -156,15 +146,19 @@ function ArticlePage() {
           }
         </div>
         <div className="flex flex-col items-center">
-          {/* {data.youtube ? ( */}
-          {/*   <ReactPlayer */}
-          {/*     controls */}
-          {/*     src={data.url!} */}
-          {/*     style={{ aspectRatio: '16/9', height: 'auto', width: '100%' }} */}
-          {/*   /> */}
-          {/* ) : ( */}
-          {/*   [] */}
-          {/* )} */}
+          {data.youtube ? (
+            <iframe
+              className="relative overflow-hidden"
+              width="853"
+              height="480"
+              src={`https://www.youtube.com/embed/${data.youtube.videoId}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Embedded youtube"
+            />
+          ) : (
+            []
+          )}
 
           {data.image ? <img src={data.image!} /> : null}
 
