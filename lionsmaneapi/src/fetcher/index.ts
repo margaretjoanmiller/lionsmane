@@ -1,10 +1,13 @@
 import { createHash } from 'node:crypto';
+import dns from 'node:dns/promises';
+import { isIP } from 'node:net';
 
 import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import { Readability } from '@mozilla/readability';
 import { isAfter, subWeeks } from 'date-fns';
 import createDomPurify, { type WindowLike } from 'dompurify';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
+import ipaddr from 'ipaddr.js';
 import { JSDOM } from 'jsdom';
 import ky, { HTTPError, type KyResponse } from 'ky';
 import { pipe, find, map } from 'remeda';
@@ -30,6 +33,66 @@ export interface ParsedItem {
   enclosures: Array<ParsedEnclosure>;
 }
 
+async function dnsCheck(url: URL) {
+  const hostname = url.hostname.replace(/^\[|\]$/g, '');
+
+  const addresses = await dns.lookup(hostname, {
+    all: true,
+    verbatim: true,
+  });
+
+  addresses.forEach((a) => {
+    const address = ipaddr.parse(a.address);
+    const range = address.range();
+
+    if (
+      ['private', 'loopback', 'linkLocal', 'unspecified', 'multicast', 'reserved'].includes(range)
+    ) {
+      throw new Error('Blocked address');
+    }
+  });
+}
+
+export async function safeFetch(
+  url: string,
+  etagHeader?: string | null,
+  lastModified?: string | null,
+): Promise<KyResponse> {
+  try {
+    const urlObj = new URL(url);
+    if (!['http:', 'https:'].includes(urlObj.protocol)) {
+      throw new Error('Only HTTP(S) feeds are supported');
+    }
+
+    if (urlObj.username || urlObj.password) {
+      throw new Error('Credentials are not allowed');
+    }
+
+    const hostname = urlObj.hostname.replace(/^\[|\]$/g, '');
+
+    if (isIP(hostname) !== 0) {
+      throw new Error('IP-address feeds are not supported');
+    }
+    await dnsCheck(urlObj);
+
+    return await ky.get(url, {
+      headers: {
+        'User-Agent': USER_AGENT,
+        ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
+        ...(lastModified ? { 'If-Modified-Since': lastModified } : {}),
+      },
+      timeout: 5000,
+      retry: 5,
+      redirect: 'manual',
+    });
+  } catch (err) {
+    if (err instanceof HTTPError && err.response.status === 304) {
+      return err.response;
+    }
+    throw err;
+  }
+}
+
 export class Fetcher {
   constructor(private svc: Services) {}
 
@@ -38,7 +101,7 @@ export class Fetcher {
       id: feedId,
     });
 
-    const feedXml = await this.fetchFeed(feed.url, feed.etagHeader);
+    const feedXml = await safeFetch(feed.url, feed.etagHeader);
 
     if (feedXml.status === 304) {
       feed.lastChecked = new Date();
@@ -107,29 +170,6 @@ export class Fetcher {
     }
 
     return artEntities;
-  }
-
-  private async fetchFeed(
-    url: string,
-    etagHeader?: string | null,
-    lastModified?: string | null,
-  ): Promise<KyResponse> {
-    try {
-      return await ky.get(url, {
-        headers: {
-          'User-Agent': USER_AGENT,
-          ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
-          ...(lastModified ? { 'If-Modified-Since': lastModified } : {}),
-        },
-        timeout: 5000,
-        retry: 5,
-      });
-    } catch (err) {
-      if (err instanceof HTTPError && err.response.status === 304) {
-        return err.response;
-      }
-      throw err;
-    }
   }
 
   private async filterExisting(

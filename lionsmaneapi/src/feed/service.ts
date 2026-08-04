@@ -1,14 +1,13 @@
 import { wrap, type Loaded } from '@mikro-orm/core';
 import { subMonths } from 'date-fns';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
-import ky from 'ky';
 import { isDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 
 import { feedQueue } from '@/bull/queue';
 import type { Services } from '@/db';
 import type { Subscriptions } from '@/entities/Subscriptions';
-import { USER_AGENT } from '@/lib/constants';
+import { safeFetch } from '@/fetcher';
 import { Duplicate } from '@/lib/errors/duplicate';
 import { Unknown } from '@/lib/errors/unknown';
 
@@ -203,11 +202,7 @@ export class FeedService {
   async normalizeAndFetchFeed(url: string) {
     const urlObj = new URL(url);
 
-    const resp = await ky.get(urlObj, {
-      headers: {
-        'User-Agent': USER_AGENT,
-      },
-    });
+    const resp = await safeFetch(urlObj.toString());
 
     if (resp.status !== 200) {
       throw new Unknown('Could not fetch submitted url');
