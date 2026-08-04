@@ -217,8 +217,10 @@ function ArticlePage() {
             Original article
           </a>
           <div className="grid-flow-row pt-2">
-            //TODO: dynamic width
-            {data.categories && <BadgeOverflow items={data.categories} width={4} />}
+            {
+              //TODO: dynamic width
+              data.categories && <BadgeOverflow items={data.categories} width={4} />
+            }
           </div>
         </footer>
       </div>

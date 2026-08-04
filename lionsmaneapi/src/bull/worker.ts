@@ -23,6 +23,8 @@ const feedWorker = new Worker<FeedJob>(
     const svc = forkServices(db.orm);
     const fetcher = new Fetcher(svc);
 
+    const controller = new AbortController();
+
     await job.log(`Processing job ${job.id} of type ${job.data.type}`);
     return await match(job.data)
       .with(
@@ -30,7 +32,7 @@ const feedWorker = new Worker<FeedJob>(
           type: 'fetch',
         },
         async ({ feedId }) => {
-          await fetcher.extractArticlesFromFeed(feedId);
+          await fetcher.extractArticlesFromFeed(feedId, controller);
         },
       )
       .with(

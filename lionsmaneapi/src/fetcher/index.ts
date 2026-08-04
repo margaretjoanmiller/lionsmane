@@ -55,6 +55,7 @@ async function dnsCheck(url: URL) {
 
 export async function safeFetch(
   url: string,
+  controller: AbortController,
   etagHeader?: string | null,
   lastModified?: string | null,
 ): Promise<{ text: string | 'Not-Modified'; etag?: string | null; lastModified?: string | null }> {
@@ -75,8 +76,6 @@ export async function safeFetch(
     }
     await dnsCheck(urlObj);
 
-    const controller = new AbortController();
-
     const resp = await ky.get(url, {
       headers: {
         'User-Agent': USER_AGENT,
@@ -85,7 +84,7 @@ export async function safeFetch(
       },
       timeout: 5000,
       retry: 5,
-      redirect: 'manual',
+      // redirect: 'manual',
       signal: controller.signal,
     });
     const stream = resp.body?.getReader();
@@ -122,12 +121,12 @@ export async function safeFetch(
 export class Fetcher {
   constructor(private svc: Services) {}
 
-  async extractArticlesFromFeed(feedId: string) {
+  async extractArticlesFromFeed(feedId: string, controller: AbortController) {
     const feed = await this.svc.feeds.findOneOrFail({
       id: feedId,
     });
 
-    const feedXml = await safeFetch(feed.url, feed.etagHeader);
+    const feedXml = await safeFetch(feed.url, controller, feed.etagHeader, feed.lastModifiedHeader);
 
     if (feedXml.text === 'Not-Modified') {
       feed.lastChecked = new Date();

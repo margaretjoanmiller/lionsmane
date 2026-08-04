@@ -201,9 +201,11 @@ export class FeedService {
   async normalizeAndFetchFeed(url: string) {
     const urlObj = new URL(url);
 
-    const resp = await safeFetch(urlObj.toString());
+    const controller = new AbortController();
 
-    const parsedFeed = parseFeed(resp, {
+    const resp = await safeFetch(urlObj.toString(), controller);
+
+    const parsedFeed = parseFeed(resp.text, {
       parseDateFn: (raw) => new Date(raw),
     });
 
