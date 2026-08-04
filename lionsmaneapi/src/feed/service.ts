@@ -9,7 +9,6 @@ import type { Services } from '@/db';
 import type { Subscriptions } from '@/entities/Subscriptions';
 import { safeFetch } from '@/fetcher';
 import { Duplicate } from '@/lib/errors/duplicate';
-import { Unknown } from '@/lib/errors/unknown';
 
 import type { FeedOut, NewFeed } from './model';
 
@@ -204,11 +203,7 @@ export class FeedService {
 
     const resp = await safeFetch(urlObj.toString());
 
-    if (resp.status !== 200) {
-      throw new Unknown('Could not fetch submitted url');
-    }
-
-    const parsedFeed = parseFeed(await resp.text(), {
+    const parsedFeed = parseFeed(resp, {
       parseDateFn: (raw) => new Date(raw),
     });
 

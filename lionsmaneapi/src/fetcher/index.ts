@@ -9,7 +9,7 @@ import createDomPurify, { type WindowLike } from 'dompurify';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
 import ipaddr from 'ipaddr.js';
 import { JSDOM } from 'jsdom';
-import ky, { HTTPError, type KyResponse } from 'ky';
+import ky, { HTTPError } from 'ky';
 import { pipe, find, map } from 'remeda';
 import { isDefined, isPresent, isPropertyDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
@@ -57,7 +57,7 @@ export async function safeFetch(
   url: string,
   etagHeader?: string | null,
   lastModified?: string | null,
-): Promise<KyResponse> {
+): Promise<{ text: string | 'Not-Modified'; etag?: string | null; lastModified?: string | null }> {
   try {
     const urlObj = new URL(url);
     if (!['http:', 'https:'].includes(urlObj.protocol)) {
@@ -75,7 +75,9 @@ export async function safeFetch(
     }
     await dnsCheck(urlObj);
 
-    return await ky.get(url, {
+    const controller = new AbortController();
+
+    const resp = await ky.get(url, {
       headers: {
         'User-Agent': USER_AGENT,
         ...(etagHeader ? { 'If-None-Match': etagHeader } : {}),
@@ -84,10 +86,34 @@ export async function safeFetch(
       timeout: 5000,
       retry: 5,
       redirect: 'manual',
+      signal: controller.signal,
     });
+    const stream = resp.body?.getReader();
+    if (!stream) {
+      throw new Error('No body stream');
+    }
+    const len = resp.headers.get('Content-Length');
+    if (len && Number(len) > 20971520) throw new Error('Content-Length too large');
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    while (true) {
+      const { done, value } = await stream.read();
+      if (done) break;
+      total += value.length;
+      if (total > 20971520) {
+        controller.abort();
+        throw new Error('Content-Length too large');
+      }
+      chunks.push(value);
+    }
+    return {
+      text: Buffer.concat(chunks).toString(),
+      etag: resp.headers.get('ETag'),
+      lastModified: resp.headers.get('Last-Modified'),
+    };
   } catch (err) {
     if (err instanceof HTTPError && err.response.status === 304) {
-      return err.response;
+      return { text: 'Not-Modified' as const, etag: null, lastModified: null };
     }
     throw err;
   }
@@ -103,14 +129,14 @@ export class Fetcher {
 
     const feedXml = await safeFetch(feed.url, feed.etagHeader);
 
-    if (feedXml.status === 304) {
+    if (feedXml.text === 'Not-Modified') {
       feed.lastChecked = new Date();
       await this.svc.em.flush();
       return [];
     }
 
-    const feedEtag = feedXml.headers.get('ETag');
-    const feedLastModified = feedXml.headers.get('Last-Modified');
+    const feedEtag = feedXml.etag;
+    const feedLastModified = feedXml.lastModified;
 
     if (feedEtag) {
       feed.etagHeader = feedEtag;
@@ -119,7 +145,7 @@ export class Fetcher {
       feed.lastModifiedHeader = feedLastModified;
     }
 
-    const parsedFeed = parseFeed(await feedXml.text(), {
+    const parsedFeed = parseFeed(feedXml.text, {
       parseDateFn: (raw) => new Date(raw),
     });
 
