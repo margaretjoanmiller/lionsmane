@@ -1,36 +1,39 @@
-import { wrap, type Loaded } from '@mikro-orm/core';
 import { subMonths } from 'date-fns';
+import { and, eq } from 'drizzle-orm';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
-import { isDefined } from 'ts-extras';
+import { isDefined, isPresent } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 
 import { feedQueue } from '@/bull/queue';
-import type { Subscriptions } from '@/entities/Subscriptions';
+import { db } from '@/db';
 import { safeFetch } from '@/fetcher';
 import { Duplicate } from '@/lib/errors/duplicate';
+import { NotFound } from '@/lib/errors/notfound';
 
+import { feeds, folders, subscriptions } from '../../drizzle/schema';
 import type { FeedOut, NewFeed } from './model';
 
-const serializeFeed = (sub: Loaded<Subscriptions, 'feed'>) => ({
-  ...wrap(sub.feed).toObject(),
-  lastChecked: sub.feed.lastChecked.toISOString(),
-  updated: sub.feed.updated?.toISOString(),
-});
-export abstract class FeedService {
-  async newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
-    const user = await this.svc.users.findOneOrFail({
-      id: userId,
-    });
+function serializeFeed(feed: typeof feeds.$inferSelect): FeedOut {
+  return {
+    ...feed,
+    lastChecked: feed.lastChecked.toISOString(),
+    updated: feed.updated?.toISOString(),
+  };
+}
 
-    const existing = await this.svc.feeds.findOne({
-      url: new URL(nf.url).toString(),
+export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
+  const result = await db.transaction(async (tx) => {
+    const existing = await tx.query.feeds.findFirst({
+      where: {
+        url: new URL(nf.url).toString(),
+      },
     });
 
     if (existing) {
-      const existingSub = await this.svc.subscriptions.findAll({
+      const existingSub = await tx.query.subscriptions.findFirst({
         where: {
-          user,
-          feed: existing,
+          userId,
+          feedId: existing.id,
         },
       });
 
@@ -40,37 +43,54 @@ export abstract class FeedService {
     }
 
     if (!existing) {
-      const parsedFeed = await this.normalizeAndFetchFeed(nf.url);
+      const parsedFeed = await normalizeAndFetchFeed(nf.url);
 
-      const newFeed = this.svc.feeds.create({
-        ...parsedFeed,
-        categories: [],
-        itunes: null,
-        youtube: null,
-      });
+      const [newFeed] = await tx.insert(feeds).values(parsedFeed).returning();
 
-      const newSub = this.svc.subscriptions.create({
-        feed: newFeed,
-        user,
-      });
-      await this.svc.em.flush();
+      if (!newFeed) {
+        throw new Error('Failed to create feed');
+      }
+
+      await tx
+        .insert(subscriptions)
+        .values({
+          feedId: newFeed.id,
+          userId,
+        })
+        .returning();
 
       if (nf.folderName) {
-        const folder = await this.svc.folders.findOne({
-          name: nf.folderName,
-          userId,
+        const folder = await tx.query.folders.findFirst({
+          where: {
+            name: nf.folderName,
+            userId,
+          },
         });
 
         if (!folder) {
-          this.svc.folders.create({
-            name: nf.folderName,
-            userId,
-            subscriptionsCollection: [newSub],
-          });
-          await this.svc.em.flush();
+          const [newFolder] = await tx
+            .insert(folders)
+            .values({
+              name: nf.folderName,
+              userId,
+            })
+            .returning();
+
+          if (newFolder) {
+            await tx
+              .update(subscriptions)
+              .set({
+                folderId: newFolder.id,
+              })
+              .where(eq(subscriptions.feedId, newFeed.id));
+          }
         } else {
-          folder.subscriptionsCollection.add(newSub);
-          await this.svc.em.flush();
+          await tx
+            .update(subscriptions)
+            .set({
+              folderId: folder.id,
+            })
+            .where(eq(subscriptions.feedId, newFeed.id));
         }
       }
 
@@ -85,171 +105,225 @@ export abstract class FeedService {
         },
       );
 
-      return serializeFeed(newSub);
+      return serializeFeed(newFeed);
     } else {
-      const newSub = this.svc.subscriptions.create({
-        feed: existing,
-        user,
-      });
-      await this.svc.em.flush();
+      await tx
+        .insert(subscriptions)
+        .values({
+          feedId: existing.id,
+          userId,
+        })
+        .returning();
 
       if (nf.folderName) {
-        const folder = await this.svc.folders.findOne({
-          name: nf.folderName,
-          userId,
+        const folder = await tx.query.folders.findFirst({
+          where: {
+            name: nf.folderName,
+            userId,
+          },
         });
 
         if (!folder) {
-          this.svc.folders.create({
-            name: nf.folderName,
-            userId,
-            subscriptionsCollection: [newSub],
-          });
-          await this.svc.em.flush();
+          const [newFolder] = await tx
+            .insert(folders)
+            .values({
+              name: nf.folderName,
+              userId,
+            })
+            .returning();
+
+          if (newFolder) {
+            await tx
+              .update(subscriptions)
+              .set({
+                folderId: newFolder.id,
+              })
+              .where(eq(subscriptions.feedId, existing.id));
+          }
         } else {
-          folder.subscriptionsCollection.add(newSub);
-          await this.svc.em.flush();
+          await tx
+            .update(subscriptions)
+            .set({
+              folderId: folder.id,
+            })
+            .where(eq(subscriptions.feedId, existing.id));
         }
       }
-
-      return serializeFeed(newSub);
+      return serializeFeed(existing);
     }
-  }
+  });
+  return result;
+}
 
-  async deleteSubscription(feedId: string, userId: string) {
-    await this.svc.subscriptions.nativeDelete({
-      feed: feedId,
-      user: userId,
+export async function deleteSubscription(feedId: string, userId: string) {
+  await db
+    .delete(subscriptions)
+    .where(and(eq(subscriptions.feedId, feedId), eq(subscriptions.userId, userId)));
+}
+
+export async function getSubscriptions(
+  userId: string,
+  options?: { foldered?: boolean | undefined },
+) {
+  if (options?.foldered) {
+    const subs = await db.query.subscriptions.findMany({
+      where: {
+        userId,
+        ne: { folderId: null },
+      },
+      with: {
+        feed: true,
+      },
     });
+    return subs.map((sub) => serializeFeed(sub.feed!));
+  } else {
+    const subs = await db.query.subscriptions.findMany({
+      where: {
+        userId,
+      },
+      with: {
+        feed: true,
+      },
+    });
+    return subs.map((sub) => serializeFeed(sub.feed!));
+  }
+}
+
+export async function getSubscription(feedId: string, userId: string): Promise<FeedOut> {
+  const sub = await db.query.subscriptions.findFirst({
+    where: {
+      feedId,
+      userId,
+    },
+    with: {
+      feed: true,
+    },
+  });
+  if (!sub) {
+    throw new NotFound('Subscription not found');
   }
 
-  async getSubscriptions(userId: string, options?: { foldered?: boolean | undefined }) {
-    const folderFilter =
-      options?.foldered === false
-        ? { folderId: null }
-        : options?.foldered === true
-          ? { folderId: { $ne: null } }
-          : {};
+  return serializeFeed(sub.feed!);
+}
 
-    const subs = await this.svc.subscriptions.find(
-      {
-        user: userId,
-        ...folderFilter,
-      },
-      {
-        populate: ['feed'],
-      },
-    );
-    return subs.map(serializeFeed);
+export async function updateFeed(feedId: string, userId: string, folderName: string | null) {
+  const sub = await db.query.subscriptions.findFirst({
+    where: {
+      feedId,
+      userId,
+    },
+    with: {
+      feed: true,
+    },
+  });
+  if (!sub) {
+    throw new NotFound('Subscription not found');
   }
 
-  async getSubscription(feedId: string, userId: string): Promise<FeedOut> {
-    const sub = await this.svc.subscriptions.findOneOrFail(
-      {
-        user: userId,
-        feed: feedId,
-      },
-      { populate: ['feed'] },
-    );
-
-    return serializeFeed(sub);
-  }
-
-  async updateFeed(feedId: string, userId: string, folderName: string | null) {
-    const sub = await this.svc.subscriptions.findOneOrFail(
-      {
-        feed: feedId,
-        user: userId,
-      },
-      { populate: ['feed'] },
-    );
-
-    if (folderName) {
-      const folder = await this.svc.folders.findOne({
+  if (folderName) {
+    const folder = await db.query.folders.findFirst({
+      where: {
         name: folderName,
         userId,
-      });
-
-      if (folder) {
-        sub.folderId = folder;
-
-        await this.svc.em.flush();
-      } else {
-        const newFolder = this.svc.folders.create({
-          name: folderName,
-          userId,
-          subscriptionsCollection: [sub],
-        });
-
-        sub.folderId = newFolder;
-        await this.svc.em.flush();
-      }
-    } else {
-      sub.folderId = null;
-      await this.svc.em.flush();
-    }
-
-    return sub.feed;
-  }
-
-  async normalizeAndFetchFeed(url: string) {
-    const urlObj = new URL(url);
-
-    const controller = new AbortController();
-
-    const resp = await safeFetch(urlObj.toString(), controller);
-
-    const parsedFeed = parseFeed(resp.text, {
-      parseDateFn: (raw) => new Date(raw),
+      },
     });
 
-    return match(parsedFeed)
-      .with({ format: 'atom', feed: P.select() }, (f) => this.parseAtomFeed(f, urlObj))
-      .with({ format: 'rss', feed: P.select() }, (f) => this.parseRssFeed(f, urlObj))
-      .with({ format: 'json', feed: P.select() }, (f) => this.parseJsonFeed(f, urlObj))
-      .with({ format: 'rdf', feed: P.select() }, (f) => this.parseRdfFeed(f, urlObj))
-      .exhaustive();
-  }
+    if (folder) {
+      await db
+        .update(subscriptions)
+        .set({
+          folderId: folder.id,
+        })
+        .where(eq(subscriptions.id, sub.id));
+    } else {
+      const [newFolder] = await db
+        .insert(folders)
+        .values({
+          name: folderName,
+          userId,
+        })
+        .returning();
 
-  parseAtomFeed(feed: Atom.Feed<Date>, url: URL) {
-    return {
-      title: feed.title?.value || url.toString(),
-      subtitle: feed.subtitle?.value,
-      url: url.toString(),
-      siteUrl: feed.links?.at(0)?.href || url.origin,
-      lastChecked: subMonths(new Date(), 3),
-      updated: feed.updated,
-      categories: feed.categories?.map((c) => c.label).filter(isDefined) || [],
-      itunes: feed.itunes,
-      youtube: feed.yt,
-      icon: feed.icon,
-    };
+      if (!newFolder) {
+        throw new Error('Failed to create folder');
+      }
+      await db
+        .update(subscriptions)
+        .set({
+          folderId: newFolder.id,
+        })
+        .where(eq(subscriptions.id, sub.id));
+    }
+  } else {
+    await db
+      .update(subscriptions)
+      .set({
+        folderId: null,
+      })
+      .where(eq(subscriptions.id, sub.id));
   }
-  parseRssFeed(feed: Rss.Feed<Date>, url: URL) {
-    return {
-      title: feed.title || url.toString(),
-      url: url.toString(),
-      siteUrl: feed.link || url.origin,
-      lastChecked: subMonths(new Date(), 3),
-      categories: feed.categories || [],
-      itunes: feed.itunes,
-    };
-  }
-  parseJsonFeed(feed: Json.Feed<Date>, url: URL) {
-    return {
-      title: feed.title || url.toString(),
-      url: url.toString(),
-      siteUrl: feed.home_page_url || url.origin,
-      lastChecked: subMonths(new Date(), 3),
-      icon: feed.icon,
-    };
-  }
-  parseRdfFeed(feed: Rdf.Feed<Date>, url: URL) {
-    return {
-      title: feed.title || url.toString(),
-      url: url.toString(),
-      siteUrl: feed.link || url.origin,
-      lastChecked: subMonths(new Date(), 3),
-    };
-  }
+  return sub.feed;
+}
+
+async function normalizeAndFetchFeed(url: string): Promise<typeof feeds.$inferInsert> {
+  const urlObj = new URL(url);
+
+  const controller = new AbortController();
+
+  const resp = await safeFetch(urlObj.toString(), controller);
+
+  const parsedFeed = parseFeed(resp.text, {
+    parseDateFn: (raw) => new Date(raw),
+  });
+
+  return match(parsedFeed)
+    .with({ format: 'atom', feed: P.select() }, (f) => parseAtomFeed(f, urlObj))
+    .with({ format: 'rss', feed: P.select() }, (f) => parseRssFeed(f, urlObj))
+    .with({ format: 'json', feed: P.select() }, (f) => parseJsonFeed(f, urlObj))
+    .with({ format: 'rdf', feed: P.select() }, (f) => parseRdfFeed(f, urlObj))
+    .exhaustive();
+}
+
+function parseAtomFeed(feed: Atom.Feed<Date>, url: URL) {
+  return {
+    title: feed.title?.value || url.toString(),
+    subtitle: feed.subtitle?.value,
+    url: url.toString(),
+    site_url: feed.links?.at(0)?.href || url.origin,
+    lastChecked: subMonths(new Date(), 3),
+    updated: feed.updated,
+    categories: feed.categories?.map((c) => c.label).filter(isDefined) || [],
+    itunes: feed.itunes,
+    youtube: feed.yt,
+    icon: feed.icon,
+  };
+}
+function parseRssFeed(feed: Rss.Feed<Date>, url: URL) {
+  return {
+    title: feed.title || url.toString(),
+    url: url.toString(),
+    site_url: feed.link || url.origin,
+    lastChecked: subMonths(new Date(), 3),
+    categories: feed.categories?.map((c) => c.name).filter(isPresent) || [],
+    itunes: feed.itunes,
+  };
+}
+function parseJsonFeed(feed: Json.Feed<Date>, url: URL) {
+  return {
+    title: feed.title || url.toString(),
+    url: url.toString(),
+    site_url: feed.home_page_url || url.origin,
+    lastChecked: subMonths(new Date(), 3),
+    categories: [],
+    icon: feed.icon,
+  };
+}
+function parseRdfFeed(feed: Rdf.Feed<Date>, url: URL) {
+  return {
+    title: feed.title || url.toString(),
+    url: url.toString(),
+    site_url: feed.link || url.origin,
+    lastChecked: subMonths(new Date(), 3),
+    categories: [],
+  };
 }

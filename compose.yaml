@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:18-alpine
+    image: groonga/pgroonga:4.0.8-alpine-18
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?error}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}

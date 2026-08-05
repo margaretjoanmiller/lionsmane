@@ -12,7 +12,6 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from '@fastify/type-provider-zod';
-import { RequestContext } from '@mikro-orm/core';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fromNodeHeaders } from 'better-auth/node';
 import Fastify from 'fastify';
@@ -20,12 +19,20 @@ import gracefulShutdown from 'fastify-graceful-shutdown';
 
 import { feedRoutes } from '@/feed';
 import authPlugin from '@/plugin/auth';
-import servicesPlugin from '@/plugin/services';
 
 import { articleRoutes } from './article';
 import { folderRoutes } from './folder';
 import { auth } from './lib/auth';
 import { errorRespSchema } from './lib/global/error.schema';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    config: {
+      PORT: number;
+      CLIENT_ORIGIN: string;
+    };
+  }
+}
 
 const envOptions = {
   schema: {
@@ -218,12 +225,7 @@ await fastify.register(ScalarApiReference, {
 await fastify.register(async (instance) => {
   await instance.register(authPlugin, { auth });
 
-  instance.get('/test', async (request, reply) => {
-    return reply.send({ message: 'Hello, World!' });
-  });
-  // instance.register(feedRoutes, { prefix: '/feed' });
-  // instance.register(articleRoutes, { prefix: '/article' });
-  // instance.register(folderRoutes, { prefix: '/folder' });
+  instance.register(feedRoutes, { prefix: '/feed' });
 });
 
 // Initialize server

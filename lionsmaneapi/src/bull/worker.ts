@@ -3,8 +3,8 @@ import { subMinutes } from 'date-fns';
 import pino from 'pino';
 import { match } from 'ts-pattern';
 
-import { forkServices, initORM } from '@/db';
-import { Fetcher } from '@/fetcher';
+import { db } from '@/db';
+import { extractArticlesFromFeed } from '@/fetcher';
 
 import { feedQueue } from './queue';
 import { redisConfig } from './redis';
@@ -13,16 +13,11 @@ import type { FeedJob } from './types/feed';
 
 const logger = pino();
 
-const db = await initORM();
-
 await startScheduler();
 
 const feedWorker = new Worker<FeedJob>(
   'feed',
   async (job) => {
-    const svc = forkServices(db.orm);
-    const fetcher = new Fetcher(svc);
-
     const controller = new AbortController();
 
     await job.log(`Processing job ${job.id} of type ${job.data.type}`);
@@ -32,7 +27,7 @@ const feedWorker = new Worker<FeedJob>(
           type: 'fetch',
         },
         async ({ feedId }) => {
-          await fetcher.extractArticlesFromFeed(feedId, controller);
+          await extractArticlesFromFeed(feedId, controller);
         },
       )
       .with(
@@ -41,14 +36,22 @@ const feedWorker = new Worker<FeedJob>(
         },
         async () => {
           const cutoff = subMinutes(new Date(), 15);
-          const feeds = await svc.feeds.find(
-            {
-              $or: [{ lastChecked: null }, { lastChecked: { $lt: cutoff } }],
+          const feeds = await db.query.feeds.findMany({
+            where: {
+              OR: [
+                {
+                  lastChecked: {
+                    eq: undefined,
+                  },
+                },
+                {
+                  lastChecked: {
+                    lt: cutoff,
+                  },
+                },
+              ],
             },
-            {
-              fields: ['id'],
-            },
-          );
+          });
 
           const feedJobs = feeds.map((f) => ({
             name: f.id,
@@ -64,10 +67,10 @@ const feedWorker = new Worker<FeedJob>(
           await feedQueue.addBulk(feedJobs);
         },
       )
-      .with({ type: 'reaper' }, async () => {
-        const deleted = await svc.feeds.nativeDelete({ subscriptions: null });
-        job.log(`${deleted} orphan feeds deleted`);
-      })
+      // .with({ type: 'reaper' }, async () => {
+      //   const deleted = await svc.feeds.nativeDelete({ subscriptions: null });
+      //   job.log(`${deleted} orphan feeds deleted`);
+      // })
       .otherwise(async () => {
         await job.log(`Unknown job type: ${job.data.type}`);
       });
@@ -106,9 +109,6 @@ const gracefulShutdown = async (signal: NodeJS.Signals) => {
   logger.info(`Received ${signal}, closing server...`);
   await feedWorker.close();
   await feedQueue.close();
-
-  await db.orm.close();
-  // Other asynchronous closings
   process.exit(0);
 };
 

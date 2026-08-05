@@ -2,6 +2,13 @@ import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
 import { feedSchema, newFeedSchema } from './model';
+import {
+  deleteSubscription,
+  getSubscription,
+  getSubscriptions,
+  newFeed,
+  updateFeed,
+} from './service';
 
 export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.post(
@@ -16,9 +23,9 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const newFeed = await fastify.feedService.newFeed(req.body, req.session?.user.id!);
+      const nf = await newFeed(req.body, req.session?.user.id!);
 
-      return reply.status(201).send(newFeed);
+      return reply.status(201).send(nf);
     },
   );
 
@@ -37,7 +44,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
     },
     async (req, reply) => {
       return reply.send(
-        await fastify.feedService.getSubscriptions(req.session?.user.id!, {
+        await getSubscriptions(req.session?.user.id!, {
           foldered: req.query.foldered,
         }),
       );
@@ -58,7 +65,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const feed = await fastify.feedService.getSubscription(req.params.id, req.session!.user.id!);
+      const feed = await getSubscription(req.params.id, req.session!.user.id!);
 
       return reply.send(feed);
     },
@@ -76,16 +83,17 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
         }),
         response: {
           200: feedSchema,
+          404: z.undefined(),
         },
         tags: ['feed'],
       },
     },
     async (req, reply) => {
-      const updated = await fastify.feedService.updateFeed(
-        req.params.id,
-        req.session?.user.id!,
-        req.body.folderName,
-      );
+      const updated = await updateFeed(req.params.id, req.session?.user.id!, req.body.folderName);
+
+      if (!updated) {
+        return reply.status(404).send();
+      }
 
       return reply.status(200).send({
         ...updated,
@@ -109,7 +117,7 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      await fastify.feedService.deleteSubscription(req.params.id, req.session?.user.id!);
+      await deleteSubscription(req.params.id, req.session?.user.id!);
 
       return reply.status(204).send();
     },

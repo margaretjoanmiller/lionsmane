@@ -2,10 +2,10 @@ import { createHash } from 'node:crypto';
 import dns from 'node:dns/promises';
 import { isIP } from 'node:net';
 
-import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import { Readability } from '@mozilla/readability';
 import { isAfter, subWeeks } from 'date-fns';
 import createDomPurify, { type WindowLike } from 'dompurify';
+import { and, eq, inArray } from 'drizzle-orm';
 import { type Atom, type Json, parseFeed, type Rdf, type Rss } from 'feedsmith';
 import ipaddr from 'ipaddr.js';
 import { JSDOM } from 'jsdom';
@@ -16,10 +16,11 @@ import { match, P } from 'ts-pattern';
 import type { Merge } from 'type-fest';
 
 import type { NewArticle } from '@/article/model';
-import type { Services } from '@/db';
-import type { Articles } from '@/entities/Articles';
+import { db } from '@/db';
 import { USER_AGENT } from '@/lib/constants';
+import { NotFound } from '@/lib/errors/notfound';
 
+import { articles, enclosures, feeds } from '../../drizzle/schema';
 import { extractAtomImage, extractRdfImage, extractJsonImage, extractRssImage } from './image';
 
 export interface ParsedEnclosure {
@@ -118,115 +119,101 @@ export async function safeFetch(
   }
 }
 
-export class Fetcher {
-  constructor(private svc: Services) {}
-
-  async extractArticlesFromFeed(feedId: string, controller: AbortController) {
-    const feed = await this.svc.feeds.findOneOrFail({
+export async function extractArticlesFromFeed(feedId: string, controller: AbortController) {
+  const feed = await db.query.feeds.findFirst({
+    where: {
       id: feedId,
-    });
+    },
+  });
+  if (!feed) {
+    throw new NotFound('Feed not found');
+  }
 
-    const feedXml = await safeFetch(feed.url, controller, feed.etagHeader, feed.lastModifiedHeader);
+  const feedXml = await safeFetch(
+    feed.url,
+    controller,
+    feed.etag_header,
+    feed.last_modified_header,
+  );
 
-    if (feedXml.text === 'Not-Modified') {
-      feed.lastChecked = new Date();
-      await this.svc.em.flush();
-      return [];
-    }
+  if (feedXml.text === 'Not-Modified') {
+    await db.update(feeds).set({ lastChecked: new Date() }).where(eq(feeds.id, feedId));
+    return [];
+  }
 
-    const feedEtag = feedXml.etag;
-    const feedLastModified = feedXml.lastModified;
+  const feedEtag = feedXml.etag;
+  const feedLastModified = feedXml.lastModified;
 
-    if (feedEtag) {
-      feed.etagHeader = feedEtag;
-    }
-    if (feedLastModified) {
-      feed.lastModifiedHeader = feedLastModified;
-    }
+  await db
+    .update(feeds)
+    .set({
+      ...(feedEtag ? { etag_header: feedEtag } : {}),
+      ...(feedLastModified ? { last_modified_header: feedLastModified } : {}),
+    })
+    .where(eq(feeds.id, feedId));
 
-    const parsedFeed = parseFeed(feedXml.text, {
-      parseDateFn: (raw) => new Date(raw),
-    });
+  const parsedFeed = parseFeed(feedXml.text, {
+    parseDateFn: (raw) => new Date(raw),
+  });
 
-    const articles = match(parsedFeed)
-      .with({ format: 'atom', feed: P.select() }, (f) =>
-        f.entries ? parseArticlesAtom(f.entries, feed.lastChecked, feed.id) : [],
-      )
-      .with({ format: 'rss', feed: P.select() }, (f) =>
-        f.items ? parseArticlesRss(f.items, feed.lastChecked, feed.id) : [],
-      )
-      .with({ format: 'json', feed: P.select() }, (f) =>
-        f.items ? parseArticlesJson(f.items, feed.lastChecked, feed.id) : [],
-      )
-      .with({ format: 'rdf', feed: P.select() }, (f) =>
-        f.items ? parseArticlesRdf(f.items, feed.lastChecked, feed.id) : [],
-      )
-      .exhaustive();
+  const arts = match(parsedFeed)
+    .with({ format: 'atom', feed: P.select() }, (f) =>
+      f.entries ? parseArticlesAtom(f.entries, feed.lastChecked, feed.id) : [],
+    )
+    .with({ format: 'rss', feed: P.select() }, (f) =>
+      f.items ? parseArticlesRss(f.items, feed.lastChecked, feed.id) : [],
+    )
+    .with({ format: 'json', feed: P.select() }, (f) =>
+      f.items ? parseArticlesJson(f.items, feed.lastChecked, feed.id) : [],
+    )
+    .with({ format: 'rdf', feed: P.select() }, (f) =>
+      f.items ? parseArticlesRdf(f.items, feed.lastChecked, feed.id) : [],
+    )
+    .exhaustive();
 
-    const artEntities: Array<Articles> = [];
+  const artEntities: Array<typeof articles.$inferSelect> = [];
 
-    const newArticles = await this.filterExisting(articles, feed.id);
+  const newArticles = await filterExisting(arts, feed.id);
 
-    for (const art of newArticles) {
-      const cleanedArt = cleanRaw(art.article);
+  for (const art of newArticles) {
+    const cleanedArt = cleanRaw(art.article);
 
-      const a = this.svc.articles.create({
+    const [a] = await db
+      .insert(articles)
+      .values({
         ...art.article,
         readableHtml: cleanedArt.htmlContent,
         readableText: cleanedArt.textContent,
         description: cleanedArt.cleanDescription,
-        enclosuresCollection: art.enclosures,
-      });
-      artEntities.push(a);
+      })
+      .returning();
+
+    if (!a) {
+      continue;
     }
-
-    feed.lastChecked = new Date();
-
-    try {
-      await this.svc.em.flush();
-    } catch (err) {
-      if (err instanceof UniqueConstraintViolationException) {
-        // A concurrent job for the same feed won the race on one hash.
-        // Fall back to per-article inserts so the rest of the batch survives.
-        await this.persistIndividually(artEntities);
-      } else {
-        throw err;
-      }
-    }
-
-    return artEntities;
+    await db
+      .insert(enclosures)
+      .values(art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId })));
+    artEntities.push(a);
   }
 
-  private async filterExisting(
-    articles: Array<ParsedItem>,
-    feedId: string,
-  ): Promise<Array<ParsedItem>> {
-    const hashes = articles.map((a) => a.article.hash).filter(isPresent);
-    if (hashes.length === 0) return [];
+  feed.lastChecked = new Date();
 
-    const existing = await this.svc.articles.find(
-      { feedId, hash: { $in: hashes } },
-      { fields: ['hash'] },
-    );
-    const existingHashes = new Set(existing.map((a) => a.hash));
+  return artEntities;
+}
 
-    return articles.filter((a) => a.article.hash && !existingHashes.has(a.article.hash));
-  }
+async function filterExisting(arts: Array<ParsedItem>, feedId: string): Promise<Array<ParsedItem>> {
+  const hashes = arts.map((a) => a.article.hash).filter(isPresent);
+  if (hashes.length === 0) return [];
 
-  private async persistIndividually(entities: Array<Articles>) {
-    for (const entity of entities) {
-      try {
-        this.svc.em.persist(entity);
-        await this.svc.em.flush();
-      } catch (err) {
-        if (err instanceof UniqueConstraintViolationException) {
-          this.svc.em.remove(entity);
-        } else {
-          throw err;
-        }
-      }
-    }
-  }
+  const existing = await db
+    .select({ hash: articles.hash })
+    .from(articles)
+    .where(and(eq(articles.feedId, feedId), inArray(articles.hash, hashes)));
+
+  return arts.filter(
+    (a) => a.article.hash && !existing.map((e) => e.hash).includes(a.article.hash),
+  );
 }
 
 export function parseArticlesAtom(
@@ -251,14 +238,22 @@ export function parseArticlesAtom(
 
       if (!hash) return null;
 
+      if (
+        i.published === undefined &&
+        i.dc?.dates?.at(0) === undefined &&
+        i.updated === undefined
+      ) {
+        return null;
+      }
+
       return {
         article: {
-          title: i.title?.value || null,
+          title: i.title?.value || undefined,
           url: i.links?.at(0)?.href,
           hash,
           description: i.summary?.value || i.dc?.descriptions?.at(0),
           rawContent: i.content?.value,
-          published: i.published || i.dc?.dates?.at(0) || i.updated,
+          published: (i.published || i.dc?.dates?.at(0) || i.updated)!,
           updated: i.updated || i.dcterms?.modified?.at(-1),
           categories: i.categories?.map((c) => c.label).filter(isPresent),
           authors: i.authors?.map((a) => `${a.name} <${a.email}>`).filter(isDefined),
@@ -306,7 +301,7 @@ export function parseArticlesRss(
 
       return {
         article: {
-          title: i.title || null,
+          title: i.title || undefined,
           url: i.link,
           hash,
           description: i.description,
@@ -356,7 +351,7 @@ export function parseArticlesJson(
 
       return {
         article: {
-          title: i.title || null,
+          title: i.title || undefined,
           url: i.url,
           hash,
           description: i.summary,
@@ -404,7 +399,7 @@ export function parseArticlesRdf(
 
         return {
           article: {
-            title: i.title || null,
+            title: i.title || undefined,
             url: i.link,
             hash,
             image: extractRdfImage(i),

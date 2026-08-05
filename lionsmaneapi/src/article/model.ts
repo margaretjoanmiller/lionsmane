@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { articles } from '../../drizzle/schema';
+
 export const articleSchema = z.object({
   id: z.uuidv7(),
   title: z.string().nullish(),
@@ -75,26 +77,7 @@ export const articleSchema = z.object({
     .nullish(),
 });
 
-export const newArticleSchema = articleSchema
-  .omit({
-    id: true,
-    itunes: true,
-    youtube: true,
-    keywords: true,
-    feedTitle: true,
-    isBlurred: true,
-    isRead: true,
-    isHidden: true,
-    isStarred: true,
-    contentWarning: true,
-    enclosuresCollection: true,
-  })
-  .extend({
-    published: z.date().nullish(),
-    updated: z.date().nullish(),
-  });
-
-export type NewArticle = z.infer<typeof newArticleSchema>;
+export type NewArticle = typeof articles.$inferInsert;
 
 export const articleList = z.object({
   articles: z.array(articleSchema),

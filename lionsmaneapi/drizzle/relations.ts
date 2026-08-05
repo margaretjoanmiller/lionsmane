@@ -22,6 +22,10 @@ export const relations = defineRelations(schema, (r) => ({
     passkeys: r.many.passkey(),
     sessions: r.many.session(),
     twoFactors: r.many.twoFactor(),
+    appliedRules: r.many.appliedRules(),
+    folders: r.many.folders(),
+    subscriptions: r.many.subscriptions(),
+    userFilters: r.many.userFilters(),
   },
   oauthAccessToken: {
     oauthClient: r.one.oauthClient({
@@ -87,6 +91,70 @@ export const relations = defineRelations(schema, (r) => ({
   twoFactor: {
     user: r.one.user({
       from: r.twoFactor.userId,
+      to: r.user.id,
+    }),
+  },
+  appliedRules: {
+    article: r.one.articles({
+      from: r.appliedRules.articleId,
+      to: r.articles.id,
+    }),
+    userFilter: r.one.userFilters({
+      from: r.appliedRules.ruleId,
+      to: r.userFilters.id,
+    }),
+    user: r.one.user({
+      from: r.appliedRules.userId,
+      to: r.user.id,
+    }),
+  },
+  articles: {
+    appliedRules: r.many.appliedRules(),
+    feed: r.one.feeds({
+      from: r.articles.feedId,
+      to: r.feeds.id,
+    }),
+    enclosures: r.many.enclosures(),
+    userArticleStates: r.many.userArticleStates({
+      from: r.articles.id,
+      to: r.userArticleStates.articleId,
+    }),
+  },
+  userFilters: {
+    appliedRules: r.many.appliedRules(),
+    user: r.one.user({
+      from: r.userFilters.userId,
+      to: r.user.id,
+    }),
+  },
+  feeds: {
+    articles: r.many.articles(),
+    subscriptions: r.many.subscriptions(),
+  },
+  enclosures: {
+    article: r.one.articles({
+      from: r.enclosures.entryId,
+      to: r.articles.minifluxId,
+    }),
+  },
+  folders: {
+    user: r.one.user({
+      from: r.folders.userId,
+      to: r.user.id,
+    }),
+    subscriptions: r.many.subscriptions(),
+  },
+  subscriptions: {
+    feed: r.one.feeds({
+      from: r.subscriptions.feedId,
+      to: r.feeds.id,
+    }),
+    folder: r.one.folders({
+      from: r.subscriptions.folderId,
+      to: r.folders.id,
+    }),
+    user: r.one.user({
+      from: r.subscriptions.userId,
       to: r.user.id,
     }),
   },
