@@ -5,7 +5,6 @@ import { isDefined } from 'ts-extras';
 import { match, P } from 'ts-pattern';
 
 import { feedQueue } from '@/bull/queue';
-import type { Services } from '@/db';
 import type { Subscriptions } from '@/entities/Subscriptions';
 import { safeFetch } from '@/fetcher';
 import { Duplicate } from '@/lib/errors/duplicate';
@@ -17,12 +16,7 @@ const serializeFeed = (sub: Loaded<Subscriptions, 'feed'>) => ({
   lastChecked: sub.feed.lastChecked.toISOString(),
   updated: sub.feed.updated?.toISOString(),
 });
-export class FeedService {
-  private svc: Services;
-  constructor({ svc }: { svc: Services }) {
-    this.svc = svc;
-  }
-
+export abstract class FeedService {
   async newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
     const user = await this.svc.users.findOneOrFail({
       id: userId,

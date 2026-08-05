@@ -23,13 +23,9 @@ import authPlugin from '@/plugin/auth';
 import servicesPlugin from '@/plugin/services';
 
 import { articleRoutes } from './article';
-import { initORM } from './db';
 import { folderRoutes } from './folder';
-import { getAuth } from './lib/auth';
+import { auth } from './lib/auth';
 import { errorRespSchema } from './lib/global/error.schema';
-
-const db = await initORM();
-const auth = await getAuth(db);
 
 const envOptions = {
   schema: {
@@ -55,11 +51,6 @@ const fastify = Fastify({
     ignoreTrailingSlash: true,
   },
 }).withTypeProvider<ZodTypeProvider>();
-
-// register request context hook
-fastify.addHook('onRequest', (_request, _reply, done) => {
-  RequestContext.create(db.em, done);
-});
 
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
@@ -222,14 +213,17 @@ await fastify.register(ScalarApiReference, {
   routePrefix: '/reference',
 });
 
-await fastify.register(servicesPlugin, { svc: db });
+// await fastify.register(servicesPlugin, { svc: db });
 
 await fastify.register(async (instance) => {
   await instance.register(authPlugin, { auth });
 
-  instance.register(feedRoutes, { prefix: '/feed' });
-  instance.register(articleRoutes, { prefix: '/article' });
-  instance.register(folderRoutes, { prefix: '/folder' });
+  instance.get('/test', async (request, reply) => {
+    return reply.send({ message: 'Hello, World!' });
+  });
+  // instance.register(feedRoutes, { prefix: '/feed' });
+  // instance.register(articleRoutes, { prefix: '/article' });
+  // instance.register(folderRoutes, { prefix: '/folder' });
 });
 
 // Initialize server
