@@ -2,6 +2,7 @@ import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
 import { createFolderSchema, folderSchema, updateFolderSchema } from './model';
+import { createFolder, deleteFolder, getFolder, getFolders, updateFolder } from './service';
 
 export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
   fastify.get(
@@ -15,7 +16,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const folders = await fastify.folderService.getFolders(req.session?.user.id!);
+      const folders = await getFolders(req.session?.user.id!);
       return reply.send(folders);
     },
   );
@@ -34,7 +35,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const folder = await fastify.folderService.getFolder(req.params.id, req.session?.user.id!);
+      const folder = await getFolder(req.params.id, req.session?.user.id!);
       return reply.send(folder);
     },
   );
@@ -51,7 +52,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const folder = await fastify.folderService.createFolder(req.session?.user.id!, req.body);
+      const folder = await createFolder(req.session?.user.id!, req.body);
 
       return reply.status(201).send(folder);
     },
@@ -72,11 +73,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      const folder = await fastify.folderService.updateFolder(
-        req.params.id,
-        req.body,
-        req.session?.user.id!,
-      );
+      const folder = await updateFolder(req.params.id, req.body, req.session?.user.id!);
 
       return reply.send(folder);
     },
@@ -96,7 +93,7 @@ export const folderRoutes: FastifyPluginAsyncZod = async (fastify) => {
       },
     },
     async (req, reply) => {
-      await fastify.folderService.deleteFolder(req.params.id, req.session?.user.id!);
+      await deleteFolder(req.params.id, req.session?.user.id!);
 
       return reply.status(204).send();
     },

@@ -1,140 +1,260 @@
-import { type Loaded } from '@mikro-orm/core';
+import { and, eq, inArray } from 'drizzle-orm';
+import { isPresent } from 'ts-extras';
 
-import type { Services } from '@/db';
-import type { Folders } from '@/entities/Folders';
+import { db } from '@/db';
 import { Duplicate } from '@/lib/errors/duplicate';
+import { NotFound } from '@/lib/errors/notfound';
 
+import { feeds, folders, subscriptions } from '../../drizzle/schema';
 import type { Folder, NewFolder, UpdateFolder } from './model';
 
-const serializeFolder = (folder: Loaded<Folders, 'subscriptionsCollection.feed'>) => ({
-  id: folder.id,
-  name: folder.name,
-  feeds: folder.subscriptionsCollection.map((s) => ({
-    ...s.feed,
-    lastChecked: s.feed.lastChecked.toISOString(),
-    updated: s.feed.updated?.toISOString(),
-  })),
-});
-export class FolderService {
-  private svc: Services;
-  constructor({ svc }: { svc: Services }) {
-    this.svc = svc;
-  }
+function serializeFolder(
+  folder: typeof folders.$inferSelect,
+  folderedFeeds: Array<typeof feeds.$inferSelect>,
+) {
+  return {
+    id: folder.id,
+    name: folder.name,
+    feeds: folderedFeeds.map((f) => ({
+      ...f,
+      lastChecked: f.lastChecked.toISOString(),
+      updated: f.updated?.toISOString(),
+    })),
+  };
+}
 
-  async createFolder(userId: string, newFolder: NewFolder) {
-    const subs = await this.svc.subscriptions.find({
-      feed: {
-        id: { $in: newFolder.feeds },
+export async function createFolder(userId: string, newFolder: NewFolder) {
+  return await db.transaction(async (tx) => {
+    const subs = await tx.query.subscriptions.findMany({
+      where: {
+        feedId: {
+          in: newFolder.feeds,
+        },
+        userId,
       },
-      user: userId,
     });
 
-    const existingFolder = await this.svc.folders.findOne({
-      name: newFolder.name,
-      userId,
+    const subIds = subs.map((s) => s.id);
+
+    const existingFolder = await tx.query.folders.findFirst({
+      where: {
+        name: newFolder.name,
+        userId,
+      },
     });
 
     if (existingFolder) throw new Duplicate('This folder already exists');
 
-    const folder = this.svc.folders.create({
-      name: newFolder.name,
-      userId,
-      subscriptionsCollection: subs,
-    });
-
-    await this.svc.em.flush();
-
-    return {
-      id: folder.id,
-      name: folder.name,
-      feeds: folder.subscriptionsCollection.map((s) => s.feed.id),
-    };
-  }
-
-  async getFolders(userId: string): Promise<Array<Folder>> {
-    const folders = await this.svc.folders.findAll({
-      where: {
+    const [folder] = await tx
+      .insert(folders)
+      .values({
+        name: newFolder.name,
         userId,
+      })
+      .returning();
+
+    if (!folder) throw new Error('Failed to create folder');
+
+    const updatedSubs = await tx
+      .update(subscriptions)
+      .set({
+        folderId: folder.id,
+      })
+      .where(inArray(subscriptions.id, subIds))
+      .returning();
+
+    const feeds = await tx.query.feeds.findMany({
+      where: {
+        id: {
+          in: updatedSubs.map((s) => s.feedId),
+        },
       },
-      populate: ['subscriptionsCollection.feed'],
     });
 
-    return folders.map(serializeFolder);
-  }
+    return serializeFolder(folder, feeds);
+  });
+}
 
-  async getFolder(folderId: string, userId: string): Promise<Folder> {
-    const folder = await this.svc.folders.findOneOrFail(
-      {
+export async function getFolders(userId: string): Promise<Array<Folder>> {
+  const folders = await db.query.folders.findMany({
+    where: {
+      userId,
+    },
+    with: {
+      subscriptions: {
+        with: {
+          feed: true,
+        },
+      },
+    },
+  });
+
+  return folders.map((f) => ({
+    ...f,
+    feeds: f.subscriptions
+      .map((s) => {
+        if (!s.feed) return null;
+        return {
+          ...s.feed,
+          lastChecked: s.feed?.lastChecked.toISOString(),
+          updated: s.feed?.updated?.toISOString(),
+        };
+      })
+      .filter(isPresent),
+  }));
+}
+
+export async function getFolder(folderId: string, userId: string): Promise<Folder> {
+  const folder = await db.query.folders.findFirst({
+    where: {
+      id: folderId,
+      userId,
+    },
+    with: {
+      subscriptions: {
+        with: {
+          feed: true,
+        },
+      },
+    },
+  });
+
+  if (!folder) throw new NotFound('Folder not found');
+
+  return {
+    ...folder,
+    feeds: folder?.subscriptions
+      .map((s) => {
+        if (!s.feed) return null;
+
+        return {
+          ...s.feed,
+          lastChecked: s.feed.lastChecked.toISOString(),
+          updated: s.feed.updated?.toISOString(),
+        };
+      })
+      .filter(isPresent),
+  };
+}
+
+export async function findByName(folderName: string, userId: string): Promise<Folder> {
+  const folder = await db.query.folders.findFirst({
+    where: {
+      name: folderName,
+      userId,
+    },
+    with: {
+      subscriptions: {
+        with: {
+          feed: true,
+        },
+      },
+    },
+  });
+
+  if (!folder) throw new NotFound('Folder not found');
+
+  return {
+    ...folder,
+    feeds: folder?.subscriptions
+      .map((s) => {
+        if (!s.feed) return null;
+
+        return {
+          ...s.feed,
+          lastChecked: s.feed.lastChecked.toISOString(),
+          updated: s.feed.updated?.toISOString(),
+        };
+      })
+      .filter(isPresent),
+  };
+}
+
+export async function updateFolder(folderId: string, updateFolder: UpdateFolder, userId: string) {
+  return await db.transaction(async (tx) => {
+    const folder = await tx.query.folders.findFirst({
+      where: {
         id: folderId,
         userId,
       },
-      {
-        populate: ['subscriptionsCollection.feed'],
-      },
-    );
-
-    return serializeFolder(folder);
-  }
-
-  async findByName(folderName: string, userId: string): Promise<Folder> {
-    const folder = await this.svc.folders.findOneOrFail(
-      {
-        name: folderName,
-        userId,
-      },
-      {
-        populate: ['subscriptionsCollection.feed'],
-      },
-    );
-
-    return serializeFolder(folder);
-  }
-
-  async updateFolder(folderId: string, updateFolder: UpdateFolder, userId: string) {
-    const folder = await this.svc.folders.findOneOrFail({
-      id: folderId,
-      userId,
     });
 
-    if (updateFolder.feedIds && updateFolder.feedIds.length > 0) {
-      folder.subscriptionsCollection.removeAll();
+    if (!folder) throw new NotFound('Folder not found');
 
-      for (const f of updateFolder.feedIds) {
-        const sub = await this.svc.subscriptions.findOneOrFail({
-          user: userId,
-          feed: f,
-        });
-        folder.subscriptionsCollection.add(sub);
-      }
+    if (updateFolder.feedIds && updateFolder.feedIds?.length > 0) {
+      await tx
+        .update(subscriptions)
+        .set({
+          folderId: folder.id,
+        })
+        .where(
+          and(eq(subscriptions.userId, userId), inArray(subscriptions.id, updateFolder.feedIds)),
+        );
     }
 
     if (updateFolder.name) {
-      folder.name = updateFolder.name;
+      await tx
+        .update(folders)
+        .set({
+          name: updateFolder.name,
+        })
+        .where(and(eq(folders.userId, userId), eq(folders.id, folder.id)));
     }
 
-    await this.svc.em.flush();
-
-    const loaded = await this.svc.em.populate(folder, ['subscriptionsCollection.feed']);
-    return serializeFolder(loaded);
-  }
-
-  async deleteFolder(folderId: string, userId: string) {
-    const folder = await this.svc.folders.findOneOrFail(
-      {
+    const updatedFolder = await tx.query.folders.findFirst({
+      where: {
         id: folderId,
         userId,
       },
-      {
-        populate: ['subscriptionsCollection'],
+      with: {
+        subscriptions: {
+          with: {
+            feed: true,
+          },
+        },
       },
-    );
+    });
 
-    for (const feed of folder.subscriptionsCollection.$) {
-      feed.folderId = null;
-    }
+    if (!updatedFolder) throw new NotFound('Folder not found');
 
-    this.svc.em.remove(folder);
+    return {
+      ...updatedFolder,
+      feeds: updatedFolder?.subscriptions
+        .map((s) => {
+          if (!s.feed) return null;
 
-    await this.svc.em.flush();
-  }
+          return {
+            ...s.feed,
+            lastChecked: s.feed.lastChecked.toISOString(),
+            updated: s.feed.updated?.toISOString(),
+          };
+        })
+        .filter(isPresent),
+    };
+  });
+}
+
+export async function deleteFolder(folderId: string, userId: string) {
+  return await db.transaction(async (tx) => {
+    const folder = await tx.query.folders.findFirst({
+      where: {
+        id: folderId,
+        userId,
+      },
+      with: {
+        subscriptions: true,
+      },
+    });
+    if (!folder) throw new NotFound('Folder not found');
+
+    const feedIds = folder.subscriptions.map((s) => s.id);
+    await tx
+      .update(subscriptions)
+      .set({
+        folderId: null,
+      })
+      .where(and(eq(subscriptions.userId, userId), inArray(subscriptions.id, feedIds)));
+
+    await tx.delete(folders).where(and(eq(folders.userId, userId), eq(folders.id, folderId)));
+  });
 }

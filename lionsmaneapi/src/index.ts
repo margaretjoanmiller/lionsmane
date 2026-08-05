@@ -227,6 +227,7 @@ await fastify.register(async (instance) => {
 
   instance.register(feedRoutes, { prefix: '/feed' });
   instance.register(articleRoutes, { prefix: '/article' });
+  instance.register(folderRoutes, { prefix: '/folder' });
 });
 
 // Initialize server
