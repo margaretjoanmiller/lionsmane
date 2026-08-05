@@ -13,15 +13,15 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: 'pg', schema }),
   baseURL: process.env.HOST_URL || 'http://localhost:4000/',
   plugins: [
-    // jwt(),
+    jwt(),
     twoFactor(),
     passkey(),
     apiKey(),
-    // oauthProvider({
-    //   loginPage: '/sign-in',
-    //   consentPage: '/consent',
-    //   silenceWarnings: { oauthAuthServerConfig: true },
-    // }),
+    oauthProvider({
+      loginPage: '/sign-in',
+      consentPage: '/consent',
+      silenceWarnings: { oauthAuthServerConfig: true },
+    }),
     openAPI(),
   ],
   emailAndPassword: {
