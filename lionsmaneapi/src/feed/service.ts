@@ -165,11 +165,26 @@ export async function getSubscriptions(
   userId: string,
   options?: { foldered?: boolean | undefined },
 ) {
-  if (options?.foldered) {
+  if (options?.foldered === true) {
     const subs = await db.query.subscriptions.findMany({
       where: {
         userId,
-        ne: { folderId: null },
+        folderId: {
+          isNotNull: true,
+        },
+      },
+      with: {
+        feed: true,
+      },
+    });
+    return subs.map((sub) => serializeFeed(sub.feed!));
+  } else if (options?.foldered === false) {
+    const subs = await db.query.subscriptions.findMany({
+      where: {
+        userId,
+        folderId: {
+          isNull: true,
+        },
       },
       with: {
         feed: true,
