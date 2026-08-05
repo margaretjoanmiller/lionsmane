@@ -191,9 +191,11 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
     if (!a) {
       continue;
     }
-    await db
-      .insert(enclosures)
-      .values(art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId })));
+    const en = art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId }));
+    if (en.length > 0)
+      await db
+        .insert(enclosures)
+        .values(art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId })));
     artEntities.push(a);
   }
 

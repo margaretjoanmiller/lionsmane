@@ -1,13 +1,13 @@
-import { wrap } from '@mikro-orm/core';
-import type { FilterQuery } from '@mikro-orm/core';
+import { isPresent } from 'ts-extras';
+import { match } from 'ts-pattern';
 import type { PartialDeep } from 'type-fest';
 
-import type { Services } from '@/db';
-import type { Articles } from '@/entities/Articles';
-import { UserArticleStates } from '@/entities/UserArticleStates';
+import { db } from '@/db';
 import { NotFound } from '@/lib/errors/notfound';
+import { createCursor, parseCursor } from '@/lib/paging';
 
-import type { UpdateArticle } from './model';
+import { userArticleStates } from '../../drizzle/schema';
+import type { ArticleDetail, ArticleList, UpdateArticle } from './model';
 
 export type ArticleStatus = 'read' | 'unread' | 'starred';
 
@@ -15,130 +15,155 @@ export interface GetArticlesOptions {
   feedId: string | undefined;
   status: ArticleStatus | undefined;
   cursor: string | undefined;
+  pageSize: number | undefined;
 }
 
-export class ArticleService {
-  private svc: Services;
-  constructor({ svc }: { svc: Services }) {
-    this.svc = svc;
-  }
+export async function getArticles(
+  userId: string,
+  opts: PartialDeep<GetArticlesOptions>,
+): Promise<ArticleList> {
+  const { feedId, status, cursor, pageSize } = opts;
 
-  private async getFeedsForUser(userId: string) {
-    const subscriptions = await this.svc.subscriptions.findAll({
-      where: {
-        user: userId,
-      },
-      exclude: ['description', 'folderId'],
-    });
+  const limit = pageSize ? pageSize : 10;
 
-    return subscriptions.map((s) => s.feed.toObject().id);
-  }
-
-  private stateFilter(userId: string, status?: ArticleStatus): FilterQuery<Articles> {
-    switch (status) {
-      case 'read':
-        return { articleStates: { userId, isRead: true } };
-      case 'starred':
-        return { articleStates: { userId, isStarred: true } };
-      case 'unread':
-        // "unread" means either an explicit isRead:false state, or no
-        // state row exists yet for this user/article at all.
+  const cursorFilter = cursor
+    ? (() => {
+        const { published, id } = parseCursor(cursor);
         return {
-          $or: [{ articleStates: { userId, isRead: false } }, { articleStates: null }],
+          OR: [{ published: { lt: published } }, { published: { eq: published }, id: { lt: id } }],
         };
-      case undefined:
-        return {};
-    }
-  }
+      })()
+    : undefined;
 
-  private async paginatedArticles(where: FilterQuery<Articles>, userId: string, cursor?: string) {
-    const result = await this.svc.articles.findByCursor({
-      where,
-      first: 10,
-      ...(cursor ? { after: cursor } : {}),
-      orderBy: { published: 'desc', id: 'desc' },
-      populate: ['enclosuresCollection', 'articleStates', 'feedId'],
-    });
+  const statusFilter = status
+    ? match(status)
+        .with('read', () => ({ userArticleStates: { userId, isRead: true } }))
+        .with('starred', () => ({ userArticleStates: { userId, isStarred: true } }))
+        .with('unread', () => ({
+          OR: [
+            { userArticleStates: { userId, isRead: false } },
+            { NOT: { userArticleStates: { userId } } },
+          ],
+        }))
+        .exhaustive()
+    : undefined;
 
-    return {
-      articles: result.items.map((i) => {
-        const states = i.articleStates.find((c) => c.userId.id === userId);
-        return {
-          ...wrap(i).toObject(),
-          ...states,
-          feedTitle: i.feedId.title,
-          published: i.published?.toISOString(),
-          updated: i.updated?.toISOString(),
-        };
-      }),
-      cursor: result.hasNextPage ? result.endCursor : null,
-    };
-  }
-
-  async getArticles(userId: string, opts: PartialDeep<GetArticlesOptions>) {
-    const { feedId, status, cursor } = opts;
-
-    let feedFilter: FilterQuery<Articles>;
-    if (feedId) {
-      const feedIds = await this.getFeedsForUser(userId);
-      if (!feedIds.includes(feedId)) {
-        throw new NotFound('Feed not found or subscribed to');
-      }
-      feedFilter = { feedId };
-    } else {
-      feedFilter = { feedId: { subscriptions: { user: userId } } };
-    }
-
-    return this.paginatedArticles(
-      { $and: [feedFilter, this.stateFilter(userId, status)] },
-      userId,
-      cursor,
-    );
-  }
-
-  async getArticle(articleId: string, userId: string) {
-    const article = await this.svc.articles.findOneOrFail(
-      {
-        id: articleId,
-        feedId: {
-          subscriptions: {
-            user: userId,
-          },
-        },
+  const pages = await db.query.articles.findMany({
+    where: {
+      feed: {
+        ...(feedId ? { id: feedId } : {}),
+        subscriptions: { userId },
       },
-      { populate: ['enclosuresCollection', 'articleStates', 'feedId'] },
-    );
-    const states = article.articleStates.find((c) => c.userId.id === userId);
+      ...([cursorFilter, statusFilter].some(isPresent)
+        ? { AND: [cursorFilter, statusFilter].filter(isPresent) }
+        : {}),
+    },
+    with: {
+      feed: { columns: { id: true, title: true } },
+      enclosures: true,
+      userArticleStates: { where: { userId } },
+    },
+    orderBy: {
+      published: 'desc',
+      id: 'desc',
+    },
+    limit: limit + 1,
+  });
 
-    return {
-      ...wrap(article).toObject(),
-      ...states,
-      feedTitle: article.feedId.title,
-      published: article.published?.toISOString(),
-      updated: article.updated?.toISOString(),
-    };
-  }
+  const artPages = pages
+    .map((page) => {
+      if (!(page.feed?.id && page.feed?.title)) return null;
+      return {
+        ...page,
+        published: page.published.toISOString(),
+        updated: page.updated?.toISOString() ?? null,
+        feedId: page.feed.id,
+        feedTitle: page.feed.title,
+        isRead: page.userArticleStates.some((s) => s.isRead),
+        isStarred: page.userArticleStates.some((s) => s.isStarred),
+        isHidden: page.userArticleStates.some((s) => s.isHidden),
+        isBlurred: page.userArticleStates.some((s) => s.isBlurred),
+        contentWarning:
+          page.userArticleStates.find((s) => s.contentWarning)?.contentWarning ?? null,
+      };
+    })
+    .filter(isPresent);
 
-  async changeArticleState(articleId: string, userId: string, updateBody: UpdateArticle) {
-    const article = await this.svc.articles.findOneOrFail({
+  const hasNextPage = artPages.length > limit;
+  const items = hasNextPage ? artPages.slice(0, limit) : artPages;
+
+  return {
+    articles: items,
+    cursor: hasNextPage ? createCursor(new Date(items.at(-1)!.published), items.at(-1)!.id) : null,
+  };
+}
+
+export async function getArticle(articleId: string, userId: string): Promise<ArticleDetail> {
+  const article = await db.query.articles.findFirst({
+    where: {
       id: articleId,
-      feedId: {
+      feed: { subscriptions: { userId } },
+    },
+    with: {
+      userArticleStates: { where: { userId } },
+      enclosures: true,
+    },
+  });
+
+  if (!article) {
+    throw new NotFound('Article not found');
+  }
+
+  const { userArticleStates, ...rest } = article;
+  const state = userArticleStates[0];
+
+  return {
+    ...rest,
+    published: rest.published.toISOString(),
+    updated: rest.updated?.toISOString() ?? null,
+    isRead: state?.isRead ?? false,
+    isStarred: state?.isStarred ?? false,
+    isHidden: state?.isHidden ?? false,
+    isBlurred: state?.isBlurred ?? false,
+    contentWarning: state?.contentWarning ?? null,
+  };
+}
+
+export async function changeArticleState(
+  articleId: string,
+  userId: string,
+  updateBody: UpdateArticle,
+) {
+  const sub = await db.query.articles.findFirst({
+    where: {
+      feed: {
         subscriptions: {
-          user: userId,
+          userId,
         },
       },
-    });
+    },
+    with: {
+      feed: {
+        with: {
+          subscriptions: true,
+        },
+      },
+    },
+  });
 
-    this.svc.em.upsert(UserArticleStates, {
-      articleId: article,
-      userId,
-      isStarred: updateBody.isStarred,
-      isRead: updateBody.isRead,
-      isHidden: false,
-      isBlurred: false,
-      contentWarning: null,
-    });
-
-    await this.svc.em.flush();
+  if (!sub) {
+    throw new NotFound('Article not found');
   }
+
+  await db
+    .insert(userArticleStates)
+    .values({
+      articleId,
+      userId,
+      ...updateBody,
+    })
+    .onConflictDoUpdate({
+      target: [userArticleStates.articleId, userArticleStates.userId],
+      set: updateBody,
+    });
 }

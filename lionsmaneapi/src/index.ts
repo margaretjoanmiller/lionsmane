@@ -226,6 +226,7 @@ await fastify.register(async (instance) => {
   await instance.register(authPlugin, { auth });
 
   instance.register(feedRoutes, { prefix: '/feed' });
+  instance.register(articleRoutes, { prefix: '/article' });
 });
 
 // Initialize server
@@ -240,6 +241,5 @@ fastify.listen({ port: fastify.config.PORT }, (err) => {
 fastify.after(() => {
   fastify.gracefulShutdown(async (signal) => {
     fastify.log.info('Received signal to shutdown: %s', signal);
-    await db.orm.close();
   });
 });

@@ -1,31 +1,9 @@
+import { createSelectSchema } from 'drizzle-orm/zod';
 import { z } from 'zod';
 
 import { articles } from '../../drizzle/schema';
 
-export const articleSchema = z.object({
-  id: z.uuidv7(),
-  title: z.string().nullish(),
-  url: z.url().nullish(),
-  feedTitle: z.string(),
-  isRead: z.boolean().nullish(),
-  isStarred: z.boolean().nullish(),
-  isHidden: z.boolean().nullish(),
-  isBlurred: z.boolean().nullish(),
-  contentWarning: z.array(z.string()).nullish(),
-  hash: z.string().nullish(),
-  description: z.string().nullish(),
-  rawContent: z.string().nullish(),
-  readableHtml: z.string().nullish(),
-  readableText: z.string().nullish(),
-  fullArticleHtml: z.string().nullish(),
-  fullArticleText: z.string().nullish(),
-  keywords: z.array(z.string()).nullish(),
-  published: z.iso.datetime().nullish(),
-  updated: z.iso.datetime().nullish(),
-  categories: z.array(z.string()).nullish(),
-  authors: z.array(z.string()).nullish(),
-  image: z.url().nullish(),
-  imageAlt: z.string().nullish(),
+export const articleSchema = createSelectSchema(articles).extend({
   media: z
     .array(
       z.object({
@@ -46,7 +24,7 @@ export const articleSchema = z.object({
       }),
     )
     .nullish(),
-  enclosuresCollection: z.array(
+  enclosures: z.array(
     z.object({
       url: z.url(),
       mimeType: z.string().nullish(),
@@ -75,14 +53,33 @@ export const articleSchema = z.object({
       channelId: z.string().nullish(),
     })
     .nullish(),
+  // published: z.preprocess((arg: Date | string) => {
+  //   // If the input is a string, try to parse it into a Date object.
+  //   // This handles the '2025-09-01 21:54:33' format.
+  //   if (typeof arg === 'string') {
+  //     return new Date(arg).toISOString();
+  //   } else if (arg instanceof Date) {
+  //     return arg.toISOString();
+  //   } else {
+  //     return null;
+  //   }
+  // }, z.iso.datetime()), // Then, validate that the result is a valid ISO datetime string.
+  // updated: z
+  //   .preprocess((arg: Date | string | undefined) => {
+  //     // If the input is a string, try to parse it into a Date object.
+  //     // This handles the '2025-09-01 21:54:33' format.
+  //     if (typeof arg === 'string') {
+  //       return new Date(arg).toISOString();
+  //     } else if (arg instanceof Date) {
+  //       return arg.toISOString();
+  //     } else {
+  //       return null;
+  //     }
+  //   }, z.iso.datetime())
+  //   .nullable(), // Then, validate that the result is a valid ISO datetime string.
 });
 
 export type NewArticle = typeof articles.$inferInsert;
-
-export const articleList = z.object({
-  articles: z.array(articleSchema),
-  cursor: z.string().nullable(),
-});
 
 export const updateArticleSchema = z.object({
   isStarred: z.boolean(),
@@ -90,3 +87,38 @@ export const updateArticleSchema = z.object({
 });
 
 export type UpdateArticle = z.infer<typeof updateArticleSchema>;
+
+export const articleDetail = createSelectSchema(articles, {
+  published: z.iso.datetime(),
+  updated: z.iso.datetime().nullish(),
+}).extend({
+  enclosures: z.array(
+    z.object({
+      url: z.url(),
+      mimeType: z.string().nullish(),
+      size: z.int().nullish(),
+    }),
+  ),
+});
+
+export type Article = z.infer<typeof articleDetail>;
+
+export const articleList = z.object({
+  articles: z.array(articleDetail),
+  cursor: z.string().nullable(),
+});
+
+export type ArticleList = z.infer<typeof articleList>;
+
+export const articleDetailWithStatus = articleDetail.extend({
+  published: z.iso.datetime(),
+  updated: z.iso.datetime().nullish(),
+  feedTitle: z.string().min(1).max(255).optional(),
+  isRead: z.boolean().default(false).nullish(),
+  isStarred: z.boolean().default(false).nullish(),
+  isBlurred: z.boolean().default(false).nullish(),
+  isHidden: z.boolean().default(false).nullish(),
+  contentWarning: z.array(z.string()).nullish(),
+});
+
+export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;
