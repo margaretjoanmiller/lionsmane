@@ -136,16 +136,10 @@ export async function changeArticleState(
 ) {
   const sub = await db.query.articles.findFirst({
     where: {
+      id: articleId,
       feed: {
         subscriptions: {
           userId,
-        },
-      },
-    },
-    with: {
-      feed: {
-        with: {
-          subscriptions: true,
         },
       },
     },

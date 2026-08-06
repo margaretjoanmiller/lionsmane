@@ -103,13 +103,6 @@ export const articleDetail = createSelectSchema(articles, {
 
 export type Article = z.infer<typeof articleDetail>;
 
-export const articleList = z.object({
-  articles: z.array(articleDetail),
-  cursor: z.string().nullable(),
-});
-
-export type ArticleList = z.infer<typeof articleList>;
-
 export const articleDetailWithStatus = articleDetail.extend({
   published: z.iso.datetime(),
   updated: z.iso.datetime().nullish(),
@@ -120,5 +113,12 @@ export const articleDetailWithStatus = articleDetail.extend({
   isHidden: z.boolean().default(false).nullish(),
   contentWarning: z.array(z.string()).nullish(),
 });
+
+export const articleList = z.object({
+  articles: z.array(articleDetailWithStatus),
+  cursor: z.string().nullable(),
+});
+
+export type ArticleList = z.infer<typeof articleList>;
 
 export type ArticleDetail = z.infer<typeof articleDetailWithStatus>;

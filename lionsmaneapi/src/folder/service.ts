@@ -188,7 +188,10 @@ export async function updateFolder(folderId: string, updateFolder: UpdateFolder,
           folderId: folder.id,
         })
         .where(
-          and(eq(subscriptions.userId, userId), inArray(subscriptions.id, updateFolder.feedIds)),
+          and(
+            eq(subscriptions.userId, userId),
+            inArray(subscriptions.feedId, updateFolder.feedIds),
+          ),
         );
     }
 

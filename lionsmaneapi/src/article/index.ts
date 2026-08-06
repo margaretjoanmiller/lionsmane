@@ -1,7 +1,7 @@
 import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
-import { articleDetail, articleList, updateArticleSchema } from './model';
+import { articleDetailWithStatus, articleList, updateArticleSchema } from './model';
 import { changeArticleState, getArticle, getArticles } from './service';
 
 export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
@@ -41,7 +41,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           id: z.uuidv7(),
         }),
         response: {
-          200: articleDetail,
+          200: articleDetailWithStatus,
         },
         tags: ['article'],
       },

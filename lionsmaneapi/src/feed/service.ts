@@ -82,7 +82,7 @@ export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
               .set({
                 folderId: newFolder.id,
               })
-              .where(eq(subscriptions.feedId, newFeed.id));
+              .where(and(eq(subscriptions.feedId, newFeed.id), eq(subscriptions.userId, userId)));
           }
         } else {
           await tx
@@ -90,7 +90,7 @@ export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
             .set({
               folderId: folder.id,
             })
-            .where(eq(subscriptions.feedId, newFeed.id));
+            .where(and(eq(subscriptions.feedId, newFeed.id), eq(subscriptions.userId, userId)));
         }
       }
 
@@ -138,7 +138,7 @@ export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
               .set({
                 folderId: newFolder.id,
               })
-              .where(eq(subscriptions.feedId, existing.id));
+              .where(and(eq(subscriptions.feedId, existing.id), eq(subscriptions.userId, userId)));
           }
         } else {
           await tx
@@ -146,7 +146,7 @@ export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
             .set({
               folderId: folder.id,
             })
-            .where(eq(subscriptions.feedId, existing.id));
+            .where(and(eq(subscriptions.feedId, existing.id), eq(subscriptions.userId, userId)));
         }
       }
       return serializeFeed(existing);
