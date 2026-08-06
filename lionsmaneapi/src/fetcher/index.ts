@@ -147,6 +147,7 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
   await db
     .update(feeds)
     .set({
+      lastChecked: new Date(),
       ...(feedEtag ? { etag_header: feedEtag } : {}),
       ...(feedLastModified ? { last_modified_header: feedLastModified } : {}),
     })
@@ -198,8 +199,6 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
         .values(art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId })));
     artEntities.push(a);
   }
-
-  feed.lastChecked = new Date();
 
   return artEntities;
 }
