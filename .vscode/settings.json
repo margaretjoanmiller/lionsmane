@@ -1,4 +1,5 @@
 {
+ 	"recommendations": ["svelte.svelte-vscode", "esbenp.prettier-vscode", "dbaeumer.vscode-eslint"],
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true
   },

@@ -6,7 +6,8 @@
     "dev:worker": "tsx watch src/bull/worker.ts",
     "migrate": "mikro-orm migration:up",
     "build": "tsdown",
-    "start": "node dist/index.mjs"
+    "start": "node dist/index.mjs",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@better-auth/api-key": "1.7.0-beta.10",
@@ -55,15 +56,22 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/css": "^1.4.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.0.1",
+    "@eslint/markdown": "^8.0.3",
     "@mikro-orm/cli": "^7.1.7",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
     "drizzle-kit": "1.0.0-rc.4",
+    "eslint": "^10.8.0",
     "fast-check": "^4.9.0",
+    "globals": "^17.9.0",
     "tsdown": "^0.22.12",
     "tsx": "^4.23.1",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.66.0",
     "vitest": "^4.1.10"
   }
 }

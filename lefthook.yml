@@ -1,10 +1,4 @@
 pre-commit:
   commands:
-    check:
-      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}'
-      run: pnpm oxlint --fix {staged_files}
-      stage_fixed: true
-    fmt:
-      glob: '*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}'
-      run: pnpm oxfmt --write {staged_files}
-      stage_fixed: true
+    check-code:
+      run: pnpm run check-code
