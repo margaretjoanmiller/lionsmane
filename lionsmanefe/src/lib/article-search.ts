@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 export const articleStatusSearchSchema = z.object({
-  status: z.enum(['read', 'unread', 'starred']).optional(),
+  status: z
+    .enum(['all', 'read', 'unread', 'starred'] as const)
+    .default('unread')
+    .catch('unread'),
 });
 
-export type ArticleStatusSearch = z.infer<typeof articleStatusSearchSchema>;
+export const defaultArticleStatusSearch = { status: 'unread' } as const;

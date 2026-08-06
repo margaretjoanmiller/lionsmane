@@ -10,7 +10,7 @@ import { Skeleton } from './ui/skeleton';
 
 export type ArticleListProps = {
   feedId?: string;
-  status?: 'unread' | 'read' | 'starred';
+  status?: 'all' | 'unread' | 'read' | 'starred';
 };
 
 const SKELETON_COUNT = 9;
@@ -41,7 +41,7 @@ export default function ArticleList({ feedId, status }: ArticleListProps) {
       params: {
         query: {
           ...(feedId ? { feedId } : {}),
-          ...(status ? { status } : {}),
+          ...(status && status !== 'all' ? { status } : {}),
         },
       },
     },

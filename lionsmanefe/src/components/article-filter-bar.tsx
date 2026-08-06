@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
@@ -7,56 +7,56 @@ export function ArticleFilterBar({
   status,
 }: {
   feedId: string | undefined;
-  status: 'unread' | 'read' | 'starred' | undefined;
+  status: 'all' | 'unread' | 'read' | 'starred' | undefined;
 }) {
-  const currentStatus = status ?? 'all';
+  const currentStatus = status ?? 'unread';
+  const navigate = useNavigate();
 
   return (
     <div role="group">
-      <ToggleGroup selectionMode="single" selectedKeys={[currentStatus]}>
+      <ToggleGroup
+        selectionMode="single"
+        disallowEmptySelection
+        selectedKeys={[currentStatus]}
+        onSelectionChange={(keys) => {
+          const nextStatus = [...keys][0];
+          if (nextStatus) {
+            const status =
+              nextStatus === 'all'
+                ? ('all' as const)
+                : nextStatus === 'unread'
+                  ? ('unread' as const)
+                  : nextStatus === 'read'
+                    ? ('read' as const)
+                    : ('starred' as const);
+
+            if (feedId) {
+              navigate({
+                to: '/dash/feed/$id',
+                params: {
+                  id: feedId,
+                },
+                search: {
+                  status,
+                },
+              });
+            } else {
+              navigate({ to: '/dash', search: { status } });
+            }
+          }
+        }}
+      >
         <ToggleGroupItem id="all" aria-label="All articles">
-          {feedId ? (
-            <Link to="/dash/feed/$id" params={{ id: feedId }}>
-              All
-            </Link>
-          ) : (
-            <Link to="/dash" params={{ id: feedId }}>
-              All
-            </Link>
-          )}
+          All
         </ToggleGroupItem>
         <ToggleGroupItem id="unread" aria-label="Unread articles">
-          {feedId ? (
-            <Link to="/dash/feed/$id" params={{ id: feedId }} search={{ status: 'unread' }}>
-              Unread
-            </Link>
-          ) : (
-            <Link to="/dash" params={{ id: feedId }} search={{ status: 'unread' }}>
-              Unread
-            </Link>
-          )}
+          Unread
         </ToggleGroupItem>
         <ToggleGroupItem id="read" aria-label="Read articles">
-          {feedId ? (
-            <Link to="/dash/feed/$id" params={{ id: feedId }} search={{ status: 'read' }}>
-              Read
-            </Link>
-          ) : (
-            <Link to="/dash" params={{ id: feedId }} search={{ status: 'read' }}>
-              Read
-            </Link>
-          )}
+          Read
         </ToggleGroupItem>
         <ToggleGroupItem id="starred" aria-label="Starred articles">
-          {feedId ? (
-            <Link to="/dash/feed/$id" params={{ id: feedId }} search={{ status: 'starred' }}>
-              Starred
-            </Link>
-          ) : (
-            <Link to="/dash" params={{ id: feedId }} search={{ status: 'starred' }}>
-              Starred
-            </Link>
-          )}
+          Starred
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

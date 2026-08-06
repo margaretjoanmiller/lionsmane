@@ -15,9 +15,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 
 function ReadBadge({ read }: { read: boolean }) {
   if (read) {
-    return <Badge variant="secondary">Read</Badge>;
+    return (
+      <Badge aria-label="Read" variant="secondary">
+        Read
+      </Badge>
+    );
   } else {
-    return <Badge variant="default">Unread</Badge>;
+    return (
+      <Badge aria-label="Unread" variant="default">
+        Unread
+      </Badge>
+    );
   }
 }
 
@@ -106,12 +114,22 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
                 {articleFeed}
               </Badge>
               {!article.isStarred && (
-                <Button onClick={markStarred} size="icon" variant="ghost">
+                <Button
+                  onClick={markStarred}
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Mark as starred"
+                >
                   <SolarStarLinear />
                 </Button>
               )}
               {article.isStarred && (
-                <Button onClick={markUnstarred} size="icon" variant="ghost">
+                <Button
+                  onClick={markUnstarred}
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Mark as unstarred"
+                >
                   <SolarStarBold />
                 </Button>
               )}
@@ -162,6 +180,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           className="absolute bottom-4 left-1/2 -translate-x-1/2 transform"
           onClick={() => setDismissBlur(true)}
           variant="ghost"
+          aria-label="Dismiss blur"
         >
           Dismiss blur
         </Button>
@@ -175,6 +194,7 @@ export function ArticleCard({ article }: { article: ArticleDetail }) {
           className="-my-3 max-w-1/3 place-self-center"
           onClick={() => setDismissBlur(false)}
           variant="ghost"
+          aria-label="Reapply blur"
         >
           Reapply Blur
         </Button>

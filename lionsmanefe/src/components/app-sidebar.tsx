@@ -1,4 +1,6 @@
 import type * as React from 'react';
+import RssIcon from '~icons/meteor-icons/rss';
+import FolderBoldIcon from '~icons/solar/folder-bold';
 
 import { authClient } from '#/lib/auth-client.ts';
 import { NavMain } from '@/components/nav-main';
@@ -30,6 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     title: f.title || f.url,
     url: `/dash/feed/${f.id}`,
     isActive: false,
+    icon: f.icon ? <img src={f.icon} alt={`${f.title ?? 'Feed'} icon`} /> : <RssIcon />,
   }));
 
   const folderData = folderQuery.data?.map((f) => ({
@@ -37,10 +40,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     title: f.name,
     url: `/dash/folder/${f.id}`,
     isActive: false,
+    icon: <FolderBoldIcon />,
     items: f.feeds.map((feed) => ({
       id: feed.id,
       title: feed.title || feed.url,
       url: `/dash/feed/${feed.id}`,
+      icon: feed.icon ? <img src={feed.icon} alt={`${feed.title ?? 'Feed'} icon`} /> : <RssIcon />,
     })),
   }));
 
