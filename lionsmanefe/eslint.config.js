@@ -34,6 +34,12 @@ export default defineConfig(
 		},
 	},
 	{
+		parserOptions: {
+			project: true,
+			tsconfigRootDir: __dirname,
+		},
+	},
+	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {},
