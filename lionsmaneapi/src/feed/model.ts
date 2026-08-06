@@ -15,3 +15,7 @@ export const feedSchema = createSelectSchema(feeds).extend({
   updated: z.iso.datetime().nullish(),
 });
 export type FeedOut = z.infer<typeof feedSchema>;
+
+export const feedDiscoverSchema = z.object({
+  url: z.url(),
+});

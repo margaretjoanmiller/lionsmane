@@ -1,7 +1,8 @@
 import type { FastifyPluginAsyncZod } from '@fastify/type-provider-zod';
 import { z } from 'zod';
 
-import { feedSchema, newFeedSchema } from './model';
+import { discover } from './discover';
+import { feedDiscoverSchema, feedSchema, newFeedSchema } from './model';
 import {
   deleteSubscription,
   getSubscription,
@@ -26,6 +27,32 @@ export const feedRoutes: FastifyPluginAsyncZod = async (fastify) => {
       const nf = await newFeed(req.body, req.session?.user.id!);
 
       return reply.status(201).send(nf);
+    },
+  );
+
+  fastify.post(
+    '/discover',
+    {
+      schema: {
+        body: feedDiscoverSchema,
+        response: {
+          200: z.array(
+            z.object({
+              format: z.enum(['rss', 'atom', 'json', 'rdf']),
+              url: z.url(),
+              title: z.string().nullable(),
+            }),
+          ),
+        },
+        tags: ['feed'],
+      },
+    },
+    async (req, reply) => {
+      const { url } = req.body as { url: string };
+
+      const feed = await discover(url);
+
+      return reply.send(feed);
     },
   );
 

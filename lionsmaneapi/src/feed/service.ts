@@ -88,8 +88,6 @@ export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
     let feed = existing;
 
     if (!feed) {
-      // Another request may have inserted the same feed URL between the check
-      // above and this transaction.
       const [inserted] = await tx
         .insert(feeds)
         .values(parsedFeed!)
