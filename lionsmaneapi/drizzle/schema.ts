@@ -14,7 +14,7 @@ import {
   serial,
   pgEnum,
 } from 'drizzle-orm/pg-core';
-import type { ItunesNs, YtNs } from 'feedsmith';
+import type { ItunesNs, MediaNs, YtNs } from 'feedsmith';
 
 import type { Conditions } from '@/filter/filter';
 
@@ -359,6 +359,7 @@ export const articles = pgTable(
     authors: varchar({ length: 256 }).array().notNull().default([]),
     image: varchar({ length: 512 }),
     imageAlt: varchar({ length: 512 }),
+    media: jsonb().$type<MediaNs.Content[]>(),
     itunes: jsonb().$type<ItunesNs.Item>(),
     youtube: jsonb().$type<YtNs.Item>(),
     feedId: uuid()

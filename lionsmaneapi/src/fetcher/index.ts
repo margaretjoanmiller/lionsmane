@@ -144,15 +144,6 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
   const feedEtag = feedXml.etag;
   const feedLastModified = feedXml.lastModified;
 
-  await db
-    .update(feeds)
-    .set({
-      lastChecked: new Date(),
-      ...(feedEtag ? { etag_header: feedEtag } : {}),
-      ...(feedLastModified ? { last_modified_header: feedLastModified } : {}),
-    })
-    .where(eq(feeds.id, feedId));
-
   const parsedFeed = parseFeed(feedXml.text, {
     parseDateFn: (raw) => new Date(raw),
   });
@@ -179,6 +170,8 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
   for (const art of newArticles) {
     const cleanedArt = cleanRaw(art.article);
 
+    // onConflictDoNothing guards against duplicate hashes, both within this
+    // batch (a feed repeating an item) and against concurrent inserts.
     const [a] = await db
       .insert(articles)
       .values({
@@ -187,18 +180,28 @@ export async function extractArticlesFromFeed(feedId: string, controller: AbortC
         readableText: cleanedArt.textContent,
         description: cleanedArt.cleanDescription,
       })
+      .onConflictDoNothing({ target: articles.hash })
       .returning();
 
     if (!a) {
       continue;
     }
     const en = art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId }));
-    if (en.length > 0)
-      await db
-        .insert(enclosures)
-        .values(art.enclosures.map((e) => ({ ...e, entryId: a.minifluxId })));
+    if (en.length > 0) await db.insert(enclosures).values(en);
     artEntities.push(a);
   }
+
+  // Persist lastChecked/etag only after articles were ingested successfully.
+  // If anything above throws, the next fetch retries with the old values and
+  // filterExisting dedupes by hash, so no articles are lost.
+  await db
+    .update(feeds)
+    .set({
+      lastChecked: new Date(),
+      ...(feedEtag ? { etag_header: feedEtag } : {}),
+      ...(feedLastModified ? { last_modified_header: feedLastModified } : {}),
+    })
+    .where(eq(feeds.id, feedId));
 
   return artEntities;
 }
@@ -212,9 +215,15 @@ async function filterExisting(arts: Array<ParsedItem>, feedId: string): Promise<
     .from(articles)
     .where(and(eq(articles.feedId, feedId), inArray(articles.hash, hashes)));
 
-  return arts.filter(
-    (a) => a.article.hash && !existing.map((e) => e.hash).includes(a.article.hash),
-  );
+  const existingHashes = new Set(existing.map((e) => e.hash));
+  const seenInBatch = new Set<string>();
+
+  return arts.filter((a) => {
+    const hash = a.article.hash;
+    if (!hash || existingHashes.has(hash) || seenInBatch.has(hash)) return false;
+    seenInBatch.add(hash);
+    return true;
+  });
 }
 
 export function parseArticlesAtom(

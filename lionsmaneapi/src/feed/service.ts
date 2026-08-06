@@ -21,138 +21,123 @@ function serializeFeed(feed: typeof feeds.$inferSelect): FeedOut {
   };
 }
 
-export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
-  const result = await db.transaction(async (tx) => {
-    const existing = await tx.query.feeds.findFirst({
+type DbTx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+async function assignFolderToSubscription(
+  tx: DbTx,
+  feedId: string,
+  userId: string,
+  folderName: string,
+): Promise<void> {
+  const folder =
+    (await tx.query.folders.findFirst({
       where: {
-        url: new URL(nf.url).toString(),
+        name: folderName,
+        userId,
+      },
+    })) ??
+    (
+      await tx
+        .insert(folders)
+        .values({
+          name: folderName,
+          userId,
+        })
+        .returning()
+    ).at(0);
+
+  if (!folder) {
+    throw new Error('Failed to create folder');
+  }
+
+  await tx
+    .update(subscriptions)
+    .set({
+      folderId: folder.id,
+    })
+    .where(and(eq(subscriptions.feedId, feedId), eq(subscriptions.userId, userId)));
+}
+
+export async function newFeed(nf: NewFeed, userId: string): Promise<FeedOut> {
+  const feedUrl = new URL(nf.url).toString();
+
+  const existing = await db.query.feeds.findFirst({
+    where: {
+      url: feedUrl,
+    },
+  });
+
+  if (existing) {
+    const existingSub = await db.query.subscriptions.findFirst({
+      where: {
+        userId,
+        feedId: existing.id,
       },
     });
 
-    if (existing) {
-      const existingSub = await tx.query.subscriptions.findFirst({
-        where: {
-          userId,
-          feedId: existing.id,
-        },
-      });
-
-      if (existingSub) {
-        throw new Duplicate('You are already subscribed to that feed');
-      }
+    if (existingSub) {
+      throw new Duplicate('You are already subscribed to that feed');
     }
+  }
 
-    if (!existing) {
-      const parsedFeed = await normalizeAndFetchFeed(nf.url);
+  // Fetch and parse outside the transaction so we don't hold a database
+  // connection open across network I/O.
+  const parsedFeed = existing ? null : await normalizeAndFetchFeed(feedUrl);
 
-      const [newFeed] = await tx.insert(feeds).values(parsedFeed).returning();
+  const { feed, created } = await db.transaction(async (tx) => {
+    let feed = existing;
 
-      if (!newFeed) {
+    if (!feed) {
+      // Another request may have inserted the same feed URL between the check
+      // above and this transaction.
+      const [inserted] = await tx
+        .insert(feeds)
+        .values(parsedFeed!)
+        .onConflictDoNothing({ target: feeds.url })
+        .returning();
+
+      feed =
+        inserted ??
+        (await tx.query.feeds.findFirst({
+          where: { url: feedUrl },
+        }));
+
+      if (!feed) {
         throw new Error('Failed to create feed');
       }
-
-      await tx
-        .insert(subscriptions)
-        .values({
-          feedId: newFeed.id,
-          userId,
-        })
-        .returning();
-
-      if (nf.folderName) {
-        const folder = await tx.query.folders.findFirst({
-          where: {
-            name: nf.folderName,
-            userId,
-          },
-        });
-
-        if (!folder) {
-          const [newFolder] = await tx
-            .insert(folders)
-            .values({
-              name: nf.folderName,
-              userId,
-            })
-            .returning();
-
-          if (newFolder) {
-            await tx
-              .update(subscriptions)
-              .set({
-                folderId: newFolder.id,
-              })
-              .where(and(eq(subscriptions.feedId, newFeed.id), eq(subscriptions.userId, userId)));
-          }
-        } else {
-          await tx
-            .update(subscriptions)
-            .set({
-              folderId: folder.id,
-            })
-            .where(and(eq(subscriptions.feedId, newFeed.id), eq(subscriptions.userId, userId)));
-        }
-      }
-
-      await feedQueue.add(
-        `initial${newFeed.id}`,
-        {
-          type: 'fetch',
-          feedId: newFeed.id,
-        },
-        {
-          jobId: `initial${newFeed.id}`,
-        },
-      );
-
-      return serializeFeed(newFeed);
-    } else {
-      await tx
-        .insert(subscriptions)
-        .values({
-          feedId: existing.id,
-          userId,
-        })
-        .returning();
-
-      if (nf.folderName) {
-        const folder = await tx.query.folders.findFirst({
-          where: {
-            name: nf.folderName,
-            userId,
-          },
-        });
-
-        if (!folder) {
-          const [newFolder] = await tx
-            .insert(folders)
-            .values({
-              name: nf.folderName,
-              userId,
-            })
-            .returning();
-
-          if (newFolder) {
-            await tx
-              .update(subscriptions)
-              .set({
-                folderId: newFolder.id,
-              })
-              .where(and(eq(subscriptions.feedId, existing.id), eq(subscriptions.userId, userId)));
-          }
-        } else {
-          await tx
-            .update(subscriptions)
-            .set({
-              folderId: folder.id,
-            })
-            .where(and(eq(subscriptions.feedId, existing.id), eq(subscriptions.userId, userId)));
-        }
-      }
-      return serializeFeed(existing);
     }
+
+    await tx
+      .insert(subscriptions)
+      .values({
+        feedId: feed.id,
+        userId,
+      })
+      .onConflictDoNothing({ target: [subscriptions.userId, subscriptions.feedId] });
+
+    if (nf.folderName) {
+      await assignFolderToSubscription(tx, feed.id, userId, nf.folderName);
+    }
+
+    return { feed, created: !existing };
   });
-  return result;
+
+  // Enqueue only after the transaction has committed so the worker never
+  // looks up a feed that doesn't exist yet.
+  if (created) {
+    await feedQueue.add(
+      `initial${feed.id}`,
+      {
+        type: 'fetch',
+        feedId: feed.id,
+      },
+      {
+        jobId: `initial${feed.id}`,
+      },
+    );
+  }
+
+  return serializeFeed(feed);
 }
 
 export async function deleteSubscription(feedId: string, userId: string) {
@@ -310,7 +295,7 @@ function parseAtomFeed(feed: Atom.Feed<Date>, url: URL) {
     categories: feed.categories?.map((c) => c.label).filter(isDefined) || [],
     itunes: feed.itunes,
     youtube: feed.yt,
-    icon: feed.icon,
+    favicon: feed.icon,
   };
 }
 function parseRssFeed(feed: Rss.Feed<Date>, url: URL) {
@@ -330,7 +315,7 @@ function parseJsonFeed(feed: Json.Feed<Date>, url: URL) {
     site_url: feed.home_page_url || url.origin,
     lastChecked: subMonths(new Date(), 3),
     categories: [],
-    icon: feed.icon,
+    favicon: feed.icon,
   };
 }
 function parseRdfFeed(feed: Rdf.Feed<Date>, url: URL) {

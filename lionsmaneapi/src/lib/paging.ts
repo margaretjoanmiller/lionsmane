@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { BadRequest } from '@/lib/errors/badrequest';
+
 function safeParseBase64Json(cursor: string) {
   const cursorSchema = z.object({
     id: z.uuid(),
@@ -9,7 +11,7 @@ function safeParseBase64Json(cursor: string) {
     JSON.parse(Buffer.from(cursor, 'base64url').toString('ascii')),
   );
   if (!parsedCursor.success) {
-    throw new Error('Invalid cursor format');
+    throw new BadRequest('Invalid cursor format');
   }
   return parsedCursor.data;
 }
@@ -21,11 +23,12 @@ export function parseCursor(cursor: string): {
   try {
     const decoded = safeParseBase64Json(cursor);
     if (!decoded.published || !decoded.id) {
-      throw new Error('Invalid cursor format');
+      throw new BadRequest('Invalid cursor format');
     }
     return { ...decoded, published: new Date(decoded.published) };
   } catch (error) {
-    throw new Error('Invalid cursor provided', { cause: error });
+    if (error instanceof BadRequest) throw error;
+    throw new BadRequest('Invalid cursor provided', { cause: error });
   }
 }
 

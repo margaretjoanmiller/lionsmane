@@ -13,7 +13,7 @@ export const articleRoutes: FastifyPluginAsyncZod = async (fastify) => {
           cursor: z.base64url().optional(),
           feedId: z.uuidv7().optional(),
           status: z.enum(['read', 'unread', 'starred']).optional(),
-          pageSize: z.coerce.number().optional(),
+          pageSize: z.coerce.number().int().min(1).max(100).optional(),
         }),
         response: {
           200: articleList,

@@ -220,8 +220,6 @@ await fastify.register(ScalarApiReference, {
   routePrefix: '/reference',
 });
 
-// await fastify.register(servicesPlugin, { svc: db });
-
 await fastify.register(async (instance) => {
   await instance.register(authPlugin, { auth });
 

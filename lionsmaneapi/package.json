@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "dev:worker": "tsx watch src/bull/worker.ts",
-    "migrate": "mikro-orm migration:up",
+    "migrate": "drizzle-kit migrate",
     "build": "tsdown",
     "start": "node dist/index.mjs"
   },
@@ -24,9 +24,6 @@
     "@fastify/swagger": "^9.8.1",
     "@fastify/type-provider-zod": "^1.0.0",
     "@fastify/under-pressure": "^9.1.0",
-    "@mikro-orm/core": "^7.1.7",
-    "@mikro-orm/migrations": "^7.1.7",
-    "@mikro-orm/postgresql": "^7.1.7",
     "@mozilla/readability": "^0.6.0",
     "@scalar/fastify-api-reference": "^1.63.0",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
@@ -55,7 +52,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^7.1.7",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",

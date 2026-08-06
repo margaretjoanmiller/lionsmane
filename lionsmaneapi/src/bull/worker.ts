@@ -38,18 +38,9 @@ const feedWorker = new Worker<FeedJob>(
           const cutoff = subMinutes(new Date(), 15);
           const feeds = await db.query.feeds.findMany({
             where: {
-              OR: [
-                {
-                  lastChecked: {
-                    eq: undefined,
-                  },
-                },
-                {
-                  lastChecked: {
-                    lt: cutoff,
-                  },
-                },
-              ],
+              lastChecked: {
+                lt: cutoff,
+              },
             },
           });
 
