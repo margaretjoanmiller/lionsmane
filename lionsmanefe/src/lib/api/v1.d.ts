@@ -14,7 +14,7 @@ export interface paths {
     get: {
       parameters: {
         query?: {
-          foldered?: boolean;
+          foldered?: string;
         };
         header?: never;
         path?: never;
@@ -31,35 +31,40 @@ export interface paths {
             'application/json': {
               /** Format: uuid */
               id: string;
-              title?: string | null;
-              subTitle?: string | null;
-              /** Format: uri */
+              minifluxId: number;
+              title: string;
+              subtitle: string | null;
               url: string;
-              siteUrl?: string | null;
-              etagHeader?: string | null;
-              lastModifiedHeader?: string | null;
-              parsingErrorMessage?: string | null;
-              parsingErrorCount?: number | null;
-              userAgent?: string | null;
-              crawler?: boolean | null;
-              lastChecked?: string | null;
+              site_url: string;
+              etag_header: string;
+              last_modified_header: string;
+              parsingErrorMessage: string | null;
+              parsingErrorCount: number;
+              userAgent: string | null;
+              crawler: boolean;
+              /** Format: date-time */
+              lastChecked: string;
               updated?: string | null;
-              categories?: string[] | null;
-              itunes?: {
-                duration?: number;
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-              } | null;
-              youtube?: {
-                channelId?: string;
-                videoId?: string;
-              } | null;
-              icon?: string | null;
+              categories: string[];
+              itunes:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              youtube:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              favicon: string | null;
             }[];
           };
         };
@@ -147,36 +152,144 @@ export interface paths {
             'application/json': {
               /** Format: uuid */
               id: string;
-              title?: string | null;
-              subTitle?: string | null;
+              minifluxId: number;
+              title: string;
+              subtitle: string | null;
+              url: string;
+              site_url: string;
+              etag_header: string;
+              last_modified_header: string;
+              parsingErrorMessage: string | null;
+              parsingErrorCount: number;
+              userAgent: string | null;
+              crawler: boolean;
+              /** Format: date-time */
+              lastChecked: string;
+              updated?: string | null;
+              categories: string[];
+              itunes:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              youtube:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              favicon: string | null;
+            };
+          };
+        };
+        /** @description Default Response */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              message: string;
+            };
+          };
+        };
+        /** @description Default Response */
+        401: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              message: string;
+            };
+          };
+        };
+        /** @description Default Response */
+        403: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              message: string;
+            };
+          };
+        };
+        /** @description Default Response */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              message: string;
+            };
+          };
+        };
+        /** @description Default Response */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              message: string;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/feed/discover': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** Format: uri */
+            url: string;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              /** @enum {string} */
+              format: 'rss' | 'atom' | 'json' | 'rdf';
               /** Format: uri */
               url: string;
-              siteUrl?: string | null;
-              etagHeader?: string | null;
-              lastModifiedHeader?: string | null;
-              parsingErrorMessage?: string | null;
-              parsingErrorCount?: number | null;
-              userAgent?: string | null;
-              crawler?: boolean | null;
-              lastChecked?: string | null;
-              updated?: string | null;
-              categories?: string[] | null;
-              itunes?: {
-                duration?: number;
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-              } | null;
-              youtube?: {
-                channelId?: string;
-                videoId?: string;
-              } | null;
-              icon?: string | null;
-            };
+              title: string | null;
+            }[];
           };
         };
         /** @description Default Response */
@@ -269,35 +382,40 @@ export interface paths {
             'application/json': {
               /** Format: uuid */
               id: string;
-              title?: string | null;
-              subTitle?: string | null;
-              /** Format: uri */
+              minifluxId: number;
+              title: string;
+              subtitle: string | null;
               url: string;
-              siteUrl?: string | null;
-              etagHeader?: string | null;
-              lastModifiedHeader?: string | null;
-              parsingErrorMessage?: string | null;
-              parsingErrorCount?: number | null;
-              userAgent?: string | null;
-              crawler?: boolean | null;
-              lastChecked?: string | null;
+              site_url: string;
+              etag_header: string;
+              last_modified_header: string;
+              parsingErrorMessage: string | null;
+              parsingErrorCount: number;
+              userAgent: string | null;
+              crawler: boolean;
+              /** Format: date-time */
+              lastChecked: string;
               updated?: string | null;
-              categories?: string[] | null;
-              itunes?: {
-                duration?: number;
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-              } | null;
-              youtube?: {
-                channelId?: string;
-                videoId?: string;
-              } | null;
-              icon?: string | null;
+              categories: string[];
+              itunes:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              youtube:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              favicon: string | null;
             };
           };
         };
@@ -463,35 +581,40 @@ export interface paths {
             'application/json': {
               /** Format: uuid */
               id: string;
-              title?: string | null;
-              subTitle?: string | null;
-              /** Format: uri */
+              minifluxId: number;
+              title: string;
+              subtitle: string | null;
               url: string;
-              siteUrl?: string | null;
-              etagHeader?: string | null;
-              lastModifiedHeader?: string | null;
-              parsingErrorMessage?: string | null;
-              parsingErrorCount?: number | null;
-              userAgent?: string | null;
-              crawler?: boolean | null;
-              lastChecked?: string | null;
+              site_url: string;
+              etag_header: string;
+              last_modified_header: string;
+              parsingErrorMessage: string | null;
+              parsingErrorCount: number;
+              userAgent: string | null;
+              crawler: boolean;
+              /** Format: date-time */
+              lastChecked: string;
               updated?: string | null;
-              categories?: string[] | null;
-              itunes?: {
-                duration?: number;
-                image?: string;
-                explicit?: boolean;
-                title?: string;
-                episode?: number;
-                season?: number;
-                episodeType?: string;
-                block?: boolean;
-              } | null;
-              youtube?: {
-                channelId?: string;
-                videoId?: string;
-              } | null;
-              icon?: string | null;
+              categories: string[];
+              itunes:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              youtube:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              favicon: string | null;
             };
           };
         };
@@ -533,11 +656,7 @@ export interface paths {
           headers: {
             [name: string]: unknown;
           };
-          content: {
-            'application/json': {
-              message: string;
-            };
-          };
+          content?: never;
         };
         /** @description Default Response */
         500: {
@@ -567,6 +686,7 @@ export interface paths {
           cursor?: string;
           feedId?: string;
           status?: 'read' | 'unread' | 'starred';
+          pageSize?: number;
         };
         header?: never;
         path?: never;
@@ -584,70 +704,65 @@ export interface paths {
               articles: {
                 /** Format: uuid */
                 id: string;
-                title?: string | null;
-                url?: string | null;
-                feedTitle: string;
-                isRead?: boolean | null;
-                isStarred?: boolean | null;
-                isHidden?: boolean | null;
-                isBlurred?: boolean | null;
-                contentWarning?: string[] | null;
-                hash?: string | null;
-                description?: string | null;
-                rawContent?: string | null;
-                readableHtml?: string | null;
-                readableText?: string | null;
-                fullArticleHtml?: string | null;
-                fullArticleText?: string | null;
-                keywords?: string[] | null;
-                published?: string | null;
+                minifluxId: number;
+                title: string;
+                url: string | null;
+                hash: string | null;
+                description: string | null;
+                rawContent: string | null;
+                readableHtml: string | null;
+                readableText: string | null;
+                fullArticleHtml: string | null;
+                fullArticleText: string | null;
+                keywords: string[];
+                /** Format: date-time */
+                published: string;
                 updated?: string | null;
-                categories?: string[] | null;
-                authors?: string[] | null;
-                image?: string | null;
-                imageAlt?: string | null;
-                media?:
-                  | {
-                      url?: string | null;
-                      fileSize?: number | null;
-                      type?: string | null;
-                      medium?: string | null;
-                      isDefault?: boolean | null;
-                      expression?: string | null;
-                      bitrate?: number | null;
-                      framerate?: number | null;
-                      samplingrate?: number | null;
-                      channels?: number | null;
-                      duration?: number | null;
-                      height?: number | null;
-                      width?: number | null;
-                      lang?: string | null;
-                    }[]
+                categories: string[];
+                authors: string[];
+                image: string | null;
+                imageAlt: string | null;
+                media:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
                   | null;
-                enclosuresCollection: {
+                itunes:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                youtube:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                /** Format: uuid */
+                feedId: string;
+                enclosures: {
                   /** Format: uri */
                   url: string;
                   mimeType?: string | null;
                   size?: number | null;
                 }[];
-                itunes?: {
-                  duration?: number | null;
-                  image?: string | null;
-                  explicit?: boolean | null;
-                  author?: string | null;
-                  title?: string | null;
-                  episode?: number | null;
-                  season?: number | null;
-                  episodeType?: string | null;
-                  block?: boolean | null;
-                  summary?: string | null;
-                  subtitle?: string | null;
-                  keywords?: string[] | null;
-                } | null;
-                youtube?: {
-                  videoId?: string | null;
-                  channelId?: string | null;
-                } | null;
+                feedTitle?: string;
+                isRead?: boolean | null;
+                isStarred?: boolean | null;
+                isBlurred?: boolean | null;
+                isHidden?: boolean | null;
+                contentWarning?: string[] | null;
               }[];
               cursor: string | null;
             };
@@ -745,70 +860,65 @@ export interface paths {
             'application/json': {
               /** Format: uuid */
               id: string;
-              title?: string | null;
-              url?: string | null;
-              feedTitle: string;
-              isRead?: boolean | null;
-              isStarred?: boolean | null;
-              isHidden?: boolean | null;
-              isBlurred?: boolean | null;
-              contentWarning?: string[] | null;
-              hash?: string | null;
-              description?: string | null;
-              rawContent?: string | null;
-              readableHtml?: string | null;
-              readableText?: string | null;
-              fullArticleHtml?: string | null;
-              fullArticleText?: string | null;
-              keywords?: string[] | null;
-              published?: string | null;
+              minifluxId: number;
+              title: string;
+              url: string | null;
+              hash: string | null;
+              description: string | null;
+              rawContent: string | null;
+              readableHtml: string | null;
+              readableText: string | null;
+              fullArticleHtml: string | null;
+              fullArticleText: string | null;
+              keywords: string[];
+              /** Format: date-time */
+              published: string;
               updated?: string | null;
-              categories?: string[] | null;
-              authors?: string[] | null;
-              image?: string | null;
-              imageAlt?: string | null;
-              media?:
-                | {
-                    url?: string | null;
-                    fileSize?: number | null;
-                    type?: string | null;
-                    medium?: string | null;
-                    isDefault?: boolean | null;
-                    expression?: string | null;
-                    bitrate?: number | null;
-                    framerate?: number | null;
-                    samplingrate?: number | null;
-                    channels?: number | null;
-                    duration?: number | null;
-                    height?: number | null;
-                    width?: number | null;
-                    lang?: string | null;
-                  }[]
+              categories: string[];
+              authors: string[];
+              image: string | null;
+              imageAlt: string | null;
+              media:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
                 | null;
-              enclosuresCollection: {
+              itunes:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              youtube:
+                | (
+                    | (string | number | boolean | null)
+                    | {
+                        [key: string]: unknown;
+                      }
+                    | unknown[]
+                  )
+                | null;
+              /** Format: uuid */
+              feedId: string;
+              enclosures: {
                 /** Format: uri */
                 url: string;
                 mimeType?: string | null;
                 size?: number | null;
               }[];
-              itunes?: {
-                duration?: number | null;
-                image?: string | null;
-                explicit?: boolean | null;
-                author?: string | null;
-                title?: string | null;
-                episode?: number | null;
-                season?: number | null;
-                episodeType?: string | null;
-                block?: boolean | null;
-                summary?: string | null;
-                subtitle?: string | null;
-                keywords?: string[] | null;
-              } | null;
-              youtube?: {
-                videoId?: string | null;
-                channelId?: string | null;
-              } | null;
+              feedTitle?: string;
+              isRead?: boolean | null;
+              isStarred?: boolean | null;
+              isBlurred?: boolean | null;
+              isHidden?: boolean | null;
+              contentWarning?: string[] | null;
             };
           };
         };
@@ -989,35 +1099,40 @@ export interface paths {
               feeds: {
                 /** Format: uuid */
                 id: string;
-                title?: string | null;
-                subTitle?: string | null;
-                /** Format: uri */
+                minifluxId: number;
+                title: string;
+                subtitle: string | null;
                 url: string;
-                siteUrl?: string | null;
-                etagHeader?: string | null;
-                lastModifiedHeader?: string | null;
-                parsingErrorMessage?: string | null;
-                parsingErrorCount?: number | null;
-                userAgent?: string | null;
-                crawler?: boolean | null;
-                lastChecked?: string | null;
+                site_url: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsingErrorMessage: string | null;
+                parsingErrorCount: number;
+                userAgent: string | null;
+                crawler: boolean;
+                /** Format: date-time */
+                lastChecked: string;
                 updated?: string | null;
-                categories?: string[] | null;
-                itunes?: {
-                  duration?: number;
-                  image?: string;
-                  explicit?: boolean;
-                  title?: string;
-                  episode?: number;
-                  season?: number;
-                  episodeType?: string;
-                  block?: boolean;
-                } | null;
-                youtube?: {
-                  channelId?: string;
-                  videoId?: string;
-                } | null;
-                icon?: string | null;
+                categories: string[];
+                itunes:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                youtube:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                favicon: string | null;
               }[];
             }[];
           };
@@ -1109,35 +1224,40 @@ export interface paths {
               feeds: {
                 /** Format: uuid */
                 id: string;
-                title?: string | null;
-                subTitle?: string | null;
-                /** Format: uri */
+                minifluxId: number;
+                title: string;
+                subtitle: string | null;
                 url: string;
-                siteUrl?: string | null;
-                etagHeader?: string | null;
-                lastModifiedHeader?: string | null;
-                parsingErrorMessage?: string | null;
-                parsingErrorCount?: number | null;
-                userAgent?: string | null;
-                crawler?: boolean | null;
-                lastChecked?: string | null;
+                site_url: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsingErrorMessage: string | null;
+                parsingErrorCount: number;
+                userAgent: string | null;
+                crawler: boolean;
+                /** Format: date-time */
+                lastChecked: string;
                 updated?: string | null;
-                categories?: string[] | null;
-                itunes?: {
-                  duration?: number;
-                  image?: string;
-                  explicit?: boolean;
-                  title?: string;
-                  episode?: number;
-                  season?: number;
-                  episodeType?: string;
-                  block?: boolean;
-                } | null;
-                youtube?: {
-                  channelId?: string;
-                  videoId?: string;
-                } | null;
-                icon?: string | null;
+                categories: string[];
+                itunes:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                youtube:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                favicon: string | null;
               }[];
             };
           };
@@ -1236,35 +1356,40 @@ export interface paths {
               feeds: {
                 /** Format: uuid */
                 id: string;
-                title?: string | null;
-                subTitle?: string | null;
-                /** Format: uri */
+                minifluxId: number;
+                title: string;
+                subtitle: string | null;
                 url: string;
-                siteUrl?: string | null;
-                etagHeader?: string | null;
-                lastModifiedHeader?: string | null;
-                parsingErrorMessage?: string | null;
-                parsingErrorCount?: number | null;
-                userAgent?: string | null;
-                crawler?: boolean | null;
-                lastChecked?: string | null;
+                site_url: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsingErrorMessage: string | null;
+                parsingErrorCount: number;
+                userAgent: string | null;
+                crawler: boolean;
+                /** Format: date-time */
+                lastChecked: string;
                 updated?: string | null;
-                categories?: string[] | null;
-                itunes?: {
-                  duration?: number;
-                  image?: string;
-                  explicit?: boolean;
-                  title?: string;
-                  episode?: number;
-                  season?: number;
-                  episodeType?: string;
-                  block?: boolean;
-                } | null;
-                youtube?: {
-                  channelId?: string;
-                  videoId?: string;
-                } | null;
-                icon?: string | null;
+                categories: string[];
+                itunes:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                youtube:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                favicon: string | null;
               }[];
             };
           };
@@ -1436,35 +1561,40 @@ export interface paths {
               feeds: {
                 /** Format: uuid */
                 id: string;
-                title?: string | null;
-                subTitle?: string | null;
-                /** Format: uri */
+                minifluxId: number;
+                title: string;
+                subtitle: string | null;
                 url: string;
-                siteUrl?: string | null;
-                etagHeader?: string | null;
-                lastModifiedHeader?: string | null;
-                parsingErrorMessage?: string | null;
-                parsingErrorCount?: number | null;
-                userAgent?: string | null;
-                crawler?: boolean | null;
-                lastChecked?: string | null;
+                site_url: string;
+                etag_header: string;
+                last_modified_header: string;
+                parsingErrorMessage: string | null;
+                parsingErrorCount: number;
+                userAgent: string | null;
+                crawler: boolean;
+                /** Format: date-time */
+                lastChecked: string;
                 updated?: string | null;
-                categories?: string[] | null;
-                itunes?: {
-                  duration?: number;
-                  image?: string;
-                  explicit?: boolean;
-                  title?: string;
-                  episode?: number;
-                  season?: number;
-                  episodeType?: string;
-                  block?: boolean;
-                } | null;
-                youtube?: {
-                  channelId?: string;
-                  videoId?: string;
-                } | null;
-                icon?: string | null;
+                categories: string[];
+                itunes:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                youtube:
+                  | (
+                      | (string | number | boolean | null)
+                      | {
+                          [key: string]: unknown;
+                        }
+                      | unknown[]
+                    )
+                  | null;
+                favicon: string | null;
               }[];
             };
           };

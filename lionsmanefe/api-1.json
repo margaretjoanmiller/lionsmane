@@ -61,19 +61,17 @@
                     "id": {
                       "type": "string",
                       "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "minifluxId": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "title": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string"
                     },
-                    "subTitle": {
+                    "subtitle": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -84,43 +82,25 @@
                       ]
                     },
                     "url": {
+                      "type": "string"
+                    },
+                    "site_url": {
                       "type": "string",
-                      "format": "uri"
+                      "maxLength": 256
                     },
-                    "siteUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "etag_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
-                    "etagHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "lastModifiedHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "last_modified_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
                     "parsingErrorMessage": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -128,21 +108,15 @@
                       ]
                     },
                     "parsingErrorCount": {
-                      "anyOf": [
-                        {
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "userAgent": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -150,27 +124,12 @@
                       ]
                     },
                     "crawler": {
-                      "anyOf": [
-                        {
-                          "default": false,
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "boolean"
                     },
                     "lastChecked": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "date-time",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     },
                     "updated": {
                       "anyOf": [
@@ -185,49 +144,44 @@
                       ]
                     },
                     "categories": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "itunes": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "duration": {
-                              "type": "number"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "image": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
                             },
-                            "explicit": {
-                              "type": "boolean"
-                            },
-                            "title": {
-                              "type": "string"
-                            },
-                            "episode": {
-                              "type": "number"
-                            },
-                            "season": {
-                              "type": "number"
-                            },
-                            "episodeType": {
-                              "type": "string"
-                            },
-                            "block": {
-                              "type": "boolean"
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
@@ -237,26 +191,46 @@
                     "youtube": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "channelId": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "videoId": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
                         }
                       ]
                     },
-                    "icon": {
+                    "favicon": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -264,7 +238,25 @@
                       ]
                     }
                   },
-                  "required": ["id", "url"],
+                  "required": [
+                    "id",
+                    "minifluxId",
+                    "title",
+                    "subtitle",
+                    "url",
+                    "site_url",
+                    "etag_header",
+                    "last_modified_header",
+                    "parsingErrorMessage",
+                    "parsingErrorCount",
+                    "userAgent",
+                    "crawler",
+                    "lastChecked",
+                    "categories",
+                    "itunes",
+                    "youtube",
+                    "favicon"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -367,7 +359,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "boolean"
+              "type": "string"
             },
             "in": "query",
             "name": "foldered",
@@ -387,19 +379,17 @@
                       "id": {
                         "type": "string",
                         "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "minifluxId": {
+                        "type": "integer",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
                       },
                       "title": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                        "type": "string"
                       },
-                      "subTitle": {
+                      "subtitle": {
                         "anyOf": [
                           {
                             "type": "string"
@@ -410,43 +400,25 @@
                         ]
                       },
                       "url": {
+                        "type": "string"
+                      },
+                      "site_url": {
                         "type": "string",
-                        "format": "uri"
+                        "maxLength": 256
                       },
-                      "siteUrl": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                      "etag_header": {
+                        "type": "string",
+                        "maxLength": 256
                       },
-                      "etagHeader": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      },
-                      "lastModifiedHeader": {
-                        "anyOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                      "last_modified_header": {
+                        "type": "string",
+                        "maxLength": 256
                       },
                       "parsingErrorMessage": {
                         "anyOf": [
                           {
-                            "type": "string"
+                            "type": "string",
+                            "maxLength": 256
                           },
                           {
                             "type": "null"
@@ -454,21 +426,15 @@
                         ]
                       },
                       "parsingErrorCount": {
-                        "anyOf": [
-                          {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                        "type": "integer",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
                       },
                       "userAgent": {
                         "anyOf": [
                           {
-                            "type": "string"
+                            "type": "string",
+                            "maxLength": 256
                           },
                           {
                             "type": "null"
@@ -476,27 +442,12 @@
                         ]
                       },
                       "crawler": {
-                        "anyOf": [
-                          {
-                            "default": false,
-                            "type": "boolean"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                        "type": "boolean"
                       },
                       "lastChecked": {
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "format": "date-time",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                       },
                       "updated": {
                         "anyOf": [
@@ -511,49 +462,44 @@
                         ]
                       },
                       "categories": {
-                        "anyOf": [
-                          {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            }
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 256
+                        }
                       },
                       "itunes": {
                         "anyOf": [
                           {
-                            "type": "object",
-                            "properties": {
-                              "duration": {
-                                "type": "number"
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
                               },
-                              "image": {
-                                "type": "string"
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
                               },
-                              "explicit": {
-                                "type": "boolean"
-                              },
-                              "title": {
-                                "type": "string"
-                              },
-                              "episode": {
-                                "type": "number"
-                              },
-                              "season": {
-                                "type": "number"
-                              },
-                              "episodeType": {
-                                "type": "string"
-                              },
-                              "block": {
-                                "type": "boolean"
+                              {
+                                "type": "array",
+                                "items": {}
                               }
-                            },
-                            "additionalProperties": false
+                            ]
                           },
                           {
                             "type": "null"
@@ -563,23 +509,210 @@
                       "youtube": {
                         "anyOf": [
                           {
-                            "type": "object",
-                            "properties": {
-                              "channelId": {
-                                "type": "string"
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "boolean"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
                               },
-                              "videoId": {
-                                "type": "string"
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "array",
+                                "items": {}
                               }
-                            },
-                            "additionalProperties": false
+                            ]
                           },
                           {
                             "type": "null"
                           }
                         ]
                       },
-                      "icon": {
+                      "favicon": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 256
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "minifluxId",
+                      "title",
+                      "subtitle",
+                      "url",
+                      "site_url",
+                      "etag_header",
+                      "last_modified_header",
+                      "parsingErrorMessage",
+                      "parsingErrorCount",
+                      "userAgent",
+                      "crawler",
+                      "lastChecked",
+                      "categories",
+                      "itunes",
+                      "youtube",
+                      "favicon"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "required": ["message"],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feed/discover": {
+      "post": {
+        "tags": ["feed"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                },
+                "required": ["url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "enum": ["rss", "atom", "json", "rdf"]
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "title": {
                         "anyOf": [
                           {
                             "type": "string"
@@ -590,7 +723,7 @@
                         ]
                       }
                     },
-                    "required": ["id", "url"],
+                    "required": ["format", "url", "title"],
                     "additionalProperties": false
                   }
                 }
@@ -716,19 +849,17 @@
                     "id": {
                       "type": "string",
                       "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "minifluxId": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "title": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string"
                     },
-                    "subTitle": {
+                    "subtitle": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -739,43 +870,25 @@
                       ]
                     },
                     "url": {
+                      "type": "string"
+                    },
+                    "site_url": {
                       "type": "string",
-                      "format": "uri"
+                      "maxLength": 256
                     },
-                    "siteUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "etag_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
-                    "etagHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "lastModifiedHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "last_modified_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
                     "parsingErrorMessage": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -783,21 +896,15 @@
                       ]
                     },
                     "parsingErrorCount": {
-                      "anyOf": [
-                        {
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "userAgent": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -805,27 +912,12 @@
                       ]
                     },
                     "crawler": {
-                      "anyOf": [
-                        {
-                          "default": false,
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "boolean"
                     },
                     "lastChecked": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "date-time",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     },
                     "updated": {
                       "anyOf": [
@@ -840,49 +932,44 @@
                       ]
                     },
                     "categories": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "itunes": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "duration": {
-                              "type": "number"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "image": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
                             },
-                            "explicit": {
-                              "type": "boolean"
-                            },
-                            "title": {
-                              "type": "string"
-                            },
-                            "episode": {
-                              "type": "number"
-                            },
-                            "season": {
-                              "type": "number"
-                            },
-                            "episodeType": {
-                              "type": "string"
-                            },
-                            "block": {
-                              "type": "boolean"
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
@@ -892,26 +979,46 @@
                     "youtube": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "channelId": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "videoId": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
                         }
                       ]
                     },
-                    "icon": {
+                    "favicon": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -919,7 +1026,25 @@
                       ]
                     }
                   },
-                  "required": ["id", "url"],
+                  "required": [
+                    "id",
+                    "minifluxId",
+                    "title",
+                    "subtitle",
+                    "url",
+                    "site_url",
+                    "etag_header",
+                    "last_modified_header",
+                    "parsingErrorMessage",
+                    "parsingErrorCount",
+                    "userAgent",
+                    "crawler",
+                    "lastChecked",
+                    "categories",
+                    "itunes",
+                    "youtube",
+                    "favicon"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -1065,19 +1190,17 @@
                     "id": {
                       "type": "string",
                       "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "minifluxId": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "title": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string"
                     },
-                    "subTitle": {
+                    "subtitle": {
                       "anyOf": [
                         {
                           "type": "string"
@@ -1088,43 +1211,25 @@
                       ]
                     },
                     "url": {
+                      "type": "string"
+                    },
+                    "site_url": {
                       "type": "string",
-                      "format": "uri"
+                      "maxLength": 256
                     },
-                    "siteUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "etag_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
-                    "etagHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "lastModifiedHeader": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                    "last_modified_header": {
+                      "type": "string",
+                      "maxLength": 256
                     },
                     "parsingErrorMessage": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -1132,21 +1237,15 @@
                       ]
                     },
                     "parsingErrorCount": {
-                      "anyOf": [
-                        {
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "userAgent": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -1154,27 +1253,12 @@
                       ]
                     },
                     "crawler": {
-                      "anyOf": [
-                        {
-                          "default": false,
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "boolean"
                     },
                     "lastChecked": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "date-time",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     },
                     "updated": {
                       "anyOf": [
@@ -1189,49 +1273,44 @@
                       ]
                     },
                     "categories": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "itunes": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "duration": {
-                              "type": "number"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "image": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
                             },
-                            "explicit": {
-                              "type": "boolean"
-                            },
-                            "title": {
-                              "type": "string"
-                            },
-                            "episode": {
-                              "type": "number"
-                            },
-                            "season": {
-                              "type": "number"
-                            },
-                            "episodeType": {
-                              "type": "string"
-                            },
-                            "block": {
-                              "type": "boolean"
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
@@ -1241,26 +1320,46 @@
                     "youtube": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "channelId": {
-                              "type": "string"
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "videoId": {
-                              "type": "string"
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
                             }
-                          },
-                          "additionalProperties": false
+                          ]
                         },
                         {
                           "type": "null"
                         }
                       ]
                     },
-                    "icon": {
+                    "favicon": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 256
                         },
                         {
                           "type": "null"
@@ -1268,7 +1367,25 @@
                       ]
                     }
                   },
-                  "required": ["id", "url"],
+                  "required": [
+                    "id",
+                    "minifluxId",
+                    "title",
+                    "subtitle",
+                    "url",
+                    "site_url",
+                    "etag_header",
+                    "last_modified_header",
+                    "parsingErrorMessage",
+                    "parsingErrorCount",
+                    "userAgent",
+                    "crawler",
+                    "lastChecked",
+                    "categories",
+                    "itunes",
+                    "youtube",
+                    "favicon"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -1329,22 +1446,7 @@
             }
           },
           "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "minLength": 3
-                    }
-                  },
-                  "required": ["message"],
-                  "additionalProperties": false
-                }
-              }
-            }
+            "description": "Default Response"
           },
           "500": {
             "description": "Default Response",
@@ -1509,6 +1611,16 @@
             "in": "query",
             "name": "status",
             "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "in": "query",
+            "name": "pageSize",
+            "required": false
           }
         ],
         "responses": {
@@ -1527,79 +1639,20 @@
                           "id": {
                             "type": "string",
                             "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "minifluxId": {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "title": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string"
                           },
                           "url": {
                             "anyOf": [
                               {
-                                "type": "string",
-                                "format": "uri"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "feedTitle": {
-                            "type": "string"
-                          },
-                          "isRead": {
-                            "anyOf": [
-                              {
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "isStarred": {
-                            "anyOf": [
-                              {
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "isHidden": {
-                            "anyOf": [
-                              {
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "isBlurred": {
-                            "anyOf": [
-                              {
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "contentWarning": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
+                                "type": "string"
                               },
                               {
                                 "type": "null"
@@ -1609,7 +1662,8 @@
                           "hash": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 64
                               },
                               {
                                 "type": "null"
@@ -1677,29 +1731,16 @@
                             ]
                           },
                           "keywords": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "published": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                           },
                           "updated": {
                             "anyOf": [
@@ -1714,36 +1755,24 @@
                             ]
                           },
                           "categories": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "authors": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "image": {
                             "anyOf": [
                               {
                                 "type": "string",
-                                "format": "uri"
+                                "maxLength": 512
                               },
                               {
                                 "type": "null"
@@ -1753,7 +1782,8 @@
                           "imageAlt": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 512
                               },
                               {
                                 "type": "null"
@@ -1763,161 +1793,123 @@
                           "media": {
                             "anyOf": [
                               {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "url": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string",
-                                          "format": "uri"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "fileSize": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "type": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "medium": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "isDefault": {
-                                      "anyOf": [
-                                        {
-                                          "type": "boolean"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "expression": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "bitrate": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "framerate": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "samplingrate": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "channels": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "duration": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "height": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "width": {
-                                      "anyOf": [
-                                        {
-                                          "type": "number"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    },
-                                    "lang": {
-                                      "anyOf": [
-                                        {
-                                          "type": "string"
-                                        },
-                                        {
-                                          "type": "null"
-                                        }
-                                      ]
-                                    }
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "additionalProperties": false
-                                }
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
+                                  }
+                                ]
                               },
                               {
                                 "type": "null"
                               }
                             ]
                           },
-                          "enclosuresCollection": {
+                          "itunes": {
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "youtube": {
+                            "anyOf": [
+                              {
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "feedId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "enclosures": {
                             "type": "array",
                             "items": {
                               "type": "object",
@@ -1953,170 +1945,62 @@
                               "additionalProperties": false
                             }
                           },
-                          "itunes": {
+                          "feedTitle": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 255
+                          },
+                          "isRead": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "duration": {
-                                    "anyOf": [
-                                      {
-                                        "type": "number"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "image": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string",
-                                        "format": "uri"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "explicit": {
-                                    "anyOf": [
-                                      {
-                                        "type": "boolean"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "author": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "title": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "episode": {
-                                    "anyOf": [
-                                      {
-                                        "type": "number"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "season": {
-                                    "anyOf": [
-                                      {
-                                        "type": "number"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "episodeType": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "block": {
-                                    "anyOf": [
-                                      {
-                                        "type": "boolean"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "summary": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "subtitle": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "keywords": {
-                                    "anyOf": [
-                                      {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "string"
-                                        }
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "additionalProperties": false
+                                "default": false,
+                                "type": "boolean"
                               },
                               {
                                 "type": "null"
                               }
                             ]
                           },
-                          "youtube": {
+                          "isStarred": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "videoId": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  },
-                                  "channelId": {
-                                    "anyOf": [
-                                      {
-                                        "type": "string"
-                                      },
-                                      {
-                                        "type": "null"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "additionalProperties": false
+                                "default": false,
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "isBlurred": {
+                            "anyOf": [
+                              {
+                                "default": false,
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "isHidden": {
+                            "anyOf": [
+                              {
+                                "default": false,
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "contentWarning": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
                               },
                               {
                                 "type": "null"
@@ -2124,7 +2008,30 @@
                             ]
                           }
                         },
-                        "required": ["id", "feedTitle", "enclosuresCollection"],
+                        "required": [
+                          "id",
+                          "minifluxId",
+                          "title",
+                          "url",
+                          "hash",
+                          "description",
+                          "rawContent",
+                          "readableHtml",
+                          "readableText",
+                          "fullArticleHtml",
+                          "fullArticleText",
+                          "keywords",
+                          "published",
+                          "categories",
+                          "authors",
+                          "image",
+                          "imageAlt",
+                          "media",
+                          "itunes",
+                          "youtube",
+                          "feedId",
+                          "enclosures"
+                        ],
                         "additionalProperties": false
                       }
                     },
@@ -2264,79 +2171,20 @@
                     "id": {
                       "type": "string",
                       "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "minifluxId": {
+                      "type": "integer",
+                      "minimum": -2147483648,
+                      "maximum": 2147483647
                     },
                     "title": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "url": {
                       "anyOf": [
                         {
-                          "type": "string",
-                          "format": "uri"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "feedTitle": {
-                      "type": "string"
-                    },
-                    "isRead": {
-                      "anyOf": [
-                        {
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "isStarred": {
-                      "anyOf": [
-                        {
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "isHidden": {
-                      "anyOf": [
-                        {
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "isBlurred": {
-                      "anyOf": [
-                        {
-                          "type": "boolean"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "contentWarning": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
+                          "type": "string"
                         },
                         {
                           "type": "null"
@@ -2346,7 +2194,8 @@
                     "hash": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 64
                         },
                         {
                           "type": "null"
@@ -2414,29 +2263,16 @@
                       ]
                     },
                     "keywords": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "published": {
-                      "anyOf": [
-                        {
-                          "type": "string",
-                          "format": "date-time",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                     },
                     "updated": {
                       "anyOf": [
@@ -2451,36 +2287,24 @@
                       ]
                     },
                     "categories": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "authors": {
-                      "anyOf": [
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "maxLength": 256
+                      }
                     },
                     "image": {
                       "anyOf": [
                         {
                           "type": "string",
-                          "format": "uri"
+                          "maxLength": 512
                         },
                         {
                           "type": "null"
@@ -2490,7 +2314,8 @@
                     "imageAlt": {
                       "anyOf": [
                         {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 512
                         },
                         {
                           "type": "null"
@@ -2500,161 +2325,123 @@
                     "media": {
                       "anyOf": [
                         {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "url": {
-                                "anyOf": [
-                                  {
-                                    "type": "string",
-                                    "format": "uri"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "fileSize": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "type": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "medium": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "isDefault": {
-                                "anyOf": [
-                                  {
-                                    "type": "boolean"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "expression": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "bitrate": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "framerate": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "samplingrate": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "channels": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "duration": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "height": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "width": {
-                                "anyOf": [
-                                  {
-                                    "type": "number"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "lang": {
-                                "anyOf": [
-                                  {
-                                    "type": "string"
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              }
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
                             },
-                            "additionalProperties": false
-                          }
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
+                            }
+                          ]
                         },
                         {
                           "type": "null"
                         }
                       ]
                     },
-                    "enclosuresCollection": {
+                    "itunes": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "youtube": {
+                      "anyOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "boolean"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "array",
+                              "items": {}
+                            }
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "feedId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "enclosures": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -2690,170 +2477,62 @@
                         "additionalProperties": false
                       }
                     },
-                    "itunes": {
+                    "feedTitle": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 255
+                    },
+                    "isRead": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "duration": {
-                              "anyOf": [
-                                {
-                                  "type": "number"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "image": {
-                              "anyOf": [
-                                {
-                                  "type": "string",
-                                  "format": "uri"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "explicit": {
-                              "anyOf": [
-                                {
-                                  "type": "boolean"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "author": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "title": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "episode": {
-                              "anyOf": [
-                                {
-                                  "type": "number"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "season": {
-                              "anyOf": [
-                                {
-                                  "type": "number"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "episodeType": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "block": {
-                              "anyOf": [
-                                {
-                                  "type": "boolean"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "summary": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "subtitle": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "keywords": {
-                              "anyOf": [
-                                {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string"
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
+                          "default": false,
+                          "type": "boolean"
                         },
                         {
                           "type": "null"
                         }
                       ]
                     },
-                    "youtube": {
+                    "isStarred": {
                       "anyOf": [
                         {
-                          "type": "object",
-                          "properties": {
-                            "videoId": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "channelId": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            }
-                          },
-                          "additionalProperties": false
+                          "default": false,
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isBlurred": {
+                      "anyOf": [
+                        {
+                          "default": false,
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "isHidden": {
+                      "anyOf": [
+                        {
+                          "default": false,
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contentWarning": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
                         },
                         {
                           "type": "null"
@@ -2861,7 +2540,30 @@
                       ]
                     }
                   },
-                  "required": ["id", "feedTitle", "enclosuresCollection"],
+                  "required": [
+                    "id",
+                    "minifluxId",
+                    "title",
+                    "url",
+                    "hash",
+                    "description",
+                    "rawContent",
+                    "readableHtml",
+                    "readableText",
+                    "fullArticleHtml",
+                    "fullArticleText",
+                    "keywords",
+                    "published",
+                    "categories",
+                    "authors",
+                    "image",
+                    "imageAlt",
+                    "media",
+                    "itunes",
+                    "youtube",
+                    "feedId",
+                    "enclosures"
+                  ],
                   "additionalProperties": false
                 }
               }
@@ -3123,19 +2825,17 @@
                             "id": {
                               "type": "string",
                               "format": "uuid",
-                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "minifluxId": {
+                              "type": "integer",
+                              "minimum": -2147483648,
+                              "maximum": 2147483647
                             },
                             "title": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                              "type": "string"
                             },
-                            "subTitle": {
+                            "subtitle": {
                               "anyOf": [
                                 {
                                   "type": "string"
@@ -3146,43 +2846,25 @@
                               ]
                             },
                             "url": {
+                              "type": "string"
+                            },
+                            "site_url": {
                               "type": "string",
-                              "format": "uri"
+                              "maxLength": 256
                             },
-                            "siteUrl": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                            "etag_header": {
+                              "type": "string",
+                              "maxLength": 256
                             },
-                            "etagHeader": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "lastModifiedHeader": {
-                              "anyOf": [
-                                {
-                                  "type": "string"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                            "last_modified_header": {
+                              "type": "string",
+                              "maxLength": 256
                             },
                             "parsingErrorMessage": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "maxLength": 256
                                 },
                                 {
                                   "type": "null"
@@ -3190,21 +2872,15 @@
                               ]
                             },
                             "parsingErrorCount": {
-                              "anyOf": [
-                                {
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                              "type": "integer",
+                              "minimum": -2147483648,
+                              "maximum": 2147483647
                             },
                             "userAgent": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "maxLength": 256
                                 },
                                 {
                                   "type": "null"
@@ -3212,27 +2888,12 @@
                               ]
                             },
                             "crawler": {
-                              "anyOf": [
-                                {
-                                  "default": false,
-                                  "type": "boolean"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                              "type": "boolean"
                             },
                             "lastChecked": {
-                              "anyOf": [
-                                {
-                                  "type": "string",
-                                  "format": "date-time",
-                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                             },
                             "updated": {
                               "anyOf": [
@@ -3247,49 +2908,44 @@
                               ]
                             },
                             "categories": {
-                              "anyOf": [
-                                {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string"
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "maxLength": 256
+                              }
                             },
                             "itunes": {
                               "anyOf": [
                                 {
-                                  "type": "object",
-                                  "properties": {
-                                    "duration": {
-                                      "type": "number"
+                                  "anyOf": [
+                                    {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "boolean"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
                                     },
-                                    "image": {
-                                      "type": "string"
+                                    {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string"
+                                      },
+                                      "additionalProperties": {}
                                     },
-                                    "explicit": {
-                                      "type": "boolean"
-                                    },
-                                    "title": {
-                                      "type": "string"
-                                    },
-                                    "episode": {
-                                      "type": "number"
-                                    },
-                                    "season": {
-                                      "type": "number"
-                                    },
-                                    "episodeType": {
-                                      "type": "string"
-                                    },
-                                    "block": {
-                                      "type": "boolean"
+                                    {
+                                      "type": "array",
+                                      "items": {}
                                     }
-                                  },
-                                  "additionalProperties": false
+                                  ]
                                 },
                                 {
                                   "type": "null"
@@ -3299,26 +2955,46 @@
                             "youtube": {
                               "anyOf": [
                                 {
-                                  "type": "object",
-                                  "properties": {
-                                    "channelId": {
-                                      "type": "string"
+                                  "anyOf": [
+                                    {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "number"
+                                        },
+                                        {
+                                          "type": "boolean"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
                                     },
-                                    "videoId": {
-                                      "type": "string"
+                                    {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string"
+                                      },
+                                      "additionalProperties": {}
+                                    },
+                                    {
+                                      "type": "array",
+                                      "items": {}
                                     }
-                                  },
-                                  "additionalProperties": false
+                                  ]
                                 },
                                 {
                                   "type": "null"
                                 }
                               ]
                             },
-                            "icon": {
+                            "favicon": {
                               "anyOf": [
                                 {
-                                  "type": "string"
+                                  "type": "string",
+                                  "maxLength": 256
                                 },
                                 {
                                   "type": "null"
@@ -3326,7 +3002,25 @@
                               ]
                             }
                           },
-                          "required": ["id", "url"],
+                          "required": [
+                            "id",
+                            "minifluxId",
+                            "title",
+                            "subtitle",
+                            "url",
+                            "site_url",
+                            "etag_header",
+                            "last_modified_header",
+                            "parsingErrorMessage",
+                            "parsingErrorCount",
+                            "userAgent",
+                            "crawler",
+                            "lastChecked",
+                            "categories",
+                            "itunes",
+                            "youtube",
+                            "favicon"
+                          ],
                           "additionalProperties": false
                         }
                       }
@@ -3481,19 +3175,17 @@
                           "id": {
                             "type": "string",
                             "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "minifluxId": {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "title": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string"
                           },
-                          "subTitle": {
+                          "subtitle": {
                             "anyOf": [
                               {
                                 "type": "string"
@@ -3504,43 +3196,25 @@
                             ]
                           },
                           "url": {
+                            "type": "string"
+                          },
+                          "site_url": {
                             "type": "string",
-                            "format": "uri"
+                            "maxLength": 256
                           },
-                          "siteUrl": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "etag_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
-                          "etagHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "lastModifiedHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "last_modified_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
                           "parsingErrorMessage": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -3548,21 +3222,15 @@
                             ]
                           },
                           "parsingErrorCount": {
-                            "anyOf": [
-                              {
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "userAgent": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -3570,27 +3238,12 @@
                             ]
                           },
                           "crawler": {
-                            "anyOf": [
-                              {
-                                "default": false,
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "boolean"
                           },
                           "lastChecked": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                           },
                           "updated": {
                             "anyOf": [
@@ -3605,49 +3258,44 @@
                             ]
                           },
                           "categories": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "itunes": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "duration": {
-                                    "type": "number"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "image": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
                                   },
-                                  "explicit": {
-                                    "type": "boolean"
-                                  },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "episode": {
-                                    "type": "number"
-                                  },
-                                  "season": {
-                                    "type": "number"
-                                  },
-                                  "episodeType": {
-                                    "type": "string"
-                                  },
-                                  "block": {
-                                    "type": "boolean"
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
@@ -3657,26 +3305,46 @@
                           "youtube": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "channelId": {
-                                    "type": "string"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "videoId": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
                               }
                             ]
                           },
-                          "icon": {
+                          "favicon": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -3684,7 +3352,25 @@
                             ]
                           }
                         },
-                        "required": ["id", "url"],
+                        "required": [
+                          "id",
+                          "minifluxId",
+                          "title",
+                          "subtitle",
+                          "url",
+                          "site_url",
+                          "etag_header",
+                          "last_modified_header",
+                          "parsingErrorMessage",
+                          "parsingErrorCount",
+                          "userAgent",
+                          "crawler",
+                          "lastChecked",
+                          "categories",
+                          "itunes",
+                          "youtube",
+                          "favicon"
+                        ],
                         "additionalProperties": false
                       }
                     }
@@ -3827,19 +3513,17 @@
                           "id": {
                             "type": "string",
                             "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "minifluxId": {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "title": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string"
                           },
-                          "subTitle": {
+                          "subtitle": {
                             "anyOf": [
                               {
                                 "type": "string"
@@ -3850,43 +3534,25 @@
                             ]
                           },
                           "url": {
+                            "type": "string"
+                          },
+                          "site_url": {
                             "type": "string",
-                            "format": "uri"
+                            "maxLength": 256
                           },
-                          "siteUrl": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "etag_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
-                          "etagHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "lastModifiedHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "last_modified_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
                           "parsingErrorMessage": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -3894,21 +3560,15 @@
                             ]
                           },
                           "parsingErrorCount": {
-                            "anyOf": [
-                              {
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "userAgent": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -3916,27 +3576,12 @@
                             ]
                           },
                           "crawler": {
-                            "anyOf": [
-                              {
-                                "default": false,
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "boolean"
                           },
                           "lastChecked": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                           },
                           "updated": {
                             "anyOf": [
@@ -3951,49 +3596,44 @@
                             ]
                           },
                           "categories": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "itunes": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "duration": {
-                                    "type": "number"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "image": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
                                   },
-                                  "explicit": {
-                                    "type": "boolean"
-                                  },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "episode": {
-                                    "type": "number"
-                                  },
-                                  "season": {
-                                    "type": "number"
-                                  },
-                                  "episodeType": {
-                                    "type": "string"
-                                  },
-                                  "block": {
-                                    "type": "boolean"
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
@@ -4003,26 +3643,46 @@
                           "youtube": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "channelId": {
-                                    "type": "string"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "videoId": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
                               }
                             ]
                           },
-                          "icon": {
+                          "favicon": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -4030,7 +3690,25 @@
                             ]
                           }
                         },
-                        "required": ["id", "url"],
+                        "required": [
+                          "id",
+                          "minifluxId",
+                          "title",
+                          "subtitle",
+                          "url",
+                          "site_url",
+                          "etag_header",
+                          "last_modified_header",
+                          "parsingErrorMessage",
+                          "parsingErrorCount",
+                          "userAgent",
+                          "crawler",
+                          "lastChecked",
+                          "categories",
+                          "itunes",
+                          "youtube",
+                          "favicon"
+                        ],
                         "additionalProperties": false
                       }
                     }
@@ -4208,19 +3886,17 @@
                           "id": {
                             "type": "string",
                             "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "minifluxId": {
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "title": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string"
                           },
-                          "subTitle": {
+                          "subtitle": {
                             "anyOf": [
                               {
                                 "type": "string"
@@ -4231,43 +3907,25 @@
                             ]
                           },
                           "url": {
+                            "type": "string"
+                          },
+                          "site_url": {
                             "type": "string",
-                            "format": "uri"
+                            "maxLength": 256
                           },
-                          "siteUrl": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "etag_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
-                          "etagHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
-                          },
-                          "lastModifiedHeader": {
-                            "anyOf": [
-                              {
-                                "type": "string"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                          "last_modified_header": {
+                            "type": "string",
+                            "maxLength": 256
                           },
                           "parsingErrorMessage": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -4275,21 +3933,15 @@
                             ]
                           },
                           "parsingErrorCount": {
-                            "anyOf": [
-                              {
-                                "type": "integer",
-                                "minimum": -9007199254740991,
-                                "maximum": 9007199254740991
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "integer",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
                           },
                           "userAgent": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -4297,27 +3949,12 @@
                             ]
                           },
                           "crawler": {
-                            "anyOf": [
-                              {
-                                "default": false,
-                                "type": "boolean"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "boolean"
                           },
                           "lastChecked": {
-                            "anyOf": [
-                              {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                           },
                           "updated": {
                             "anyOf": [
@@ -4332,49 +3969,44 @@
                             ]
                           },
                           "categories": {
-                            "anyOf": [
-                              {
-                                "type": "array",
-                                "items": {
-                                  "type": "string"
-                                }
-                              },
-                              {
-                                "type": "null"
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 256
+                            }
                           },
                           "itunes": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "duration": {
-                                    "type": "number"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "image": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
                                   },
-                                  "explicit": {
-                                    "type": "boolean"
-                                  },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "episode": {
-                                    "type": "number"
-                                  },
-                                  "season": {
-                                    "type": "number"
-                                  },
-                                  "episodeType": {
-                                    "type": "string"
-                                  },
-                                  "block": {
-                                    "type": "boolean"
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
@@ -4384,26 +4016,46 @@
                           "youtube": {
                             "anyOf": [
                               {
-                                "type": "object",
-                                "properties": {
-                                  "channelId": {
-                                    "type": "string"
+                                "anyOf": [
+                                  {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
                                   },
-                                  "videoId": {
-                                    "type": "string"
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {}
                                   }
-                                },
-                                "additionalProperties": false
+                                ]
                               },
                               {
                                 "type": "null"
                               }
                             ]
                           },
-                          "icon": {
+                          "favicon": {
                             "anyOf": [
                               {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 256
                               },
                               {
                                 "type": "null"
@@ -4411,7 +4063,25 @@
                             ]
                           }
                         },
-                        "required": ["id", "url"],
+                        "required": [
+                          "id",
+                          "minifluxId",
+                          "title",
+                          "subtitle",
+                          "url",
+                          "site_url",
+                          "etag_header",
+                          "last_modified_header",
+                          "parsingErrorMessage",
+                          "parsingErrorCount",
+                          "userAgent",
+                          "crawler",
+                          "lastChecked",
+                          "categories",
+                          "itunes",
+                          "youtube",
+                          "favicon"
+                        ],
                         "additionalProperties": false
                       }
                     }
